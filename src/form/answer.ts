@@ -43,7 +43,6 @@ export enum QAComparisonOperator {
 
 export interface QALiteral {
     literalId: string 
-    questionObj: QAQuestion|undefined
     questionRef: string | undefined
     comparisonOperator: QAComparisonOperator | undefined,
     comparisonValue: QAContent | undefined,

@@ -1,6 +1,6 @@
-import React from "react";
+import React, { RefObject } from "react";
 import { Formik, Field, Form, FormikActions } from 'formik';
-import { faPlusSquare, faCross, faWindowClose, faArrowUp } from "@fortawesome/free-solid-svg-icons";
+import { faPlusSquare, faCross, faWindowClose, faArrowUp, faKey, faQuestion } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
 import Select from 'react-select'
 import * as _ from "lodash";
@@ -15,16 +15,26 @@ import {
     FormGroup,
     Input,
     Row,
-    Col
+    Col,
+    ModalFooter,
+    ModalBody,
+    ModalHeader
 } from "reactstrap";
 import { string, any } from "prop-types";
 import { QACondition, QAFollowingOperator } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType, QAContent } from "../form/answer";
 import { QAQuestion } from "../form/question";
 import { ValueType } from "react-select/src/types";
+import { AddOption } from "./addChoice";
+import Modal from "react-modal";
+import { ReactComponent } from "*.svg";
+import { openModal, destroyModal } from "../utils/util";
+import { AutofillCondition } from "./AutofillCondition";
+let root: HTMLElement = document.getElementById("root") || document.body;
+Modal.setAppElement(root);
 
 
-function getRandomId(startingText?: string) {
+export function getRandomId(startingText?: string) {
     if (!startingText) startingText = "";
     var S4 = function () {
         return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
@@ -39,12 +49,14 @@ function getOperatorForType(type?: AnswerType) {
         case AnswerType.Date:
         case AnswerType.String:
         case AnswerType.Time:
+
+
             return allOperators.filter(item => item === QAComparisonOperator.Equal);
         case AnswerType.Number:
             deftault:
             return allOperators;
     }
-    return []
+    return [QAComparisonOperator.Equal]
 }
 
 const customStyles = {
@@ -112,12 +124,37 @@ interface Values {
 }
 
 export class DPFormItem extends React.Component<any, any>{
+    static defaultProps = {
+        question: new QAQuestion()
+    }
     constructor(props: any) {
         super(props);
         this.state = {
-
+            question: this.props.question
         }
     }
+    openAppearingConditionModal() {
+        let el = <CreateConditionModal
+            isOpen={true}
+            onSubmit={this.editAppearingCondition.bind(this)}
+            onCancel={destroyModal.bind(this)}
+            condition={this.state.question.appearingCondition} />
+        openModal(el);
+    }
+
+    editAppearingCondition(newLiterals: QALiteral[]) {
+        this.setState((prevState: any) => {
+            let question: QAQuestion = _.clone(prevState.question)
+            if (!question.appearingCondition) question.setAppearingCondition(new QACondition())
+            question.appearingCondition.setLiterals(newLiterals)
+            return {
+                question: question
+            }
+        }, () => {
+            destroyModal();
+        })
+    }
+
     render() {
         let AnswerKeys = Object.keys(AnswerType);
         return (
@@ -127,12 +164,9 @@ export class DPFormItem extends React.Component<any, any>{
                     type: '',
                     email: '',
                 }}
+
                 onSubmit={(values: Values, { setSubmitting }: FormikActions<Values>) => {
-                    console.log("value");
-                    setTimeout(() => {
-                        alert(JSON.stringify(values, null, 2));
-                        setSubmitting(false);
-                    }, 500);
+
                 }}
                 render={() => (
 
@@ -148,15 +182,54 @@ export class DPFormItem extends React.Component<any, any>{
                                             <label htmlFor="question">Question</label>
                                             <Field className="form-control" id="question" name="question" placeholder="" type="text" />
                                         </FormGroup>
+
+                                        <FormGroup>
+                                            <label htmlFor="isRequired">Required</label>
+                                            <Select styles={customStyles} id="isRequired" options={[{ value: true, label: "Yes" }, { value: false, label: "No" }]} />
+                                        </FormGroup>
+
+
+                                        <FormGroup>
+                                            <label htmlFor="type">Appearing Condition</label>
+                                            <div>
+                                                <Button type="button" onClick={this.openAppearingConditionModal.bind(this)}
+                                                    size="sm">
+                                                    <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
+
+                                            </div>
+
+                                        </FormGroup>
+
                                         <FormGroup>
                                             <label htmlFor="type">Type</label>
-                                            <Select styles={customStyles} id="type" options={Object.keys(AnswerType).map((i): SelectOption => ({ value: i, label: i }))} />
+                                            <Select onChange={(e: any) => this.setState((prevState: any) => {
+                                                let cloned = _.clone(prevState.question)
+                                                cloned.setAnswerType(AnswerType[e.value])
+                                                return {
+                                                    question: cloned
+                                                }
+                                            })} styles={customStyles} id="type" options={Object.keys(AnswerType).map((i): SelectOption => ({ value: i, label: i }))} />
+                                        </FormGroup>
+
+                                        <FormGroup>
+                                            <label htmlFor="type">Add Options</label>
+
+                                            <AddOption onChange={(d: any) => this.setState((prevState: any) => {
+                                                let cloned = _.clone(this.state.question);
+                                                cloned.options = d;
+                                                return{
+                                                    question: cloned
+                                                }
+                                            })} />
 
                                         </FormGroup>
                                         <FormGroup>
-                                            <CreateCondition>
+                                            <FormGroup>
+                                                <label htmlFor="type">Add Autofill Conditions</label>
 
-                                            </CreateCondition>
+                                                <AutofillCondition answerType={this.state.question.answerType} options={this.state.question.options} />
+
+                                            </FormGroup>
                                         </FormGroup>
 
 
@@ -202,6 +275,10 @@ type CreateConditionState = any;
 
 type CreateConditionProps = {
     definedQuestions?: { [key: string]: QAQuestion }
+    onChange?: (data: QALiteral[]) => void
+    literals?: Array<QALiteral>
+    setLiteralsSetter?: Function
+    condition?: QACondition
 
 }
 
@@ -270,17 +347,14 @@ const testQuestion5 = new QAQuestion().setAnswerType(AnswerType.String).setQuest
 export class CreateCondition extends React.Component<CreateConditionProps, CreateConditionState>{
     columns: { dataField: string; text: string; }[];
     static defaultProps: CreateConditionProps = {
+        onChange: () => { },
         definedQuestions: { 'question-1': testQuestion, 'question-2': testQuestion2, "question-3": testQuestion3, "question-4": testQuestion4, "question-5": testQuestion5 }
     }
     constructor(props: any) {
         super(props);
         this.state = {
-            literals: new Array<QALiteral>(),
-
-
+            literals: this.props.condition ? this.props.condition.literals : [],
         }
-
-
         this.columns = [
             {
                 dataField: "id",
@@ -305,14 +379,32 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
         ]
 
     }
+    componentDidMount() {
+        if (this.props.setLiteralsSetter) {
+            this.props.setLiteralsSetter(this.setLiterals.bind(this));
+        }
+    }
+
+    setLiterals(newLiterals: QALiteral[]) {
+        this.setState({
+            literals: newLiterals
+        })
+    }
+
+
     addLiteral(literal?: QALiteral) {
-        if (!literal) literal = { literalId: getRandomId("lit-"), questionObj: undefined, questionRef: undefined, comparisonOperator: undefined, comparisonValue: undefined, followingOperator: undefined }
+        if (!literal) literal = { literalId: getRandomId("lit-"), questionRef: undefined, comparisonOperator: undefined, comparisonValue: undefined, followingOperator: undefined }
         this.setState((prevState: any) => {
             let newLiterals = _.clone(prevState.literals);
             newLiterals.push(literal);
             return { literals: newLiterals }
+        }, () => {
+            if (this.props.onChange) {
+                this.props.onChange(this.state.literals)
+            }
         })
     }
+
     moveLiteralUp(index: number) {
         this.setState((prevState: any) => {
             let newLiterals = _.clone(prevState.literals);
@@ -362,8 +454,11 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
             return {
                 literals: newLiterals
             }
+        }, () => {
+            if (this.props.onChange) this.props.onChange(this.state.literals);
         })
     }
+
     getQuestion(questionRef?: string) {
         if (questionRef && this.props.definedQuestions && !_.isEmpty(this.props.definedQuestions)) {
             let v = this.props.definedQuestions[questionRef];
@@ -379,12 +474,16 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
             return {
                 literals: newLiterals
             }
+        }, () => {
+            if (this.props.onChange) {
+                this.props.onChange(this.state.literals)
+            }
         })
     }
     render() {
         return (
             <Card>
-                <CardHeader>Add Condtion</CardHeader>
+                <CardHeader>{`${this.props.condition ? "Edit" : "Add"} Condtion`}</CardHeader>
                 <CardBody>
                     <Row>
                         <Table>
@@ -392,7 +491,7 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                                 <tr>
                                     <th key="th-first">{``}</th>
                                     {this.columns.map((item, key) => {
-                                        return <th  key={key}>{item.text}</th>
+                                        return <th key={key}>{item.text}</th>
                                     })}
                                     <th key="th-last">{``}</th>
                                 </tr>
@@ -410,7 +509,6 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
 
                                     />
                                     let selectedQuestionType = item.questionRef && this.props.definedQuestions ? this.props.definedQuestions[item.questionRef].answerType : undefined;
-                                    console.log(selectedQuestionType);
                                     let comparisionOPOptions_: SelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }))
                                     let comparisonOpSelect = <Select
                                         key={`literalo-${key}-${item.literalId}`}
@@ -428,7 +526,7 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                                         options={qOptions.map(item => ({ value: item.value, label: item.value }))}
                                         value={item.comparisonValue && item.comparisonValue.content} questionType={qAnswerType} />
 
-                                    let followingOperatorOptions_: SelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key }))
+                                    let followingOperatorOptions_: SelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }))
                                     let followingOperatorSelect = <Select
                                         key={`literalfo-${key}-${item.literalId}`}
                                         styles={customStyles}
@@ -470,18 +568,90 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
     }
 }
 
-class AddOption extends React.Component{
-    constructor(props:any){
+interface CreateConditionModalProp {
+    isOpen: boolean
+    onSubmit?: (data: QALiteral[]) => void;
+    onCancel?: (data: QALiteral[]) => void;
+    condition?: QACondition
+    setLiteralsSetter?: Function
+}
+export class CreateConditionModal extends React.Component<CreateConditionModalProp, any> {
+    createCondition_: React.RefObject<CreateCondition>
+    static defaultProps = {
+        isOpen: false,
+
+    }
+    literalsSetter: any;
+    constructor(props: CreateConditionModalProp) {
         super(props);
         this.state = {
+            literals: this.props.condition && this.props.condition.literals,
+            errors: []
+        }
+        this.createCondition_ = React.createRef();
+    }
 
+
+    handleChange = (data: QALiteral[]) => {
+        this.setState({
+            errors: [],
+            literals: data
+        })
+    }
+    primaryButtonHandler = () => {
+        let newCondition = new QACondition().setLiterals(this.state.literals);
+        let isValid = QACondition.checkIfValid(newCondition)
+        if (!isValid) {
+            this.setState({
+                errors: [{ message: "Condition is not valid!" }]
+            })
+            return;
+        }
+
+        if (this.props.onSubmit) {
+            this.props.onSubmit(this.state.literals);
+        }
+
+
+
+    }
+    secondaryButtonHandler = () => {
+        if (this.props.onCancel) {
+            this.props.onCancel(this.state.literals);
         }
     }
+    render() {
+        const customStyles = {
+            content: {
+                top: '50%',
+                left: '50%',
+                right: 'auto',
+                bottom: 'auto',
+                marginRight: '-50%',
+                transform: 'translate(-50%, -50%)',
+                minHeight: "400px",
+                backgroundColor: "#27293d"
+            },
+            overlay: {
+                backgroundColor: "rgba(0, 0, 0, 0.50)"
+            }
+        };
+        return (
+            <Modal style={customStyles} isOpen={this.props.isOpen}>
+                <ModalBody>
 
-    render(){
-        return(<>
+                    {this.props.isOpen && <CreateCondition condition={this.props.condition ? this.props.condition : undefined} ref={this.createCondition_} onChange={(data) => this.handleChange(data)} />}
+                    <Row>
+                        <div className="btn-danger">{this.state.errors.map((item: any) => item.message)}</div>
+                    </Row>
+                </ModalBody>
 
-
-        </>)
+                <ModalFooter>
+                    <Button color="primary" onClick={this.primaryButtonHandler}>Submit</Button>
+                    <Button color="secondary" onClick={this.secondaryButtonHandler}>Cancel</Button>
+                </ModalFooter>
+            </Modal>
+        )
     }
 }
+

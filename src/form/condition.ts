@@ -1,15 +1,33 @@
 import { QALiteral } from "./answer";
+import _ from "lodash";
 
 export class QACondition {
+
     literals: Array<QALiteral>;
 
     constructor() {
         this.literals = Array<QALiteral>();
     }
 
+    static checkIfValid(condition: QACondition) {
+        if (!condition.literals) return false;
+        let isValid = true;
+        condition.literals.forEach((literal) => {
+            let validity: boolean = Object.values(literal).every((x: QALiteral) => !_.isNil(x));
+            if (!validity) isValid = false;
+        });
+        console.log(isValid);
+        return isValid;
+
+    }
+
     static Clone(condition: QACondition): QACondition {
         let newCondition = new QACondition();
         return newCondition;
+    }
+    setLiterals(newLiterals: QALiteral[]) {
+        this.literals = newLiterals;
+        return this;
     }
 
     getClause(): string {
