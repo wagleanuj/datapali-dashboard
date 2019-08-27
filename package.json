@@ -3,6 +3,8 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@blueprintjs/core": "^3.18.0",
+    "@blueprintjs/docs-theme": "^3.3.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.22",
     "@fortawesome/free-solid-svg-icons": "^5.10.2",
     "@fortawesome/react-fontawesome": "^0.1.4",
@@ -21,6 +23,7 @@
     "@types/react-select": "^3.0.2",
     "@types/reactstrap": "^8.0.4",
     "classnames": "^2.2.6",
+    "eslint": "^6.2.2",
     "formik": "^1.5.8",
     "history": "^4.9.0",
     "lodash": "^4.17.15",

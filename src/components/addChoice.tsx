@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faKey } from "@fortawesome/free-solid-svg-icons";
 
 import _ from "lodash";
-import { getRandomId, CreateCondition, CreateConditionModal } from "./DPFormItem";
+import { CreateCondition, CreateConditionModal } from "./DPFormItem";
+import { getRandomId } from "../utils/getRandomId";
 import { QACondition } from "../form/condition";
 import Modal from "react-modal";
 import { QALiteral } from "../form/answer";

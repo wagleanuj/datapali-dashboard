@@ -4,9 +4,11 @@ import { QACondition } from "../form/condition";
 import { AnswerType, QALiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { openModal, destroyModal } from "../utils/util";
-import { CreateConditionModal, ValueInput, getRandomId } from "./DPFormItem";
+import { CreateConditionModal, ValueInput } from "./DPFormItem";
+import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
+import { QAAnswerCondition } from "../form/question";
 
 export class AutofillCondition extends React.Component<any, any> {
     constructor(props: any) {
@@ -31,13 +33,17 @@ export class AutofillCondition extends React.Component<any, any> {
             return {
                 aConditions: newConditions
             }
+        }, () => {
+            if (this.props.onChange) {
+                this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
+            }
         });
 
     }
 
 
     openConditionModal(index: number) {
-        let condition: AutoFillCondition = this.state.aConditions[index];
+        let condition: QAAnswerCondition = this.state.aConditions[index];
 
         let el = <CreateConditionModal
             isOpen={true}
@@ -54,10 +60,13 @@ export class AutofillCondition extends React.Component<any, any> {
                 condition: new QACondition(),
                 ifTrue: undefined,
                 ifFalse: undefined
-            } as AutoFillCondition)
+            } as unknown as QAAnswerCondition)
             return {
                 aConditions: newConditions
             }
+        }, () => {
+            if (this.props.onChange)
+                this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
         })
     }
 
@@ -70,8 +79,13 @@ export class AutofillCondition extends React.Component<any, any> {
         cloned[index].condition.setLiterals(data);
         this.setState({
             aConditions: cloned
-        }, destroyModal)
+        }, () => {
+            destroyModal();
+            if (this.props.onchange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
+
+        })
     }
+
     removeAutofillCondition(index: number) {
         this.setState((prevState: any) => {
             let aConditions = _.clone(prevState.aConditions);
@@ -80,16 +94,10 @@ export class AutofillCondition extends React.Component<any, any> {
                 aConditions: aConditions
             }
 
+        }, () => {
+            if (this.props.onchange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
+
         })
-    }
-
-    getQuestion(questionRef?: string) {
-        if (questionRef && this.props.definedQuestions && !_.isEmpty(this.props.definedQuestions)) {
-            let v = this.props.definedQuestions[questionRef];
-            return v;
-
-        }
-        return null;
     }
 
 
@@ -113,13 +121,16 @@ export class AutofillCondition extends React.Component<any, any> {
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.aConditions.map((item: AutoFillCondition, index: number) => {
+                        {this.state.aConditions.map((item: QAAnswerCondition, index: number) => {
                             let options = this.props.options || [];
+                            let ifTrueValue = item.ifTrue && item.ifTrue.value ? item.ifTrue.value : undefined;
+                            let ifFalseValue = item.ifFalse && item.ifFalse.value ? item.ifFalse.value : undefined;
+
                             let comparisonValueSelect = (ifFalseOrTrue: string) => <ValueInput
                                 key={`literalv-${getRandomId()}`}
                                 onChange={(data: any) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data)}
                                 options={options.map((item: any) => ({ value: item.value, label: item.value }))}
-                                value={ifFalseOrTrue === "true" ? item.ifTrue : item.ifFalse}
+                                value={ifFalseOrTrue === "true" ?ifTrueValue : ifFalseValue}
                                 questionType={this.props.answerType} />
 
                             return (<tr key={`af${index}`}>
@@ -148,10 +159,4 @@ export class AutofillCondition extends React.Component<any, any> {
             </div>
         )
     }
-}
-
-interface AutoFillCondition {
-    condition: QACondition;
-    ifTrue?: string | AnswerType
-    ifFalse?: string | AnswerType
 }

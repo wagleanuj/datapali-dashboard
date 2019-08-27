@@ -1,7 +1,9 @@
 import { QACondition } from "./condition";
-import { QAContent, Answer, AnswerType } from "./answer";
+import { QAContent, AnswerType } from "./answer";
+import { getRandomId } from "../utils/getRandomId";
 
 export class QAQuestion {
+    id!:string;
     isRequired!: Boolean;
     validate!: Function;
     referenceId!: string;
@@ -13,7 +15,11 @@ export class QAQuestion {
     answerType!: AnswerType;
 
     constructor() {
-
+        this.autoAnswer = {
+            isEnabled: false,
+            answeringConditions: []
+        }
+        this.id = getRandomId("q-")
     }
 
     setIsRequired(bool: Boolean) {
@@ -28,6 +34,10 @@ export class QAQuestion {
 
     setAppearingCondition(cond: QACondition) {
         this.appearingCondition = cond;
+        return this;
+    }
+    setAutoAnswer(a: QAAutoAnswer) {
+        this.autoAnswer = a;
         return this;
     }
 
@@ -47,42 +57,42 @@ export class QAQuestion {
         return this;
     }
 
-    setAutoAnswerEnabled(bool?: Boolean){
-        if(!bool) this.autoAnswer.isEnabled = true
+    setAutoAnswerEnabled(bool?: Boolean) {
+        if (!bool) this.autoAnswer.isEnabled = true
         else this.autoAnswer.isEnabled = bool;
         return this;
     }
 
-    addAutoAnswerCondition(aaCond: QAAnswerCondition){
+    addAutoAnswerCondition(aaCond: QAAnswerCondition) {
         this.autoAnswer.answeringConditions.push(aaCond);
         return this;
     }
-    
-    setAnswerType(type: AnswerType){
+
+    setAnswerType(type: AnswerType) {
         this.answerType = type;
         return this;
     }
 
-    addOption(opt: AnswerOption){
-        if(!this.options) this.options = [];
+    addOption(opt: AnswerOption) {
+        if (!this.options) this.options = [];
         this.options.push(opt);
         return this;
     }
 }
 
 
-interface QAAutoAnswer{
+export interface QAAutoAnswer {
     isEnabled: Boolean,
     answeringConditions: Array<QAAnswerCondition>
 }
 
-interface QAAnswerCondition{
+export interface QAAnswerCondition {
     condition: QACondition,
-    ifTrue: Answer,
-    ifFalse: Answer// or could make a task class
+    ifTrue: AnswerOption,
+    ifFalse: AnswerOption// or could make a task class
 }
 
-interface AnswerOption{
+export interface AnswerOption {
     value: string,
-    
+
 }

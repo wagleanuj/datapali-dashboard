@@ -23,24 +23,16 @@ import {
 import { string, any } from "prop-types";
 import { QACondition, QAFollowingOperator } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType, QAContent } from "../form/answer";
-import { QAQuestion } from "../form/question";
+import { QAQuestion, QAAutoAnswer } from "../form/question";
 import { ValueType } from "react-select/src/types";
 import { AddOption } from "./addChoice";
 import Modal from "react-modal";
-import { ReactComponent } from "*.svg";
 import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
+import { getRandomId } from "../utils/getRandomId";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
-
-export function getRandomId(startingText?: string) {
-    if (!startingText) startingText = "";
-    var S4 = function () {
-        return (((1 + Math.random()) * 0x10000) | 0).toString(16).substring(1);
-    };
-    return startingText + (S4() + S4() + "-" + S4() + "-" + S4() + "-" + S4() + "-" + S4() + S4() + S4());
-}
 
 function getOperatorForType(type?: AnswerType) {
     let allOperators = Object.values(QAComparisonOperator);
@@ -204,7 +196,8 @@ export class DPFormItem extends React.Component<any, any>{
                                             <label htmlFor="type">Type</label>
                                             <Select onChange={(e: any) => this.setState((prevState: any) => {
                                                 let cloned = _.clone(prevState.question)
-                                                cloned.setAnswerType(AnswerType[e.value])
+                                                cloned.setAnswerType(AnswerType[e.value]);
+
                                                 return {
                                                     question: cloned
                                                 }
@@ -217,7 +210,7 @@ export class DPFormItem extends React.Component<any, any>{
                                             <AddOption onChange={(d: any) => this.setState((prevState: any) => {
                                                 let cloned = _.clone(this.state.question);
                                                 cloned.options = d;
-                                                return{
+                                                return {
                                                     question: cloned
                                                 }
                                             })} />
@@ -227,7 +220,17 @@ export class DPFormItem extends React.Component<any, any>{
                                             <FormGroup>
                                                 <label htmlFor="type">Add Autofill Conditions</label>
 
-                                                <AutofillCondition answerType={this.state.question.answerType} options={this.state.question.options} />
+                                                <AutofillCondition onChange={(data: QAAutoAnswer) => {
+                                                    this.setState((prevState: any) => {
+                                                        let cloned: QAQuestion = _.clone(prevState.question);
+                                                        cloned.setAutoAnswer(data)
+                                                        return {
+                                                            question: cloned
+                                                        }
+                                                    })
+                                                }}
+                                                    answerType={this.state.question.answerType}
+                                                    options={this.state.question.options} />
 
                                             </FormGroup>
                                         </FormGroup>
@@ -307,19 +310,19 @@ export class ValueInput extends React.Component<any, any> {
                 />
                 break;
             case AnswerType.Date:
-                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="date" value={this.props.value} />
+                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="date" defaultValue={this.props.value} />
                 break;
             case AnswerType.Number:
-                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="number" value={this.props.value} />
+                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="number" defaultValue={this.props.value} />
                 break;
             case AnswerType.Select:
                 comp = <Select styles={customStyles} onChange={this.onDataChange.bind(this)} options={this.props.options} value={this.props.options.find((item: any) => item.value === this.props.value)} />
                 break;
             case AnswerType.String:
-                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="text" value={this.props.value} />
+                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="text" defaultValue={this.props.value} />
                 break;
             case AnswerType.Time:
-                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="time" value={this.props.value} />
+                comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="time" defaultValue={this.props.value} />
                 break;
             default:
                 comp = <input onChange={e => this.onDataChange({ value: e.target.value })} className="form-control" type="text" disabled />

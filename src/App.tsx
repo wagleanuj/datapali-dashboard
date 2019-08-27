@@ -1,8 +1,9 @@
 import React from 'react';
 import './App.css';
 import { DPNavbar } from './ui/Navbar';
-import { DPFormItem } from './components/DPFormItem';
-import { Row } from 'reactstrap';
+// import { DPFormItem } from './components/DPFormItem';
+// import { Row, Col } from 'reactstrap';
+import { SurveyForm_, FormTree } from './components/SurveyForm';
 
 class App extends React.Component {
   constructor(props: any) {
@@ -17,12 +18,13 @@ class App extends React.Component {
         <DPNavbar></DPNavbar>
         <div className="main-panel">
           <div className="content">
-            <DPFormItem></DPFormItem>
+            <SurveyForm_ />
           </div>
+         
         </div>
-      </div>
-    )
-  }
-}
-
-export default App;
+        </div>
+        )
+      }
+    }
+    
+    export default App;
