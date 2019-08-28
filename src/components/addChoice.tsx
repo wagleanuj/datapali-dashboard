@@ -4,7 +4,8 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faTimes, faKey } from "@fortawesome/free-solid-svg-icons";
 
 import _ from "lodash";
-import { CreateCondition, CreateConditionModal } from "./DPFormItem";
+import { CreateConditionModal } from "./CreateConditionModal";
+import { CreateCondition } from "./CreateCondition";
 import { getRandomId } from "../utils/getRandomId";
 import { QACondition } from "../form/condition";
 import Modal from "react-modal";
@@ -21,7 +22,7 @@ interface AddOptionProp {
     options: QAOption[],
     onChange: Function
     onError: Function
-    shouldAllowDuplicateOptions: Boolean
+    shouldAllowDuplicateOptions: boolean
 }
 
 interface AddOptionState {
@@ -102,15 +103,14 @@ export class AddOption extends React.Component<AddOptionProp, AddOptionState>{
         })
     }
 
-    keydownHandler(e: any) {
-        console.log(this.state.options);
+    keydownHandler(e: React.KeyboardEvent) {
         if (e.key === "Enter") {
             e.preventDefault();
             if (this.inputRef_.current && this.inputRef_.current.value === "") {
                 return;
             }
 
-            if (!this.props.shouldAllowDuplicateOptions && this.state.options.find((item: any) => this.inputRef_.current && item.value === this.inputRef_.current.value)) {
+            if (!this.props.shouldAllowDuplicateOptions && this.state.options.find((item: QAOption) => this.inputRef_.current && item.value === this.inputRef_.current.value)) {
                 if (this.props.onError) this.props.onError({ message: "Option already exists" });
                 return;
             }

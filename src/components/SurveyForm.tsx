@@ -108,12 +108,13 @@ export class SurveyForm_ extends React.Component<SurveyFormState, SurveyFormProp
                         position: "fixed",
                         height: "60px",
                         bottom: 0,
-                        width: "100%"
+                        width: "100%",
+                        margin: "0 auto"
                     }} className="fixed-footer">
 
-                        <ButtonGroup fill={true} vertical ={false}>
+                        <ButtonGroup className={"bp3-dark"} fill={true} vertical ={false}>
                             <BTN text="Add Question"></BTN>
-                            <BTN text="Add Question"></BTN>
+                            <BTN text="Add Section"></BTN>
 
                         </ButtonGroup>
 

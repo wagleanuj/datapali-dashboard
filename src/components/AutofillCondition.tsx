@@ -4,14 +4,27 @@ import { QACondition } from "../form/condition";
 import { AnswerType, QALiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { openModal, destroyModal } from "../utils/util";
-import { CreateConditionModal, ValueInput } from "./DPFormItem";
+import { CreateConditionModal } from "./CreateConditionModal";
+import { ValueInput } from "./ValueInput";
 import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { QAAnswerCondition } from "../form/question";
+import { QAAnswerCondition, AnswerOption } from "../form/question";
+import { SelectOption } from "./DPFormItem";
 
-export class AutofillCondition extends React.Component<any, any> {
-    constructor(props: any) {
+interface AutoAnswerProps {
+    onChange: Function,
+    options: SelectOption[],
+    answerType: AnswerType
+}
+interface AutoAnswerState {
+    aConditions: QAAnswerCondition[];
+    isEnabled: boolean,
+
+}
+
+export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnswerState> {
+    constructor(props: AutoAnswerProps) {
         super(props);
         this.state = {
             aConditions: [],
@@ -19,8 +32,8 @@ export class AutofillCondition extends React.Component<any, any> {
         }
     }
 
-    editIfTrueFalseValue(type: string, index: number, value: string | number | boolean) {
-        this.setState((prevState: any) => {
+    editIfTrueFalseValue(type: string, index: number, value: AnswerOption) {
+        this.setState((prevState: AutoAnswerState) => {
             let newConditions = _.clone(prevState.aConditions);
             let selected = newConditions[index];
             if (type === "true") {
@@ -54,7 +67,7 @@ export class AutofillCondition extends React.Component<any, any> {
     }
 
     addAutoFillCondition() {
-        this.setState((prevState: any) => {
+        this.setState((prevState: AutoAnswerState) => {
             let newConditions = _.clone(prevState.aConditions);
             newConditions.push({
                 condition: new QACondition(),
@@ -74,20 +87,20 @@ export class AutofillCondition extends React.Component<any, any> {
         let cloned = _.clone(this.state.aConditions);
         let condition = cloned[index].condition;
         if (!condition) {
-            cloned[index].conditin = new QACondition();
+            cloned[index].condition = new QACondition();
         }
         cloned[index].condition.setLiterals(data);
         this.setState({
             aConditions: cloned
         }, () => {
             destroyModal();
-            if (this.props.onchange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
+            if (this.props.onChange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
 
         })
     }
 
     removeAutofillCondition(index: number) {
-        this.setState((prevState: any) => {
+        this.setState((prevState: AutoAnswerState) => {
             let aConditions = _.clone(prevState.aConditions);
             aConditions.splice(index, 1);
             return {
@@ -95,7 +108,7 @@ export class AutofillCondition extends React.Component<any, any> {
             }
 
         }, () => {
-            if (this.props.onchange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
+            if (this.props.onChange) this.props.onChange({ isEnabled: this.state.isEnabled, answerCondition: this.state.aConditions })
 
         })
     }
@@ -123,14 +136,12 @@ export class AutofillCondition extends React.Component<any, any> {
                     <tbody>
                         {this.state.aConditions.map((item: QAAnswerCondition, index: number) => {
                             let options = this.props.options || [];
-                            let ifTrueValue = item.ifTrue && item.ifTrue.value ? item.ifTrue.value : undefined;
-                            let ifFalseValue = item.ifFalse && item.ifFalse.value ? item.ifFalse.value : undefined;
-
+                   
                             let comparisonValueSelect = (ifFalseOrTrue: string) => <ValueInput
                                 key={`literalv-${getRandomId()}`}
-                                onChange={(data: any) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data)}
-                                options={options.map((item: any) => ({ value: item.value, label: item.value }))}
-                                value={ifFalseOrTrue === "true" ?ifTrueValue : ifFalseValue}
+                                onChange={(data: AnswerOption) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data)}
+                                options={options.map((item: AnswerOption) => ({ value: item.value, label: item.value }))}
+                                value={ifFalseOrTrue === "true" ? item.ifTrue : item.ifFalse}
                                 questionType={this.props.answerType} />
 
                             return (<tr key={`af${index}`}>

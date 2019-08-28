@@ -4,7 +4,7 @@ import { getRandomId } from "../utils/getRandomId";
 
 export class QAQuestion {
     id!:string;
-    isRequired!: Boolean;
+    isRequired!: boolean;
     validate!: Function;
     referenceId!: string;
     appearingCondition!: QACondition;
@@ -22,7 +22,7 @@ export class QAQuestion {
         this.id = getRandomId("q-")
     }
 
-    setIsRequired(bool: Boolean) {
+    setIsRequired(bool: boolean) {
         this.isRequired = bool;
         return this;
     }
