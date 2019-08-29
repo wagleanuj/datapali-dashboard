@@ -25,7 +25,7 @@ import Modal from "react-modal";
 import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ANSWER_TYPES } from "./AnswerType";
+import { ANSWER_TYPES, AnswerTypeInput } from "./AnswerType";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -174,7 +174,11 @@ export class DPFormItem extends React.Component<any, any>{
                                             <label htmlFor="isRequired">Required</label>
                                             <Select styles={customStyles} id="isRequired" options={[{ value: true, label: "Yes" }, { value: false, label: "No" }]} />
                                         </FormGroup>
+                                        <FormGroup>
+                                            <AnswerTypeInput onChange={(d)=>{console.log(d)}}/>
 
+
+                                        </FormGroup>
 
                                         <FormGroup>
                                             <label htmlFor="type">Appearing Condition</label>
