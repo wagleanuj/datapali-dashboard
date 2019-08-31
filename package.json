@@ -4,6 +4,7 @@
   "private": true,
   "dependencies": {
     "@blueprintjs/core": "^3.18.0",
+    "@blueprintjs/datetime": "^3.9.2",
     "@blueprintjs/docs-theme": "^3.3.0",
     "@blueprintjs/select": "^3.10.0",
     "@fortawesome/fontawesome-svg-core": "^1.2.22",

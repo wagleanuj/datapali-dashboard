@@ -20,12 +20,13 @@ import {
 import { QACondition } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
 import { QAQuestion, QAAutoAnswer } from "../form/question";
-import { AddOption } from "./addChoice";
+import { QAAddOptions as AddOption, AnswerOptions } from "./AddOptions";
 import Modal from "react-modal";
 import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { ANSWER_TYPES, AnswerTypeInput } from "./AnswerType";
+import { ValInput } from "./ValInput";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -170,14 +171,29 @@ export class DPFormItem extends React.Component<any, any>{
                                             <Field className="form-control" id="question" name="question" placeholder="" type="text" />
                                         </FormGroup>
 
+
                                         <FormGroup>
                                             <label htmlFor="isRequired">Required</label>
                                             <Select styles={customStyles} id="isRequired" options={[{ value: true, label: "Yes" }, { value: false, label: "No" }]} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <AnswerTypeInput onChange={(d)=>{console.log(d)}}/>
+                                            <AnswerTypeInput onChange={(d) => {
+                                                {
+                                                    console.log(d);
+                                                    this.setState({
+                                                        answerType: d
+                                                    })
+                                                }
+                                            }} />
+                                        </FormGroup>
 
-
+                                        <FormGroup>
+                                            <label htmlFor="quedsstion">Question</label>
+                                            <ValInput onChange={r => console.log(r)} type={this.state.answerType} />
+                                        </FormGroup>
+                                        <FormGroup>
+                                            <label htmlFor="quedsstion">Question</label>
+                                            <AddOption defaultOptionType={this.state.answerType} options={new AnswerOptions()} />
                                         </FormGroup>
 
                                         <FormGroup>
@@ -206,13 +222,13 @@ export class DPFormItem extends React.Component<any, any>{
                                         <FormGroup>
                                             <label htmlFor="type">Add Options</label>
 
-                                            <AddOption onChange={(d: any) => this.setState((prevState: any) => {
+                                            {/* <AddOption onChange={(d: any) => this.setState((prevState: any) => {
                                                 let cloned = _.clone(this.state.question);
                                                 cloned.options = d;
                                                 return {
                                                     question: cloned
                                                 }
-                                            })} />
+                                            })} /> */}
 
                                         </FormGroup>
                                         <FormGroup>

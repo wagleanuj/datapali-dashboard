@@ -31,7 +31,7 @@ interface AddOptionState {
     isModalOpen: boolean
 }
 
-export class AddOption extends React.Component<AddOptionProp, AddOptionState>{
+export class AddOption7 extends React.Component<AddOptionProp, AddOptionState>{
     inputRef_: React.RefObject<HTMLInputElement>;
     static defaultProps = {
         options: [],
