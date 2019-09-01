@@ -37,6 +37,15 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             }
         })
     }
+    handleGroupNameChange(oldname: string, newname: string) {
+        this.setState((prevState: QAAddOptionsState) => {
+            let cloned = _.clone(prevState.options);
+            cloned.changeGroupName(oldname, newname);
+            return {
+                options: cloned
+            }
+        })
+    }
     handleOptionTypeChange(id: string, newType: QAValueType) {
         this.setState((prevState: QAAddOptionsState) => {
             let cloned = _.clone(prevState.options);
@@ -46,15 +55,27 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             }
         })
     }
-    handleGroupAssignment(id: string, groupname: string) {
+
+    handleGroupAssignment(ids: string[], groupname: string) {
         this.setState((prevState: QAAddOptionsState) => {
             let cloned = _.clone(prevState.options);
-            cloned.assignOptionToGroup(id, groupname)
+            cloned.assignOptionToGroup(ids, groupname)
             return {
                 options: cloned
             }
         });
     }
+
+    handleGroupUnassignment(ids: string[]) {
+        this.setState((prevState: QAAddOptionsState) => {
+            let cloned = _.clone(prevState.options);
+            cloned.unassignGroup(ids)
+            return {
+                options: cloned
+            }
+        });
+    }
+
     handleOptionDelete(id: string) {
         this.setState((prevState: QAAddOptionsState) => {
             let cloned = _.clone(prevState.options);
@@ -75,7 +96,11 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
                         handleOptionDelete={this.handleOptionDelete.bind(this)}
                         options={Object.values(this.state.options.optionsMap)}></QAOptionSection>
                     <Divider />
-                    <QAAddGroupSection options={Object.values(this.state.options.optionsMap)}
+                    <QAAddGroupSection
+                        handleGroupUnassignment={this.handleGroupUnassignment.bind(this)}
+                        handleGroupAssignment={this.handleGroupAssignment.bind(this)}
+                        handleGroupNameChange={this.handleGroupNameChange.bind(this)}
+                        options={Object.values(this.state.options.optionsMap)}
                         groups={Object.values(this.state.options.optionGroupMap)} />
 
                 </ButtonGroup>
@@ -89,7 +114,7 @@ interface QAAoptionSectionProps {
     groups: OptionGroup[],
     handleAddNewOption?: () => void,
     handleOptionTypeChange?: (id: string, newType: QAValueType) => void
-    handleGroupAssignment?: (id: string, groupname: string) => void,
+    handleGroupAssignment?: (ids: string[], groupname: string) => void,
     handleOptionDelete?: (id: string) => void,
 }
 interface QAAddOptionsSectionState {
@@ -108,10 +133,11 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
         }
     }
 
-    generateAddGroupInput(id: string) {
+    generateAddGroupInput(option: Option) {
         let creatableOptions = this.props.groups.map(item => ({ value: item.name, label: item.name }));
-        return <Creatable styles={customStyles} options={creatableOptions} onChange={(e: any) => {
-            if (this.props.handleGroupAssignment) this.props.handleGroupAssignment(id, e.value);
+        let value = creatableOptions.find(item => item.value === option.groupName);
+        return <Creatable value={value || null} styles={customStyles} options={creatableOptions} onChange={(e: any) => {
+            if (this.props.handleGroupAssignment) this.props.handleGroupAssignment([option.id], e.value);
         }} />
     }
 
@@ -154,11 +180,11 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
                     {this.props.options.map((item, i) => {
                         return <tr key={item.id}>
                             <td></td>
-                            <td>{item.id.substr(0, 5)}</td>
+                            <td>{item.id}</td>
                             <td><AnswerTypeInput onChange={e => this.handleOptionTypeChange(item.id, e)} /></td>
                             <td>{<ValInput onChange={e => console.log(e)} defaultValue={item.value} type={item.type} />}</td>
                             <td><Button onClick={this.handleConditionEdit.bind(this, i)} style={{ color: 'red' }} icon="key" /></td>
-                            <td>{this.generateAddGroupInput(item.id)}</td>
+                            <td>{this.generateAddGroupInput(item)}</td>
                             <td><Button onClick={this.handleOptionDelete.bind(this, item.id)} icon="cross" /></td>
 
                         </tr>
@@ -190,6 +216,7 @@ interface Option {
 }
 
 interface OptionGroup {
+    id: string,
     name: string,
     appearingCondition?: QACondition,
     members: Option[],
@@ -199,8 +226,9 @@ interface OptionGroup {
 interface QAAoptionGroupSectionProps {
     groups: OptionGroup[],
     options: Option[],
-    handleGroupAssignment?: (id: string, groupname: string) => void,
-
+    handleGroupAssignment?: (id: string[], groupname: string) => void,
+    handleGroupUnassignment?: (id: string[]) => void,
+    handleGroupNameChange?: (oldname: string, newname: string) => void,
 }
 interface QAAddOptionSectionState {
 
@@ -212,9 +240,13 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
 
         }
     }
-    handleGroupAssignment(e:any){
-        console.log(e);
-        // if(this.props.handleGroupAssignment) this.props.handleGroupAssignment(id, groupname)
+    handleGroupAssignment(e: { value: string, label: string }[], groupname: string) {
+        if (e) {
+            let ids = e.map(item => item.value)
+            console.log(ids);
+            if (this.props.handleGroupAssignment) this.props.handleGroupAssignment(ids, groupname)
+        }
+
     }
 
     render() {
@@ -231,14 +263,28 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
                     </tr>
                 </thead>
                 <tbody>
-                    {this.props.groups.map(item => {
+                    {this.props.groups.map((item, index) => {
+                        console.log(this.props.groups);
+                        console.log(this.props.options);
                         let options = this.props.options.map(item => ({ value: item.id, label: item.id }));
                         let memberids = item.members.map(item => item.id);
                         let selected = options.filter(item => memberids.includes(item.value))
-                        return <tr key={item.name}>
+                        return <tr key={item.id}>
                             <td></td>
-                            <td>{item.name}</td>
-                            <td><Select onChange={(e:any)=>this.handleGroupAssignment(e)} defaultValue={selected} isMulti={true} options={options} /></td>
+                            <td><input key={item.id} type="text" className="form-control" defaultValue={item.name} onChange={e => {
+                                if (this.props.handleGroupNameChange) this.props.handleGroupNameChange(item.name, e.target.value);
+                            }} /></td>
+                            <td><Select styles={customStyles}
+                                onChange={(e: any, action: any) => {
+                                    if (action.action === "remove-value") {
+                                        let removedid = action.removedValue.value;
+                                        if (this.props.handleGroupUnassignment) this.props.handleGroupUnassignment([removedid])
+                                    }
+                                    this.handleGroupAssignment(e, item.name)
+                                }}
+                                value={selected}
+
+                                isMulti={true} options={options} /></td>
                             <td></td>
                             <td></td>
 
@@ -253,9 +299,13 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
 }
 
 export class AnswerOptions {
+
     optionsMap: { [key: string]: Option } = {};
     optionGroupMap: { [key: string]: OptionGroup } = {};
     options: (Option | OptionGroup)[] = []
+    private opt_count: number = 0;
+    private group_count: number = 0;
+
 
     constructor() {
 
@@ -264,14 +314,15 @@ export class AnswerOptions {
 
     addOption(option?: Option, groupname?: string) {
         if (!option) {
-            option = { id: getRandomId("opt-"), value: undefined, groupName: groupname }
+            option = { id: 'opt-' + this.opt_count, value: undefined, groupName: groupname }
         }
         this.optionsMap[option.id] = option;
         if (groupname) {
             let group: OptionGroup = this.optionGroupMap[groupname];
             if (!group) {
-                group = { name: groupname, appearingCondition: undefined, members: [option] }
+                group = { id: "opt-grp-" + this.group_count, name: groupname, appearingCondition: undefined, members: [option] }
                 this.optionGroupMap[groupname] = group;
+                this.group_count++;
             }
             this.options.push(group);
 
@@ -279,13 +330,15 @@ export class AnswerOptions {
         else {
             this.options.push(option);
         }
+        this.opt_count++;
         return this;
     }
     addGroup(groupname: string) {
-        let group: OptionGroup = { name: groupname, appearingCondition: undefined, members: [] }
+        let group: OptionGroup = { id: "opt-grp" + this.group_count, name: groupname, appearingCondition: undefined, members: [] }
         this.optionGroupMap[group.name] = group;
         this.options.push(group);
-        return this;
+        this.group_count++;
+        return group;
     }
 
     deleteOption(id: string) {
@@ -310,28 +363,66 @@ export class AnswerOptions {
 
     }
 
-    assignOptionToGroup(optionId: string, groupName: string) {
+    assignOptionToGroup(optionIds: string[], groupName: string) {
         let existingGroup = this.optionGroupMap[groupName];
-        let option = this.optionsMap[optionId];
-        let option_group = option.groupName && this.optionGroupMap[option.groupName];
-
-        if (existingGroup) {
-            if (existingGroup.members.find(item => item.id === optionId)) return this;
-        }
-
-        //unassign from the group the option is in 
-        if (option_group) {
-            let find = option_group.members.findIndex(item => item.id === option.id);
-            if (find > -1) {
-                option_group.members.splice(find, 1);
-            }
-        }
         if (!existingGroup) {
-            existingGroup = { name: groupName, appearingCondition: undefined, members: [option] }
+            existingGroup = this.addGroup(groupName);
             this.optionGroupMap[existingGroup.name] = existingGroup;
+
         }
+        for (let i = 0; i < optionIds.length; i++) {
+            let optionId = optionIds[i];
+            let option = this.optionsMap[optionId];
+            let option_group = option.groupName && this.optionGroupMap[option.groupName];
 
+            if (existingGroup.members.find(item => item.id === optionId)) continue;
+            //unassign from the group the option is in 
+            if (option_group) {
+                let find = option_group.members.findIndex(item => item.id === option.id);
+                if (find > -1) {
+                    option_group.members.splice(find, 1);
+                }
+            }
 
+            option.groupName = existingGroup.name;
+            existingGroup.members.push(option);
+
+        }
+        return this;
+
+    }
+    unassignGroup(ids: string[]) {
+        ids.forEach(id => {
+            let option = this.optionsMap[id];
+            let opt_groupname = option.groupName
+            if (option && opt_groupname) {
+                let optgroup = this.optionGroupMap[opt_groupname];
+                if (optgroup) {
+                    let ind = optgroup.members.findIndex(item => item.id === id);
+                    optgroup.members.splice(ind, 1);
+                }
+
+            }
+            if (option) {
+                option.groupName = undefined;
+            }
+        })
+    }
+    changeGroupName(oldname: string, newname: string) {
+        let group = this.optionGroupMap[oldname];
+        let members_ids = group.members.map(item => item.id);
+        if (members_ids) {
+            members_ids.forEach(id => {
+                let option = this.optionsMap[id];
+                if (option) option.groupName = newname;
+            })
+        }
+        if (group) {
+            group.name = newname;
+            let newGroup = _.clone(group);
+            delete this.optionGroupMap[oldname];
+            this.optionGroupMap[newname] = newGroup;
+        }
     }
 
     setOptionTypeFor(optionId: string, newType: QAValueType) {
