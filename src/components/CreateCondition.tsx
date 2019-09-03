@@ -12,6 +12,7 @@ import { ValueInput } from "./ValueInput";
 import { TableFieldType, customStyles, SelectOption, getOperatorForType } from "./DPFormItem";
 import _ from "lodash";
 import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from "../testData/TestQuestions";
+import { ValInput } from "./ValInput";
 export type CreateConditionState = {
     literals: QALiteral[]
 };
@@ -180,8 +181,8 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                                 let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
                                 let question_: QAQuestion | null = this.getQuestion(item.questionRef);
                                 let qAnswerType = question_ ? question_.answerType : undefined;
-                                let qOptions = question_ && question_.options ? question_.options : [];
-                                let comparisonValueSelect = <ValueInput key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} options={qOptions.map(item => ({ value: item.value, label: item.value }))} value={{ value: item.comparisonValue && item.comparisonValue.content } as AnswerOption} questionType={qAnswerType} />;
+                                let qOptions = question_ && question_.options ? question_.options: undefined ;
+                                let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={ item.comparisonValue && item.comparisonValue.content } type={qAnswerType} />;
                                 let followingOperatorOptions_: SelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
                                 let followingOperatorSelect = <Select key={`literalfo-${key}-${item.literalId}`} styles={customStyles} options={followingOperatorOptions_} value={followingOperatorOptions_.find(r => r.value === item.followingOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.FollowingOperator)} />;
                                 return <tr key={"tr_" + key}>

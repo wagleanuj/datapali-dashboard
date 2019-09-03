@@ -1,6 +1,8 @@
 import { QACondition } from "./condition";
 import { QAContent, AnswerType } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
+import { QAValueType } from "../components/AnswerType";
+import { AnswerOptions } from "../components/AnswerOptions";
 
 export class QAQuestion {
     id!:string;
@@ -11,8 +13,8 @@ export class QAQuestion {
     questionContent!: QAContent;
     creationDate!: number;
     autoAnswer!: QAAutoAnswer
-    options!: AnswerOption[];
-    answerType!: AnswerType;
+    options!: AnswerOptions;
+    answerType!: QAValueType;
 
     constructor() {
         this.autoAnswer = {
@@ -68,14 +70,13 @@ export class QAQuestion {
         return this;
     }
 
-    setAnswerType(type: AnswerType) {
+    setAnswerType(type: QAValueType) {
         this.answerType = type;
         return this;
     }
 
-    addOption(opt: AnswerOption) {
-        if (!this.options) this.options = [];
-        this.options.push(opt);
+    setOptions(opt: AnswerOptions){
+        this.options = opt;
         return this;
     }
 }

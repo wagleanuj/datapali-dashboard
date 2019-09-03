@@ -4,17 +4,19 @@ import { DatePicker, TimePicker, TimePrecision, DateRangePicker, DateInput } fro
 import { ButtonGroup, Divider } from "@blueprintjs/core";
 import Select from "react-select"
 import { customStyles } from "./DPFormItem";
+import { AnswerOptions } from "./AnswerOptions";
+import { optionCSS } from "react-select/src/components/Option";
 
 interface RangeValue {
-    min: string
-    max: string
+    min: string|undefined
+    max: string|undefined
 }
 
 
 interface RangeInputProps {
     type: QAValueType,
-    value: RangeValue,
-    onChange: (newRange: RangeValue) => void
+    value: string,
+    onChange: (newRange: string) => void
 }
 
 interface RangeInputState {
@@ -27,20 +29,26 @@ export class RangeInput extends React.Component<RangeInputProps, RangeInputState
 
         }
     }
+    parseRangeValue(range: string): RangeValue {
+        let d = range.split("-")
+        return { min: d[0], max: d[1] }
+    }
+
     handleInputChange(data: RangeValue) {
+        let transformed = data.min + "-" + data.max;
         switch (this.props.type && this.props.type.name) {
             //necessary transforms to be done here
             case ANSWER_TYPES.TIME:
-                if (this.props.onChange) this.props.onChange(data);
+                if (this.props.onChange) this.props.onChange(transformed);
                 break;
             case ANSWER_TYPES.DATE:
-                if (this.props.onChange) this.props.onChange(data);
+                if (this.props.onChange) this.props.onChange(transformed);
                 break;
             case ANSWER_TYPES.NUMBER:
-                if (this.props.onChange) this.props.onChange(data);
+                if (this.props.onChange) this.props.onChange(transformed);
                 break;
             default:
-                if (this.props.onChange) this.props.onChange(data);
+                if (this.props.onChange) this.props.onChange(transformed);
 
                 break;
 
@@ -49,17 +57,18 @@ export class RangeInput extends React.Component<RangeInputProps, RangeInputState
     render() {
         let comp = null;
         let type = this.props.type ? this.props.type.name : undefined;
+        let parsed = this.parseRangeValue(this.props.value);
         switch (type) {
             case ANSWER_TYPES.TIME:
-                comp = <TimeRange range={this.props.value} onChange={this.handleInputChange} />
+                comp = <TimeRange range={parsed} onChange={this.handleInputChange} />
                 break;
             case ANSWER_TYPES.DATE:
-                let dateMin = this.props.value.min ? new Date(this.props.value.min) : undefined;
-                let dateMax = this.props.value.max ? new Date(this.props.value.max) : undefined;
+                let dateMin = parsed.min ? new Date(parsed.min) : undefined;
+                let dateMax = parsed.max ? new Date(parsed.max) : undefined;
                 comp = <DateRangePicker shortcuts={false} defaultValue={[dateMin, dateMax]} onChange={(selectedDates) => this.handleInputChange({ min: selectedDates[0] ? selectedDates[0].toString() : "", max: selectedDates[1] ? selectedDates[1].toString() : "" })} />
                 break;
             case ANSWER_TYPES.NUMBER:
-                comp = <NumberRange range={this.props.value} onChange={d => console.log(d)} />
+                comp = <NumberRange range={parsed} onChange={d => this.handleInputChange} />
                 break;
         }
         return comp;
@@ -108,17 +117,19 @@ const defaultTimeRangeProps = {
     onChange: () => { }
 }
 const TimeRange = (props: TimeRangeProps = defaultTimeRangeProps) => {
-    const [minValue, setMin] = useState(props && props.range.min || "");
-    const [maxValue, setMax] = useState(props && props.range.max || "");
+    const [minValue, setMin] = useState(props && props.range.min || undefined);
+    const [maxValue, setMax] = useState(props && props.range.max || undefined);
+    console.log(maxValue);
+    console.log(minValue);
     return (
-        <ButtonGroup>
-            <TimePicker className="form-control" precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={new Date(minValue)} onChange={newTime => {
+        <ButtonGroup className="bp3-dark">
+            <TimePicker  precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={minValue ? new Date(minValue) : undefined} onChange={newTime => {
                 setMin(newTime.toLocaleDateString());
                 if (props.onChange) props.onChange({ min: minValue, max: maxValue })
             }}></TimePicker>
             <Divider />
 
-            <TimePicker className="form-control" precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={new Date(maxValue)} onChange={newTime => {
+            <TimePicker  precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={maxValue ? new Date(maxValue) : undefined} onChange={newTime => {
                 setMax(newTime.toLocaleDateString());
                 props.onChange({ min: minValue, max: maxValue })
             }}></TimePicker>
@@ -129,6 +140,7 @@ const TimeRange = (props: TimeRangeProps = defaultTimeRangeProps) => {
 interface ValInputProps {
     type: QAValueType,
     defaultValue?: any,
+    options?: AnswerOptions | undefined,
     onChange: (newValue: any) => void
 }
 interface ValInputState {
@@ -156,6 +168,10 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 />
                 break;
             case ANSWER_TYPES.SELECT:
+                comp = <SelInput type={this.props.type.ofType} defaultValue={this.props.defaultValue} options={this.props.options} onChange={(newVal:any)=>{
+                    if (this.props.onChange) this.props.onChange( newVal )
+                }} />
+
                 //TODO::
                 break;
             case ANSWER_TYPES.BOOLEAN:
@@ -167,7 +183,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 break;
             case ANSWER_TYPES.DATE:
                 let defaultDate = this.props.defaultValue ? new Date(this.props.defaultValue) : undefined;
-                comp = <DateInput  formatDate={date => date.toLocaleDateString()}
+                comp = <DateInput formatDate={date => date.toLocaleDateString()}
                     parseDate={str => new Date(str)}
                     closeOnSelection={true} defaultValue={defaultDate} onChange={e => {
                         if (this.props.onChange) this.props.onChange({ value: e.toLocaleDateString() })
@@ -177,7 +193,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
             case ANSWER_TYPES.RANGE:
                 if (this.props.type.ofType) {
                     comp = <RangeInput
-                        value={{ min: this.props.defaultValue.min, max: this.props.defaultValue.max }}
+                        value={this.props.defaultValue}
                         type={this.props.type.ofType}
                         onChange={e => {
                             if (this.props.onChange) this.props.onChange({ value: e })
@@ -192,7 +208,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 break;
             case ANSWER_TYPES.TIME:
                 let defaulttime = this.props.defaultValue ? new Date(this.props.defaultValue) : undefined;
-                comp = <TimePicker  precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={defaulttime} onChange={newTime => {
+                comp = <TimePicker precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={defaulttime} onChange={newTime => {
                     if (this.props.onChange) this.props.onChange({ value: newTime.toString() })
                 }}></TimePicker>
 
@@ -203,17 +219,41 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
     }
 }
 interface SelInputProps {
-
+    options?: AnswerOptions,
+    type?: QAValueType,
+    defaultValue?: string,
+    onChange: (data: any) => void
 }
 interface SelInputState {
 
 }
-// export class SelInput extends React.Component<SelInputProps, SelInputState>{
-//     constructor(props: SelInputProps) {
-//         super(props);
-//         this.state = {}
-//     }
-//     render() {
-//         let comp = [];
-//     }
-// }
+export class SelInput extends React.Component<SelInputProps, SelInputState>{
+    constructor(props: SelInputProps) {
+        super(props);
+        this.state = {}
+    }
+    handleChange(d: any) {
+        console.log(d);
+        if (this.props.onChange) this.props.onChange(d);
+    }
+    render() {
+        let allOptions = [];
+        if (this.props.options) {
+            let { rootOptions, groups } = this.props.options.SortedOptions;
+            let groupOptions_: any = [];
+            let rootOptions_: any = []
+            if (groups && groups.length > 0) {
+                groupOptions_ = groups.map(item => {
+                    return ({
+                        label: item.name,
+                        options: item.members.map(i => ({ label: i.value, value: i.id }))
+                    })
+                })
+            }
+            rootOptions_ = rootOptions.map(i => ({ label: i.value, value: i.id }));
+            allOptions = [...groupOptions_, ...rootOptions_];
+        }
+        let defaultvalue = allOptions.find(item=>item.value===this.props.defaultValue);
+        return (<Select styles={customStyles} options={allOptions} onChange={this.handleChange.bind(this)} defaultValue={defaultvalue} />)
+    }
+}

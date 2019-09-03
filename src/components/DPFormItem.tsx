@@ -21,27 +21,30 @@ import {
 import { QACondition } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
 import { QAQuestion, QAAutoAnswer } from "../form/question";
-import { QAAddOptions as AddOption, AnswerOptions } from "./AddOptions";
+import { QAAddOptions as AddOption } from "./AddOptions";
+import { AnswerOptions } from "./AnswerOptions";
 import Modal from "react-modal";
 import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ANSWER_TYPES, AnswerTypeInput } from "./AnswerType";
+import { ANSWER_TYPES, AnswerTypeInput, QAValueType } from "./AnswerType";
 import { ValInput } from "./ValInput";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
-export function getOperatorForType(type?: AnswerType) {
+export function getOperatorForType(valueType?: QAValueType) {
     let allOperators = Object.values(QAComparisonOperator);
+    let type = valueType && valueType.name;
+
     switch (type) {
-        case AnswerType.Boolean:
-        case AnswerType.Date:
-        case AnswerType.String:
-        case AnswerType.Time:
+        case ANSWER_TYPES.BOOLEAN:
+        case ANSWER_TYPES.DATE:
+        case ANSWER_TYPES.STRING:
+        case ANSWER_TYPES.TIME:
 
 
             return allOperators.filter(item => item === QAComparisonOperator.Equal);
-        case AnswerType.Number:
+        case ANSWER_TYPES.NUMBER:
             deftault:
             return allOperators;
     }
@@ -190,14 +193,13 @@ export class DPFormItem extends React.Component<any, any>{
                                                 }
                                             }} />
                                         </FormGroup>
+                            
+                                        <FormGroup>
+                                            <label >Add Options</label>
+                                            <Card>
+                                            <AddOption  defaultOptionType={this.state.answerType} options={new AnswerOptions()} />
 
-                                        <FormGroup>
-                                            <label htmlFor="quedsstion">Question</label>
-                                            <ValInput onChange={r => console.log(r)} type={this.state.answerType} />
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <label htmlFor="quedsstion">Question</label>
-                                            <AddOption defaultOptionType={this.state.answerType} options={new AnswerOptions()} />
+                                            </Card>
                                         </FormGroup>
 
                                         <FormGroup>
