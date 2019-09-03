@@ -1,13 +1,15 @@
-import React from "react";
+import React, { ReactNode, useState } from "react";
 import { QAQuestion } from "../form/question";
-import { Classes, Button as BTN, Icon, Intent, ITreeNode, Position, Tooltip, Tree, ButtonGroup } from "@blueprintjs/core";
+import { Classes, Button as Button_B, Icon, Intent, ITreeNode, Position, Tooltip, Tree, ButtonGroup, Collapse } from "@blueprintjs/core";
 import { DPFormItem } from "./DPFormItem";
 import { getRandomId } from "../utils/getRandomId";
 import { AnswerType, QAType } from "../form/answer";
 import { Row, Col, Button } from "reactstrap";
+import { Toolbar } from "./Toolbar";
+import { ALIGNMENT_LEFT } from "@blueprintjs/icons/lib/esm/generated/iconNames";
 
 export class SurveyForm {
-    content!: (SurveySection | QAQuestion)[];
+    content!: (QuestionSection | QAQuestion)[];
     id: string;
     name!: string;
     constructor() {
@@ -18,7 +20,7 @@ export class SurveyForm {
         return this;
     }
 
-    setContent(content: (SurveySection | QAQuestion)[]) {
+    setContent(content: (QuestionSection | QAQuestion)[]) {
         this.content = content;
         return this;
     }
@@ -28,16 +30,16 @@ export class SurveyForm {
         return this;
     }
 
-    addContent(content: QAQuestion | SurveySection) {
+    addContent(content: QAQuestion | QuestionSection) {
         this.content.push(content);
         return this;
     }
 
 }
 
-export class SurveySection {
+export class QuestionSection {
     name!: string;
-    content!: (SurveySection | QAQuestion)[]
+    content!: (QuestionSection | QAQuestion)[]
     id: string
     constructor() {
         this.id = getRandomId("ss-");
@@ -51,22 +53,22 @@ export class SurveySection {
         this.name = name;
         return this;
     }
-    setContent(content: (SurveySection | QAQuestion)[]) {
+    setContent(content: (QuestionSection | QAQuestion)[]) {
         this.content = content;
         return this;
     }
 
-    addContent(content: SurveySection | QAQuestion) {
+    addContent(content: QuestionSection | QAQuestion) {
         this.content.push(content);
         return this;
     }
 }
 
 interface SurveyFormState {
-    form: SurveyForm
+    form: QuestionSection
 }
 interface SurveyFormProps {
-    form: SurveyForm
+    form: QuestionSection
 }
 
 
@@ -82,7 +84,7 @@ const testQuestion5 = new QAQuestion().setAnswerType(AnswerType.String).setQuest
 
 export class SurveyForm_ extends React.Component<SurveyFormState, SurveyFormProps>{
     static defaultProps = {
-        form: { id: "12", content: [testQuestion, testQuestion2, testQuestion3, new SurveySection().setContent([testQuestion4, testQuestion5]).setName("true things")] }
+        form: new QuestionSection().setContent([testQuestion, testQuestion2, testQuestion3, new QuestionSection().setContent([testQuestion4, testQuestion5]).setName("true things")]),
     }
     constructor(props: SurveyFormProps) {
         super(props);
@@ -94,6 +96,7 @@ export class SurveyForm_ extends React.Component<SurveyFormState, SurveyFormProp
     render() {
         return (
             <Row>
+                <Toolbar></Toolbar>
                 <div className="container">
 
                     <div style={{ background: "transparent" }} className="sidebar">
@@ -102,7 +105,7 @@ export class SurveyForm_ extends React.Component<SurveyFormState, SurveyFormProp
                         </div>
                     </div>
                     <div className="content">
-                        <DPFormItem />
+                        <SectionC section={this.state.form} />
                     </div>
                     <Row style={{
                         position: "fixed",
@@ -112,11 +115,6 @@ export class SurveyForm_ extends React.Component<SurveyFormState, SurveyFormProp
                         margin: "0 auto"
                     }} className="fixed-footer">
 
-                        <ButtonGroup className={"bp3-dark"} fill={true} vertical ={false}>
-                            <BTN text="Add Question"></BTN>
-                            <BTN text="Add Section"></BTN>
-
-                        </ButtonGroup>
 
 
                     </Row>
@@ -171,7 +169,7 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
     }
 
     generateITNodeTree(form: SurveyForm): ITreeNode[] {
-        function getFormContent(item: SurveySection | QAQuestion, sectionNumber: string) {
+        function getFormContent(item: QuestionSection | QAQuestion, sectionNumber: string) {
             let def: ITreeNode = {
                 id: item.id,
                 icon: undefined,
@@ -181,7 +179,7 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
                 def.icon = "document"
                 def.label = sectionNumber + " " + "Question";
             }
-            else if (item instanceof SurveySection) {
+            else if (item instanceof QuestionSection) {
                 def.icon = "folder-close"
                 def.label = sectionNumber + " " + item.name || "Section";
                 def.childNodes = item.content.map((it, ind) => getFormContent(it, sectionNumber + "." + (ind + 1)))
@@ -209,5 +207,63 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
 
     }
 }
+interface SectionCProps {
+    section: QuestionSection
+}
+interface SectionCState {
 
+}
+class SectionC extends React.Component<SectionCProps, SectionCState>{
+    constructor(props: SectionCProps) {
+        super(props);
+        this.state = {
 
+        }
+    }
+    render() {
+        let comp = null;
+        comp = this.props.section.content.map(item => {
+            if (item instanceof QAQuestion) {
+                return <QuestionButton isExpanded={false}>
+                    <DPFormItem/>
+                </QuestionButton>
+            }
+            else if (item instanceof QuestionSection) {
+                return <SectionButton onClick={() => console.log("Sdf")}></SectionButton>
+            }
+        })
+        return (
+            <ButtonGroup fill  vertical>
+               { comp}
+    
+            </ButtonGroup>
+
+        )
+    }
+}
+interface QuestionButtonProps {
+    isExpanded: boolean,
+    children: ReactNode
+}
+const QuestionButton = (props: QuestionButtonProps) => {
+    const [isExpanded, setIsExpanded] = useState(false);
+    return (
+        <ButtonGroup className="bp3-dark" style={{paddingBottom: "50px"}} fill vertical>
+            <Button_B  style={{height:50}} onClick={() => setIsExpanded(!isExpanded)} alignText={"left"} text="Question:" rightIcon={isExpanded?"chevron-up":"chevron-down"}></Button_B>
+            <Collapse keepChildrenMounted={false} isOpen={isExpanded}>
+                {props.children}
+            </Collapse>
+        </ButtonGroup>
+    )
+}
+
+interface SectionButtonProps {
+    onClick: (e: React.MouseEvent) => void,
+}
+const SectionButton = (props: SectionButtonProps) => {
+    return (
+        <ButtonGroup className="bp3-dark" style={{paddingBottom: "50px"}} fill vertical>
+            <Button_B style={{height:50}} alignText="left" onClick={props.onClick} text="Section:" rightIcon={"folder-open"}></Button_B>
+        </ButtonGroup>
+    )
+}

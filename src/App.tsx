@@ -15,7 +15,6 @@ class App extends React.Component {
   render() {
     return (
       <div className={"wrapper"}>
-        <DPNavbar></DPNavbar>
         <div className="main-panel">
           <div className="content">
             <SurveyForm_ />

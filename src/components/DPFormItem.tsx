@@ -15,7 +15,8 @@ import {
     Input,
     Row,
     Col,
-    ModalHeader
+    ModalHeader,
+    Container
 } from "reactstrap";
 import { QACondition } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
@@ -58,6 +59,7 @@ export const customStyles = {
             boxShadow: "0 2px 4px 0 rgba(41, 56, 78, 0.1)",
         }
     }),
+   
     control: (base: any, state: any) => ({
         ...base,
         background: "transparent",
@@ -77,7 +79,9 @@ export const customStyles = {
     menu: (base: any, state: any) => ({
         ...base,
         background: "black",
-        borderColor: "#e14eca"
+        borderColor: "#e14eca",
+        zIndex: 9999
+
 
     }),
     menuList: (base: any, state: any) => {
@@ -85,7 +89,8 @@ export const customStyles = {
         return {
             ...base,
             background: "#525f7f",
-            color: "white"
+            color: "white",
+
         }
     },
     singleValue: (base: any, state: any) => ({
@@ -159,8 +164,7 @@ export class DPFormItem extends React.Component<any, any>{
                 render={() => (
 
                     <Form>
-                        <Row>
-                            <Col className="pr-md-1" >
+                        <div>
                                 <Card>
                                     <CardHeader>
                                         <h5 className="title">Add Question</h5>
@@ -258,8 +262,7 @@ export class DPFormItem extends React.Component<any, any>{
                                             </Button>
                                     </CardFooter>
                                 </Card>
-                            </Col>
-                        </Row>
+                        </div>
                     </Form>
 
 
