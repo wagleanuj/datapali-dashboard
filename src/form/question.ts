@@ -2,7 +2,7 @@ import { QACondition } from "./condition";
 import { QAContent, AnswerType } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
 import { QAValueType } from "../components/AnswerType";
-import { AnswerOptions } from "../components/AnswerOptions";
+import { AnswerOptions, QAOption } from "../components/AnswerOptions";
 
 export class QAQuestion {
     id!:string;
@@ -89,8 +89,8 @@ export interface QAAutoAnswer {
 
 export interface QAAnswerCondition {
     condition: QACondition,
-    ifTrue: AnswerOption,
-    ifFalse: AnswerOption// or could make a task class
+    ifTrue: QAOption,
+    ifFalse: QAOption// or could make a task class
 }
 
 export interface AnswerOption {

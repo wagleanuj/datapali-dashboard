@@ -20,7 +20,9 @@ interface QAAddOptionsState {
 }
 interface QAAddOptionsProps {
     options: AnswerOptions,
-    defaultOptionType: QAValueType
+    defaultOptionType: QAValueType,
+    onChange: (options:AnswerOptions)=>void,
+    
 
 }
 enum OPTION_OR_GROUP {
@@ -34,6 +36,9 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             options: this.props.options || []
         }
     }
+    handleChange(){
+        if(this.props.onChange) this.props.onChange(this.state.options);
+    }
     handleAddNewOption() {
         this.setState((prevState: QAAddOptionsState) => {
             let cloned = _.clone(prevState.options);
@@ -41,7 +46,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        })
+        }, this.handleChange.bind(this))
     }
     handleGroupNameChange(oldname: string, newname: string) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -50,7 +55,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        })
+        },this.handleChange.bind(this))
     }
     handleGroupDelete(name: string) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -59,7 +64,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        })
+        },this.handleChange.bind(this))
     }
     handleOptionTypeChange(id: string, newType: QAValueType) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -68,7 +73,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        })
+        },this.handleChange.bind(this))
     }
 
     handleGroupAssignment(ids: string[], groupname: string) {
@@ -78,7 +83,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        });
+        },this.handleChange.bind(this));
     }
 
     handleGroupUnassignment(ids: string[]) {
@@ -88,7 +93,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        });
+        },this.handleChange.bind(this));
     }
 
     handleOptionDelete(id: string) {
@@ -98,7 +103,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        });
+        },this.handleChange.bind(this));
     }
     handleOptionValueChange(id: string, newValue: string) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -107,7 +112,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        });
+        },this.handleChange.bind(this));
     }
     handleAddGroup() {
         this.setState((prevState: QAAddOptionsState) => {
@@ -116,7 +121,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        });
+        },this.handleChange.bind(this));
     }
     handleConditionClick(type: OPTION_OR_GROUP, name: string) {
         // openModal()
@@ -156,7 +161,8 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
                 options: cloned
             }
         }, () => {
-            destroyModal()
+            destroyModal();
+            this.handleChange();
         });
 
     }

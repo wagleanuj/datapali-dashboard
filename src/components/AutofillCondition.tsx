@@ -11,11 +11,14 @@ import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import { QAAnswerCondition, AnswerOption } from "../form/question";
 import { SelectOption } from "./DPFormItem";
+import { QAValueType } from "./AnswerType";
+import { ValInput } from "./ValInput";
+import { QAOption, AnswerOptions } from "./AnswerOptions";
 
 interface AutoAnswerProps {
     onChange: Function,
-    options: SelectOption[],
-    answerType: AnswerType
+    options: AnswerOptions,
+    answerType: QAValueType
 }
 interface AutoAnswerState {
     aConditions: QAAnswerCondition[];
@@ -32,16 +35,17 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
         }
     }
 
-    editIfTrueFalseValue(type: string, index: number, value: AnswerOption) {
+    editIfTrueFalseValue(type: string, index: number, value: string) {
         this.setState((prevState: AutoAnswerState) => {
+            let found = this.props.options.optionGroupMap[value];
             let newConditions = _.clone(prevState.aConditions);
             let selected = newConditions[index];
             if (type === "true") {
-                selected.ifTrue = value
+                selected.ifTrue = found
 
             }
             else if (type === "false") {
-                selected.ifFalse = value
+                selected.ifFalse = found
             }
             return {
                 aConditions: newConditions
@@ -137,12 +141,12 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                         {this.state.aConditions.map((item: QAAnswerCondition, index: number) => {
                             let options = this.props.options || [];
                    
-                            let comparisonValueSelect = (ifFalseOrTrue: string) => <ValueInput
+                            let comparisonValueSelect = (ifFalseOrTrue: string) => <ValInput
                                 key={`literalv-${getRandomId()}`}
-                                onChange={(data: AnswerOption) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data)}
-                                options={options.map((item: AnswerOption) => ({ value: item.value, label: item.value }))}
-                                value={ifFalseOrTrue === "true" ? item.ifTrue : item.ifFalse}
-                                questionType={this.props.answerType} />
+                                onChange={(data: {value:string}) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data.value)}
+                                options={this.props.options}
+                                defaultValue={ifFalseOrTrue === "true" ? item.ifTrue : item.ifFalse}
+                                type={this.props.answerType} />
 
                             return (<tr key={`af${index}`}>
                                 <td></td>

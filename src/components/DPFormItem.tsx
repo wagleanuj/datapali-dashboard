@@ -29,6 +29,7 @@ import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { ANSWER_TYPES, AnswerTypeInput, QAValueType } from "./AnswerType";
 import { ValInput } from "./ValInput";
+import { ValueType } from "react-select/src/types";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -118,8 +119,14 @@ interface Values {
     type: string;
     email: string;
 }
+interface FormItemProps {
+    question: QAQuestion
+}
+interface FormItemState{
+    question: QAQuestion
+}
 
-export class DPFormItem extends React.Component<any, any>{
+export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
     static defaultProps = {
         question: new QAQuestion()
     }
@@ -150,22 +157,38 @@ export class DPFormItem extends React.Component<any, any>{
             destroyModal();
         })
     }
+    handleQuestionChange(e: string){
+        this.setState((prevState: FormItemState)=>{
+            let question = _.clone(prevState.question);
+            question.setQuestionContent({type: QAType.String, content: e});
+            return {
+                question: question
+            }
+        })
+    }
+    handleAnswerTypeChange(type: QAValueType){
+        this.setState((prevState: FormItemState)=>{
+            let question = _.clone(prevState.question);
+            question.setAnswerType(type);
+            return {
+                question: question
+            }
+        })
+    }
+    handleOptionsChange(options: AnswerOptions){
+        this.setState((prevState: FormItemState)=>{
+            let question = _.clone(prevState.question);
+            question.setOptions(options);
+            return {
+                question: question
+            }
+        })
+    }
 
     render() {
         let AnswerKeys = Object.keys(AnswerType);
         return (
-            <Formik
-                initialValues={{
-                    question: '',
-                    type: '',
-                    email: '',
-                }}
-
-                onSubmit={(values: Values, { setSubmitting }: FormikActions<Values>) => {
-
-                }}
-                render={() => (
-
+    
                     <Form>
                         <div>
                                 <Card>
@@ -175,7 +198,7 @@ export class DPFormItem extends React.Component<any, any>{
                                     <CardBody>
                                         <FormGroup>
                                             <label htmlFor="question">Question</label>
-                                            <Field className="form-control" id="question" name="question" placeholder="" type="text" />
+                                            <textarea className="form-control" onChange = {e=>this.handleQuestionChange(e.target.value)}  id="question" name="question" placeholder=""  />
                                         </FormGroup>
 
 
@@ -184,23 +207,15 @@ export class DPFormItem extends React.Component<any, any>{
                                             <Select styles={customStyles} id="isRequired" options={[{ value: true, label: "Yes" }, { value: false, label: "No" }]} />
                                         </FormGroup>
                                         <FormGroup>
-                                            <AnswerTypeInput onChange={(d) => {
-                                                {
-                                                    console.log(d);
-                                                    this.setState({
-                                                        answerType: d
-                                                    })
-                                                }
-                                            }} />
+                                            <AnswerTypeInput answerType={this.state.question.answerType} onChange={this.handleAnswerTypeChange.bind(this)} />
                                         </FormGroup>
                             
-                                        <FormGroup>
+                                       {this.state.question.answerType && this.state.question.answerType.name===ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
                                             <label >Add Options</label>
                                             <Card>
-                                            <AddOption  defaultOptionType={this.state.answerType} options={new AnswerOptions()} />
-
+                                            <AddOption onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={new AnswerOptions()} />
                                             </Card>
-                                        </FormGroup>
+                                        </FormGroup>}
 
                                         <FormGroup>
                                             <label htmlFor="type">Appearing Condition</label>
@@ -213,30 +228,6 @@ export class DPFormItem extends React.Component<any, any>{
 
                                         </FormGroup>
 
-                                        <FormGroup>
-                                            <label htmlFor="type">Type</label>
-                                            <Select onChange={(e: any) => this.setState((prevState: any) => {
-                                                let cloned = _.clone(prevState.question)
-                                                cloned.setAnswerType(AnswerType[e.value]);
-
-                                                return {
-                                                    question: cloned
-                                                }
-                                            })} styles={customStyles} id="type" options={Object.keys(AnswerType).map((i): SelectOption => ({ value: i, label: i }))} />
-                                        </FormGroup>
-
-                                        <FormGroup>
-                                            <label htmlFor="type">Add Options</label>
-
-                                            {/* <AddOption onChange={(d: any) => this.setState((prevState: any) => {
-                                                let cloned = _.clone(this.state.question);
-                                                cloned.options = d;
-                                                return {
-                                                    question: cloned
-                                                }
-                                            })} /> */}
-
-                                        </FormGroup>
                                         <FormGroup>
                                             <FormGroup>
                                                 <label htmlFor="type">Add Autofill Conditions</label>
@@ -265,14 +256,12 @@ export class DPFormItem extends React.Component<any, any>{
                                     </CardFooter>
                                 </Card>
                         </div>
-                    </Form>
+                    </Form>)
 
 
-                )}
 
 
-            />
-        )
+            
     }
 }
 
