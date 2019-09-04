@@ -1,11 +1,11 @@
 import { QACondition } from "./condition";
-import { QAContent, AnswerType } from "./answer";
+import { QAContent, AnswerType, QAType } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
 import { QAValueType } from "../components/AnswerType";
 import { AnswerOptions, QAOption } from "../components/AnswerOptions";
 
 export class QAQuestion {
-    id!:string;
+    id!: string;
     isRequired!: boolean;
     validate!: Function;
     referenceId!: string;
@@ -15,13 +15,25 @@ export class QAQuestion {
     autoAnswer!: QAAutoAnswer
     options!: AnswerOptions;
     answerType!: QAValueType;
+    content=[]
 
     constructor() {
         this.autoAnswer = {
             isEnabled: false,
             answeringConditions: []
         }
-        this.id = getRandomId("q-")
+        this.id = getRandomId("q-");
+        this.questionContent = { content: "", type: QAType.String }
+    }
+    updateFromQuestion(q: QAQuestion){
+        this.isRequired = q.isRequired;
+        this.validate =   q.validate;
+        this.appearingCondition = q.appearingCondition;
+        this.questionContent = q.questionContent;
+        this.autoAnswer = q.autoAnswer;
+        this.options = q.options;
+        this.answerType = q.answerType;
+        return this;
     }
 
     setIsRequired(bool: boolean) {
@@ -75,7 +87,7 @@ export class QAQuestion {
         return this;
     }
 
-    setOptions(opt: AnswerOptions){
+    setOptions(opt: AnswerOptions) {
         this.options = opt;
         return this;
     }

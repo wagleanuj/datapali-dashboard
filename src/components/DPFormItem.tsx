@@ -28,8 +28,7 @@ import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { ANSWER_TYPES, AnswerTypeInput, QAValueType } from "./AnswerType";
-import { ValInput } from "./ValInput";
-import { ValueType } from "react-select/src/types";
+import { Switch } from "@blueprintjs/core";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -63,7 +62,7 @@ export const customStyles = {
             boxShadow: "0 2px 4px 0 rgba(41, 56, 78, 0.1)",
         }
     }),
-   
+
     control: (base: any, state: any) => ({
         ...base,
         background: "transparent",
@@ -114,15 +113,12 @@ export const customStyles = {
 
 const brandColor = '#46beed';
 
-interface Values {
-    question: string;
-    type: string;
-    email: string;
-}
+
 interface FormItemProps {
-    question: QAQuestion
+    question: QAQuestion,
+    onChange: (question: QAQuestion) => void
 }
-interface FormItemState{
+interface FormItemState {
     question: QAQuestion
 }
 
@@ -135,6 +131,18 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
         this.state = {
             question: this.props.question
         }
+    }
+    handleChange() {
+        if (this.props.onChange) this.props.onChange(this.state.question)
+    }
+    handleRequiredChange(e:any){
+        this.setState((prevState: FormItemState) => {
+            let question = _.clone(prevState.question);
+            question.setIsRequired(!question.isRequired);
+            return {
+                question: question
+            }
+        }, this.handleChange.bind(this))
     }
     openAppearingConditionModal() {
         let el = <CreateConditionModal
@@ -155,113 +163,110 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
             }
         }, () => {
             destroyModal();
+            this.handleChange();
         })
     }
-    handleQuestionChange(e: string){
-        this.setState((prevState: FormItemState)=>{
+    handleQuestionChange(e: string) {
+        this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
-            question.setQuestionContent({type: QAType.String, content: e});
+            question.setQuestionContent({ type: QAType.String, content: e });
             return {
                 question: question
             }
-        })
+        }, this.handleChange.bind(this))
     }
-    handleAnswerTypeChange(type: QAValueType){
-        this.setState((prevState: FormItemState)=>{
+    handleAnswerTypeChange(type: QAValueType) {
+        this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
             question.setAnswerType(type);
             return {
                 question: question
             }
-        })
+        }, this.handleChange.bind(this))
     }
-    handleOptionsChange(options: AnswerOptions){
-        this.setState((prevState: FormItemState)=>{
+    handleOptionsChange(options: AnswerOptions) {
+        this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
             question.setOptions(options);
             return {
                 question: question
             }
-        })
+        }, this.handleChange.bind(this))
+    }
+    handleAutoFillChange(autoanswer: QAAutoAnswer) {
+        this.setState((prevState: any) => {
+            let cloned: QAQuestion = _.clone(prevState.question);
+            cloned.setAutoAnswer(autoanswer)
+            return {
+                question: cloned
+            }
+        }, this.handleChange.bind(this))
     }
 
     render() {
         let AnswerKeys = Object.keys(AnswerType);
         return (
-    
-                    <Form>
-                        <div>
+
+            <Form>
+                <div>
+                    <Card>
+                        <CardHeader>
+                            <h5 className="title">Add Question</h5>
+                        </CardHeader>
+                        <CardBody>
+                            <FormGroup>
+                                <label htmlFor="question">Question</label>
+                                <textarea defaultValue={this.state.question.questionContent.content} className="form-control" onChange={e => this.handleQuestionChange(e.target.value)} id="question" name="question" placeholder="" />
+                            </FormGroup>
+
+
+                            <FormGroup>
+                                <Switch defaultChecked={this.state.question.isRequired} label="Required" onChange={this.handleRequiredChange.bind(this)} />
+                            </FormGroup>
+                            <FormGroup>
+                                <AnswerTypeInput answerType={this.state.question.answerType} onChange={this.handleAnswerTypeChange.bind(this)} />
+                            </FormGroup>
+
+                            {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
+                                <label >Add Options</label>
                                 <Card>
-                                    <CardHeader>
-                                        <h5 className="title">Add Question</h5>
-                                    </CardHeader>
-                                    <CardBody>
-                                        <FormGroup>
-                                            <label htmlFor="question">Question</label>
-                                            <textarea className="form-control" onChange = {e=>this.handleQuestionChange(e.target.value)}  id="question" name="question" placeholder=""  />
-                                        </FormGroup>
-
-
-                                        <FormGroup>
-                                            <label htmlFor="isRequired">Required</label>
-                                            <Select styles={customStyles} id="isRequired" options={[{ value: true, label: "Yes" }, { value: false, label: "No" }]} />
-                                        </FormGroup>
-                                        <FormGroup>
-                                            <AnswerTypeInput answerType={this.state.question.answerType} onChange={this.handleAnswerTypeChange.bind(this)} />
-                                        </FormGroup>
-                            
-                                       {this.state.question.answerType && this.state.question.answerType.name===ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
-                                            <label >Add Options</label>
-                                            <Card>
-                                            <AddOption onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={new AnswerOptions()} />
-                                            </Card>
-                                        </FormGroup>}
-
-                                        <FormGroup>
-                                            <label htmlFor="type">Appearing Condition</label>
-                                            <div>
-                                                <Button type="button" onClick={this.openAppearingConditionModal.bind(this)}
-                                                    size="sm">
-                                                    <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
-
-                                            </div>
-
-                                        </FormGroup>
-
-                                        <FormGroup>
-                                            <FormGroup>
-                                                <label htmlFor="type">Add Autofill Conditions</label>
-
-                                                <AutofillCondition onChange={(data: QAAutoAnswer) => {
-                                                    this.setState((prevState: any) => {
-                                                        let cloned: QAQuestion = _.clone(prevState.question);
-                                                        cloned.setAutoAnswer(data)
-                                                        return {
-                                                            question: cloned
-                                                        }
-                                                    })
-                                                }}
-                                                    answerType={this.state.question.answerType}
-                                                    options={this.state.question.options} />
-
-                                            </FormGroup>
-                                        </FormGroup>
-
-
-                                    </CardBody>
-                                    <CardFooter>
-                                        <Button className="btn-fill" color="primary" type="submit">
-                                            Submit
-                                            </Button>
-                                    </CardFooter>
+                                    <AddOption onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={new AnswerOptions()} />
                                 </Card>
-                        </div>
-                    </Form>)
+                            </FormGroup>}
+
+                            <FormGroup>
+                                <label htmlFor="type">Appearing Condition</label>
+                                <div>
+                                    <Button type="button" onClick={this.openAppearingConditionModal.bind(this)}
+                                        size="sm">
+                                        <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
+
+                                </div>
+
+                            </FormGroup>
+
+                            <FormGroup>
+                                <FormGroup>
+                                    <label htmlFor="type">Add Autofill Conditions</label>
+
+                                    <AutofillCondition onChange={this.handleAutoFillChange.bind(this)}
+                                        answerType={this.state.question.answerType}
+                                        options={this.state.question.options} />
+
+                                </FormGroup>
+                            </FormGroup>
+
+
+                        </CardBody>
+                           
+                    </Card>
+                </div>
+            </Form>)
 
 
 
 
-            
+
     }
 }
 

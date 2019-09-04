@@ -211,7 +211,7 @@ interface QAAddOptionsSectionState {
 }
 
 export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAddOptionsSectionState>{
-    defaultProps = {
+    static defaultProps = {
         options: [],
         groups: []
     }
