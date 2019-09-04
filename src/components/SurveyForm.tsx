@@ -75,6 +75,8 @@ interface SurveyFormState {
     activeSection: QuestionSection,
     activeSectionPath: number[]
     treeNodes: ITreeNode[],
+    selectedNodes: string[],
+    expandedNodes: string[],
 
 }
 interface SurveyFormProps {
@@ -101,6 +103,8 @@ export class SurveyForm_ extends React.Component<SurveyFormProps, SurveyFormStat
     constructor(props: SurveyFormProps) {
         super(props);
         this.state = {
+            selectedNodes:[],
+            expandedNodes: [this.props.form.id],
             form: this.props.form,
             activeSection: this.props.form,
             treeNodes: this.generateITNodeTree(this.props.form),
@@ -299,7 +303,7 @@ export class SurveyForm_ extends React.Component<SurveyFormProps, SurveyFormStat
         }
         nodeData.isSelected = !initiallySelected;
         let item = SurveyForm_.questionOrSectionFromPath(_nodePath, [this.state.form]);
-        console.log(item)
+        console.log(item);
         if (item instanceof QuestionSection) {
             this.setState((prevState: SurveyFormState) => {
 
@@ -325,7 +329,7 @@ export class SurveyForm_ extends React.Component<SurveyFormProps, SurveyFormStat
 
                     <div style={{ background: "transparent" }} className="sidebar">
                         <div className="sidebar-wrapper">
-                            <FormTree handleNodeExpand={this.handleFormTreeNodeExpand.bind(this)} handleNodeCollapse={this.handleFormTreeNodeCollapse.bind(this)} handleNodeClick={this.handleFormTreeNodeClick.bind(this)} nodes={this.state.treeNodes} />
+                            <FormTree expandedNodes={this.state.expandedNodes} selectedNodes={this.state.selectedNodes} handleNodeExpand={this.handleFormTreeNodeExpand.bind(this)} handleNodeCollapse={this.handleFormTreeNodeCollapse.bind(this)} handleNodeClick={this.handleFormTreeNodeClick.bind(this)} root={this.state.form} />
                         </div>
                     </div>
                     <div className="content">
@@ -351,7 +355,9 @@ export class SurveyForm_ extends React.Component<SurveyFormProps, SurveyFormStat
 interface FormTreeState {
 }
 interface FormTreeProps {
-    nodes: ITreeNode[],
+    root: (QuestionSection),
+    selectedNodes: string[],
+    expandedNodes: string[],
     handleNodeClick?: (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => void,
     handleNodeCollapse?: (nodeData: ITreeNode) => void,
     handleNodeExpand?: (nodeData: ITreeNode) => void,
@@ -375,9 +381,44 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
     private handleNodeExpand = (nodeData: ITreeNode) => {
         if (this.props.handleNodeExpand) this.props.handleNodeExpand(nodeData);
     };
+    getNodeFromQuestionOrSection(item: QuestionSection | QAQuestion, sectionNumber: string, selectedNodes:string[], expandedNodes:string[]) {
+        let def: ITreeNode = {
+            id: item.id,
+            icon: undefined,
+            label: "",
+            isSelected: selectedNodes.includes(item.id),
+            isExpanded: expandedNodes.includes(item.id)
+        };
+        if (item instanceof QAQuestion) {
+            def.icon = "document"
+            def.label = sectionNumber + " " + "Question";
+        }
+        else if (item instanceof QuestionSection) {
+            def.icon = "folder-close"
+            def.label = sectionNumber + " " + (item.name || "Section");
+            def.childNodes = item.content.map((it, ind) => this.getNodeFromQuestionOrSection(it, sectionNumber + "." + (ind + 1), selectedNodes, expandedNodes))
+
+        }
+        return def;
+    }
+
+    generateITNodeTree(form:QuestionSection, selectedNodes: string[], expandedNodes: string[]): ITreeNode[] {
+        let root: ITreeNode = {
+            id: 0,
+            hasCaret: true,
+            icon: "folder-close",
+            label: "Root",
+            isExpanded: expandedNodes.includes(form.id),
+            isSelected: selectedNodes.includes(form.id),
+            childNodes: form.content.map((it: QAQuestion | QuestionSection, ind: number) => this.getNodeFromQuestionOrSection(it, (ind + 1).toString(),selectedNodes,expandedNodes))
+        }
+        return [root];
+    }
+
+   
 
     render() {
-        return <Tree contents={this.props.nodes}
+        return <Tree contents={this.generateITNodeTree(this.props.root, this.props.selectedNodes, this.props.expandedNodes)}
             onNodeClick={this.handleNodeClick}
             onNodeCollapse={this.handleNodeCollapse}
             onNodeExpand={this.handleNodeExpand}
@@ -473,5 +514,74 @@ const SectionButton = (props: SectionButtonProps) => {
 
 function getReadablePath(nu: number[]) {
     return nu.slice(1).map(item => item + 1).join(".");
+
+}
+interface EditViewProps{
+
+}
+
+interface EditViewState{
+
+}
+
+class EditView extends React.Component<EditViewProps, EditViewState>{
+    constructor(props: EditViewProps){
+        super(props);
+        this.state = {
+
+        }
+    }
+    private handleSectionAdd(){
+
+    }
+    private handleQuestionAdd(){
+
+    }
+    private handleSectionRemove(){
+
+    }
+    private handleQuestionRemove(){
+
+    }
+    private handleMoveItem(previousPath:number[], newPath:number[]){
+
+    }
+    render(){
+        return (
+            <></>
+        );
+    }
+    
+}
+
+class DPQuestions {
+    sections: Map<string, QuestionSection> = new Map();
+    questions: Map<string, QAQuestion> = new Map();
+    root: (QuestionSection|QAQuestion)[]
+    
+
+    constructor(root?:  (QuestionSection|QAQuestion)[]){
+        if(!root) root = [new QuestionSection()];
+        this.root = root;
+        
+    }
+
+    static getQuestionOrSectionFromNodePath(path: number[], root: (QuestionSection|QAQuestion)[]) : QuestionSection |QAQuestion{
+            let el = root[path[0]];
+            if (path.length === 1) {
+                return el;
+            } else {
+                return DPQuestions.getQuestionOrSectionFromNodePath(path.slice(1), el.content);
+            }
+        }    
+
+    addQuestions(questions: QAQuestion[], newPath:number[]){
+        
+    }
+
+    addSections(sections: QuestionSection[], newPath: number[]){
+
+    }
+
 
 }
