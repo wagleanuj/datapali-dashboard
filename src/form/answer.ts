@@ -1,6 +1,4 @@
-import { string } from "prop-types";
 import { QACondition, QAFollowingOperator } from "./condition";
-import { QAQuestion } from "./question";
 
 export class Answer {
     content: QAContent;

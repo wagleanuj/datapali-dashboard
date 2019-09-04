@@ -1,6 +1,6 @@
 import { QAQuestion } from "../form/question";
 
-import { AnswerType, QAType } from "../form/answer";
+import {  QAType } from "../form/answer";
 import { QAValueType, ANSWER_TYPES } from "../components/AnswerType";
 import { AnswerOptions, QAOption } from "../components/AnswerOptions";
 import { getRandomId } from "../utils/getRandomId";

@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Row, ModalFooter, ModalBody } from "reactstrap";
 import { QACondition } from "../form/condition";
-import { QALiteral, AnswerType, QAType } from "../form/answer";
+import { QALiteral } from "../form/answer";
 import Modal from "react-modal";
 import { CreateCondition } from "./CreateCondition";
 

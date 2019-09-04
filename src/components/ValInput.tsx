@@ -1,15 +1,14 @@
 import React, { useState } from "react";
 import { ANSWER_TYPES, QAValueType } from "./AnswerType";
-import { DatePicker, TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprintjs/datetime"
+import { TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprintjs/datetime"
 import { ButtonGroup, Divider } from "@blueprintjs/core";
 import Select from "react-select"
 import { customStyles } from "./DPFormItem";
 import { AnswerOptions } from "./AnswerOptions";
-import { optionCSS } from "react-select/src/components/Option";
 
 interface RangeValue {
-    min: string|undefined
-    max: string|undefined
+    min: string | undefined
+    max: string | undefined
 }
 
 
@@ -87,8 +86,8 @@ const defaultNumberRangeProps: NumberRangeProps = {
 }
 
 const NumberRange = (props: NumberRangeProps = defaultNumberRangeProps) => {
-    const [minValue, setMin] = useState(props && props.range.min || "");
-    const [maxValue, setMax] = useState(props && props.range.max || "");
+    const [minValue, setMin] = useState(props ? props.range.min : "");
+    const [maxValue, setMax] = useState(props ? props.range.max : "");
     return (
         <ButtonGroup>
             <input className="form-control" defaultValue={props && props.range.min && props.range.min.toString()}
@@ -117,19 +116,19 @@ const defaultTimeRangeProps = {
     onChange: () => { }
 }
 const TimeRange = (props: TimeRangeProps = defaultTimeRangeProps) => {
-    const [minValue, setMin] = useState(props && props.range.min || undefined);
-    const [maxValue, setMax] = useState(props && props.range.max || undefined);
+    const [minValue, setMin] = useState(props ? props.range.min : undefined);
+    const [maxValue, setMax] = useState(props ? props.range.max : undefined);
     console.log(maxValue);
     console.log(minValue);
     return (
         <ButtonGroup className="bp3-dark">
-            <TimePicker  precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={minValue ? new Date(minValue) : undefined} onChange={newTime => {
+            <TimePicker precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={minValue ? new Date(minValue) : undefined} onChange={newTime => {
                 setMin(newTime.toLocaleDateString());
                 if (props.onChange) props.onChange({ min: minValue, max: maxValue })
             }}></TimePicker>
             <Divider />
 
-            <TimePicker  precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={maxValue ? new Date(maxValue) : undefined} onChange={newTime => {
+            <TimePicker precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={maxValue ? new Date(maxValue) : undefined} onChange={newTime => {
                 setMax(newTime.toLocaleDateString());
                 props.onChange({ min: minValue, max: maxValue })
             }}></TimePicker>
@@ -147,10 +146,12 @@ interface ValInputState {
 
 }
 export class ValInput extends React.Component<ValInputProps, ValInputState> {
-    static defaultProps: ValInputProps = {
-        defaultValue: "",
-        onChange: (e) => { console.log(e) },
-        type: { name: ANSWER_TYPES.STRING }
+    static get defaultProps(): ValInputProps {
+        return {
+            defaultValue: "",
+            onChange: (e) => { console.log(e) },
+            type: { name: ANSWER_TYPES.STRING }
+        }
     }
     constructor(props: ValInputProps) {
         super(props);
@@ -168,8 +169,8 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 />
                 break;
             case ANSWER_TYPES.SELECT:
-                comp = <SelInput type={this.props.type.ofType} defaultValue={this.props.defaultValue} options={this.props.options} onChange={(newVal:any)=>{
-                    if (this.props.onChange) this.props.onChange( newVal )
+                comp = <SelInput type={this.props.type.ofType} defaultValue={this.props.defaultValue} options={this.props.options} onChange={(newVal: any) => {
+                    if (this.props.onChange) this.props.onChange(newVal)
                 }} />
 
                 //TODO::
@@ -253,7 +254,7 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
             rootOptions_ = rootOptions.map(i => ({ label: i.value, value: i.id }));
             allOptions = [...groupOptions_, ...rootOptions_];
         }
-        let defaultvalue = allOptions.find(item=>item.value===this.props.defaultValue);
+        let defaultvalue = allOptions.find(item => item.value === this.props.defaultValue);
         return (<Select styles={customStyles} options={allOptions} onChange={this.handleChange.bind(this)} defaultValue={defaultvalue} />)
     }
 }

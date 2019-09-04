@@ -4,11 +4,10 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Select from 'react-select';
 import { Button, Table, Card, CardHeader, CardBody, Row } from "reactstrap";
 import { QAFollowingOperator, QACondition } from "../form/condition";
-import { QALiteral, QAComparisonOperator, QAType, QAContent, AnswerType } from "../form/answer";
+import { QALiteral, QAComparisonOperator, QAType, QAContent } from "../form/answer";
 import { QAQuestion, AnswerOption } from "../form/question";
 import { ValueType } from "react-select/src/types";
 import { getRandomId } from "../utils/getRandomId";
-import { ValueInput } from "./ValueInput";
 import { TableFieldType, customStyles, SelectOption, getOperatorForType } from "./DPFormItem";
 import _ from "lodash";
 import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from "../testData/TestQuestions";
@@ -30,9 +29,11 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
         dataField: string;
         text: string;
     }[];
-    static defaultProps: CreateConditionProps = {
-        onChange: () => { },
-        definedQuestions: { 'question-1': testQuestion, 'question-2': testQuestion2, "question-3": testQuestion3, "question-4": testQuestion4, "question-5": testQuestion5 }
+    static defaultProps(): CreateConditionProps {
+        return {
+            onChange: () => { },
+            definedQuestions: { 'question-1': testQuestion, 'question-2': testQuestion2, "question-3": testQuestion3, "question-4": testQuestion4, "question-5": testQuestion5 }
+        }
     };
     constructor(props: CreateConditionProps) {
         super(props);
@@ -181,8 +182,8 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                                 let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
                                 let question_: QAQuestion | null = this.getQuestion(item.questionRef);
                                 let qAnswerType = question_ ? question_.answerType : undefined;
-                                let qOptions = question_ && question_.options ? question_.options: undefined ;
-                                let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={ item.comparisonValue && item.comparisonValue.content } type={qAnswerType} />;
+                                let qOptions = question_ && question_.options ? question_.options : undefined;
+                                let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={item.comparisonValue && item.comparisonValue.content} type={qAnswerType} />;
                                 let followingOperatorOptions_: SelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
                                 let followingOperatorSelect = <Select key={`literalfo-${key}-${item.literalId}`} styles={customStyles} options={followingOperatorOptions_} value={followingOperatorOptions_.find(r => r.value === item.followingOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.FollowingOperator)} />;
                                 return <tr key={"tr_" + key}>

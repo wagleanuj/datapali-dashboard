@@ -12,7 +12,6 @@ import { customStyles } from "./DPFormItem";
 import Select from "react-select";
 import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { getRandomId } from "../utils/getRandomId";
 import { AnswerOptions, QAOption, QAOptionGroup } from "./AnswerOptions";
 interface QAAddOptionsState {
     options: AnswerOptions,

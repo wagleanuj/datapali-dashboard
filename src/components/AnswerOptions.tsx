@@ -1,6 +1,7 @@
 import { QACondition } from "../form/condition";
 import { QAValueType } from "./AnswerType";
 import _ from "lodash";
+
 export interface QAOption {
     appearingCondition?: QACondition;
     type?: QAValueType;
@@ -9,9 +10,6 @@ export interface QAOption {
     groupName?: string
 }
 
-function getOptionValueString(opt: QAOption) {
-
-}
 
 export interface QAOptionGroup {
     id: string,
@@ -20,6 +18,7 @@ export interface QAOptionGroup {
     members: QAOption[],
 
 }
+
 export class AnswerOptions {
     optionsMap: {
         [key: string]: QAOption;
@@ -30,8 +29,7 @@ export class AnswerOptions {
     options: (QAOption | QAOptionGroup)[] = [];
     private opt_count: number = 0;
     private group_count: number = 0;
-    constructor() {
-    }
+ 
     get SortedOptions() {
         let grouplessOptions = Object.values(this.optionsMap).filter(item => !item.groupName);
         let groups = Object.values(this.optionGroupMap);

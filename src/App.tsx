@@ -1,9 +1,7 @@
 import React from 'react';
 import './App.css';
-import { DPNavbar } from './ui/Navbar';
-// import { DPFormItem } from './components/DPFormItem';
-// import { Row, Col } from 'reactstrap';
-import { SurveyForm_, FormTree, QuestionSection } from './components/SurveyForm';
+
+import { SurveyForm, QuestionSection } from './components/SurveyForm';
 import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from './testData/TestQuestions';
 
 class App extends React.Component<any, any> {
@@ -25,7 +23,7 @@ class App extends React.Component<any, any> {
       <div className={"wrapper"}>
         <div className="main-panel">
           <div className="content">
-            <SurveyForm_ form={this.state.form} onChange={this.handleChange.bind(this)}/>
+            <SurveyForm form={this.state.form} onChange={this.handleChange.bind(this)}/>
           </div>
          
         </div>

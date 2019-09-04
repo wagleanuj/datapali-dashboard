@@ -1,22 +1,14 @@
-import React, { RefObject } from "react";
-import { Formik, Field, Form, FormikActions } from 'formik';
-import { faCross, faKey, faQuestion } from "@fortawesome/free-solid-svg-icons";
+import React from "react";
+import { Form } from 'formik';
+import { faKey } from "@fortawesome/free-solid-svg-icons";
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
-import Select from 'react-select'
 import * as _ from "lodash";
 import {
     Button,
     Card,
     CardHeader,
     CardBody,
-    CardFooter,
-    CardText,
     FormGroup,
-    Input,
-    Row,
-    Col,
-    ModalHeader,
-    Container
 } from "reactstrap";
 import { QACondition } from "../form/condition";
 import { QALiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
@@ -45,10 +37,9 @@ export function getOperatorForType(valueType?: QAValueType) {
 
             return allOperators.filter(item => item === QAComparisonOperator.Equal);
         case ANSWER_TYPES.NUMBER:
-            deftault:
+        default:
             return allOperators;
     }
-    return [QAComparisonOperator.Equal]
 }
 
 export const customStyles = {
@@ -135,7 +126,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
     handleChange() {
         if (this.props.onChange) this.props.onChange(this.state.question)
     }
-    handleRequiredChange(e:any){
+    handleRequiredChange(e: any) {
         this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
             question.setIsRequired(!question.isRequired);
@@ -204,7 +195,6 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
     }
 
     render() {
-        let AnswerKeys = Object.keys(AnswerType);
         return (
 
             <Form>
@@ -258,7 +248,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
 
 
                         </CardBody>
-                           
+
                     </Card>
                 </div>
             </Form>)

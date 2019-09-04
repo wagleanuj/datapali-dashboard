@@ -1,19 +1,17 @@
 import React from "react";
 import { Table, Button } from "reactstrap";
 import { QACondition } from "../form/condition";
-import { AnswerType, QALiteral } from "../form/answer";
+import {  QALiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ValueInput } from "./ValueInput";
 import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { QAAnswerCondition, AnswerOption } from "../form/question";
-import { SelectOption } from "./DPFormItem";
+import { QAAnswerCondition } from "../form/question";
 import { QAValueType } from "./AnswerType";
 import { ValInput } from "./ValInput";
-import { QAOption, AnswerOptions } from "./AnswerOptions";
+import {  AnswerOptions } from "./AnswerOptions";
 
 interface AutoAnswerProps {
     onChange: Function,
@@ -139,7 +137,6 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                     </thead>
                     <tbody>
                         {this.state.aConditions.map((item: QAAnswerCondition, index: number) => {
-                            let options = this.props.options || [];
                    
                             let comparisonValueSelect = (ifFalseOrTrue: string) => <ValInput
                                 key={`literalv-${getRandomId()}`}

@@ -1,5 +1,5 @@
 import ReactDOM from "react-dom";
-import React, { ReactElement } from "react";
+import  { ReactElement } from "react";
 
 export function openModal(com: ReactElement) {
     let el = document.getElementById("dp-modal");

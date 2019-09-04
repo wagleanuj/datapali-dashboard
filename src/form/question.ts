@@ -1,5 +1,5 @@
 import { QACondition } from "./condition";
-import { QAContent, AnswerType, QAType } from "./answer";
+import { QAContent, QAType } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
 import { QAValueType } from "../components/AnswerType";
 import { AnswerOptions, QAOption } from "../components/AnswerOptions";
