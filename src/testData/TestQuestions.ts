@@ -22,7 +22,7 @@ testQuestion.setOptions(catOptions);
 export const testQuestion2 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your favorite tv?" }).setReferenceId("question-2");
 testQuestion2.setOptions(tvOptions);
 
-export const testQuestion3 = new QAQuestion().setAnswerType(selectBoolean).setQuestionContent({ type: QAType.String, content: "Do you like having sex?" }).setReferenceId("question-3");
-export const testQuestion4 = new QAQuestion().setAnswerType(selectNumber).setQuestionContent({ type: QAType.String, content: "How many times have you had HIV AIDS?" }).setReferenceId("question-4");
-export const testQuestion5 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "Who taught you how to have sex?" }).setReferenceId("question-5");
+export const testQuestion3 = new QAQuestion().setAnswerType(selectBoolean).setQuestionContent({ type: QAType.String, content: "Do you like having tea?" }).setReferenceId("question-3");
+export const testQuestion4 = new QAQuestion().setAnswerType(selectNumber).setQuestionContent({ type: QAType.String, content: "How many times have you had death?" }).setReferenceId("question-4");
+export const testQuestion5 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "Who taught you how to die?" }).setReferenceId("question-5");
 
