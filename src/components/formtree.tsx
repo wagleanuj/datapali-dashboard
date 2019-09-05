@@ -5,13 +5,14 @@ import { ITreeNode, Tree, Classes } from "@blueprintjs/core";
 import React from "react";
 
 import { QAQuestion } from "../form/question";
+import { RootSection } from "./section";
 
 
 
 interface FormTreeState {
 }
 interface FormTreeProps {
-    root: (QuestionSection),
+    root_: RootSection,
     selectedNodes: string[],
     expandedNodes: string[],
     handleNodeClick?: (nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) => void,
@@ -58,7 +59,7 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
         return def;
     }
 
-    generateITNodeTree(form: QuestionSection, selectedNodes: string[], expandedNodes: string[]): ITreeNode[] {
+    generateITNodeTree(form: RootSection, selectedNodes: string[], expandedNodes: string[]): ITreeNode[] {
         let root: ITreeNode = {
             id: form.id,
             hasCaret: true,
@@ -74,7 +75,7 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
 
 
     render() {
-        return <Tree contents={this.generateITNodeTree(this.props.root, this.props.selectedNodes, this.props.expandedNodes)}
+        return <Tree contents={this.generateITNodeTree(this.props.root_, this.props.selectedNodes, this.props.expandedNodes)}
             onNodeClick={this.handleNodeClick}
             onNodeCollapse={this.handleNodeCollapse}
             onNodeExpand={this.handleNodeExpand}

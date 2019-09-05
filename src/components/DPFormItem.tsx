@@ -74,8 +74,7 @@ export const customStyles = {
         ...base,
         background: "black",
         borderColor: "#e14eca",
-        zIndex: 9999
-
+        zIndex: "999999999999999999 !important"
 
     }),
     menuList: (base: any, state: any) => {

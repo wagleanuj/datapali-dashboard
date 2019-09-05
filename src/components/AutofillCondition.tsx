@@ -147,7 +147,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
 
                             return (<tr key={`af${index}`}>
                                 <td></td>
-                                <td><Button type="button" onClick={() => this.openConditionModal(index)}
+`   `                                <td><Button type="button" onClick={() => this.openConditionModal(index)}
                                     size="sm">
                                     <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
                                 </td>

@@ -1,0 +1,102 @@
+import React from "react";
+import {QACondition} from "../form/condition";
+import {  ButtonGroup,Button, Switch, Classes, Divider } from "@blueprintjs/core";
+import { QAQuestion } from "../form/question";
+import Select from "react-select";
+import { customStyles } from "./DPFormItem";
+import _ from "lodash";
+
+type DuplicateTimesType = "questionRef"|"number";
+
+export interface DupeSettings {
+    enabled: boolean, 
+    condition?: QACondition,
+    duplicateTimes: {value: string, type: DuplicateTimesType},
+}
+interface DuplicateSettingsProps extends DupeSettings {
+    definedQuestions: QAQuestion[],
+    handleSave: (dupe: DupeSettings)=>void,
+    handleCancel : ()=>void
+
+}
+interface DuplicateSettingsState  extends DupeSettings{
+
+}
+
+export class DuplicateSettings extends React.Component<DuplicateSettingsProps, DuplicateSettingsState>{
+    constructor(props: DuplicateSettingsProps){
+        super(props);
+        this.state = {
+            enabled: this.props.enabled,
+            condition: this.props.condition,
+            duplicateTimes: this.props.duplicateTimes
+        }
+    }
+
+    private handleQuestionRefChange(newValue: any){
+        this.setState({
+            duplicateTimes: {value: newValue.value, type: "questionRef"}
+        })
+    }
+    private handleNumberTimesChange(newValue: string){
+        this.setState({
+            duplicateTimes: {value: newValue, type: "number"}
+        })
+    }
+    private handleTypeChange(newType:any){
+        this.setState((prevState: DuplicateSettingsState)=>{
+            return {
+                duplicateTimes: {value: "", type: newType.value}
+            }
+        })
+    }
+    private handleEnabledChange(){
+        this.setState((prevState: DuplicateSettingsState)=>{
+            return {
+                enabled: !prevState.enabled
+            }
+        })
+    }
+    private generateValueComponent(type?: string){
+        if(type==="questionRef"){
+            let options = this.props.definedQuestions.map(item=>({value: item.id, label: item.questionContent.content}));
+            let selected = this.state.duplicateTimes.type==="questionRef"? options.find(item=>item.value===this.state.duplicateTimes.value): undefined;
+            return <Select styles={customStyles} options = {options} defaultValue = {selected} onChange = {this.handleQuestionRefChange}/>
+        }
+        return <input defaultValue={this.state.duplicateTimes.type==="number"? this.state.duplicateTimes.value:""} type="number" className ="form-control" onChange={e=> this.handleNumberTimesChange(e.target.value)}/>
+    }
+    private handleSave(){
+        let isInvalid = _.values(this.state).every(_.isEmpty);
+        if(!isInvalid){
+            this.props.handleSave({enabled: this.state.enabled, condition: this.state.condition, duplicateTimes: this.state.duplicateTimes})
+        }
+    }
+
+    render(){
+        let typeOptions = [{value: "number", label: "Number"}, {value: "questionRef" as DuplicateTimesType, label: "AnswerValue" as DuplicateTimesType}];
+        let defaultValue =typeOptions.find(item=>item.value===this.state.duplicateTimes.type);
+        
+        return (
+            <div style={{paddingTop: 10}}>
+
+            <ButtonGroup className = {Classes.ELEVATION_2} vertical fill>
+                <Switch  onChange = {this.handleEnabledChange.bind(this)} defaultChecked={this.props.enabled}>Enabled</Switch>
+                <Divider/>
+                <Select menuContainerStyle={{zIndex: 99999}} styles={customStyles} onChange = {(e:any)=>this.handleTypeChange(e)} options = {typeOptions} defaultValue={defaultValue}></Select>
+                {this.generateValueComponent(this.state.duplicateTimes.type)}
+                <Divider />
+                <ButtonGroup fill>
+                    <Button onClick = {this.handleSave.bind(this)}>
+                        Save
+                    </Button>
+                    <Button onClick={this.props.handleCancel}>
+                        Cancel
+                    </Button>
+                </ButtonGroup>
+            </ButtonGroup>
+            </div>
+
+           
+        )
+    }
+}
