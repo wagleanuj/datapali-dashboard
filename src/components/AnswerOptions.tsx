@@ -1,35 +1,56 @@
 import { QACondition } from "../form/condition";
-import { QAValueType } from "./AnswerType";
+import { IValueType } from "./AnswerType";
 import _ from "lodash";
+import { optionToJSON, optionGroupToJSON, optionFromJSON } from "../utils/util";
 
-export interface QAOption {
+export interface IOption {
     appearingCondition?: QACondition;
-    type?: QAValueType;
+    type?: IValueType;
     id: string,
     value?: string
     groupName?: string
 }
 
-
-export interface QAOptionGroup {
+export interface IOptionGroup {
     id: string,
     name: string,
     appearingCondition?: QACondition,
-    members: QAOption[],
-
+    members: IOption[],
 }
 
 export class AnswerOptions {
     optionsMap: {
-        [key: string]: QAOption;
+        [key: string]: IOption;
     } = {};
     optionGroupMap: {
-        [key: string]: QAOptionGroup;
+        [key: string]: IOptionGroup;
     } = {};
-    options: (QAOption | QAOptionGroup)[] = [];
+    options: (IOption | IOptionGroup)[] = [];
     private opt_count: number = 0;
     private group_count: number = 0;
- 
+
+    static toJSON(a: AnswerOptions) {
+        return {
+            optionsMap: a && a.optionsMap ? _.mapValues(a.optionsMap, (v => optionToJSON(v))) : {},
+            optionGroupMap: a && a.optionGroupMap ? _.mapValues(a.optionGroupMap, (v) => optionGroupToJSON(v)) : {}
+        }
+    }
+
+    static fromJSON(d: any): AnswerOptions {
+        let r = new AnswerOptions();
+        r.optionsMap = _.mapValues(d.optionsMap, (v) => optionFromJSON(v));
+        r.optionGroupMap = _.mapValues(d.optionGroupMap, v => {
+            let rr: IOptionGroup = {
+                id: v.id,
+                name: v.name,
+                appearingCondition: QACondition.fromJSON(v.appearingCondition),
+                members: v.members.map((item: any) => r.optionsMap[item.id]),
+            }
+            console.log(rr);
+            return rr;
+        });
+        return r;
+    }
     get SortedOptions() {
         let grouplessOptions = Object.values(this.optionsMap).filter(item => !item.groupName);
         let groups = Object.values(this.optionGroupMap);
@@ -38,13 +59,13 @@ export class AnswerOptions {
             rootOptions: grouplessOptions
         };
     }
-    addOption(option?: QAOption, groupname?: string) {
+    addOption(option?: IOption, groupname?: string) {
         if (!option) {
             option = { id: 'opt-' + this.opt_count, value: undefined, groupName: groupname };
         }
         this.optionsMap[option.id] = option;
         if (groupname) {
-            let group: QAOptionGroup = this.optionGroupMap[groupname];
+            let group: IOptionGroup = this.optionGroupMap[groupname];
             if (!group) {
                 group = { id: "opt-grp-" + this.group_count, name: groupname, appearingCondition: undefined, members: [option] };
                 this.optionGroupMap[groupname] = group;
@@ -59,7 +80,7 @@ export class AnswerOptions {
         return this;
     }
     addGroup(groupname?: string) {
-        let group: QAOptionGroup = { id: "opt-grp" + this.group_count, name: groupname || `group-${this.group_count}`, appearingCondition: undefined, members: [] };
+        let group: IOptionGroup = { id: "opt-grp" + this.group_count, name: groupname || `group-${this.group_count}`, appearingCondition: undefined, members: [] };
         this.optionGroupMap[group.name] = group;
         this.options.push(group);
         this.group_count++;
@@ -174,7 +195,7 @@ export class AnswerOptions {
         }
         delete this.optionGroupMap[name];
     }
-    setOptionTypeFor(optionId: string, newType: QAValueType) {
+    setOptionTypeFor(optionId: string, newType: IValueType) {
         let opt = this.optionsMap[optionId];
         if (opt) {
             opt.type = newType;

@@ -29,20 +29,19 @@ const OptionsForSelect: QAAnswerTypeOption[] = ValueSelectOptions.filter((item) 
 let includedInRange = [ANSWER_TYPES.TIME, ANSWER_TYPES.NUMBER, ANSWER_TYPES.DATE, ANSWER_TYPES.TIME];
 const OptionsForRange: QAAnswerTypeOption[] = ValueSelectOptions.filter(item => includedInRange.includes(item.value))
 
-export interface QAValueType {
+export interface IValueType {
     name: ANSWER_TYPES,
-    ofType?: QAValueType,
+    ofType?: IValueType,
 }
 
 
 interface AnswerTypeInputProps {
-    answerType: QAValueType,
-    onChange: (val: QAValueType) => void,
-
+    answerType: IValueType,
+    onChange: (val: IValueType) => void,
 }
 
 interface AnswerTypeInputState {
-    answerType: QAValueType,
+    answerType: IValueType,
 }
 
 export class AnswerTypeInput extends React.Component<AnswerTypeInputProps, AnswerTypeInputState>{

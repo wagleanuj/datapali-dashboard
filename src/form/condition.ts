@@ -1,19 +1,34 @@
-import { QALiteral } from "./answer";
+import { ILiteral } from "./answer";
 import _ from "lodash";
 
 export class QACondition {
 
-    literals: Array<QALiteral>;
+    literals: Array<ILiteral>;
 
     constructor() {
-        this.literals = Array<QALiteral>();
+        this.literals = Array<ILiteral>();
+    }
+
+    static fromJSON(data: { [key: string]: any }) {
+        if(!data) return new QACondition();
+        let c = new QACondition();
+        let literals: ILiteral[] = data.literals;
+        c.setLiterals(literals)
+        return c;
+    }
+
+    static toJSON(data?: QACondition): { [key: string]: any } | undefined {
+        if (!data) return undefined;
+        return {
+            literals: JSON.parse(JSON.stringify(data.literals))
+        }
     }
 
     static checkIfValid(condition: QACondition) {
         if (!condition.literals) return false;
         let isValid = true;
         condition.literals.forEach((literal) => {
-            let validity: boolean = Object.values(literal).every((x: QALiteral) => !_.isNil(x));
+            let validity: boolean = Object.values(literal).every((x: ILiteral) => !_.isNil(x));
             if (!validity) isValid = false;
         });
         console.log(isValid);
@@ -25,7 +40,7 @@ export class QACondition {
         let newCondition = new QACondition();
         return newCondition;
     }
-    setLiterals(newLiterals: QALiteral[]) {
+    setLiterals(newLiterals: ILiteral[]) {
         this.literals = newLiterals;
         return this;
     }
@@ -38,11 +53,11 @@ export class QACondition {
         return clause;
     }
 
-    get Literals(): Array<QALiteral> {
+    get Literals(): Array<ILiteral> {
         return this.literals;
     }
 
-    addLiteral(literal: QALiteral) {
+    addLiteral(literal: ILiteral) {
         this.literals.push(literal);
         console.log(this.literals);
     }

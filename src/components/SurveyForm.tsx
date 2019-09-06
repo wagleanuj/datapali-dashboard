@@ -10,7 +10,8 @@ import _ from "lodash";
 import { SectionC, RootSection } from "./section";
 import { FormTree } from "./formtree";
 import { QACondition } from "../form/condition";
-import { DuplicateSettings, DupeSettings } from "./duplicateSettings";
+import {  IDupeSettings } from "./duplicateSettings";
+import { dupeSettingsToJSON } from "../utils/util";
 
 export class QASurveyForm {
     content!: (QuestionSection | QAQuestion)[];
@@ -40,13 +41,29 @@ export class QuestionSection {
     name!: string;
     content!: (QuestionSection | QAQuestion)[]
     id: string
-    duplicatingSettings: DupeSettings;
+    duplicatingSettings: IDupeSettings;
     constructor() {
         this.id = getRandomId("ss-");
-        this.duplicatingSettings ={condition: undefined, enabled: false, duplicateTimes: {value: "", type: "number"}}
+        this.duplicatingSettings = { condition: undefined, isEnabled: false, duplicateTimes: { value: "", type: "number" } }
         this.content = []
 
     }
+    static toJSON(a: QuestionSection): any {
+        return ({
+            name: a.name,
+            id: a.id,
+            content: a.content.map(item => {
+                if (item instanceof QuestionSection) {
+                    return QuestionSection.toJSON(item)
+                }
+                else if (item instanceof QAQuestion) {
+                    return QAQuestion.toJSON(item)
+                }
+            }),
+            duplicatingSettings: dupeSettingsToJSON(a.duplicatingSettings)
+        })
+    }
+
     setID(id: string) {
         this.id = id;
         return this;
@@ -71,14 +88,14 @@ export class QuestionSection {
             this.content.splice(found, 1);
         }
     }
-    setDuplicatingSettings(dupe: DupeSettings){
+    setDuplicatingSettings(dupe: IDupeSettings) {
         this.duplicatingSettings = dupe;
         return this;
     }
 }
 
 interface SurveyFormState {
-    activeSection: QuestionSection|RootSection,
+    activeSection: QuestionSection | RootSection,
     activeSectionPath: number[]
     selectedNodes: string[],
     expandedNodes: string[],
@@ -89,7 +106,7 @@ interface SurveyFormProps {
     root: RootSection,
     onChange: (root: RootSection) => void
 }
-export const rootSection = new RootSection().addSection([0]).addQuestion([0], [testQuestion]).addQuestion([0,0], [testQuestion2, testQuestion3]);
+export const rootSection = new RootSection().addSection([0]).addQuestion([0], [testQuestion]).addQuestion([0, 0], [testQuestion2, testQuestion3]);
 console.log(rootSection);
 
 
@@ -97,9 +114,10 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     static defaultProps = {
         root: rootSection,
     }
- 
+
     constructor(props: SurveyFormProps) {
         super(props);
+        console.log(this.props.root);
         this.state = {
             selectedNodes: [],
             expandedNodes: [this.props.root.id],
@@ -119,6 +137,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 root: cloned
             }
         }, () => {
+           let r = (RootSection.toJSON(this.state.root));
+           let rr  = (RootSection.fromJSON(r));
+           console.log(r);
             if (this.props.onChange) this.props.onChange(this.state.root);
         })
     }
@@ -140,22 +161,22 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             let activeSectionPath = prevState.activeSectionPath;
             let parent = path_.slice(0, path_.length - 1);
             let cloned = _.clone(prevState.root);
-            let item = RootSection.getFromPath(path_,[this.state.root]);
-            if(deleteid !==item.id) throw new Error("cannot delete, id mismatch");
-            if(item instanceof QAQuestion){
-                cloned.removeQuestion(item.id,path_);
+            let item = RootSection.getFromPath(path_, [this.state.root]);
+            if (deleteid !== item.id) throw new Error("cannot delete, id mismatch");
+            if (item instanceof QAQuestion) {
+                cloned.removeQuestion(item.id, path_);
             }
-            else if(item instanceof QuestionSection){
+            else if (item instanceof QuestionSection) {
                 cloned.removeSection(item.id, path_);
-                if(item.id===prevState.activeSection.id){
+                if (item.id === prevState.activeSection.id) {
                     let parentSection = RootSection.getFromPath(parent, [this.state.root]);
-                    if(!(parentSection instanceof QAQuestion)){
+                    if (!(parentSection instanceof QAQuestion)) {
                         activeSection = parentSection;
                         activeSectionPath = parent;
                     }
                 }
             }
-        
+
             return {
                 root: cloned,
                 activeSection: activeSection,
@@ -236,8 +257,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         else {
             this.setState((prevState: SurveyFormState) => {
 
-                let parent = _nodePath.length>1? _nodePath.slice(0, _nodePath.length - 1): _nodePath;
-                let parentSection =  RootSection.getFromPath(parent, [prevState.root]);
+                let parent = _nodePath.length > 1 ? _nodePath.slice(0, _nodePath.length - 1) : _nodePath;
+                let parentSection = RootSection.getFromPath(parent, [prevState.root]);
                 let selectedQuestion = RootSection.getFromPath(_nodePath, [prevState.root]);
                 let expandedNodes = prevState.expandedNodes;
                 let selectedNodes = [selectedQuestion.id];
@@ -249,7 +270,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 return {
                     expandedNodes: expandedNodes,
                     selectedNodes: selectedNodes,
-                    activeSection:!(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
+                    activeSection: !(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
                     activeSectionPath: parent
                 }
 
@@ -270,13 +291,13 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             return {
                 expandedNodes: expandedNodes,
                 selectedNodes: selectedNodes,
-                activeSection: !(section instanceof QAQuestion)? section : prevState.activeSection,
+                activeSection: !(section instanceof QAQuestion) ? section : prevState.activeSection,
                 activeSectionPath: path
             }
         })
     }
-    handleDuplicatingSettingsChange( id:string, dupe: DupeSettings){
-        this.setState((prevState: SurveyFormState)=>{
+    handleDuplicatingSettingsChange(id: string, dupe: IDupeSettings) {
+        this.setState((prevState: SurveyFormState) => {
             let cloned = _.clone(prevState.root);
             cloned.sections[id].setDuplicatingSettings(dupe);
             return {
@@ -299,15 +320,15 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                                 selectedNodes={this.state.selectedNodes}
                                 handleNodeExpand={this.handleFormTreeNodeExpand.bind(this)}
                                 handleNodeCollapse={this.handleFormTreeNodeCollapse.bind(this)}
-                                handleNodeClick={this.handleFormTreeNodeClick.bind(this)} 
+                                handleNodeClick={this.handleFormTreeNodeClick.bind(this)}
                                 root_={this.state.root}
                             />
                         </div>
                     </div>
                     <div className="content">
                         <SectionC
-                            definedQuestions = {Object.values(this.props.root.questions)}
-                            handleSectionDuplicatingSettingsChange = {this.handleDuplicatingSettingsChange.bind(this)}
+                            definedQuestions={Object.values(this.props.root.questions)}
+                            handleSectionDuplicatingSettingsChange={this.handleDuplicatingSettingsChange.bind(this)}
                             handleSectionClick={this.handleSectionChange.bind(this)}
                             handleDeleteChildSectionOrQuestion={this.handleDeleteQuestionOrSection.bind(this)}
                             parentPath={this.state.activeSectionPath}

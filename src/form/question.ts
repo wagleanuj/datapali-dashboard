@@ -1,8 +1,9 @@
 import { QACondition } from "./condition";
-import { QAContent, QAType } from "./answer";
+import { IContent, QAType, AnswerType, Answer } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
-import { QAValueType } from "../components/AnswerType";
-import { AnswerOptions, QAOption } from "../components/AnswerOptions";
+import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
+import { AnswerOptions, IOption } from "../components/AnswerOptions";
+import { autoAnswerToJSON, answerTypeToJSON, optionFromJSON, answerTypeFromJSON } from "../utils/util";
 
 export class QAQuestion {
     id!: string;
@@ -10,12 +11,12 @@ export class QAQuestion {
     validate!: Function;
     referenceId!: string;
     appearingCondition!: QACondition;
-    questionContent!: QAContent;
+    questionContent!: IContent;
     creationDate!: number;
-    autoAnswer!: QAAutoAnswer
+    autoAnswer!: IAutoAnswer
     options!: AnswerOptions;
-    answerType!: QAValueType;
-    content=[]
+    answerType!: IValueType;
+    content = []
 
     constructor() {
         this.autoAnswer = {
@@ -25,9 +26,33 @@ export class QAQuestion {
         this.id = getRandomId("q-");
         this.questionContent = { content: "", type: QAType.String }
     }
-    updateFromQuestion(q: QAQuestion){
+
+    static toJSON(a: QAQuestion) {
+        let r = {
+            id: a.id,
+            isRequired: a.isRequired,
+            appearingCondition: QACondition.toJSON(a.appearingCondition),
+            questionContent: { content: a.questionContent.content, type: a.questionContent.type },
+            autoAnswer: autoAnswerToJSON(a.autoAnswer),
+            options: AnswerOptions.toJSON(a.options),
+            answerType: answerTypeToJSON(a.answerType),
+        }
+        return r;
+    }
+    static fromJSON(a: any):QAQuestion{
+        let q = new QAQuestion();
+        q.id = a.id;
+        q.isRequired = a.isRequired;
+        q.appearingCondition = QACondition.fromJSON(a.appearingCondition);
+        q.questionContent = a.questionContent as IContent;
+        q.options = AnswerOptions.fromJSON(a.options);
+        q.answerType = answerTypeFromJSON(a.answerType);
+        return q;
+    }
+
+    updateFromQuestion(q: QAQuestion) {
         this.isRequired = q.isRequired;
-        this.validate =   q.validate;
+        this.validate = q.validate;
         this.appearingCondition = q.appearingCondition;
         this.questionContent = q.questionContent;
         this.autoAnswer = q.autoAnswer;
@@ -50,7 +75,7 @@ export class QAQuestion {
         this.appearingCondition = cond;
         return this;
     }
-    setAutoAnswer(a: QAAutoAnswer) {
+    setAutoAnswer(a: IAutoAnswer) {
         this.autoAnswer = a;
         return this;
     }
@@ -60,7 +85,7 @@ export class QAQuestion {
         return this;
     }
 
-    setQuestionContent(content: QAContent) {
+    setQuestionContent(content: IContent) {
         this.questionContent = content;
         return this;
     }
@@ -77,12 +102,12 @@ export class QAQuestion {
         return this;
     }
 
-    addAutoAnswerCondition(aaCond: QAAnswerCondition) {
+    addAutoAnswerCondition(aaCond: IAnswerCondition) {
         this.autoAnswer.answeringConditions.push(aaCond);
         return this;
     }
 
-    setAnswerType(type: QAValueType) {
+    setAnswerType(type: IValueType) {
         this.answerType = type;
         return this;
     }
@@ -94,18 +119,41 @@ export class QAQuestion {
 }
 
 
-export interface QAAutoAnswer {
+export interface IAutoAnswer {
     isEnabled: Boolean,
-    answeringConditions: Array<QAAnswerCondition>
+    answeringConditions: Array<IAnswerCondition>
 }
 
-export interface QAAnswerCondition {
+export interface IAnswerCondition {
     condition: QACondition,
-    ifTrue: QAOption,
-    ifFalse: QAOption// or could make a task class
+    ifTrue: IOption,
+    ifFalse: IOption// or could make a task class
 }
 
-export interface AnswerOption {
+
+export interface IAnswerOption {
     value: string,
-
 }
+
+
+
+// export class DPValueType implements IValueType {
+//     name!: ANSWER_TYPES
+//     ofType?: IValueType | undefined;
+
+//     static toJSON(valType?: DPValueType): { [key: string]: any } {
+//         if (!valType) return {}
+//         return {
+//             name: valType.name,
+//             ofType: DPValueType.toJSON(valType.ofType)
+//         }
+//     }
+
+//     static fromJSON(val?: { [key: string]: any }) {
+//         if (!val) return undefined;
+//         let r = new DPValueType();
+//         r.name = val.name;
+//         r.ofType = DPValueType.fromJSON(val.ofType);
+//         return r;
+//     }
+// }

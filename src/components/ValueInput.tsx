@@ -1,14 +1,14 @@
 import React from "react";
 import Select from 'react-select';
 import { AnswerType } from "../form/answer";
-import { customStyles, SelectOption } from "./DPFormItem";
-import { AnswerOption } from "../form/question";
+import { customStyles, ISelectOption } from "./DPFormItem";
+import { IAnswerOption } from "../form/question";
 
 interface ValueInputProps {
     onChange: Function,
     questionType: AnswerType|undefined,
-    options?: SelectOption[],
-    value: AnswerOption 
+    options?: ISelectOption[],
+    value: IAnswerOption 
 }
 
 interface ValueInputState {

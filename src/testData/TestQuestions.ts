@@ -1,15 +1,15 @@
 import { QAQuestion } from "../form/question";
 
 import {  QAType } from "../form/answer";
-import { QAValueType, ANSWER_TYPES } from "../components/AnswerType";
-import { AnswerOptions, QAOption } from "../components/AnswerOptions";
+import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
+import { AnswerOptions, IOption } from "../components/AnswerOptions";
 import { getRandomId } from "../utils/getRandomId";
 import { RootSection } from "../components/section";
 
-const selectString: QAValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.STRING } }
-const selectBoolean: QAValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.BOOLEAN } }
-const selectNumber: QAValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.NUMBER } }
-const makeStringOption = (value: string): QAOption => {
+const selectString: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.STRING } }
+const selectBoolean: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.BOOLEAN } }
+const selectNumber: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.NUMBER } }
+const makeStringOption = (value: string): IOption => {
     return { id: getRandomId("opt-"), value: value }
 }
 const catOptions = new AnswerOptions();

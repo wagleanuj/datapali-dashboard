@@ -1,7 +1,7 @@
 import React from "react";
 import { Button, Row, ModalFooter, ModalBody } from "reactstrap";
 import { QACondition } from "../form/condition";
-import { QALiteral } from "../form/answer";
+import { ILiteral } from "../form/answer";
 import Modal from "react-modal";
 import { CreateCondition } from "./CreateCondition";
 
@@ -9,14 +9,14 @@ import { CreateCondition } from "./CreateCondition";
 
 interface CreateConditionModalState {
     isOpen: boolean,
-    literals: QALiteral[],
+    literals: ILiteral[],
     errors: { message: string }[]
 }
 
 interface CreateConditionModalProp {
     isOpen: boolean
-    onSubmit?: (data: QALiteral[]) => void;
-    onCancel?: (data: QALiteral[]) => void;
+    onSubmit?: (data: ILiteral[]) => void;
+    onCancel?: (data: ILiteral[]) => void;
     condition?: QACondition
 }
 
@@ -37,7 +37,7 @@ export class CreateConditionModal extends React.Component<CreateConditionModalPr
         };
         this.createCondition_ = React.createRef();
     }
-    handleChange = (data: QALiteral[]) => {
+    handleChange = (data: ILiteral[]) => {
         this.setState({
             errors: [],
             literals: data

@@ -4,32 +4,32 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Select from 'react-select';
 import { Button, Table, Card, CardHeader, CardBody, Row } from "reactstrap";
 import { QAFollowingOperator, QACondition } from "../form/condition";
-import { QALiteral, QAComparisonOperator, QAType, QAContent } from "../form/answer";
-import { QAQuestion, AnswerOption } from "../form/question";
+import { ILiteral, QAComparisonOperator, QAType, IContent } from "../form/answer";
+import { QAQuestion, IAnswerOption } from "../form/question";
 import { ValueType } from "react-select/src/types";
 import { getRandomId } from "../utils/getRandomId";
-import { TableFieldType, customStyles, SelectOption, getOperatorForType } from "./DPFormItem";
+import { TableFieldType, customStyles, ISelectOption, getOperatorForType } from "./DPFormItem";
 import _ from "lodash";
 import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from "../testData/TestQuestions";
 import { ValInput } from "./ValInput";
-export type CreateConditionState = {
-    literals: QALiteral[]
+type CreateConditionState = {
+    literals: ILiteral[]
 };
 
-export type CreateConditionProps = {
+type CreateConditionProps = {
     definedQuestions?: { [key: string]: QAQuestion }
-    onChange?: (data: QALiteral[]) => void
-    literals?: Array<QALiteral>
+    onChange?: (data: ILiteral[]) => void
+    literals?: Array<ILiteral>
     setLiteralsSetter?: Function
     condition?: QACondition
-
 }
+
 export class CreateCondition extends React.Component<CreateConditionProps, CreateConditionState> {
     columns: {
         dataField: string;
         text: string;
     }[];
-    static defaultProps(): CreateConditionProps {
+    static get defaultProps(): CreateConditionProps {
         return {
             onChange: () => { },
             definedQuestions: { 'question-1': testQuestion, 'question-2': testQuestion2, "question-3": testQuestion3, "question-4": testQuestion4, "question-5": testQuestion5 }
@@ -68,12 +68,12 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
             this.props.setLiteralsSetter(this.setLiterals.bind(this));
         }
     }
-    setLiterals(newLiterals: QALiteral[]) {
+    setLiterals(newLiterals: ILiteral[]) {
         this.setState({
             literals: newLiterals
         });
     }
-    addLiteral(literal?: QALiteral) {
+    addLiteral(literal?: ILiteral) {
         if (!literal)
             literal = { literalId: getRandomId("lit-"), questionRef: undefined, comparisonOperator: undefined, comparisonValue: undefined, followingOperator: undefined };
 
@@ -83,6 +83,7 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
             return { literals: newLiterals };
         }, () => {
             if (this.props.onChange) {
+
                 this.props.onChange(this.state.literals);
             }
         });
@@ -103,7 +104,7 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
     }
     handleDataChange(literalIndex: number, valueField: TableFieldType, newValue: any) {
         this.setState((prevState: CreateConditionState) => {
-            let newLiterals: QALiteral[] = _.clone(prevState.literals);
+            let newLiterals: ILiteral[] = _.clone(prevState.literals);
             let current = newLiterals[literalIndex];
             switch (valueField) {
                 case TableFieldType.QuestionRef:
@@ -121,7 +122,7 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                     }
                     break;
                 case TableFieldType.ComparisonValue:
-                    let newComparisonValue: QAContent = { content: newValue.value, type: QAType.String };
+                    let newComparisonValue: IContent = { content: newValue.value, type: QAType.String };
                     current.comparisonValue = newComparisonValue;
                     break;
                 case TableFieldType.FollowingOperator:
@@ -174,17 +175,17 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                             </tr>
                         </thead>
                         <tbody>
-                            {this.state.literals.map((item: QALiteral, key: number) => {
+                            {this.state.literals.map((item: ILiteral, key: number) => {
                                 let questions_ = this.props.definedQuestions ? Object.values(this.props.definedQuestions).map((item: QAQuestion) => ({ value: item.referenceId, label: item.questionContent.content })) : [];
-                                let questionselect = <Select key={`literalq-${key}-${item.literalId}`} styles={customStyles} options={questions_} value={questions_.find((r: { value: string, label: string }) => r.value === item.questionRef)} onChange={(selecteOption: ValueType<AnswerOption>) => this.handleDataChange(key, TableFieldType.QuestionRef, selecteOption)} />;
+                                let questionselect = <Select key={`literalq-${key}-${item.literalId}`} styles={customStyles} options={questions_} value={questions_.find((r: { value: string, label: string }) => r.value === item.questionRef)} onChange={(selecteOption: ValueType<IAnswerOption>) => this.handleDataChange(key, TableFieldType.QuestionRef, selecteOption)} />;
                                 let selectedQuestionType = item.questionRef && this.props.definedQuestions ? this.props.definedQuestions[item.questionRef].answerType : undefined;
-                                let comparisionOPOptions_: SelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }));
+                                let comparisionOPOptions_: ISelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }));
                                 let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
                                 let question_: QAQuestion | null = this.getQuestion(item.questionRef);
                                 let qAnswerType = question_ ? question_.answerType : undefined;
                                 let qOptions = question_ && question_.options ? question_.options : undefined;
                                 let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={item.comparisonValue && item.comparisonValue.content} type={qAnswerType} />;
-                                let followingOperatorOptions_: SelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
+                                let followingOperatorOptions_: ISelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
                                 let followingOperatorSelect = <Select key={`literalfo-${key}-${item.literalId}`} styles={customStyles} options={followingOperatorOptions_} value={followingOperatorOptions_.find(r => r.value === item.followingOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.FollowingOperator)} />;
                                 return <tr key={"tr_" + key}>
                                     <td><Button type="button" size="sm" onClick={() => this.moveLiteralUp(key)}><FontAwesomeIcon icon={faArrowUp} /></Button></td>

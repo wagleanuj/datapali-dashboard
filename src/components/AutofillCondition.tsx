@@ -1,27 +1,26 @@
 import React from "react";
 import { Table, Button } from "reactstrap";
 import { QACondition } from "../form/condition";
-import {  QALiteral } from "../form/answer";
+import {  ILiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { QAAnswerCondition } from "../form/question";
-import { QAValueType } from "./AnswerType";
+import { IAnswerCondition } from "../form/question";
+import { IValueType } from "./AnswerType";
 import { ValInput } from "./ValInput";
 import {  AnswerOptions } from "./AnswerOptions";
 
 interface AutoAnswerProps {
     onChange: Function,
     options: AnswerOptions,
-    answerType: QAValueType
+    answerType: IValueType
 }
 interface AutoAnswerState {
-    aConditions: QAAnswerCondition[];
+    aConditions: IAnswerCondition[];
     isEnabled: boolean,
-
 }
 
 export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnswerState> {
@@ -58,7 +57,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
 
 
     openConditionModal(index: number) {
-        let condition: QAAnswerCondition = this.state.aConditions[index];
+        let condition: IAnswerCondition = this.state.aConditions[index];
 
         let el = <CreateConditionModal
             isOpen={true}
@@ -75,7 +74,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                 condition: new QACondition(),
                 ifTrue: undefined,
                 ifFalse: undefined
-            } as unknown as QAAnswerCondition)
+            } as unknown as IAnswerCondition)
             return {
                 aConditions: newConditions
             }
@@ -85,7 +84,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
         })
     }
 
-    editCondition(index: number, data: QALiteral[]) {
+    editCondition(index: number, data: ILiteral[]) {
         let cloned = _.clone(this.state.aConditions);
         let condition = cloned[index].condition;
         if (!condition) {
@@ -136,7 +135,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                         </tr>
                     </thead>
                     <tbody>
-                        {this.state.aConditions.map((item: QAAnswerCondition, index: number) => {
+                        {this.state.aConditions.map((item: IAnswerCondition, index: number) => {
                    
                             let comparisonValueSelect = (ifFalseOrTrue: string) => <ValInput
                                 key={`literalv-${getRandomId()}`}

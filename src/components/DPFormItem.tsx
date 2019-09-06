@@ -11,20 +11,20 @@ import {
     FormGroup,
 } from "reactstrap";
 import { QACondition } from "../form/condition";
-import { QALiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
-import { QAQuestion, QAAutoAnswer } from "../form/question";
+import { ILiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
+import { QAQuestion, IAutoAnswer } from "../form/question";
 import { QAAddOptions as AddOption } from "./AddOptions";
 import { AnswerOptions } from "./AnswerOptions";
 import Modal from "react-modal";
 import { openModal, destroyModal } from "../utils/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ANSWER_TYPES, AnswerTypeInput, QAValueType } from "./AnswerType";
+import { ANSWER_TYPES, AnswerTypeInput, IValueType } from "./AnswerType";
 import { Switch } from "@blueprintjs/core";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
-export function getOperatorForType(valueType?: QAValueType) {
+export function getOperatorForType(valueType?: IValueType) {
     let allOperators = Object.values(QAComparisonOperator);
     let type = valueType && valueType.name;
 
@@ -143,11 +143,12 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
         openModal(el);
     }
 
-    editAppearingCondition(newLiterals: QALiteral[]) {
+    editAppearingCondition(newLiterals: ILiteral[]) {
         this.setState((prevState: any) => {
             let question: QAQuestion = _.clone(prevState.question)
             if (!question.appearingCondition) question.setAppearingCondition(new QACondition())
-            question.appearingCondition.setLiterals(newLiterals)
+            question.appearingCondition.setLiterals(newLiterals);
+            console.log(QACondition.toJSON(question.appearingCondition));
             return {
                 question: question
             }
@@ -165,7 +166,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
             }
         }, this.handleChange.bind(this))
     }
-    handleAnswerTypeChange(type: QAValueType) {
+    handleAnswerTypeChange(type: IValueType) {
         this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
             question.setAnswerType(type);
@@ -183,7 +184,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
             }
         }, this.handleChange.bind(this))
     }
-    handleAutoFillChange(autoanswer: QAAutoAnswer) {
+    handleAutoFillChange(autoanswer: IAutoAnswer) {
         this.setState((prevState: any) => {
             let cloned: QAQuestion = _.clone(prevState.question);
             cloned.setAutoAnswer(autoanswer)
@@ -219,7 +220,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
                             {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
                                 <label >Add Options</label>
                                 <Card>
-                                    <AddOption onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={new AnswerOptions()} />
+                                    <AddOption onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={this.state.question.options} />
                                 </Card>
                             </FormGroup>}
 
@@ -259,7 +260,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
     }
 }
 
-export interface SelectOption {
+export interface ISelectOption {
     value: string | keyof typeof AnswerType,
     label: string
 }

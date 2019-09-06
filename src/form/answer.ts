@@ -1,9 +1,9 @@
 import { QACondition, QAFollowingOperator } from "./condition";
 
 export class Answer {
-    content: QAContent;
+    content: IContent;
     condition!: QACondition;
-    constructor(content: QAContent) {
+    constructor(content: IContent) {
         this.content = content;
     }
 
@@ -11,11 +11,11 @@ export class Answer {
         return this.condition;
     }
 
-    get Content(): QAContent {
+    get Content(): IContent {
         return this.content;
     }
 
-    setContent(content: QAContent) {
+    setContent(content: IContent) {
         this.content = content;
         return this;
     }
@@ -26,7 +26,7 @@ export class Answer {
     }
 }
 
-export interface QAContent {
+export interface IContent {
     content: string
     type: QAType
 }
@@ -39,11 +39,11 @@ export enum QAComparisonOperator {
     Equal = "=="
 }
 
-export interface QALiteral {
+export interface ILiteral {
     literalId: string 
     questionRef: string | undefined
     comparisonOperator: QAComparisonOperator | undefined,
-    comparisonValue: QAContent | undefined,
+    comparisonValue: IContent | undefined,
     followingOperator: QAFollowingOperator | undefined
 }
 

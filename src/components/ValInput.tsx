@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { ANSWER_TYPES, QAValueType } from "./AnswerType";
+import { ANSWER_TYPES, IValueType } from "./AnswerType";
 import { TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprintjs/datetime"
 import { ButtonGroup, Divider } from "@blueprintjs/core";
 import Select from "react-select"
@@ -13,7 +13,7 @@ interface RangeValue {
 
 
 interface RangeInputProps {
-    type: QAValueType,
+    type: IValueType,
     value: string,
     onChange: (newRange: string) => void
 }
@@ -137,7 +137,7 @@ const TimeRange = (props: TimeRangeProps = defaultTimeRangeProps) => {
 }
 
 interface ValInputProps {
-    type: QAValueType,
+    type: IValueType,
     defaultValue?: any,
     options?: AnswerOptions | undefined,
     onChange: (newValue: any) => void
@@ -163,8 +163,8 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
         let comp = null;
         switch (this.props.type.name) {
             case ANSWER_TYPES.NUMBER:
-                comp = <input className="form-control" type="number" onChange={e => {
-                    if (this.props.onChange) this.props.onChange(e.target.value)
+                comp = <input defaultValue={this.props.defaultValue} className="form-control" type="number" onChange={e => {
+                    if (this.props.onChange) this.props.onChange({value:e.target.value})
                 }}
                 />
                 break;
@@ -221,7 +221,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
 }
 interface SelInputProps {
     options?: AnswerOptions,
-    type?: QAValueType,
+    type?: IValueType,
     defaultValue?: string,
     onChange: (data: any) => void
 }

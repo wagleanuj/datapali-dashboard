@@ -6,20 +6,20 @@ import Select from "react-select";
 import { customStyles } from "./DPFormItem";
 import _ from "lodash";
 
-type DuplicateTimesType = "questionRef"|"number";
+export type DuplicateTimesType = "questionRef"|"number";
 
-export interface DupeSettings {
-    enabled: boolean, 
+export interface IDupeSettings {
+    isEnabled: boolean, 
     condition?: QACondition,
     duplicateTimes: {value: string, type: DuplicateTimesType},
 }
-interface DuplicateSettingsProps extends DupeSettings {
+interface DuplicateSettingsProps extends IDupeSettings {
     definedQuestions: QAQuestion[],
-    handleSave: (dupe: DupeSettings)=>void,
+    handleSave: (dupe: IDupeSettings)=>void,
     handleCancel : ()=>void
 
 }
-interface DuplicateSettingsState  extends DupeSettings{
+interface DuplicateSettingsState  extends IDupeSettings{
 
 }
 
@@ -27,7 +27,7 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
     constructor(props: DuplicateSettingsProps){
         super(props);
         this.state = {
-            enabled: this.props.enabled,
+            isEnabled: this.props.isEnabled,
             condition: this.props.condition,
             duplicateTimes: this.props.duplicateTimes
         }
@@ -53,7 +53,7 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
     private handleEnabledChange(){
         this.setState((prevState: DuplicateSettingsState)=>{
             return {
-                enabled: !prevState.enabled
+                isEnabled: !prevState.isEnabled
             }
         })
     }
@@ -68,7 +68,7 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
     private handleSave(){
         let isInvalid = _.values(this.state).every(_.isEmpty);
         if(!isInvalid){
-            this.props.handleSave({enabled: this.state.enabled, condition: this.state.condition, duplicateTimes: this.state.duplicateTimes})
+            this.props.handleSave({isEnabled: this.state.isEnabled, condition: this.state.condition, duplicateTimes: this.state.duplicateTimes})
         }
     }
 
@@ -80,7 +80,7 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
             <div style={{paddingTop: 10}}>
 
             <ButtonGroup className = {Classes.ELEVATION_2} vertical fill>
-                <Switch  onChange = {this.handleEnabledChange.bind(this)} defaultChecked={this.props.enabled}>Enabled</Switch>
+                <Switch  onChange = {this.handleEnabledChange.bind(this)} defaultChecked={this.props.isEnabled}>Enabled</Switch>
                 <Divider/>
                 <Select menuContainerStyle={{zIndex: 99999}} styles={customStyles} onChange = {(e:any)=>this.handleTypeChange(e)} options = {typeOptions} defaultValue={defaultValue}></Select>
                 {this.generateValueComponent(this.state.duplicateTimes.type)}
