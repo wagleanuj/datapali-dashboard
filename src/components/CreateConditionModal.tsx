@@ -4,6 +4,7 @@ import { QACondition } from "../form/condition";
 import { ILiteral } from "../form/answer";
 import Modal from "react-modal";
 import { CreateCondition } from "./CreateCondition";
+import { QAQuestion } from "../form/question";
 
 
 
@@ -15,6 +16,7 @@ interface CreateConditionModalState {
 
 interface CreateConditionModalProp {
     isOpen: boolean
+    definedQuestions: {[key:string]: QAQuestion}
     onSubmit?: (data: ILiteral[]) => void;
     onCancel?: (data: ILiteral[]) => void;
     condition?: QACondition
@@ -80,7 +82,7 @@ export class CreateConditionModal extends React.Component<CreateConditionModalPr
         return (<Modal style={customStyles} isOpen={this.props.isOpen}>
             <ModalBody>
 
-                {this.props.isOpen && <CreateCondition condition={this.props.condition ? this.props.condition : undefined} ref={this.createCondition_} onChange={(data) => this.handleChange(data)} />}
+                {this.props.isOpen && <CreateCondition definedQuestions = {this.props.definedQuestions} condition={this.props.condition ? this.props.condition : undefined} ref={this.createCondition_} onChange={(data) => this.handleChange(data)} />}
                 <Row>
                     <div className="btn-danger">{this.state.errors.map((item: { message: string }) => item.message)}</div>
                 </Row>

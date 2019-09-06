@@ -12,7 +12,7 @@ import { dupeSettingsFromJSON } from "../utils/util";
 
 interface SectionCProps {
     section: QuestionSection | RootSection,
-    definedQuestions: QAQuestion[],
+    definedQuestions: {[key:string]: QAQuestion}
     handleQuestionChange: (question: QAQuestion, _path: number[]) => void,
     parentPath: number[],
     handleDeleteChildSectionOrQuestion: (deleteid: string, _path: number[]) => void,
@@ -46,7 +46,7 @@ export class SectionC extends React.Component<SectionCProps, SectionCState>{
             let childPath = this.props.parentPath.concat(index);
             if (item instanceof QAQuestion) {
                 return <QuestionButton path={childPath} questionId={item.id} handleDeletion={this.props.handleDeleteChildSectionOrQuestion} readablePath={readablePath + (index + 1)} key={item.id} isExpanded={false}>
-                    <DPFormItem onChange={(q) => this.handleQuestionChange(q, childPath)} question={item} />
+                    <DPFormItem definedQuestions = {this.props.definedQuestions} onChange={(q) => this.handleQuestionChange(q, childPath)} question={item} />
                 </QuestionButton>
             }
             else if (item instanceof QuestionSection) {

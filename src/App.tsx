@@ -29,7 +29,7 @@ class App extends React.Component<any, any> {
   }
 }
 const demo = {
-  "id": "root-f2a26046-c266-5407-48a5-9c60cff67f26",
+  "id": "root-b81e7724-0a7a-40fe-7ddd-1f5741d2d17a",
   "content": [
     {
       "id": "ss-76662375-aee2-e050-a91b-268924d8dddd",
@@ -66,10 +66,10 @@ const demo = {
                   "literals": [
                     {
                       "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                      "questionRef": "question-1",
+                      "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                       "comparisonOperator": ">=",
                       "comparisonValue": {
-                        "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                        "content": "opt-0",
                         "type": "string"
                       },
                       "followingOperator": "&"
@@ -80,6 +80,7 @@ const demo = {
                   "name": "number"
                 },
                 "id": "opt-0",
+                "value": "45",
                 "groupName": "ni"
               },
               "opt-1": {
@@ -107,10 +108,10 @@ const demo = {
                       "literals": [
                         {
                           "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                          "questionRef": "question-1",
+                          "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                           "comparisonOperator": ">=",
                           "comparisonValue": {
-                            "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                            "content": "opt-0",
                             "type": "string"
                           },
                           "followingOperator": "&"
@@ -121,6 +122,7 @@ const demo = {
                       "name": "number"
                     },
                     "id": "opt-0",
+                    "value": "45",
                     "groupName": "ni"
                   },
                   {
@@ -186,7 +188,19 @@ const demo = {
             },
             "duplicateTimes": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -198,8 +212,66 @@ const demo = {
           "content": [],
           "duplicatingSettings": {
             "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
             "duplicateTimes": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            }
+          }
+        },
+        {
+          "id": "ss-1570f1f8-c1a4-841d-e4fb-2c789f085c03",
+          "content": [],
+          "duplicatingSettings": {
+            "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
+            "duplicateTimes": {
+              "value": {
+                "value": {
+                  "value": {
+                    "value": "",
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            }
+          }
+        },
+        {
+          "id": "ss-92c93457-cf51-d8e5-b024-314551f77132",
+          "content": [],
+          "duplicatingSettings": {
+            "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
+            "duplicateTimes": {
+              "value": {
+                "value": {
+                  "value": "",
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             }
           }
@@ -214,7 +286,19 @@ const demo = {
           "value": {
             "value": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -227,6 +311,7 @@ const demo = {
     },
     {
       "id": "q-a93bd9a3-70aa-e03c-5af7-6542a56cd585",
+      "isRequired": true,
       "appearingCondition": {
         "literals": []
       },
@@ -235,57 +320,98 @@ const demo = {
         "type": "string"
       },
       "autoAnswer": {
-        "isEnabled": false,
-        "answeringConditions": []
+        "isEnabled": true,
+        "answeringConditions": [
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-1",
+            "ifFalse": "opt-2"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-3"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-2"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-1"
+          }
+        ]
       },
       "options": {
         "optionsMap": {
-          "opt-f829c6d2-d91f-50ad-3c18-e307c2aff83d": {
+          "opt-0": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-f829c6d2-d91f-50ad-3c18-e307c2aff83d",
-            "value": "cat0"
-          },
-          "opt-144ce4d7-3351-3327-78fe-da2ce0cdbef6": {
-            "appearingCondition": {
-              "literals": []
+            "type": {
+              "name": "string"
             },
-            "type": {},
-            "id": "opt-144ce4d7-3351-3327-78fe-da2ce0cdbef6",
+            "id": "opt-0",
             "value": "cat1"
           },
-          "opt-c6fda469-1194-57a6-5c6b-ee6cda462634": {
+          "opt-1": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-c6fda469-1194-57a6-5c6b-ee6cda462634",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-1",
             "value": "cat2"
           },
-          "opt-3dfa4960-99ea-76c6-f64d-3407b1ba02ca": {
+          "opt-2": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-3dfa4960-99ea-76c6-f64d-3407b1ba02ca",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-2",
             "value": "cat3"
           },
-          "opt-e7c4e53b-791c-ecbd-4560-ea7946c81d8c": {
+          "opt-3": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-e7c4e53b-791c-ecbd-4560-ea7946c81d8c",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-3",
             "value": "cat4"
+          },
+          "opt-4": {
+            "appearingCondition": {
+              "literals": []
+            },
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-4",
+            "value": "cat5"
           }
         },
         "optionGroupMap": {}
       },
       "answerType": {
         "name": "select",
-        "ofType": {}
+        "ofType": {
+          "name": "string"
+        }
       }
     },
     {
@@ -300,7 +426,19 @@ const demo = {
           "value": {
             "value": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -322,7 +460,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -342,7 +492,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -362,7 +524,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -382,7 +556,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -402,7 +588,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -422,7 +620,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -442,7 +652,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -462,7 +684,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -482,7 +716,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -502,7 +748,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -522,7 +780,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -542,11 +812,51 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
           },
+          "type": "number"
+        }
+      }
+    },
+    {
+      "id": "ss-eed81b34-e961-2fd1-9565-25a9da34193a",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "condition": {
+          "literals": []
+        },
+        "duplicateTimes": {
+          "value": {
+            "value": "",
+            "type": "number"
+          },
+          "type": "number"
+        }
+      }
+    },
+    {
+      "id": "ss-e6e6b75c-c1f5-4ca4-8753-d44012eebd26",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "duplicateTimes": {
+          "value": "",
           "type": "number"
         }
       }
@@ -585,10 +895,10 @@ const demo = {
               "literals": [
                 {
                   "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                  "questionRef": "question-1",
+                  "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                   "comparisonOperator": ">=",
                   "comparisonValue": {
-                    "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                    "content": "opt-0",
                     "type": "string"
                   },
                   "followingOperator": "&"
@@ -599,6 +909,7 @@ const demo = {
               "name": "number"
             },
             "id": "opt-0",
+            "value": "45",
             "groupName": "ni"
           },
           "opt-1": {
@@ -626,10 +937,10 @@ const demo = {
                   "literals": [
                     {
                       "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                      "questionRef": "question-1",
+                      "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                       "comparisonOperator": ">=",
                       "comparisonValue": {
-                        "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                        "content": "opt-0",
                         "type": "string"
                       },
                       "followingOperator": "&"
@@ -640,6 +951,7 @@ const demo = {
                   "name": "number"
                 },
                 "id": "opt-0",
+                "value": "45",
                 "groupName": "ni"
               },
               {
@@ -697,6 +1009,7 @@ const demo = {
     },
     "q-a93bd9a3-70aa-e03c-5af7-6542a56cd585": {
       "id": "q-a93bd9a3-70aa-e03c-5af7-6542a56cd585",
+      "isRequired": true,
       "appearingCondition": {
         "literals": []
       },
@@ -705,57 +1018,98 @@ const demo = {
         "type": "string"
       },
       "autoAnswer": {
-        "isEnabled": false,
-        "answeringConditions": []
+        "isEnabled": true,
+        "answeringConditions": [
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-1",
+            "ifFalse": "opt-2"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-3"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-2"
+          },
+          {
+            "condition": {
+              "literals": []
+            },
+            "ifTrue": "opt-2",
+            "ifFalse": "opt-1"
+          }
+        ]
       },
       "options": {
         "optionsMap": {
-          "opt-f829c6d2-d91f-50ad-3c18-e307c2aff83d": {
+          "opt-0": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-f829c6d2-d91f-50ad-3c18-e307c2aff83d",
-            "value": "cat0"
-          },
-          "opt-144ce4d7-3351-3327-78fe-da2ce0cdbef6": {
-            "appearingCondition": {
-              "literals": []
+            "type": {
+              "name": "string"
             },
-            "type": {},
-            "id": "opt-144ce4d7-3351-3327-78fe-da2ce0cdbef6",
+            "id": "opt-0",
             "value": "cat1"
           },
-          "opt-c6fda469-1194-57a6-5c6b-ee6cda462634": {
+          "opt-1": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-c6fda469-1194-57a6-5c6b-ee6cda462634",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-1",
             "value": "cat2"
           },
-          "opt-3dfa4960-99ea-76c6-f64d-3407b1ba02ca": {
+          "opt-2": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-3dfa4960-99ea-76c6-f64d-3407b1ba02ca",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-2",
             "value": "cat3"
           },
-          "opt-e7c4e53b-791c-ecbd-4560-ea7946c81d8c": {
+          "opt-3": {
             "appearingCondition": {
               "literals": []
             },
-            "type": {},
-            "id": "opt-e7c4e53b-791c-ecbd-4560-ea7946c81d8c",
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-3",
             "value": "cat4"
+          },
+          "opt-4": {
+            "appearingCondition": {
+              "literals": []
+            },
+            "type": {
+              "name": "string"
+            },
+            "id": "opt-4",
+            "value": "cat5"
           }
         },
         "optionGroupMap": {}
       },
       "answerType": {
         "name": "select",
-        "ofType": {}
+        "ofType": {
+          "name": "string"
+        }
       }
     }
   },
@@ -795,10 +1149,10 @@ const demo = {
                   "literals": [
                     {
                       "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                      "questionRef": "question-1",
+                      "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                       "comparisonOperator": ">=",
                       "comparisonValue": {
-                        "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                        "content": "opt-0",
                         "type": "string"
                       },
                       "followingOperator": "&"
@@ -809,6 +1163,7 @@ const demo = {
                   "name": "number"
                 },
                 "id": "opt-0",
+                "value": "45",
                 "groupName": "ni"
               },
               "opt-1": {
@@ -836,10 +1191,10 @@ const demo = {
                       "literals": [
                         {
                           "literalId": "lit-3a8a474e-6116-742c-554d-4847e95c20a3",
-                          "questionRef": "question-1",
+                          "questionRef": "q-3682ec18-23cf-9ea1-9c17-bd9a66adf4fd",
                           "comparisonOperator": ">=",
                           "comparisonValue": {
-                            "content": "opt-b4a155a5-465f-3243-3c89-ab3d69050cd8",
+                            "content": "opt-0",
                             "type": "string"
                           },
                           "followingOperator": "&"
@@ -850,6 +1205,7 @@ const demo = {
                       "name": "number"
                     },
                     "id": "opt-0",
+                    "value": "45",
                     "groupName": "ni"
                   },
                   {
@@ -915,7 +1271,19 @@ const demo = {
             },
             "duplicateTimes": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -927,8 +1295,66 @@ const demo = {
           "content": [],
           "duplicatingSettings": {
             "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
             "duplicateTimes": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            }
+          }
+        },
+        {
+          "id": "ss-1570f1f8-c1a4-841d-e4fb-2c789f085c03",
+          "content": [],
+          "duplicatingSettings": {
+            "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
+            "duplicateTimes": {
+              "value": {
+                "value": {
+                  "value": {
+                    "value": "",
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            }
+          }
+        },
+        {
+          "id": "ss-92c93457-cf51-d8e5-b024-314551f77132",
+          "content": [],
+          "duplicatingSettings": {
+            "isEnabled": false,
+            "condition": {
+              "literals": []
+            },
+            "duplicateTimes": {
+              "value": {
+                "value": {
+                  "value": "",
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             }
           }
@@ -943,7 +1369,19 @@ const demo = {
           "value": {
             "value": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -964,7 +1402,88 @@ const demo = {
         },
         "duplicateTimes": {
           "value": {
-            "value": "",
+            "value": {
+              "value": {
+                "value": {
+                  "value": {
+                    "value": "",
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            },
+            "type": "number"
+          },
+          "type": "number"
+        }
+      }
+    },
+    "ss-e9f5253e-148f-3a01-93fa-f16c29420523": {
+      "id": "ss-e9f5253e-148f-3a01-93fa-f16c29420523",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "condition": {
+          "literals": []
+        },
+        "duplicateTimes": {
+          "value": {
+            "value": {
+              "value": {
+                "value": {
+                  "value": "",
+                  "type": "number"
+                },
+                "type": "number"
+              },
+              "type": "number"
+            },
+            "type": "number"
+          },
+          "type": "number"
+        }
+      }
+    },
+    "ss-1570f1f8-c1a4-841d-e4fb-2c789f085c03": {
+      "id": "ss-1570f1f8-c1a4-841d-e4fb-2c789f085c03",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "condition": {
+          "literals": []
+        },
+        "duplicateTimes": {
+          "value": {
+            "value": {
+              "value": {
+                "value": "",
+                "type": "number"
+              },
+              "type": "number"
+            },
+            "type": "number"
+          },
+          "type": "number"
+        }
+      }
+    },
+    "ss-92c93457-cf51-d8e5-b024-314551f77132": {
+      "id": "ss-92c93457-cf51-d8e5-b024-314551f77132",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "condition": {
+          "literals": []
+        },
+        "duplicateTimes": {
+          "value": {
+            "value": {
+              "value": "",
+              "type": "number"
+            },
             "type": "number"
           },
           "type": "number"
@@ -983,7 +1502,19 @@ const demo = {
           "value": {
             "value": {
               "value": {
-                "value": "",
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": {
+                        "value": "",
+                        "type": "number"
+                      },
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
                 "type": "number"
               },
               "type": "number"
@@ -1005,7 +1536,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1025,7 +1568,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1045,7 +1600,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1065,7 +1632,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1085,7 +1664,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1105,7 +1696,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1125,7 +1728,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1145,7 +1760,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1165,7 +1792,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1185,7 +1824,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1205,7 +1856,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1225,7 +1888,19 @@ const demo = {
         "duplicateTimes": {
           "value": {
             "value": {
-              "value": "",
+              "value": {
+                "value": {
+                  "value": {
+                    "value": {
+                      "value": "",
+                      "type": "number"
+                    },
+                    "type": "number"
+                  },
+                  "type": "number"
+                },
+                "type": "number"
+              },
               "type": "number"
             },
             "type": "number"
@@ -1234,8 +1909,25 @@ const demo = {
         }
       }
     },
-    "ss-e9f5253e-148f-3a01-93fa-f16c29420523": {
-      "id": "ss-e9f5253e-148f-3a01-93fa-f16c29420523",
+    "ss-eed81b34-e961-2fd1-9565-25a9da34193a": {
+      "id": "ss-eed81b34-e961-2fd1-9565-25a9da34193a",
+      "content": [],
+      "duplicatingSettings": {
+        "isEnabled": false,
+        "condition": {
+          "literals": []
+        },
+        "duplicateTimes": {
+          "value": {
+            "value": "",
+            "type": "number"
+          },
+          "type": "number"
+        }
+      }
+    },
+    "ss-e6e6b75c-c1f5-4ca4-8753-d44012eebd26": {
+      "id": "ss-e6e6b75c-c1f5-4ca4-8753-d44012eebd26",
       "content": [],
       "duplicatingSettings": {
         "isEnabled": false,
@@ -1247,5 +1939,4 @@ const demo = {
     }
   }
 }
-
 export default App;

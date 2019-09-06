@@ -1,6 +1,6 @@
 import { QAQuestion } from "../form/question";
 
-import {  QAType } from "../form/answer";
+import { QAType } from "../form/answer";
 import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
 import { AnswerOptions, IOption } from "../components/AnswerOptions";
 import { getRandomId } from "../utils/getRandomId";
@@ -10,13 +10,13 @@ const selectString: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: AN
 const selectBoolean: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.BOOLEAN } }
 const selectNumber: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.NUMBER } }
 const makeStringOption = (value: string): IOption => {
-    return { id: getRandomId("opt-"), value: value }
+    return { id: getRandomId("opt-"), type: { name: ANSWER_TYPES.STRING }, value: value }
 }
 const catOptions = new AnswerOptions();
 const tvOptions = new AnswerOptions();
 
-for(let i =0;i<5;i++) catOptions.addOption(makeStringOption("cat"+i));
-for(let i =0;i<5;i++) tvOptions.addOption(makeStringOption("tv"+i));
+for (let i = 0; i < 5; i++) catOptions.addOption(makeStringOption("cat" + i));
+for (let i = 0; i < 5; i++) tvOptions.addOption(makeStringOption("tv" + i));
 
 export const testQuestion = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your cat's name?" }).setReferenceId("question-1");
 testQuestion.setOptions(catOptions);

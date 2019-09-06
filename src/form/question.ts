@@ -3,7 +3,7 @@ import { IContent, QAType, AnswerType, Answer } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
 import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
 import { AnswerOptions, IOption } from "../components/AnswerOptions";
-import { autoAnswerToJSON, answerTypeToJSON, optionFromJSON, answerTypeFromJSON } from "../utils/util";
+import { autoAnswerToJSON, answerTypeToJSON, optionFromJSON, answerTypeFromJSON, autoAnswerFromJSON } from "../utils/util";
 
 export class QAQuestion {
     id!: string;
@@ -35,18 +35,19 @@ export class QAQuestion {
             questionContent: { content: a.questionContent.content, type: a.questionContent.type },
             autoAnswer: autoAnswerToJSON(a.autoAnswer),
             options: AnswerOptions.toJSON(a.options),
-            answerType: answerTypeToJSON(a.answerType),
+            answerType: a.answerType ? answerTypeToJSON(a.answerType) : undefined,
         }
         return r;
     }
-    static fromJSON(a: any):QAQuestion{
+    static fromJSON(a: any): QAQuestion {
         let q = new QAQuestion();
         q.id = a.id;
         q.isRequired = a.isRequired;
         q.appearingCondition = QACondition.fromJSON(a.appearingCondition);
         q.questionContent = a.questionContent as IContent;
         q.options = AnswerOptions.fromJSON(a.options);
-        q.answerType = answerTypeFromJSON(a.answerType);
+        if (a.answerType) q.answerType = answerTypeFromJSON(a.answerType);
+        if(a.autoAnswer) q.autoAnswer = autoAnswerFromJSON(a.autoAnswer)
         return q;
     }
 
@@ -96,7 +97,7 @@ export class QAQuestion {
         return this;
     }
 
-    setAutoAnswerEnabled(bool?: Boolean) {
+    setAutoAnswerEnabled(bool?: boolean) {
         if (!bool) this.autoAnswer.isEnabled = true
         else this.autoAnswer.isEnabled = bool;
         return this;
@@ -120,14 +121,14 @@ export class QAQuestion {
 
 
 export interface IAutoAnswer {
-    isEnabled: Boolean,
+    isEnabled: boolean,
     answeringConditions: Array<IAnswerCondition>
 }
 
 export interface IAnswerCondition {
     condition: QACondition,
-    ifTrue: IOption,
-    ifFalse: IOption// or could make a task class
+    ifTrue: string|undefined,
+    ifFalse: string|undefined// or could make a task class
 }
 
 

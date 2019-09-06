@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom";
 import { ReactElement } from "react";
-import { ILiteral } from "../form/answer";
 import { IAnswerCondition, IAutoAnswer } from "../form/question";
 import { QACondition } from "../form/condition";
 import { IOption, IOptionGroup } from "../components/AnswerOptions";
@@ -84,15 +83,20 @@ export function autoAnswerToJSON(a: IAutoAnswer) {
     })
 }
 
-export function autoAnswerFromJSON() {
+export function autoAnswerFromJSON(a: any) {
+    let r: IAutoAnswer = {
+        isEnabled: a.isEnabled,
+        answeringConditions: a.answeringConditions.map((item: any) => answerConditionFromJSON(item))
+    }
+    return r;
 
 }
 
 export function answerConditionToJSON(a: IAnswerCondition) {
     return ({
         condition: QACondition.toJSON(a.condition),
-        ifTrue: optionToJSON(a.ifTrue),
-        ifFalse: optionToJSON(a.ifFalse)
+        ifTrue: (a.ifTrue),
+        ifFalse: (a.ifFalse)
     })
 }
 export function optionGroupToJSON(a: IOptionGroup) {
@@ -111,8 +115,13 @@ export function optionGroupToJSON(a: IOptionGroup) {
 //     return r;
 // }
 
-export function answerConditionFromJSON() {
-    // let condition
+export function answerConditionFromJSON(a: any): IAnswerCondition {
+    let r: IAnswerCondition = {
+        condition: QACondition.fromJSON(a.condition),
+        ifFalse: a.ifFalse,
+        ifTrue: a.ifTrue
+    }
+    return r;
 }
 
 export function dupeSettingsToJSON(a: IDupeSettings) {

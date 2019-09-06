@@ -13,11 +13,13 @@ import Select from "react-select";
 import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { AnswerOptions, IOption, IOptionGroup } from "./AnswerOptions";
+import { QAQuestion } from "../form/question";
 interface QAAddOptionsState {
     options: AnswerOptions,
 
 }
 interface QAAddOptionsProps {
+    definedQuestions: {[key:string]: QAQuestion}
     options: AnswerOptions,
     defaultOptionType: IValueType,
     onChange: (options:AnswerOptions)=>void,
@@ -130,6 +132,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             condition = this.state.options.optionsMap[name].appearingCondition;
         }
         let el = <CreateConditionModal
+            definedQuestions = {this.props.definedQuestions}
             isOpen={true}
             onSubmit={this.setCondition.bind(this, name, type)}
             onCancel={destroyModal.bind(this)}

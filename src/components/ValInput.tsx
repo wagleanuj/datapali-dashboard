@@ -163,30 +163,45 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
         let comp = null;
         switch (this.props.type.name) {
             case ANSWER_TYPES.NUMBER:
-                comp = <input defaultValue={this.props.defaultValue} className="form-control" type="number" onChange={e => {
-                    if (this.props.onChange) this.props.onChange({value:e.target.value})
-                }}
+                comp = <input
+                    defaultValue={this.props.defaultValue}
+                    className="form-control"
+                    type="number"
+                    onChange={e => {
+                        if (this.props.onChange) this.props.onChange({ value: e.target.value })
+                    }}
                 />
                 break;
             case ANSWER_TYPES.SELECT:
-                comp = <SelInput type={this.props.type.ofType} defaultValue={this.props.defaultValue} options={this.props.options} onChange={(newVal: any) => {
-                    if (this.props.onChange) this.props.onChange(newVal)
-                }} />
+                comp = <SelInput
+                    type={this.props.type.ofType}
+                    defaultValue={this.props.defaultValue}
+                    options={this.props.options}
+                    onChange={(newVal: any) => {
+                        if (this.props.onChange) this.props.onChange(newVal)
+                    }} />
 
                 //TODO::
                 break;
             case ANSWER_TYPES.BOOLEAN:
                 let opt = [{ value: "true", label: "YES" }, { value: "false", label: "No" }];
                 let def = opt.find(item => item.value === this.props.defaultValue);
-                comp = <Select styles={customStyles} defaultValue={def} options={opt} onChange={(newVal: any) => {
-                    if (this.props.onChange) this.props.onChange({ value: newVal })
-                }} />
+                comp = <Select
+                    styles={customStyles}
+                    defaultValue={def}
+                    options={opt}
+                    onChange={(newVal: any) => {
+                        if (this.props.onChange) this.props.onChange({ value: newVal.value })
+                    }} />
                 break;
             case ANSWER_TYPES.DATE:
                 let defaultDate = this.props.defaultValue ? new Date(this.props.defaultValue) : undefined;
-                comp = <DateInput formatDate={date => date.toLocaleDateString()}
+                comp = <DateInput
+                    formatDate={date => date.toLocaleDateString()}
                     parseDate={str => new Date(str)}
-                    closeOnSelection={true} defaultValue={defaultDate} onChange={e => {
+                    closeOnSelection={true}
+                    defaultValue={defaultDate}
+                    onChange={e => {
                         if (this.props.onChange) this.props.onChange({ value: e.toLocaleDateString() })
                     }
                     } />
@@ -203,9 +218,13 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 }
                 break;
             case ANSWER_TYPES.STRING:
-                comp = <input className="form-control" type="text" onChange={e => {
-                    if (this.props.onChange) this.props.onChange({ value: e.target.value })
-                }} />
+                comp = <input
+                    className="form-control"
+                    type="text"
+                    defaultValue={this.props.defaultValue}
+                    onChange={e => {
+                        if (this.props.onChange) this.props.onChange({ value: e.target.value })
+                    }} />
                 break;
             case ANSWER_TYPES.TIME:
                 let defaulttime = this.props.defaultValue ? new Date(this.props.defaultValue) : undefined;
@@ -254,7 +273,23 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
             rootOptions_ = rootOptions.map(i => ({ label: i.value, value: i.id }));
             allOptions = [...groupOptions_, ...rootOptions_];
         }
-        let defaultvalue = allOptions.find(item => item.value === this.props.defaultValue);
+        let findOption = (options_: any, findValue: string | undefined): any => {
+
+            let found = null;
+            for (let i = 0; i < options_.length; i++) {
+                let options = options_[i];
+                if (options.options && options.options.length > 0) {
+                    return findOption(options.options, findValue)
+                }
+                else {
+                    found = options && options.value === findValue ? options : undefined;
+                    if (found) return found;
+                }
+            }
+            return found;
+
+        }
+        let defaultvalue = findOption(allOptions, this.props.defaultValue)
         return (<Select styles={customStyles} options={allOptions} onChange={this.handleChange.bind(this)} defaultValue={defaultvalue} />)
     }
 }

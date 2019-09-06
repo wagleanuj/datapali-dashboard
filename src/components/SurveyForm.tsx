@@ -139,7 +139,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         }, () => {
            let r = (RootSection.toJSON(this.state.root));
            let rr  = (RootSection.fromJSON(r));
+
            console.log(r);
+           console.log(rr);
             if (this.props.onChange) this.props.onChange(this.state.root);
         })
     }
@@ -327,7 +329,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                     </div>
                     <div className="content">
                         <SectionC
-                            definedQuestions={Object.values(this.props.root.questions)}
+                            definedQuestions={(this.state.root.questions)}
                             handleSectionDuplicatingSettingsChange={this.handleDuplicatingSettingsChange.bind(this)}
                             handleSectionClick={this.handleSectionChange.bind(this)}
                             handleDeleteChildSectionOrQuestion={this.handleDeleteQuestionOrSection.bind(this)}

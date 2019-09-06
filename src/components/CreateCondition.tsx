@@ -176,9 +176,9 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
                         </thead>
                         <tbody>
                             {this.state.literals.map((item: ILiteral, key: number) => {
-                                let questions_ = this.props.definedQuestions ? Object.values(this.props.definedQuestions).map((item: QAQuestion) => ({ value: item.referenceId, label: item.questionContent.content })) : [];
+                                let questions_ = this.props.definedQuestions ? Object.values(this.props.definedQuestions).map((item: QAQuestion) => ({ value: item.id, label: item.questionContent.content })) : [];
                                 let questionselect = <Select key={`literalq-${key}-${item.literalId}`} styles={customStyles} options={questions_} value={questions_.find((r: { value: string, label: string }) => r.value === item.questionRef)} onChange={(selecteOption: ValueType<IAnswerOption>) => this.handleDataChange(key, TableFieldType.QuestionRef, selecteOption)} />;
-                                let selectedQuestionType = item.questionRef && this.props.definedQuestions ? this.props.definedQuestions[item.questionRef].answerType : undefined;
+                                let selectedQuestionType = item.questionRef && this.props.definedQuestions && this.props.definedQuestions[item.questionRef] ? this.props.definedQuestions[item.questionRef].answerType : undefined;
                                 let comparisionOPOptions_: ISelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }));
                                 let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
                                 let question_: QAQuestion | null = this.getQuestion(item.questionRef);
