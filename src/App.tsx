@@ -1,8 +1,7 @@
 import React from 'react';
 import './App.css';
 
-import { SurveyForm, QuestionSection } from './components/SurveyForm';
-import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from './testData/TestQuestions';
+import { SurveyForm } from './components/SurveyForm';
 import { RootSection } from './components/section';
 
 class App extends React.Component<any, any> {
@@ -21,7 +20,7 @@ class App extends React.Component<any, any> {
       <div className={"wrapper"}>
         <div className="main-panel">
           <div className="content">
-            <SurveyForm root={RootSection.fromJSON(demo)} onChange={this.handleChange.bind(this)} />
+            <SurveyForm  root={RootSection.fromJSON(demo)} onChange={this.handleChange.bind(this)} />
           </div>
         </div>
       </div>

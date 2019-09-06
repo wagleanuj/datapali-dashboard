@@ -160,7 +160,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                         {this.state.aConditions.map((item: IAnswerCondition, index: number) => {
 
                             let comparisonValueSelect = (ifFalseOrTrue: string) => <ValInput
-                                key={`literalv-${getRandomId()}`}
+                                key={ifFalseOrTrue}
                                 onChange={(data: { value: string }) => this.editIfTrueFalseValue(ifFalseOrTrue, index, data.value)}
                                 options={this.props.options}
                                 defaultValue={ifFalseOrTrue === "true" ? item.ifTrue : (item.ifFalse && item.ifFalse)}

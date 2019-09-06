@@ -4,7 +4,6 @@ import { QAType } from "../form/answer";
 import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
 import { AnswerOptions, IOption } from "../components/AnswerOptions";
 import { getRandomId } from "../utils/getRandomId";
-import { RootSection } from "../components/section";
 
 const selectString: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.STRING } }
 const selectBoolean: IValueType = { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.BOOLEAN } }

@@ -22,7 +22,7 @@ const ValueSelectOptions: QAAnswerTypeOption[] = [
     { value: ANSWER_TYPES.DATE, label: "Date" },
     { value: ANSWER_TYPES.NUMBER, label: "Number" },
     { value: ANSWER_TYPES.RANGE, label: "Range" },
-    { value: ANSWER_TYPES.SELECT, label: "Select" }
+    { value: ANSWER_TYPES.SELECT, label: "Multiple Choice" }
 ]
 
 const OptionsForSelect: QAAnswerTypeOption[] = ValueSelectOptions.filter((item) => item.value && item.value !== ANSWER_TYPES.SELECT);

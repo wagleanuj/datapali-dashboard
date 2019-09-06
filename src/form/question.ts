@@ -1,9 +1,9 @@
 import { QACondition } from "./condition";
-import { IContent, QAType, AnswerType, Answer } from "./answer";
+import { IContent, QAType } from "./answer";
 import { getRandomId } from "../utils/getRandomId";
-import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
-import { AnswerOptions, IOption } from "../components/AnswerOptions";
-import { autoAnswerToJSON, answerTypeToJSON, optionFromJSON, answerTypeFromJSON, autoAnswerFromJSON } from "../utils/util";
+import { IValueType } from "../components/AnswerType";
+import { AnswerOptions } from "../components/AnswerOptions";
+import { autoAnswerToJSON, answerTypeToJSON, answerTypeFromJSON, autoAnswerFromJSON } from "../utils/util";
 
 export class QAQuestion {
     id!: string;
