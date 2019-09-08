@@ -1,6 +1,6 @@
-import React from "react";
+import React, { RefObject } from "react";
 import { QAQuestion } from "../form/question";
-import { ITreeNode } from "@blueprintjs/core";
+import { ITreeNode, Toaster, IToastProps, Intent } from "@blueprintjs/core";
 import { getRandomId } from "../utils/getRandomId";
 import { Row } from "reactstrap";
 import { Toolbar } from "./Toolbar";
@@ -13,7 +13,7 @@ import { QACondition } from "../form/condition";
 import { IDupeSettings } from "./duplicateSettings";
 import { dupeSettingsToJSON } from "../utils/util";
 import { ConstantDefinitions, Constants } from "./constants";
-
+import copy from "copy-to-clipboard"
 export class QASurveyForm {
     content!: (QuestionSection | QAQuestion)[];
     id: string;
@@ -116,6 +116,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     static defaultProps = {
         root: rootSection,
     }
+    private toasterRef!: Toaster;
 
     constructor(props: SurveyFormProps) {
         super(props);
@@ -140,11 +141,6 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 root: cloned
             }
         }, () => {
-            let r = (RootSection.toJSON(this.state.root));
-            let rr = (RootSection.fromJSON(r));
-
-            console.log(r);
-            console.log(rr);
             if (this.props.onChange) this.props.onChange(this.state.root);
         })
     }
@@ -192,6 +188,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         })
     }
 
+
     handleToolbarItemClick(name: string) {
         switch (name) {
             case "add-section":
@@ -199,6 +196,18 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 break;
             case "add-question":
                 this.handleAddQuestion();
+                break;
+            case "copy-state":
+                let data = JSON.stringify(RootSection.toJSON(this.state.root));
+                copy(data);
+                let toast: IToastProps = {
+                    message: "Copied state to clipboard",
+                    icon: "tick",
+                    intent: Intent.SUCCESS,
+                }
+                this.toasterRef.show(toast)
+
+
                 break;
         }
     }
@@ -324,20 +333,21 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         this.setState((prevState: SurveyFormState) => {
             let cloned = _.clone(prevState.root);
             let newPath = _.clone(path);
-            if(newPath[newPath.length-1]>0){
-                newPath[newPath.length-1] = newPath[newPath.length-1]-1;
+            if (newPath[newPath.length - 1] > 0) {
+                newPath[newPath.length - 1] = newPath[newPath.length - 1] - 1;
             }
             console.log(newPath, path)
-            cloned.moveItem(path, newPath );
+            cloned.moveItem(path, newPath);
             return {
                 root: cloned
             }
-        }) 
+        })
     }
     render() {
 
         return (
             <Row>
+                <Toaster ref={r => r ? this.toasterRef = r : null}></Toaster>
                 <ConstantDefinitions isOpen={false}></ConstantDefinitions>
                 <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}></Toolbar>
                 <div className="container">

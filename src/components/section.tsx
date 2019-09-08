@@ -50,6 +50,7 @@ export class SectionC extends React.Component<SectionCProps, SectionCState>{
             let childPath = this.props.parentPath.concat(index);
             if (item instanceof QAQuestion) {
                 return <QuestionButton
+                    questionTitle={item.questionContent.content}
                     handleMoveUp={this.props.handleMoveUp}
                     path={childPath}
                     questionId={item.id}

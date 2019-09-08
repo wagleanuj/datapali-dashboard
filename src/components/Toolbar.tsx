@@ -10,7 +10,13 @@ const toolbarItems = [{
     name: "add-question",
     icon: "document",
     text: "Add Question"
-}
+},
+{
+    name: "copy-state",
+    icon: "clipboard",
+    text: "Copy State"
+},
+
 ]
 interface ToolbarProps {
     handleItemClick: (tItem: string)=>void
