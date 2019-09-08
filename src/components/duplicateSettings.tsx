@@ -5,6 +5,7 @@ import { QAQuestion } from "../form/question";
 import Select from "react-select";
 import { customStyles } from "./DPFormItem";
 import _ from "lodash";
+import classNames from "classnames";
 
 export type DuplicateTimesType = "questionRef" | "number";
 
@@ -77,24 +78,22 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
         let defaultValue = typeOptions.find(item => item.value === this.state.duplicateTimes.type);
 
         return (
-            <div style={{ paddingTop: 10 }}>
 
-                <ButtonGroup className={Classes.ELEVATION_2} vertical fill>
-                    <Switch onChange={this.handleEnabledChange.bind(this)} defaultChecked={this.props.isEnabled}>Enabled</Switch>
-                    <Divider />
-                    <Select menuContainerStyle={{ zIndex: 99999 }} styles={customStyles} onChange={(e: any) => this.handleTypeChange(e)} options={typeOptions} defaultValue={defaultValue}></Select>
-                    {this.generateValueComponent(this.state.duplicateTimes.type)}
-                    <Divider />
-                    <ButtonGroup fill>
-                        <Button onClick={this.handleSave.bind(this)}>
-                            Save
+            <ButtonGroup className={classNames(Classes.ELEVATION_2, Classes.DARK)} vertical fill>
+                <Switch onChange={this.handleEnabledChange.bind(this)} defaultChecked={this.props.isEnabled}>Enabled</Switch>
+                <Divider />
+                <Select menuContainerStyle={{ zIndex: 99999 }} styles={customStyles} onChange={(e: any) => this.handleTypeChange(e)} options={typeOptions} defaultValue={defaultValue}></Select>
+                {this.generateValueComponent(this.state.duplicateTimes.type)}
+                <Divider />
+                <ButtonGroup fill>
+                    <Button onClick={this.handleSave.bind(this)}>
+                        Save
                     </Button>
-                        <Button onClick={this.props.handleCancel}>
-                            Cancel
+                    <Button onClick={this.props.handleCancel}>
+                        Cancel
                     </Button>
-                    </ButtonGroup>
                 </ButtonGroup>
-            </div>
+            </ButtonGroup>
 
 
         )

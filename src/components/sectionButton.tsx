@@ -1,7 +1,7 @@
-import { Badge } from "reactstrap";
+import { Badge, Row } from "reactstrap";
 
 import React, { ReactNode, useState } from "react";
-import { ButtonGroup, Button, Collapse } from "@blueprintjs/core";
+import { ButtonGroup, Button, Collapse, EditableText, Card, Divider, H5, Navbar, Alignment, NavbarDivider } from "@blueprintjs/core";
 
 interface SectionButtonProps {
     sectionId: string,
@@ -9,21 +9,39 @@ interface SectionButtonProps {
     path: number[],
     readablePath: string,
     handleDeletion: (id: string, path: number[]) => void,
-    children: ReactNode
+    handleMoveUp: (id: string, path: number[]) => void,
+    children: ReactNode,
+    handleSectionNameChange: (v: string) => void,
+    sectionName: string,
 
 }
 export const SectionButton = (props: SectionButtonProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <ButtonGroup className="bp3-dark" style={{ paddingBottom: "20px" }} fill  vertical>
-            <ButtonGroup >
-            <Button style={{ height: 50 }} alignText="left"  onClick={()=>setIsExpanded(!isExpanded)} onDoubleClick={() => props.onClick(props.sectionId, props.path)} rightIcon={isExpanded ? "chevron-up" : "chevron-down"}><Badge color="secondary">S</Badge> <span>{props.readablePath + " Section"} </span></Button>
-            <Button  onClick={() => props.handleDeletion(props.sectionId, props.path)} style={{ height: 50, width: 20 }} alignText="left" rightIcon={"cross"} />
+        <ButtonGroup className="bp3-dark" style={{ paddingBottom: "20px" }} fill vertical>
+            <ButtonGroup>
+                <Button style={{ width: 20 }} icon="arrow-up" onClick={() => props.handleMoveUp(props.sectionId, props.path)} />
+
+                <Navbar>
+                    <Navbar.Group align={Alignment.LEFT}>
+                        <H5>
+                            <span>{props.readablePath} </span>
+                            <EditableText onChange={props.handleSectionNameChange} placeholder="Section" defaultValue={props.sectionName}> </EditableText>
+                        </H5>
+                    </Navbar.Group>
+                    <Navbar.Group align={Alignment.RIGHT}>
+                        <Button onClick={() => setIsExpanded(!isExpanded)} icon="cog"></Button>
+                        <Button icon="folder-open" onClick={() => props.onClick(props.sectionId, props.path)}></Button>
+                    </Navbar.Group>
+                </Navbar>
+                <Button style={{ width: 20 }} icon="cross" onClick={() => props.handleDeletion(props.sectionId, props.path)} />
             </ButtonGroup>
-            <Collapse isOpen ={isExpanded} keepChildrenMounted = {false}>
+
+            <Collapse isOpen={isExpanded} keepChildrenMounted={false}>
                 {props.children}
             </Collapse>
+
         </ButtonGroup>
     )
 }

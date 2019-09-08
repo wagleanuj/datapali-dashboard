@@ -2,9 +2,11 @@ import ReactDOM from "react-dom";
 import { ReactElement } from "react";
 import { IAnswerCondition, IAutoAnswer } from "../form/question";
 import { QACondition } from "../form/condition";
-import { IOption, IOptionGroup } from "../components/AnswerOptions";
-import { IValueType } from "../components/AnswerType";
+import { IOption, IOptionGroup, AnswerOptions } from "../components/AnswerOptions";
+import { IValueType, ANSWER_TYPES } from "../components/AnswerType";
 import { IDupeSettings, DuplicateTimesType } from "../components/duplicateSettings";
+import { pradeshes, formatted } from "../testData/pradeshdata";
+import { getRandomId } from "./getRandomId";
 
 export function openModal(com: ReactElement) {
     let el = document.getElementById("dp-modal");

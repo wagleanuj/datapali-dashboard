@@ -10,8 +10,9 @@ import _ from "lodash";
 import { SectionC, RootSection } from "./section";
 import { FormTree } from "./formtree";
 import { QACondition } from "../form/condition";
-import {  IDupeSettings } from "./duplicateSettings";
+import { IDupeSettings } from "./duplicateSettings";
 import { dupeSettingsToJSON } from "../utils/util";
+import { ConstantDefinitions, Constants } from "./constants";
 
 export class QASurveyForm {
     content!: (QuestionSection | QAQuestion)[];
@@ -99,7 +100,8 @@ interface SurveyFormState {
     activeSectionPath: number[]
     selectedNodes: string[],
     expandedNodes: string[],
-    root: RootSection
+    root: RootSection,
+    constants: Constants,
 
 }
 interface SurveyFormProps {
@@ -123,7 +125,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             expandedNodes: [this.props.root.id],
             root: this.props.root,
             activeSection: this.props.root,
-            activeSectionPath: [0]
+            activeSectionPath: [0],
+            constants: new Constants(),
         }
     }
 
@@ -137,11 +140,11 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 root: cloned
             }
         }, () => {
-           let r = (RootSection.toJSON(this.state.root));
-           let rr  = (RootSection.fromJSON(r));
+            let r = (RootSection.toJSON(this.state.root));
+            let rr = (RootSection.fromJSON(r));
 
-           console.log(r);
-           console.log(rr);
+            console.log(r);
+            console.log(rr);
             if (this.props.onChange) this.props.onChange(this.state.root);
         })
     }
@@ -307,11 +310,35 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         })
     }
-
+    handleSectionNameChange(id: string, v: string) {
+        this.setState((prevState: SurveyFormState) => {
+            let cloned = _.clone(prevState.root);
+            let item = cloned.sections[id];
+            item.name = v;
+            return {
+                root: cloned
+            }
+        })
+    }
+    handleMoveUp(id: string, path: number[]) {
+        this.setState((prevState: SurveyFormState) => {
+            let cloned = _.clone(prevState.root);
+            let newPath = _.clone(path);
+            if(newPath[newPath.length-1]>0){
+                newPath[newPath.length-1] = newPath[newPath.length-1]-1;
+            }
+            console.log(newPath, path)
+            cloned.moveItem(path, newPath );
+            return {
+                root: cloned
+            }
+        }) 
+    }
     render() {
 
         return (
             <Row>
+                <ConstantDefinitions isOpen={false}></ConstantDefinitions>
                 <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}></Toolbar>
                 <div className="container">
 
@@ -329,6 +356,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                     </div>
                     <div className="content">
                         <SectionC
+                            handleMoveUp={this.handleMoveUp.bind(this)}
+                            constants={this.state.constants}
+                            handleSectionNameChange={this.handleSectionNameChange.bind(this)}
                             definedQuestions={(this.state.root.questions)}
                             handleSectionDuplicatingSettingsChange={this.handleDuplicatingSettingsChange.bind(this)}
                             handleSectionClick={this.handleSectionChange.bind(this)}

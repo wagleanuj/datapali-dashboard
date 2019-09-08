@@ -1,6 +1,6 @@
 import React from "react";
 import { Table } from "reactstrap";
-import { Button, Divider, ButtonGroup } from "@blueprintjs/core";
+import { Button, Divider, ButtonGroup, H5 } from "@blueprintjs/core";
 import { QACondition } from "../form/condition";
 
 import { ILiteral } from "../form/answer";
@@ -14,15 +14,17 @@ import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { AnswerOptions, IOption, IOptionGroup } from "./AnswerOptions";
 import { QAQuestion } from "../form/question";
+import { Constants } from "./constants";
 interface QAAddOptionsState {
     options: AnswerOptions,
 
 }
 interface QAAddOptionsProps {
-    definedQuestions: {[key:string]: QAQuestion}
+    constants: Constants,
+    definedQuestions: { [key: string]: QAQuestion }
     options: AnswerOptions,
     defaultOptionType: IValueType,
-    onChange: (options:AnswerOptions)=>void,
+    onChange: (options: AnswerOptions) => void,
 }
 enum OPTION_OR_GROUP {
     OPTION = 1,
@@ -35,8 +37,8 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             options: this.props.options || []
         }
     }
-    handleChange(){
-        if(this.props.onChange) this.props.onChange(this.state.options);
+    handleChange() {
+        if (this.props.onChange) this.props.onChange(this.state.options);
     }
     handleAddNewOption() {
         this.setState((prevState: QAAddOptionsState) => {
@@ -54,7 +56,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this))
+        }, this.handleChange.bind(this))
     }
     handleGroupDelete(name: string) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -63,7 +65,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this))
+        }, this.handleChange.bind(this))
     }
     handleOptionTypeChange(id: string, newType: IValueType) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -72,7 +74,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this))
+        }, this.handleChange.bind(this))
     }
 
     handleGroupAssignment(ids: string[], groupname: string) {
@@ -82,7 +84,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this));
+        }, this.handleChange.bind(this));
     }
 
     handleGroupUnassignment(ids: string[]) {
@@ -92,7 +94,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this));
+        }, this.handleChange.bind(this));
     }
 
     handleOptionDelete(id: string) {
@@ -102,7 +104,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this));
+        }, this.handleChange.bind(this));
     }
     handleOptionValueChange(id: string, newValue: string) {
         this.setState((prevState: QAAddOptionsState) => {
@@ -111,7 +113,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this));
+        }, this.handleChange.bind(this));
     }
     handleAddGroup() {
         this.setState((prevState: QAAddOptionsState) => {
@@ -120,7 +122,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             return {
                 options: cloned
             }
-        },this.handleChange.bind(this));
+        }, this.handleChange.bind(this));
     }
     handleConditionClick(type: OPTION_OR_GROUP, name: string) {
         // openModal()
@@ -132,7 +134,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
             condition = this.state.options.optionsMap[name].appearingCondition;
         }
         let el = <CreateConditionModal
-            definedQuestions = {this.props.definedQuestions}
+            definedQuestions={this.props.definedQuestions}
             isOpen={true}
             onSubmit={this.setCondition.bind(this, name, type)}
             onCancel={destroyModal.bind(this)}
@@ -166,32 +168,47 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
         });
 
     }
+    handleImportFromConstant(a: any) {
+        let constant = this.props.constants.getConstant(a.value);
+        console.log(a);
+        console.log(constant);
+        if (constant && constant.value instanceof AnswerOptions) {
+            this.setState({
+                options: constant.value
+            },this.handleChange.bind(this))
+        }
+    }
 
     render() {
+        let constantsOptions = this.props.constants.ConstantsArray.map(item => ({ label: item.name, value: item.name }));
         return (
-            <>
-                <ButtonGroup fill={true} vertical={true}>
-                    <QAOptionSection groups={Object.values(this.state.options.optionGroupMap)}
-                        handleGroupAssignment={this.handleGroupAssignment.bind(this)}
-                        handleOptionTypeChange={this.handleOptionTypeChange.bind(this)}
-                        handleAddNewOption={this.handleAddNewOption.bind(this)}
-                        handleOptionDelete={this.handleOptionDelete.bind(this)}
-                        handleConditionClick={this.handleConditionClick.bind(this, OPTION_OR_GROUP.OPTION)}
-                        handleOptionValueChange={this.handleOptionValueChange.bind(this)}
-                        options={Object.values(this.state.options.optionsMap)}></QAOptionSection>
-                    <Divider />
-                    <QAAddGroupSection
-                        handleAddGroup={this.handleAddGroup.bind(this)}
-                        handleGroupUnassignment={this.handleGroupUnassignment.bind(this)}
-                        handleGroupAssignment={this.handleGroupAssignment.bind(this)}
-                        handleGroupNameChange={this.handleGroupNameChange.bind(this)}
-                        handleGroupDelete={this.handleGroupDelete.bind(this)}
-                        handleGroupConditionClick={this.handleConditionClick.bind(this, OPTION_OR_GROUP.GROUP)}
-                        options={Object.values(this.state.options.optionsMap)}
-                        groups={Object.values(this.state.options.optionGroupMap)} />
+            <ButtonGroup fill={true} vertical={true}>
+                <H5>Import From Constant </H5>
+                <Select styles={customStyles} options={constantsOptions} onChange={this.handleImportFromConstant.bind(this)}></Select>
+                <QAOptionSection
+                    groups={this.state.options.optionGroupMap ? Object.values(this.state.options.optionGroupMap) : []}
+                    handleGroupAssignment={this.handleGroupAssignment.bind(this)}
+                    handleOptionTypeChange={this.handleOptionTypeChange.bind(this)}
+                    handleAddNewOption={this.handleAddNewOption.bind(this)}
+                    handleOptionDelete={this.handleOptionDelete.bind(this)}
+                    handleConditionClick={this.handleConditionClick.bind(this, OPTION_OR_GROUP.OPTION)}
+                    handleOptionValueChange={this.handleOptionValueChange.bind(this)}
+                    options={this.state.options.optionsMap ? Object.values(this.state.options.optionsMap) : []}
+                />
 
-                </ButtonGroup>
-            </>
+                <Divider />
+                <QAAddGroupSection
+                    handleAddGroup={this.handleAddGroup.bind(this)}
+                    handleGroupUnassignment={this.handleGroupUnassignment.bind(this)}
+                    handleGroupAssignment={this.handleGroupAssignment.bind(this)}
+                    handleGroupNameChange={this.handleGroupNameChange.bind(this)}
+                    handleGroupDelete={this.handleGroupDelete.bind(this)}
+                    handleGroupConditionClick={this.handleConditionClick.bind(this, OPTION_OR_GROUP.GROUP)}
+                    options={this.state.options.optionsMap ? Object.values(this.state.options.optionsMap) : []}
+                    groups={this.state.options.optionGroupMap ? Object.values(this.state.options.optionGroupMap) : []}
+                />
+
+            </ButtonGroup>
         )
     }
 }
@@ -249,8 +266,8 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
     handleOptionTypeChange(option_id: string, newType: IValueType) {
         if (this.props.handleOptionTypeChange) this.props.handleOptionTypeChange(option_id, newType)
     }
-    handleOptionValueChange(id:string, newValue: any) {
-        if (this.props.handleOptionValueChange) this.props.handleOptionValueChange(id,newValue.value);
+    handleOptionValueChange(id: string, newValue: any) {
+        if (this.props.handleOptionValueChange) this.props.handleOptionValueChange(id, newValue.value);
     }
 
     render() {
@@ -273,16 +290,16 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
                         return <tr key={item.id}>
                             <td></td>
                             <td>{item.id}</td>
-                            <td><AnswerTypeInput answerType = {item.type} onChange={e => this.handleOptionTypeChange(item.id, e)} /></td>
-                            <td><ValInput onChange={this.handleOptionValueChange.bind(this,item.id)} defaultValue={item.value} type={item.type} /></td>
-                            <td><Button  onClick={this.handleConditionEdit.bind(this, item.id)} style={{ color: 'red', width: 20 }} icon="key" /></td>
+                            <td><AnswerTypeInput answerType={item.type} onChange={e => this.handleOptionTypeChange(item.id, e)} /></td>
+                            <td><ValInput onChange={this.handleOptionValueChange.bind(this, item.id)} defaultValue={item.value} type={item.type} /></td>
+                            <td><Button onClick={this.handleConditionEdit.bind(this, item.id)} style={{ color: 'red', width: 20 }} icon="key" /></td>
                             <td>{this.generateAddGroupInput(item)}</td>
-                            <td><Button style={{width:20}} onClick={this.handleOptionDelete.bind(this, item.id)} icon="cross" /></td>
+                            <td><Button style={{ width: 20 }} onClick={this.handleOptionDelete.bind(this, item.id)} icon="cross" /></td>
 
                         </tr>
                     })}
                     <tr>
-                        <td><Button style={{width:20}} icon={"add"} onClick={this.handleAddNewOption.bind(this)}></Button></td>
+                        <td><Button style={{ width: 20 }} icon={"add"} onClick={this.handleAddNewOption.bind(this)}></Button></td>
                         <td></td>
                         <td></td>
                         <td></td>
@@ -362,10 +379,10 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
                                 value={selected}
 
                                 isMulti={true} options={options} /></td>
-                            <td><Button style={{width:20}} icon="key" onClick={() => {
+                            <td><Button style={{ width: 20 }} icon="key" onClick={() => {
                                 if (this.props.handleGroupConditionClick) this.props.handleGroupConditionClick(item.name)
                             }} /></td>
-                            <td><Button style={{width:20}} icon="cross" onClick={() => {
+                            <td><Button style={{ width: 20 }} icon="cross" onClick={() => {
                                 if (this.props.handleGroupDelete) this.props.handleGroupDelete(item.name)
                             }} /></td>
 
@@ -375,7 +392,7 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
 
                     })}
                     <tr>
-                        <td><Button style={{width:20}} icon="add" onClick={() => {
+                        <td><Button style={{ width: 20 }} icon="add" onClick={() => {
                             if (this.props.handleAddGroup) this.props.handleAddGroup()
                         }} /></td>
                         <td></td>

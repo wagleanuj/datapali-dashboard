@@ -257,7 +257,7 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
         if (this.props.onChange) this.props.onChange(d);
     }
     render() {
-        let allOptions = [];
+        let allOptions: any = [];
         if (this.props.options) {
             let { rootOptions, groups } = this.props.options.SortedOptions;
             let groupOptions_: any = [];
@@ -274,16 +274,16 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
             allOptions = [...groupOptions_, ...rootOptions_];
         }
         let findOption = (options_: any, findValue: string | undefined): any => {
-
             let found = null;
             for (let i = 0; i < options_.length; i++) {
                 let options = options_[i];
                 if (options.options && options.options.length > 0) {
-                    return findOption(options.options, findValue)
+                    found = options.options.find((item: any) => item.value === findValue);
+                    if (found) break;
                 }
                 else {
                     found = options && options.value === findValue ? options : undefined;
-                    if (found) return found;
+                    if (found) break;
                 }
             }
             return found;

@@ -46,7 +46,6 @@ export class AnswerOptions {
                 appearingCondition: QACondition.fromJSON(v.appearingCondition),
                 members: v.members.map((item: any) => r.optionsMap[item.id]),
             }
-            console.log(rr);
             return rr;
         });
         return r;
@@ -59,11 +58,12 @@ export class AnswerOptions {
             rootOptions: grouplessOptions
         };
     }
-    addOption(option?: IOption, groupname?: string) {
+    addOption(option?: IOption) {
         if (!option) {
-            option = { id: 'opt-' + this.opt_count, value: undefined, groupName: groupname };
+            option = { id: 'opt-' + this.opt_count, value: undefined, groupName: undefined };
         }
         this.optionsMap[option.id] = option;
+        let groupname = option.groupName;
         if (groupname) {
             let group: IOptionGroup = this.optionGroupMap[groupname];
             if (!group) {
@@ -71,10 +71,8 @@ export class AnswerOptions {
                 this.optionGroupMap[groupname] = group;
                 this.group_count++;
             }
-            this.options.push(group);
-        }
-        else {
-            this.options.push(option);
+            let optionExistInGroup = group.members.find(item => option && item.id === option.id);
+            if (!optionExistInGroup) group.members.push(option);
         }
         this.opt_count++;
         return this;
@@ -82,7 +80,6 @@ export class AnswerOptions {
     addGroup(groupname?: string) {
         let group: IOptionGroup = { id: "opt-grp" + this.group_count, name: groupname || `group-${this.group_count}`, appearingCondition: undefined, members: [] };
         this.optionGroupMap[group.name] = group;
-        this.options.push(group);
         this.group_count++;
         return group;
     }
@@ -112,6 +109,7 @@ export class AnswerOptions {
         }
         return this;
     }
+
     assignOptionToGroup(optionIds: string[], groupName: string) {
         let existingGroup = this.optionGroupMap[groupName];
         if (!existingGroup) {
@@ -164,6 +162,7 @@ export class AnswerOptions {
             }
         });
     }
+
     changeGroupName(oldname: string, newname: string) {
         let group = this.optionGroupMap[oldname];
         let members_ids = group.members.map(item => item.id);
@@ -181,6 +180,7 @@ export class AnswerOptions {
             this.optionGroupMap[newname] = newGroup;
         }
     }
+
     deleteGroup(name: string) {
         let group = this.optionGroupMap[name];
         if (!group)
@@ -195,6 +195,7 @@ export class AnswerOptions {
         }
         delete this.optionGroupMap[name];
     }
+
     setOptionTypeFor(optionId: string, newType: IValueType) {
         let opt = this.optionsMap[optionId];
         if (opt) {

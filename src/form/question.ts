@@ -23,6 +23,7 @@ export class QAQuestion {
             isEnabled: false,
             answeringConditions: []
         }
+        this.options = new AnswerOptions();
         this.id = getRandomId("q-");
         this.questionContent = { content: "", type: QAType.String }
     }

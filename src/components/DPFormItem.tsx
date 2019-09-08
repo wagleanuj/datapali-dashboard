@@ -21,6 +21,7 @@ import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { ANSWER_TYPES, AnswerTypeInput, IValueType } from "./AnswerType";
 import { Switch } from "@blueprintjs/core";
+import { Constants } from "./constants";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -105,6 +106,7 @@ const brandColor = '#46beed';
 
 
 interface FormItemProps {
+    constants: Constants,
     definedQuestions: { [key: string]: QAQuestion }
     question: QAQuestion,
     onChange: (question: QAQuestion) => void
@@ -222,7 +224,12 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
                             {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
                                 <label >Add Options</label>
                                 <Card>
-                                    <AddOption definedQuestions={this.props.definedQuestions} onChange={this.handleOptionsChange.bind(this)} defaultOptionType={this.state.question.answerType} options={this.state.question.options} />
+                                    <AddOption
+                                        constants={this.props.constants}
+                                        definedQuestions={this.props.definedQuestions}
+                                        onChange={this.handleOptionsChange.bind(this)}
+                                        defaultOptionType={this.state.question.answerType}
+                                        options={this.state.question.options} />
                                 </Card>
                             </FormGroup>}
 
@@ -243,7 +250,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
 
                                     <AutofillCondition
                                         autoAnswer={this.state.question.autoAnswer}
-                                        definedQuestions={this.props.definedQuestions} 
+                                        definedQuestions={this.props.definedQuestions}
                                         onChange={this.handleAutoFillChange.bind(this)}
                                         answerType={this.state.question.answerType}
                                         options={this.state.question.options} />

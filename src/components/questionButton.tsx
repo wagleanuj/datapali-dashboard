@@ -11,6 +11,7 @@ interface QuestionButtonProps {
     path: number[],
     readablePath: string,
     handleDeletion: (id: string, path_: number[]) => void,
+    handleMoveUp:(id:string, path_:number[])=>void,
 }
 
 export const QuestionButton = (props: QuestionButtonProps) => {
@@ -18,6 +19,8 @@ export const QuestionButton = (props: QuestionButtonProps) => {
     return (
         <ButtonGroup className="bp3-dark" style={{ paddingBottom: "20px" }} fill vertical>
             <ButtonGroup>
+                <Button onClick={() => props.handleMoveUp(props.questionId, props.path)} style={{ height: 50, width: 20 }} icon={"arrow-up"} />
+
                 <Button style={{ height: 50 }} onClick={() => setIsExpanded(!isExpanded)} alignText={"left"} rightIcon={isExpanded ? "chevron-up" : "chevron-down"}><Badge color="secondary">Q</Badge> <span>{props.readablePath + " Question"} </span></Button>
                 <Button onClick={() => props.handleDeletion(props.questionId, props.path)} style={{ height: 50, width: 20 }} alignText="left" rightIcon={"cross"} />
             </ButtonGroup>

@@ -75,6 +75,7 @@ export class FormTree extends React.Component<FormTreeProps, FormTreeState>{
 
 
     render() {
+        console.log(this.props.root_);
         return <Tree contents={this.generateITNodeTree(this.props.root_, this.props.selectedNodes, this.props.expandedNodes)}
             onNodeClick={this.handleNodeClick}
             onNodeCollapse={this.handleNodeCollapse}

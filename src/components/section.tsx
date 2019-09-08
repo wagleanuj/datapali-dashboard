@@ -9,15 +9,19 @@ import { DuplicateSettings, IDupeSettings } from "./duplicateSettings";
 import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { dupeSettingsFromJSON } from "../utils/util";
+import { Constants } from "./constants";
 
 interface SectionCProps {
+    constants: Constants,
     section: QuestionSection | RootSection,
-    definedQuestions: {[key:string]: QAQuestion}
+    definedQuestions: { [key: string]: QAQuestion }
     handleQuestionChange: (question: QAQuestion, _path: number[]) => void,
     parentPath: number[],
     handleDeleteChildSectionOrQuestion: (deleteid: string, _path: number[]) => void,
     handleSectionDuplicatingSettingsChange: (id: string, dupe: IDupeSettings) => void,
     handleSectionClick: (sectionid: string, _path: number[]) => void,
+    handleSectionNameChange: (id: string, v: string) => void
+    handleMoveUp: (id: string, path: number[]) => void,
 }
 interface SectionCState {
 }
@@ -45,12 +49,30 @@ export class SectionC extends React.Component<SectionCProps, SectionCState>{
         comp = this.props.section.content.map((item, index) => {
             let childPath = this.props.parentPath.concat(index);
             if (item instanceof QAQuestion) {
-                return <QuestionButton path={childPath} questionId={item.id} handleDeletion={this.props.handleDeleteChildSectionOrQuestion} readablePath={readablePath + (index + 1)} key={item.id} isExpanded={false}>
-                    <DPFormItem definedQuestions = {this.props.definedQuestions} onChange={(q) => this.handleQuestionChange(q, childPath)} question={item} />
+                return <QuestionButton
+                    handleMoveUp={this.props.handleMoveUp}
+                    path={childPath}
+                    questionId={item.id}
+                    handleDeletion={this.props.handleDeleteChildSectionOrQuestion}
+                    readablePath={readablePath + (index + 1)}
+                    key={item.id}
+                    isExpanded={false}>
+                    <DPFormItem
+                        constants={this.props.constants}
+                        definedQuestions={this.props.definedQuestions}
+                        onChange={(q) => this.handleQuestionChange(q, childPath)}
+                        question={item} />
                 </QuestionButton>
             }
             else if (item instanceof QuestionSection) {
-                return <SectionButton path={childPath} handleDeletion={this.props.handleDeleteChildSectionOrQuestion} sectionId={item.id} readablePath={readablePath + (index + 1)} key={item.id} onClick={this.props.handleSectionClick}>
+                return <SectionButton
+                    handleMoveUp={this.props.handleMoveUp}
+                    sectionName={item.name}
+                    handleSectionNameChange={(v) => this.props.handleSectionNameChange(item.id, v)}
+                    path={childPath}
+                    handleDeletion={this.props.handleDeleteChildSectionOrQuestion}
+                    sectionId={item.id} readablePath={readablePath + (index + 1)}
+                    key={item.id} onClick={this.props.handleSectionClick}>
                     <DuplicateSettings definedQuestions={this.props.definedQuestions} handleSave={(d) => this.handleDuplicatingSettingsSave(item.id, d)} handleCancel={this.handleDuplicatingSettingsCancel} {...item.duplicatingSettings} />
                 </SectionButton>
             }
@@ -156,11 +178,12 @@ export class RootSection {
             let removed = oldParent.content.splice(foundIndex, 1);
 
             if (!(newParent instanceof QAQuestion)) {
-                if (removed instanceof QuestionSection) {
-                    newParent.content.push(this.sections[removed[0].id]);
+                let pos = newPath[newPath.length - 1];
+                if (removed[0] instanceof QuestionSection) {
+                    newParent.content.splice(pos, 0, this.sections[removed[0].id]);
                 }
-                else if (removed instanceof QAQuestion) {
-                    newParent.content.push(this.sections[removed[0].id])
+                else if (removed[0] instanceof QAQuestion) {
+                    newParent.content.splice(pos, 0, this.questions[removed[0].id])
                 }
             }
             return this;
@@ -193,6 +216,7 @@ export class RootSection {
             if (a.hasOwnProperty("content")) {
                 let section = new QuestionSection();
                 section.id = a.id;
+                section.name = a.name;
                 section.duplicatingSettings = dupeSettingsFromJSON(a.duplicatingSettings);
                 r.addSection(parentPath, [section]);
                 a.content.forEach((item: any, i: number) => handleSectionAdd(item, parentPath.concat(index), i));
