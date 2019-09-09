@@ -8,8 +8,6 @@ import { autoAnswerToJSON, answerTypeToJSON, answerTypeFromJSON, autoAnswerFromJ
 export class QAQuestion {
     id!: string;
     isRequired!: boolean;
-    validate!: Function;
-    referenceId!: string;
     appearingCondition!: QACondition;
     questionContent!: IContent;
     creationDate!: number;
@@ -46,15 +44,14 @@ export class QAQuestion {
         q.isRequired = a.isRequired;
         q.appearingCondition = QACondition.fromJSON(a.appearingCondition);
         q.questionContent = a.questionContent as IContent;
-        q.options = AnswerOptions.fromJSON(a.options);
+        if (a.options) q.options = AnswerOptions.fromJSON(a.options);
         if (a.answerType) q.answerType = answerTypeFromJSON(a.answerType);
-        if(a.autoAnswer) q.autoAnswer = autoAnswerFromJSON(a.autoAnswer)
+        if (a.autoAnswer) q.autoAnswer = autoAnswerFromJSON(a.autoAnswer)
         return q;
     }
 
     updateFromQuestion(q: QAQuestion) {
         this.isRequired = q.isRequired;
-        this.validate = q.validate;
         this.appearingCondition = q.appearingCondition;
         this.questionContent = q.questionContent;
         this.autoAnswer = q.autoAnswer;
@@ -68,10 +65,6 @@ export class QAQuestion {
         return this;
     }
 
-    setValidationFunction(func: Function) {
-        this.validate = func;
-        return this;
-    }
 
     setAppearingCondition(cond: QACondition) {
         this.appearingCondition = cond;
@@ -79,11 +72,6 @@ export class QAQuestion {
     }
     setAutoAnswer(a: IAutoAnswer) {
         this.autoAnswer = a;
-        return this;
-    }
-
-    setReferenceId(id: string) {
-        this.referenceId = id;
         return this;
     }
 
@@ -128,8 +116,8 @@ export interface IAutoAnswer {
 
 export interface IAnswerCondition {
     condition: QACondition,
-    ifTrue: string|undefined,
-    ifFalse: string|undefined// or could make a task class
+    ifTrue: string | undefined,
+    ifFalse: string | undefined// or could make a task class
 }
 
 

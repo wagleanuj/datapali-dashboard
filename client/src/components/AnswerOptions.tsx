@@ -38,8 +38,8 @@ export class AnswerOptions {
 
     static fromJSON(d: any): AnswerOptions {
         let r = new AnswerOptions();
-        r.optionsMap = _.mapValues(d.optionsMap, (v) => optionFromJSON(v));
-        r.optionGroupMap = _.mapValues(d.optionGroupMap, v => {
+        r.optionsMap = d.optionsMap? _.mapValues(d.optionsMap, (v) => optionFromJSON(v)):{};
+        r.optionGroupMap = d.optionGroupMap?_.mapValues(d.optionGroupMap, v => {
             let rr: IOptionGroup = {
                 id: v.id,
                 name: v.name,
@@ -47,7 +47,7 @@ export class AnswerOptions {
                 members: v.members.map((item: any) => r.optionsMap[item.id]),
             }
             return rr;
-        });
+        }):{};
         return r;
     }
     get SortedOptions() {

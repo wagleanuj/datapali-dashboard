@@ -17,15 +17,14 @@ const tvOptions = new AnswerOptions();
 for (let i = 0; i < 5; i++) catOptions.addOption(makeStringOption("cat" + i));
 for (let i = 0; i < 5; i++) tvOptions.addOption(makeStringOption("tv" + i));
 
-export const testQuestion = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your cat's name?" }).setReferenceId("question-1");
+export const testQuestion = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your cat's name?" })
 testQuestion.setOptions(catOptions);
-export const testQuestion2 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your favorite tv?" }).setReferenceId("question-2");
+export const testQuestion2 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "what is your favorite tv?" })
 testQuestion2.setOptions(tvOptions);
 
-export const testQuestion3 = new QAQuestion().setAnswerType(selectBoolean).setQuestionContent({ type: QAType.String, content: "Do you like having tea?" }).setReferenceId("question-3");
-export const testQuestion4 = new QAQuestion().setAnswerType(selectNumber).setQuestionContent({ type: QAType.String, content: "How many times have you had death?" }).setReferenceId("question-4");
-export const testQuestion5 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "Who taught you how to die?" }).setReferenceId("question-5");
-
+export const testQuestion3 = new QAQuestion().setAnswerType(selectBoolean).setQuestionContent({ type: QAType.String, content: "Do you like having tea?" });
+export const testQuestion4 = new QAQuestion().setAnswerType(selectNumber).setQuestionContent({ type: QAType.String, content: "How many times have you had death?" })
+export const testQuestion5 = new QAQuestion().setAnswerType(selectString).setQuestionContent({ type: QAType.String, content: "Who taught you how to die?" });
 
 
 

@@ -10,6 +10,7 @@ import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { dupeSettingsFromJSON } from "../utils/util";
 import { Constants } from "./constants";
+import { QACondition } from "../form/condition";
 
 interface SectionCProps {
     constants: Constants,
@@ -101,7 +102,7 @@ export class RootSection {
     questions: { [key: string]: QAQuestion } = {};
     sections: { [key: string]: QuestionSection } = {};
     content: (QuestionSection | QAQuestion)[] = [];
-    name!: string;
+    name: string = "";
     id: string;
     constructor() {
         this.id = getRandomId("root-");
@@ -191,7 +192,7 @@ export class RootSection {
         }
 
     }
-    static toJSON(a: RootSection) {
+    static toJSON(a: RootSection):any {
         let r = {
             id: a.id,
             name: a.name,
@@ -203,8 +204,6 @@ export class RootSection {
                     return QAQuestion.toJSON(item);
                 }
             }),
-            questions: _.mapValues(a.questions, (v) => QAQuestion.toJSON(v)),
-            sections: _.mapValues(a.sections, (v) => QuestionSection.toJSON(v))
 
         };
         return r;
@@ -218,6 +217,7 @@ export class RootSection {
                 let section = new QuestionSection();
                 section.id = a.id;
                 section.name = a.name;
+                if (a.condition) section.condition = QACondition.fromJSON(a.condition);
                 section.duplicatingSettings = dupeSettingsFromJSON(a.duplicatingSettings);
                 r.addSection(parentPath, [section]);
                 a.content.forEach((item: any, i: number) => handleSectionAdd(item, parentPath.concat(index), i));

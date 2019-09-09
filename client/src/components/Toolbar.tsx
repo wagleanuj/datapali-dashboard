@@ -1,7 +1,18 @@
 import { Navbar, Alignment, Button, IconName } from "@blueprintjs/core";
 import React from "react";
 
-const toolbarItems = [{
+const toolbarItems = [
+    {
+        name: "up-one-level",
+        icon: "caret-up",
+        text: ""
+    },
+    {
+        name: "save-root",
+        icon: "save",
+        text: "Save Form"
+    },
+    {
     name: "add-section",
     icon: "box",
     text: "Add Section"
@@ -39,7 +50,6 @@ export class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
             <Navbar className="bp3-dark" fixedToTop>
                 <Navbar.Group align={Alignment.LEFT}>
                     {toolbarItems.map(item => <Button onClick={this.handleClick.bind(this, item.name)} key={item.name} icon={item.icon as IconName} text={item.text} className="bp3-minimal" />)}
-
                 </Navbar.Group>
             </Navbar>
         )

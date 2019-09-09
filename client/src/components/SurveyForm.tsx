@@ -11,15 +11,17 @@ import { SectionC, RootSection } from "./section";
 import { FormTree } from "./formtree";
 import { QACondition } from "../form/condition";
 import { IDupeSettings } from "./duplicateSettings";
-import { dupeSettingsToJSON } from "../utils/util";
+import { dupeSettingsToJSON, request } from "../utils/util";
 import { ConstantDefinitions, Constants } from "./constants";
 import copy from "copy-to-clipboard"
 export class QASurveyForm {
     content!: (QuestionSection | QAQuestion)[];
     id: string;
     name!: string;
+    condition: QACondition;
     constructor() {
         this.id = getRandomId("sf-");
+        this.condition = new QACondition()
     }
     setName(name: string) {
         this.name = name;
@@ -43,16 +45,19 @@ export class QuestionSection {
     content!: (QuestionSection | QAQuestion)[]
     id: string
     duplicatingSettings: IDupeSettings;
+    condition: QACondition;
     constructor() {
         this.id = getRandomId("ss-");
         this.duplicatingSettings = { condition: undefined, isEnabled: false, duplicateTimes: { value: "", type: "number" } }
         this.content = []
+        this.condition = new QACondition;
 
     }
     static toJSON(a: QuestionSection): any {
         return ({
             name: a.name,
             id: a.id,
+            condition : QACondition.toJSON(a.condition),
             content: a.content.map(item => {
                 if (item instanceof QuestionSection) {
                     return QuestionSection.toJSON(item)
@@ -120,7 +125,6 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
     constructor(props: SurveyFormProps) {
         super(props);
-        console.log(this.props.root);
         this.state = {
             selectedNodes: [],
             expandedNodes: [this.props.root.id],
@@ -130,6 +134,39 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             constants: new Constants(),
         }
     }
+    componentDidMount(){
+        this.loadForm();
+    }
+
+    loadForm(){
+        let requestBody = {
+            query: `
+            query GetForm{
+                forms{
+                  id
+                  name
+                  content
+                }
+              }`,
+            variables: {
+            }
+          }
+          let token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
+          return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token ).then(res=>{
+          let file= res[0];
+            if(file){
+              file.content = JSON.parse(file.content)[0];
+              let root = RootSection.fromJSON(file);
+              console.log(root);
+             this.setState({
+               root: root,
+               activeSection: root,
+               activeSectionPath: [0]
+             })
+            }
+          });
+      }
+      
 
 
 
@@ -187,6 +224,41 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             if (this.props.onChange) this.props.onChange(this.state.root);
         })
     }
+    private handleUpOneLevel() {
+
+        if (this.state.activeSectionPath.length > 1) {
+            let newSectionPath = this.state.activeSectionPath.slice(0, this.state.activeSectionPath.length - 1);
+            let newSection = RootSection.getFromPath(newSectionPath, [this.state.root]);
+            if (!(newSection instanceof QAQuestion)) {
+                this.setState((prevState: SurveyFormState) => {
+                    return {
+                        activeSection: newSection instanceof QAQuestion ? prevState.activeSection : newSection,
+                        activeSectionPath: newSectionPath
+                    }
+
+                })
+            }
+        }
+    }
+    private handleSave() {
+        let file = RootSection.toJSON(this.state.root);
+        file.content =JSON.stringify(file.content);
+        console.log(file);
+        let requestBody = {
+            query: `
+            mutation SaveForm($saveFile: RootSectionInput!){
+                saveForm(form: $saveFile){
+                  id
+                }
+              }`,
+            variables: {
+              saveFile: file
+            }
+          }
+          let token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
+
+          return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token ).then(re=>console.log(re));
+    }
 
 
     handleToolbarItemClick(name: string) {
@@ -197,6 +269,13 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             case "add-question":
                 this.handleAddQuestion();
                 break;
+            case "up-one-level":
+                this.handleUpOneLevel();
+                break;
+            case "save-root":
+                this.handleSave();
+                break;
+
             case "copy-state":
                 let data = JSON.stringify(RootSection.toJSON(this.state.root));
                 copy(data);
