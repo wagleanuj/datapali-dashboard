@@ -156,6 +156,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
           let file= res[0];
             if(file){
               file.content = JSON.parse(file.content)[0];
+              file.content = JSON.parse(file.content);
               let root = RootSection.fromJSON(file);
               console.log(root);
              this.setState({
