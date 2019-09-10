@@ -24,13 +24,44 @@ export declare class AnswerOptions {
     private opt_count;
     private group_count;
     static toJSON(a: AnswerOptions): {
-        optionsMap: any;
-        optionGroupMap: any;
+        optionsMap: {
+            [x: string]: {
+                appearingCondition: {
+                    [key: string]: any;
+                } | undefined;
+                type: {
+                    [key: string]: any;
+                } | undefined;
+                id: string;
+                value: string | undefined;
+                groupName: string | undefined;
+            };
+        };
+        optionGroupMap: {
+            [x: string]: {
+                id: string;
+                name: string;
+                appearingCondition: {
+                    [key: string]: any;
+                } | undefined;
+                members: {
+                    appearingCondition: {
+                        [key: string]: any;
+                    } | undefined;
+                    type: {
+                        [key: string]: any;
+                    } | undefined;
+                    id: string;
+                    value: string | undefined;
+                    groupName: string | undefined;
+                }[];
+            };
+        };
     };
     static fromJSON(d: any): AnswerOptions;
     readonly SortedOptions: {
-        groups: any;
-        rootOptions: any;
+        groups: IOptionGroup[];
+        rootOptions: IOption[];
     };
     addOption(option?: IOption): this;
     addGroup(groupname?: string): IOptionGroup;

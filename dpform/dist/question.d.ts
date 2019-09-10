@@ -34,8 +34,39 @@ export declare class QAQuestion {
             }[];
         } | undefined;
         options: {
-            optionsMap: any;
-            optionGroupMap: any;
+            optionsMap: {
+                [x: string]: {
+                    appearingCondition: {
+                        [key: string]: any;
+                    } | undefined;
+                    type: {
+                        [key: string]: any;
+                    } | undefined;
+                    id: string;
+                    value: string | undefined;
+                    groupName: string | undefined;
+                };
+            };
+            optionGroupMap: {
+                [x: string]: {
+                    id: string;
+                    name: string;
+                    appearingCondition: {
+                        [key: string]: any;
+                    } | undefined;
+                    members: {
+                        appearingCondition: {
+                            [key: string]: any;
+                        } | undefined;
+                        type: {
+                            [key: string]: any;
+                        } | undefined;
+                        id: string;
+                        value: string | undefined;
+                        groupName: string | undefined;
+                    }[];
+                };
+            };
         };
         answerType: {
             [key: string]: any;

@@ -6,8 +6,8 @@ export declare class Constants {
     private count;
     static fromJSON(a: any): void;
     static toJSON(a: Constants): void;
-    readonly ConstantsArray: any;
-    getConstant(constname: string): any;
+    readonly ConstantsArray: IConstant[];
+    getConstant(constname: string): IConstant;
     addConstant(constant?: IConstant): this;
     removeConstant(id: string): this;
 }
