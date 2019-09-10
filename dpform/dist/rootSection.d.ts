@@ -12,6 +12,10 @@ export declare class RootSection {
     id: string;
     constructor();
     static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): RootSection | QuestionSection | QAQuestion;
+    static Entries(root: RootSection, sectionPath: number[], startIndex: number, fetchType?: QORS): {
+        data: (QuestionSection | QAQuestion);
+        path: number[];
+    }[];
     addQuestion(parentPath: number[], q?: (QAQuestion)[]): this;
     addSection(parentPath: number[], q?: (QuestionSection)[]): this;
     removeQuestion(questionId: string, path: number[]): this;

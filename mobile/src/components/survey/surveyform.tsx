@@ -5,34 +5,34 @@ import { withStyles, ThemeType, ThemedComponentProps } from 'react-native-ui-kit
 import { textStyle } from '../common';
 import { ComponentProps } from '@src/core/navigation';
 
-import * as DPForm from '../../form';
-import { QAQuestion, RootSection, IValueType, ANSWER_TYPES, QORS } from '../../form';
 import { Showcase } from '@src/containers/components/common/showcase.component';
 import { ShowcaseSection } from '@src/containers/components/common/showcaseSection.component';
-
+import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request } from '@dpForm/index';
 export type SurveyFormComponentProps = ThemedComponentProps & ComponentProps;
 
 interface SurveyFormComponentState {
-  root: DPForm.RootSection;
-  activeSection: DPForm.RootSection | DPForm.QuestionSection;
+  root: RootSection;
+  activeSection: RootSection | QuestionSection;
   activeSectionPath: number[];
   answers: { [key: string]: string };
   activeQuestion: number[];
-  allQuestions: QAQuestion[];
+  allQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
+  currentQuestionIndex: number;
 }
 
 
 class SurveyFormComponent extends React.Component<SurveyFormComponentProps, SurveyFormComponentState> {
   constructor(props: SurveyFormComponentProps) {
     super(props);
-    const root = new DPForm.RootSection();
+    const root = new RootSection();
     this.state = {
       root: root,
       activeSection: root,
       activeSectionPath: [0],
       answers: {},
       activeQuestion: [],
-      allquestions: [],
+      allQuestions: [],
+      currentQuestionIndex: 0,
     };
   }
   componentDidMount() {
@@ -56,7 +56,7 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
     };
     // tslint:disable-next-line:max-line-length
     const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw';
-    return DPForm.request('http://192.168.2.22:5000/graphql',
+    return request('http://192.168.2.22:5000/graphql',
       'forms',
       requestBody,
       'Could not delete the game file',
@@ -64,39 +64,30 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
         file = file[0];
         if (file) {
           file.content = JSON.parse(file.content);
-          const root = DPForm.RootSection.fromJSON(file);
-          root.name = 'test';
-          const allq = root.Iterator2([0], 0, QORS.QUESTION);
-          const rr = [...allq].map(item => item.path);
-          console.log(rr);
+          const root = RootSection.fromJSON(file);
+          const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
+
           this.setState({
             root: root,
             activeSection: root,
             activeSectionPath: [0],
-
+            allQuestions: allq,
           });
         }
       });
   }
   getQuestionPage(): ReactNode {
-    let activeQuestion;
-    let valueInput = null;
-    let questionText = null;
-    if (this.state.activeQuestion.length > 0) {
-      activeQuestion = RootSection.getFromPath(this.state.activeQuestion, [this.state.root]);
-      if (activeQuestion instanceof QAQuestion) {
-        const type = activeQuestion.answerType;
-        const text = activeQuestion.questionContent.content;
-        questionText = <Text>{text}</Text>;
-        valueInput = this.getValueInput(type);
-      }
+    const currentQuestion = this.state.allQuestions[this.state.currentQuestionIndex];
+    if (currentQuestion.data instanceof QAQuestion) {
+
+
+      const questionText = currentQuestion.data.questionContent.content;
+      const valueInput = this.getValueInput(currentQuestion.data.answerType);
+      return (
+        <>{questionText}
+          {valueInput}</>
+      );
     }
-
-    return (
-      <>{questionText}
-        {valueInput}</>
-
-    );
   }
 
   getValueInput(type: IValueType) {
@@ -122,19 +113,23 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
 
 
   handleNext() {
-    const currentQuestion = this.state.activeQuestion;
-    const currentSection = RootSection.getFromPath(this.state.activeSectionPath, [this.state.root]);
-    if (currentSection instanceof QAQuestion) { return; } else {
-      const nextIndex = currentQuestion.length > 0 ? currentQuestion[currentQuestion.length - 1] + 1 : 0;
-      // currentSection.content[];l
+    if (this.state.currentQuestionIndex < this.state.allQuestions.length) {
+      this.setState((prevState: SurveyFormComponentState) => {
+        return {
+          currentQuestionIndex: ++prevState.currentQuestionIndex,
+        };
+      });
     }
-    this.setState((prevState: SurveyFormComponentState) => {
-
-    });
   }
 
   handlePrev() {
-
+    if (this.state.currentQuestionIndex > 0) {
+      this.setState((prevState: SurveyFormComponentState) => {
+        return {
+          currentQuestionIndex: ++prevState.currentQuestionIndex,
+        };
+      });
+    }
   }
   render() {
     return (

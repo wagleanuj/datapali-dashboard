@@ -19,6 +19,41 @@ export class RootSection {
         if (path.length === 1) { return el; }
         return RootSection.getFromPath(path.slice(1), el.content);
     }
+    
+    static Entries(root: RootSection, sectionPath: number[], startIndex: number, fetchType?: QORS): { data: (QuestionSection | QAQuestion), path: number[] }[] {
+        let stack: { path: number[], startIndex: number }[] = [];
+        let rt = [];
+        let cloned = sectionPath.slice(0);
+        stack.push({ path: sectionPath, startIndex: startIndex });
+        for (let i = 0; i < sectionPath.length - 1; i++) {
+            stack.push({ path: cloned.slice(0, cloned.length - 1), startIndex: cloned[cloned.length - 1] + 1 });
+            cloned.pop();
+        }
+
+        while (stack.length > 0) {
+            let p = stack.shift();
+            if (p) {
+                let section = RootSection.getFromPath(p.path, [root])
+                for (let i = p.startIndex; i < section.content.length; i++) {
+                    let item = section.content[i];
+                    if (item instanceof QAQuestion) {
+                        if (!fetchType || fetchType === QORS.QUESTION) {
+                            rt.push({ path: p.path.concat(i), data: item });
+                        }
+                    }
+                    else {
+                        if (!fetchType || fetchType === QORS.SECTION) {
+                            rt.push({ path: p.path.concat(i), data: item });
+                        }
+                        stack.push({ path: p.path.concat(i), startIndex: 0 });
+                    }
+                }
+            }
+        }
+        return rt;
+
+
+    }
 
 
     addQuestion(parentPath: number[], q?: (QAQuestion)[]) {

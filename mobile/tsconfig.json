@@ -18,7 +18,8 @@
     ],
     "paths": {
       "@src/*": ["./src/*"],
-      "@kitten/*": ["./node_modules/react-native-ui-kitten/*"]
+      "@kitten/*": ["./node_modules/react-native-ui-kitten/*"],
+      "@dpForm/*":["./node_modules/dpform/*"]
     },
     "typeRoots": [
       "./node_modules/@types"

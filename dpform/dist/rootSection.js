@@ -47,6 +47,37 @@ var RootSection = /** @class */ (function () {
         }
         return RootSection.getFromPath(path.slice(1), el.content);
     };
+    RootSection.Entries = function (root, sectionPath, startIndex, fetchType) {
+        var stack = [];
+        var rt = [];
+        var cloned = sectionPath.slice(0);
+        stack.push({ path: sectionPath, startIndex: startIndex });
+        for (var i = 0; i < sectionPath.length - 1; i++) {
+            stack.push({ path: cloned.slice(0, cloned.length - 1), startIndex: cloned[cloned.length - 1] + 1 });
+            cloned.pop();
+        }
+        while (stack.length > 0) {
+            var p = stack.shift();
+            if (p) {
+                var section = RootSection.getFromPath(p.path, [root]);
+                for (var i = p.startIndex; i < section.content.length; i++) {
+                    var item = section.content[i];
+                    if (item instanceof question_1.QAQuestion) {
+                        if (!fetchType || fetchType === QORS.QUESTION) {
+                            rt.push({ path: p.path.concat(i), data: item });
+                        }
+                    }
+                    else {
+                        if (!fetchType || fetchType === QORS.SECTION) {
+                            rt.push({ path: p.path.concat(i), data: item });
+                        }
+                        stack.push({ path: p.path.concat(i), startIndex: 0 });
+                    }
+                }
+            }
+        }
+        return rt;
+    };
     RootSection.prototype.addQuestion = function (parentPath, q) {
         if (!q) {
             q = [new question_1.QAQuestion()];

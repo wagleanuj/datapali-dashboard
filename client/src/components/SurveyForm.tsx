@@ -67,11 +67,10 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             if (file) {
                 file.content = JSON.parse(file.content);
                 console.log(file.id);
-                
+
                 let root: RootSection = RootSection.fromJSON(file);
-                let ir = this.Iterator2(root, [0],0, QORS.QUESTION);
-                let all = [...ir];
-                console.log(all.map(item=>[item.path, item.data.questionContent.content]));
+                // let ir = this.Iterator2(root, [0], 0, QORS.QUESTION);
+                console.log(ir.map((item:any)=>item.data));
                 this.setState({
                     root: root,
                     activeSection: root,
@@ -80,50 +79,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         });
     }
-
-
-    *Iterator2(root: RootSection, sectionPath: number[], index: number, fetchType?: QORS): any {
-        if (sectionPath.length === 0) { return true; }
-        const section = RootSection.getFromPath(sectionPath, [root]);
-        if (section && !(section instanceof QAQuestion)) {
-            while (index < section.content.length) {
-
-                const current = section.content[index];
-                if (current instanceof QAQuestion) {
-                    if (fetchType === QORS.QUESTION || !fetchType) {
-                        yield {
-                            path: sectionPath.concat(index),
-                            data: current,
-                        };
-                    }
-                    index++;
-                } else if (current instanceof QuestionSection) {
-                    if (fetchType === QORS.SECTION || !fetchType) {
-                        yield {
-                            path: sectionPath.concat(index),
-                            data: current,
-                        };
-                    }
-                    for (const q of this.Iterator2(root, sectionPath.concat(index), 0, fetchType)) {
-                        yield q;
-                    }
-                    index++;
-                }
-
-            }
-           let ind = sectionPath.pop();
-           if(!_.isNil(ind)) index = ind;
-
-            if (sectionPath && sectionPath.length > 0) {
-                // index = sectionPath[sectionPath.length - 1] ;
-                for (const q of this.Iterator2(root, sectionPath.slice(), index, fetchType)) {
-                    yield q;
-                }
-            }
-            return true;
-        }
-    }
-
+    
     handleAddSection() {
         this.setState((prevState: SurveyFormState) => {
             let cloned = _.clone(prevState.root);
@@ -209,7 +165,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 saveFile: file
             }
         }
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgxMzc3MjAsImV4cCI6MTU2ODIyNDEyMH0.pFUxpkVIiQ8osj8dSHHzOLhd4_8Idf6Trq9XnbBiwDc";
 
         return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token).then(re => console.log(re));
     }
