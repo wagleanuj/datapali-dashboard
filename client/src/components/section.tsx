@@ -1,16 +1,10 @@
-import { ButtonGroup } from "@blueprintjs/core";
-import { QAQuestion } from "../form/question";
+import { Constants, QuestionSection, RootSection, QAQuestion, IDupeSettings, getReadablePath } from "dpform";
 import React from "react";
 import { QuestionButton } from "./questionButton";
 import { DPFormItem } from "./DPFormItem";
 import { SectionButton } from "./sectionButton";
-import _ from "lodash";
-import { getReadablePath } from "../form/util";
-import { Constants } from "../form/constants";
-import { QuestionSection } from "../form/questionSection";
-import { RootSection } from "../form/rootSection";
-import { IDupeSettings } from "../form/duplicateSettings";
 import { DuplicateSettings } from "./duplicateSettings";
+import { ButtonGroup } from "@blueprintjs/core";
 
 interface SectionCProps {
     constants: Constants,

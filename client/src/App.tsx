@@ -2,7 +2,7 @@ import React from 'react';
 import './App.css';
 import { SurveyForm } from './components/SurveyForm';
 import { getPradeshData } from './testData/pradeshdata';
-import { RootSection } from './form/rootSection';
+import { RootSection } from 'dpform';
 
  export default class App extends React.Component<any, any> {
   constructor(props: any) {

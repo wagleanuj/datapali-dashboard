@@ -1,10 +1,8 @@
 import React from "react";
 import { Button, Row, ModalFooter, ModalBody } from "reactstrap";
-import { QACondition } from "../form/condition";
-import { ILiteral } from "../form/answer";
 import Modal from "react-modal";
 import { CreateCondition } from "./CreateCondition";
-import { QAQuestion } from "../form/question";
+import { ILiteral, QAQuestion, QACondition } from "dpform";
 
 
 

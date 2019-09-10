@@ -3,7 +3,7 @@ import { customStyles } from "./DPFormItem";
 import Select from "react-select";
 import { Row, Col } from "reactstrap";
 import _ from "lodash";
-import { ANSWER_TYPES, IValueType } from "../form";
+import { ANSWER_TYPES, IValueType } from "dpform";
 
 type QAAnswerTypeOption = { label: string, value: ANSWER_TYPES };
 

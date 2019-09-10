@@ -1,18 +1,13 @@
 import React from "react";
 import { Table, Button } from "reactstrap";
-import { QACondition } from "../form/condition";
-import { ILiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { openModal, destroyModal } from "../form/util";
+import { openModal, destroyModal } from "../utils";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { IAnswerCondition, QAQuestion, IAutoAnswer } from "../form/question";
 import { ValInput } from "./ValInput";
-import { AnswerOptions } from "../form/AnswerOptions";
 import { Switch } from "@blueprintjs/core";
-import { IValueType, ANSWER_TYPES } from "../form";
+import { QAQuestion, IAutoAnswer, AnswerOptions, IValueType, IAnswerCondition, ANSWER_TYPES, QACondition, ILiteral } from "dpform";
 
 interface AutoAnswerProps {
     definedQuestions: { [key: string]: QAQuestion },

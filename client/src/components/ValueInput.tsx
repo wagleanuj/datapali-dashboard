@@ -1,8 +1,7 @@
 import React from "react";
 import Select from 'react-select';
-import { AnswerType } from "../form/answer";
 import { customStyles, ISelectOption } from "./DPFormItem";
-import { IAnswerOption } from "../form/question";
+import { AnswerType, IAnswerOption } from "dpform";
 
 interface ValueInputProps {
     onChange: Function,

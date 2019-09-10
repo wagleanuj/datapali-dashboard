@@ -27,6 +27,7 @@
     "@types/why-did-you-update": "0.0.10",
     "classnames": "^2.2.6",
     "copy-to-clipboard": "^3.2.0",
+    "dpform": "file:../dpform",
     "eslint": "^6.2.2",
     "formik": "^1.5.8",
     "history": "^4.9.0",

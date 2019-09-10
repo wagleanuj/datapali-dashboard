@@ -3,8 +3,7 @@ import { TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprin
 import { ButtonGroup, Divider } from "@blueprintjs/core";
 import Select from "react-select"
 import { customStyles } from "./DPFormItem";
-import { AnswerOptions } from "../form/AnswerOptions";
-import { IValueType, ANSWER_TYPES } from "../form";
+import {IValueType, ANSWER_TYPES, AnswerOptions, IOptionGroup, IOption} from "dpform";
 
 interface RangeValue {
     min: string | undefined
@@ -263,14 +262,14 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
             let groupOptions_: any = [];
             let rootOptions_: any = []
             if (groups && groups.length > 0) {
-                groupOptions_ = groups.map(item => {
+                groupOptions_ = groups.map((item:IOptionGroup )=> {
                     return ({
                         label: item.name,
                         options: item.members.map(i => ({ label: i.value, value: i.id }))
                     })
                 })
             }
-            rootOptions_ = rootOptions.map(i => ({ label: i.value, value: i.id }));
+            rootOptions_ = rootOptions.map((i: IOption) => ({ label: i.value, value: i.id }));
             allOptions = [...groupOptions_, ...rootOptions_];
         }
         let findOption = (options_: any, findValue: string | undefined): any => {

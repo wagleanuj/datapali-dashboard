@@ -1,8 +1,7 @@
-import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup } from "../form";
+import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant } from "dpform";
 import React from "react";
 import _ from "lodash";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { destroyModal, openModal } from "../form/util";
 import { ButtonGroup, Table, Button } from "reactstrap";
 import { H5, Divider } from "@blueprintjs/core";
 import Select from "react-select/";
@@ -10,7 +9,7 @@ import { customStyles } from "./DPFormItem";
 import { AnswerTypeInput } from "./AnswerType";
 import { ValInput } from "./ValInput";
 import Creatable from "react-select/creatable"
-
+import {openModal, destroyModal} from "../utils"
 
 interface QAAddOptionsState {
     options: AnswerOptions,
@@ -176,7 +175,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
     }
 
     render() {
-        let constantsOptions = this.props.constants.ConstantsArray.map(item => ({ label: item.name, value: item.name }));
+        let constantsOptions = this.props.constants.ConstantsArray.map((item:IConstant) => ({ label: item.name, value: item.name }));
         return (
             <ButtonGroup fill={true} vertical={true}>
                 <H5>Import From Constant </H5>

@@ -1,4 +1,4 @@
-import { AnswerOptions } from "../form/AnswerOptions";
+import { AnswerOptions } from 'dpform'
 
 export const districts: any = [
     {

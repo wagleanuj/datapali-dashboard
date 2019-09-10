@@ -1,11 +1,10 @@
 import React from "react";
 import { ButtonGroup, Button, Switch, Classes, Divider } from "@blueprintjs/core";
-import { QAQuestion } from "../form/question";
 import Select from "react-select";
 import { customStyles } from "./DPFormItem";
 import _ from "lodash";
 import classNames from "classnames";
-import { IDupeSettings, DuplicateTimesType } from "../form/duplicateSettings";
+import { IDupeSettings, QAQuestion, DuplicateTimesType } from "dpform";
 
 interface DuplicateSettingsProps extends IDupeSettings {
     definedQuestions: { [key: string]: QAQuestion }

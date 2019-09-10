@@ -3,14 +3,12 @@ import { faPlusSquare, faWindowClose, faArrowUp } from "@fortawesome/free-solid-
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import Select from 'react-select';
 import { Button, Table, Card, CardHeader, CardBody, Row } from "reactstrap";
-import { QAFollowingOperator, QACondition } from "../form/condition";
-import { ILiteral, QAComparisonOperator, QAType, IContent } from "../form/answer";
-import { QAQuestion, IAnswerOption } from "../form/question";
 import { ValueType } from "react-select/src/types";
 import { getRandomId } from "../utils/getRandomId";
 import { customStyles, ISelectOption, getOperatorForType } from "./DPFormItem";
 import _ from "lodash";
 import { ValInput } from "./ValInput";
+import { ILiteral, QAQuestion, QACondition, QAComparisonOperator, IContent, QAType, QAFollowingOperator, IAnswerOption } from "dpform";
 
 enum TableFieldType {
     QuestionRef = 1,

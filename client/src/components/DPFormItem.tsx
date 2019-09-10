@@ -10,19 +10,26 @@ import {
     CardBody,
     FormGroup,
 } from "reactstrap";
-import { QACondition } from "../form/condition";
-import { ILiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
-import { QAQuestion, IAutoAnswer } from "../form/question";
-import { QAAddOptions as AddOption } from "./AddOptions";
-import { AnswerOptions } from "../form/AnswerOptions";
 import Modal from "react-modal";
-import { openModal, destroyModal } from "../form/util";
+import {openModal, destroyModal} from "../utils"
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { Switch } from "@blueprintjs/core";
-import { Constants } from "../form/constants";
-import { IValueType, ANSWER_TYPES } from "../form";
+import {
+    IValueType,
+    QAComparisonOperator,
+    ANSWER_TYPES,
+    Constants,
+    QAQuestion,
+    ILiteral,
+    QACondition,
+    QAType,
+    AnswerOptions,
+    IAutoAnswer,
+    AnswerType
+} from "dpform";
 import { AnswerTypeInput } from "./AnswerType";
+import { QAAddOptions } from "./AddOptions";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -126,8 +133,8 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
             question: this.props.question
         }
     }
-    shouldComponentUpdate(nextProps: FormItemProps, nextState:FormItemState){
-        if(_.isEqual(nextProps.question, this.state.question)){
+    shouldComponentUpdate(nextProps: FormItemProps, nextState: FormItemState) {
+        if (_.isEqual(nextProps.question, this.state.question)) {
             return false;
         }
         return true;
@@ -231,7 +238,7 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
                             {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
                                 <label >Add Options</label>
                                 <Card>
-                                    <AddOption
+                                    <QAAddOptions
                                         constants={this.props.constants}
                                         definedQuestions={this.props.definedQuestions}
                                         onChange={this.handleOptionsChange.bind(this)}

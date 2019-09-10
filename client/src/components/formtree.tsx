@@ -2,10 +2,8 @@
 import { ITreeNode, Tree, Classes } from "@blueprintjs/core";
 
 import React from "react";
+import { RootSection, QuestionSection, QAQuestion } from "dpform";
 
-import { QAQuestion } from "../form/question";
-import { RootSection } from "../form/rootSection";
-import { QuestionSection } from "../form/questionSection";
 
 
 
