@@ -4,12 +4,12 @@ import React from "react";
 const toolbarItems = [
     {
         name: "up-one-level",
-        icon: "caret-up",
+        icon: "arrow-up",
         text: ""
     },
     {
         name: "save-root",
-        icon: "save",
+        icon: "floppy-disk",
         text: "Save Form"
     },
     {

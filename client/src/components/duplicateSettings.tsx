@@ -1,19 +1,12 @@
 import React from "react";
-import { QACondition } from "../form/condition";
 import { ButtonGroup, Button, Switch, Classes, Divider } from "@blueprintjs/core";
 import { QAQuestion } from "../form/question";
 import Select from "react-select";
 import { customStyles } from "./DPFormItem";
 import _ from "lodash";
 import classNames from "classnames";
+import { IDupeSettings, DuplicateTimesType } from "../form/duplicateSettings";
 
-export type DuplicateTimesType = "questionRef" | "number";
-
-export interface IDupeSettings {
-    isEnabled: boolean,
-    condition?: QACondition,
-    duplicateTimes: { value: string, type: DuplicateTimesType },
-}
 interface DuplicateSettingsProps extends IDupeSettings {
     definedQuestions: { [key: string]: QAQuestion }
     handleSave: (dupe: IDupeSettings) => void,

@@ -1,104 +1,20 @@
-import React, { RefObject } from "react";
-import { QAQuestion } from "../form/question";
-import { ITreeNode, Toaster, IToastProps, Intent } from "@blueprintjs/core";
-import { getRandomId } from "../utils/getRandomId";
-import { Row } from "reactstrap";
-import { Toolbar } from "./Toolbar";
-
-import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from "../testData/TestQuestions";
+import { QuestionSection } from "../form/questionSection";
+import { RootSection } from "../form/rootSection";
+import { Constants } from "../form/constants";
+import React from "react";
+import { Toaster, IToastProps, Intent, ITreeNode } from "@blueprintjs/core";
 import _ from "lodash";
-import { SectionC, RootSection } from "./section";
+import { QAQuestion } from "../form/question";
+import { Row } from "reactstrap";
+import { ConstantDefinitions } from "./constants";
+import { Toolbar } from "./Toolbar";
 import { FormTree } from "./formtree";
-import { QACondition } from "../form/condition";
-import { IDupeSettings } from "./duplicateSettings";
-import { dupeSettingsToJSON, request } from "../utils/util";
-import { ConstantDefinitions, Constants } from "./constants";
-import copy from "copy-to-clipboard"
-export class QASurveyForm {
-    content!: (QuestionSection | QAQuestion)[];
-    id: string;
-    name!: string;
-    condition: QACondition;
-    constructor() {
-        this.id = getRandomId("sf-");
-        this.condition = new QACondition()
-    }
-    setName(name: string) {
-        this.name = name;
-        return this;
-    }
+import { SectionC } from "./section";
+import { request } from "../form/util";
+import copy from "copy-to-clipboard";
+import { IDupeSettings } from "../form/duplicateSettings";
 
-    setContent(content: (QuestionSection | QAQuestion)[]) {
-        this.content = content;
-        return this;
-    }
 
-    addContent(content: QAQuestion | QuestionSection) {
-        this.content.push(content);
-        return this;
-    }
-
-}
-
-export class QuestionSection {
-    name!: string;
-    content!: (QuestionSection | QAQuestion)[]
-    id: string
-    duplicatingSettings: IDupeSettings;
-    condition: QACondition;
-    constructor() {
-        this.id = getRandomId("ss-");
-        this.duplicatingSettings = { condition: undefined, isEnabled: false, duplicateTimes: { value: "", type: "number" } }
-        this.content = []
-        this.condition = new QACondition;
-
-    }
-    static toJSON(a: QuestionSection): any {
-        return ({
-            name: a.name,
-            id: a.id,
-            condition : QACondition.toJSON(a.condition),
-            content: a.content.map(item => {
-                if (item instanceof QuestionSection) {
-                    return QuestionSection.toJSON(item)
-                }
-                else if (item instanceof QAQuestion) {
-                    return QAQuestion.toJSON(item)
-                }
-            }),
-            duplicatingSettings: dupeSettingsToJSON(a.duplicatingSettings)
-        })
-    }
-
-    setID(id: string) {
-        this.id = id;
-        return this;
-    }
-    setName(name: string) {
-        this.name = name;
-        return this;
-    }
-    setContent(content: (QuestionSection | QAQuestion)[]) {
-        this.content = content;
-        return this;
-    }
-
-    addContent(content: QuestionSection | QAQuestion) {
-        this.content.push(content);
-        return this;
-    }
-
-    deleteContent(contentId: string) {
-        let found = this.content.findIndex(item => item.id === contentId);
-        if (found > -1) {
-            this.content.splice(found, 1);
-        }
-    }
-    setDuplicatingSettings(dupe: IDupeSettings) {
-        this.duplicatingSettings = dupe;
-        return this;
-    }
-}
 
 interface SurveyFormState {
     activeSection: QuestionSection | RootSection,
@@ -113,14 +29,10 @@ interface SurveyFormProps {
     root: RootSection,
     onChange: (root: RootSection) => void
 }
-export const rootSection = new RootSection().addSection([0]).addQuestion([0], [testQuestion]).addQuestion([0, 0], [testQuestion2, testQuestion3]);
-console.log(rootSection);
 
 
 export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState>{
-    static defaultProps = {
-        root: rootSection,
-    }
+
     private toasterRef!: Toaster;
 
     constructor(props: SurveyFormProps) {
@@ -134,40 +46,40 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             constants: new Constants(),
         }
     }
-    componentDidMount(){
+    componentDidMount() {
         this.loadForm();
     }
 
-    loadForm(){
+    loadForm() {
         let requestBody = {
             query: `
-            query GetForm{
-                forms{
+            query GetForm($formId: String!){
+                forms(id: $formId){
                   id
                   name
                   content
                 }
               }`,
             variables: {
+                formId: "root-5eadfe10-ed7a-3898-769b-490bbd5d849e"
             }
-          }
-          let token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
-          return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token ).then(res=>{
-          let file= res[0];
-            if(file){
-              file.content = JSON.parse(file.content)[0];
-              file.content = JSON.parse(file.content);
-              let root = RootSection.fromJSON(file);
-              console.log(root);
-             this.setState({
-               root: root,
-               activeSection: root,
-               activeSectionPath: [0]
-             })
+        }
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
+        return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
+            file = file[0]
+            if (file) {
+                file.content = JSON.parse(file.content);
+                console.log(file.id);
+                let root = RootSection.fromJSON(file);
+                this.setState({
+                    root: root,
+                    activeSection: root,
+                    activeSectionPath: [0]
+                })
             }
-          });
-      }
-      
+        });
+    }
+
 
 
 
@@ -243,7 +155,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     }
     private handleSave() {
         let file = RootSection.toJSON(this.state.root);
-        file.content =JSON.stringify(file.content);
+        file.content = JSON.stringify(file.content);
         console.log(file);
         let requestBody = {
             query: `
@@ -253,12 +165,12 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 }
               }`,
             variables: {
-              saveFile: file
+                saveFile: file
             }
-          }
-          let token ="eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
+        }
+        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw";
 
-          return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token ).then(re=>console.log(re));
+        return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token).then(re => console.log(re));
     }
 
 

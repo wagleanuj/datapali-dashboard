@@ -14,14 +14,15 @@ import { QACondition } from "../form/condition";
 import { ILiteral, QAComparisonOperator, QAType, AnswerType } from "../form/answer";
 import { QAQuestion, IAutoAnswer } from "../form/question";
 import { QAAddOptions as AddOption } from "./AddOptions";
-import { AnswerOptions } from "./AnswerOptions";
+import { AnswerOptions } from "../form/AnswerOptions";
 import Modal from "react-modal";
-import { openModal, destroyModal } from "../utils/util";
+import { openModal, destroyModal } from "../form/util";
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ANSWER_TYPES, AnswerTypeInput, IValueType } from "./AnswerType";
 import { Switch } from "@blueprintjs/core";
-import { Constants } from "./constants";
+import { Constants } from "../form/constants";
+import { IValueType, ANSWER_TYPES } from "../form";
+import { AnswerTypeInput } from "./AnswerType";
 let root: HTMLElement = document.getElementById("root") || document.body;
 Modal.setAppElement(root);
 
@@ -284,11 +285,4 @@ export interface ISelectOption {
 }
 
 
-
-export enum TableFieldType {
-    QuestionRef = 1,
-    ComparisonOperator,
-    ComparisonValue,
-    FollowingOperator,
-}
 

@@ -1,15 +1,15 @@
 import React from 'react';
 import './App.css';
-
 import { SurveyForm } from './components/SurveyForm';
-import { RootSection } from './components/section';
 import { getPradeshData } from './testData/pradeshdata';
+import { RootSection } from './form/rootSection';
 
  export default class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
 
   }
+  
   handleChange(form: RootSection) {
     this.setState({
       form: form

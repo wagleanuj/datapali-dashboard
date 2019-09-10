@@ -1,11 +1,11 @@
-import { QuestionSection } from "./SurveyForm";
 
 import { ITreeNode, Tree, Classes } from "@blueprintjs/core";
 
 import React from "react";
 
 import { QAQuestion } from "../form/question";
-import { RootSection } from "./section";
+import { RootSection } from "../form/rootSection";
+import { QuestionSection } from "../form/questionSection";
 
 
 

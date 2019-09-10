@@ -145,7 +145,7 @@ input RootSectionInput {
 }
 
 type Query {
-    forms: [RootSection]
+    forms(id: String!): [RootSection]
     login(usernameOrEmail: String!, password: String!): AuthData
     sendPasswordResetEmail(email: String!): GeneralQueryResponse!
 }

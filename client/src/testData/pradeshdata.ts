@@ -1,4 +1,4 @@
-import { AnswerOptions } from "../components/AnswerOptions";
+import { AnswerOptions } from "../form/AnswerOptions";
 
 export const districts: any = [
     {

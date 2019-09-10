@@ -1,10 +1,10 @@
 import React, { useState } from "react";
-import { ANSWER_TYPES, IValueType } from "./AnswerType";
 import { TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprintjs/datetime"
 import { ButtonGroup, Divider } from "@blueprintjs/core";
 import Select from "react-select"
 import { customStyles } from "./DPFormItem";
-import { AnswerOptions } from "./AnswerOptions";
+import { AnswerOptions } from "../form/AnswerOptions";
+import { IValueType, ANSWER_TYPES } from "../form";
 
 interface RangeValue {
     min: string | undefined

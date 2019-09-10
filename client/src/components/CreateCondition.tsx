@@ -8,10 +8,18 @@ import { ILiteral, QAComparisonOperator, QAType, IContent } from "../form/answer
 import { QAQuestion, IAnswerOption } from "../form/question";
 import { ValueType } from "react-select/src/types";
 import { getRandomId } from "../utils/getRandomId";
-import { TableFieldType, customStyles, ISelectOption, getOperatorForType } from "./DPFormItem";
+import { customStyles, ISelectOption, getOperatorForType } from "./DPFormItem";
 import _ from "lodash";
-import { testQuestion, testQuestion2, testQuestion3, testQuestion4, testQuestion5 } from "../testData/TestQuestions";
 import { ValInput } from "./ValInput";
+
+enum TableFieldType {
+    QuestionRef = 1,
+    ComparisonOperator,
+    ComparisonValue,
+    FollowingOperator,
+}
+
+
 type CreateConditionState = {
     literals: ILiteral[]
 };
@@ -32,7 +40,6 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
     static get defaultProps(): CreateConditionProps {
         return {
             onChange: () => { },
-            definedQuestions: { 'question-1': testQuestion, 'question-2': testQuestion2, "question-3": testQuestion3, "question-4": testQuestion4, "question-5": testQuestion5 }
         }
     };
     constructor(props: CreateConditionProps) {

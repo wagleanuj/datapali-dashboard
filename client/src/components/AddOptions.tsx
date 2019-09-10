@@ -1,23 +1,19 @@
+import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup } from "../form";
 import React from "react";
-import { Table } from "reactstrap";
-import { Button, Divider, ButtonGroup, H5 } from "@blueprintjs/core";
-import { QACondition } from "../form/condition";
-
-import { ILiteral } from "../form/answer";
-import Creatable from 'react-select/creatable';
-import { AnswerTypeInput, IValueType } from "./AnswerType";
 import _ from "lodash";
-import { ValInput } from "./ValInput";
-import { customStyles } from "./DPFormItem";
-import Select from "react-select";
-import { openModal, destroyModal } from "../utils/util";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { AnswerOptions, IOption, IOptionGroup } from "./AnswerOptions";
-import { QAQuestion } from "../form/question";
-import { Constants } from "./constants";
+import { destroyModal, openModal } from "../form/util";
+import { ButtonGroup, Table, Button } from "reactstrap";
+import { H5, Divider } from "@blueprintjs/core";
+import Select from "react-select/";
+import { customStyles } from "./DPFormItem";
+import { AnswerTypeInput } from "./AnswerType";
+import { ValInput } from "./ValInput";
+import Creatable from "react-select/creatable"
+
+
 interface QAAddOptionsState {
     options: AnswerOptions,
-
 }
 interface QAAddOptionsProps {
     constants: Constants,

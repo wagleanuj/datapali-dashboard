@@ -3,18 +3,11 @@ import { customStyles } from "./DPFormItem";
 import Select from "react-select";
 import { Row, Col } from "reactstrap";
 import _ from "lodash";
+import { ANSWER_TYPES, IValueType } from "../form";
 
 type QAAnswerTypeOption = { label: string, value: ANSWER_TYPES };
 
-export enum ANSWER_TYPES {
-    BOOLEAN = "boolean",
-    STRING = "string",
-    DATE = "date",
-    TIME = "time",
-    NUMBER = "number",
-    RANGE = "range",
-    SELECT = "select"
-}
+
 const ValueSelectOptions: QAAnswerTypeOption[] = [
     { value: ANSWER_TYPES.BOOLEAN, label: "YES/NO" },
     { value: ANSWER_TYPES.STRING, label: "Text" },
@@ -28,11 +21,6 @@ const ValueSelectOptions: QAAnswerTypeOption[] = [
 const OptionsForSelect: QAAnswerTypeOption[] = ValueSelectOptions.filter((item) => item.value && item.value !== ANSWER_TYPES.SELECT);
 let includedInRange = [ANSWER_TYPES.TIME, ANSWER_TYPES.NUMBER, ANSWER_TYPES.DATE, ANSWER_TYPES.TIME];
 const OptionsForRange: QAAnswerTypeOption[] = ValueSelectOptions.filter(item => includedInRange.includes(item.value))
-
-export interface IValueType {
-    name: ANSWER_TYPES,
-    ofType?: IValueType,
-}
 
 
 interface AnswerTypeInputProps {

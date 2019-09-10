@@ -3,16 +3,16 @@ import { Table, Button } from "reactstrap";
 import { QACondition } from "../form/condition";
 import { ILiteral } from "../form/answer";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { openModal, destroyModal } from "../utils/util";
+import { openModal, destroyModal } from "../form/util";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { getRandomId } from "../utils/getRandomId";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
 import { IAnswerCondition, QAQuestion, IAutoAnswer } from "../form/question";
-import { IValueType, ANSWER_TYPES } from "./AnswerType";
 import { ValInput } from "./ValInput";
-import { AnswerOptions } from "./AnswerOptions";
+import { AnswerOptions } from "../form/AnswerOptions";
 import { Switch } from "@blueprintjs/core";
+import { IValueType, ANSWER_TYPES } from "../form";
 
 interface AutoAnswerProps {
     definedQuestions: { [key: string]: QAQuestion },
