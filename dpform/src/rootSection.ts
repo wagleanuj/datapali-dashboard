@@ -157,7 +157,7 @@ export class RootSection {
                 const section = new QuestionSection();
                 section.id = a.id;
                 section.name = a.name;
-                if (a.condition) { section.condition = QACondition.fromJSON(a.condition); }
+                if (a.appearingCondition) { section.appearingCondition = QACondition.fromJSON(a.appearingCondition); }
                 section.duplicatingSettings = dupeSettingsFromJSON(a.duplicatingSettings);
                 r.addSection(parentPath, [section]);
                 a.content.forEach((item: any, i: number) => handleSectionAdd(item, parentPath.concat(index), i));

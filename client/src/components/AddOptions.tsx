@@ -1,9 +1,9 @@
-import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant } from "dpform";
+import { AnswerOptions,Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant } from "dpform";
 import React from "react";
 import _ from "lodash";
 import { CreateConditionModal } from "./CreateConditionModal";
-import { ButtonGroup, Table, Button } from "reactstrap";
-import { H5, Divider } from "@blueprintjs/core";
+import {  Table } from "reactstrap";
+import { H5, Divider , Button, ButtonGroup} from "@blueprintjs/core";
 import Select from "react-select/";
 import { customStyles } from "./DPFormItem";
 import { AnswerTypeInput } from "./AnswerType";

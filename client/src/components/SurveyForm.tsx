@@ -1,15 +1,15 @@
 
-import React from "react";
-import { Toaster, IToastProps, Intent, ITreeNode } from "@blueprintjs/core";
+import { Intent, IToastProps, ITreeNode, Toaster } from "@blueprintjs/core";
+import copy from "copy-to-clipboard";
+import { Constants, IDupeSettings, QAQuestion, QuestionSection, request, RootSection } from "dpform";
 import _ from "lodash";
+import React from "react";
 import { Row } from "reactstrap";
 import { ConstantDefinitions } from "./constants";
-import { Toolbar } from "./Toolbar";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
+import { Toolbar } from "./Toolbar";
 
-import copy from "copy-to-clipboard";
-import { QuestionSection, RootSection, Constants, QAQuestion, IDupeSettings, request, QORS } from "dpform";
 
 
 

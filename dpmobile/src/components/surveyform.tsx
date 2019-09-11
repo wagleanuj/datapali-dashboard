@@ -98,6 +98,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       };
     });
   }
+  evaluateCondition(){
+    
+  }
   async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
     try {
       const { action, year, month, day } = await DatePickerAndroid.open({
@@ -287,9 +290,8 @@ export class SelInput extends React.Component<SelInputProps, any> {
     }
     return value;
   }
-  evaluateCondition(condition: QACondition) {
+  evaluateCondition(condition: QACondition, question: QAQuestion) {
     let finalResult = true;
-    const question = this.props.question;
     let pendingOperator = null;
     condition.literals.forEach(literal => {
       const getValid = (item: ILiteral) => {
@@ -342,8 +344,8 @@ export class SelInput extends React.Component<SelInputProps, any> {
   }
   filterByCondition() {
     const { groups, rootOptions } = this.props.options.SortedOptions;
-    const g = groups.filter(item => this.evaluateCondition(item.appearingCondition));
-    const options = rootOptions.filter(item => this.evaluateCondition(item.appearingCondition));
+    const g = groups.filter(item => this.evaluateCondition(item.appearingCondition, this.props.question));
+    const options = rootOptions.filter(item => this.evaluateCondition(item.appearingCondition, this.props.question));
     return { groups: g, rootOptions: options };
 
   }
@@ -383,4 +385,56 @@ export class SelInput extends React.Component<SelInputProps, any> {
     );
   }
 
+}
+
+function  evaluateCondition(condition: QACondition, question: QAQuestion, answerStore: {[key:string]: string}) {
+  let finalResult = true;
+  let pendingOperator = null;
+  condition.literals.forEach(literal => {
+    const getValid = (item: ILiteral) => {
+      let result = true;
+      const answer = answerStore[item.questionRef];
+      let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
+      let c1 = this.transformValueToType(question.answerType, answer);
+
+      if (question) {
+        switch (item.comparisonOperator) {
+          case QAComparisonOperator.Equal:
+            result = c1 === c2;
+            console.log(result);
+            break;
+          case QAComparisonOperator.Greater_Than:
+            result = c1 > c2;
+            break;
+          case QAComparisonOperator.Greater_Than_Or_Equal:
+            result = c1 >= c2;
+            break;
+          case QAComparisonOperator.Less_Than:
+            result = c1 < c2;
+            break;
+          case QAComparisonOperator.Less_Than_Or_Equal:
+            result = c1 >= c2;
+            break;
+        }
+      }
+      return result;
+    }
+    let currentResult = getValid(literal);
+    if (!pendingOperator) {
+      finalResult = currentResult;
+      pendingOperator = literal.followingOperator
+    }
+    else if (pendingOperator) {
+      switch (pendingOperator) {
+        case QAFollowingOperator.AND:
+          finalResult = finalResult && currentResult;
+          break;
+        case QAFollowingOperator.OR:
+          finalResult = finalResult || currentResult;
+          break;
+      }
+    }
+
+  });
+  return finalResult;
 }

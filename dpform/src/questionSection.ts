@@ -8,7 +8,7 @@ export class QuestionSection {
     content!: (QuestionSection | QAQuestion)[];
     id: string;
     duplicatingSettings: IDupeSettings;
-    condition: QACondition;
+    appearingCondition: QACondition;
     constructor() {
         this.id = getRandomId('ss-');
         this.duplicatingSettings = {
@@ -17,14 +17,14 @@ export class QuestionSection {
             duplicateTimes: { value: '', type: 'number' },
         };
         this.content = [];
-        this.condition = new QACondition;
+        this.appearingCondition = new QACondition;
 
     }
     static toJSON(a: QuestionSection): any {
         return ({
             name: a.name,
             id: a.id,
-            condition: QACondition.toJSON(a.condition),
+            condition: QACondition.toJSON(a.appearingCondition),
             content: a.content.map(item => {
                 if (item instanceof QuestionSection) {
                     return QuestionSection.toJSON(item);
