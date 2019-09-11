@@ -9,7 +9,7 @@ import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 
 import copy from "copy-to-clipboard";
-import { QuestionSection, RootSection, Constants, QAQuestion, IDupeSettings, request, QORS } from "dpform";
+import { QuestionSection, RootSection, Constants, QAQuestion, IDupeSettings, request, QORS } from "@dpForm/dist";
 
 
 

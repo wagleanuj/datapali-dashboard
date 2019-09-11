@@ -3,11 +3,12 @@ import { Text, Button, Radio, Input, ButtonGroup } from 'react-native-ui-kitten/
 import { View, Picker, TextInput, DatePickerAndroid } from 'react-native';
 import { withStyles, ThemeType, ThemedComponentProps } from 'react-native-ui-kitten/theme';
 import { textStyle } from '../common';
-import { ComponentProps } from '@src/core/navigation';
-
-import { Showcase } from '@src/containers/components/common/showcase.component';
-import { ShowcaseSection } from '@src/containers/components/common/showcaseSection.component';
-import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request } from '@dpForm/index';
+import { RadioButton } from 'react-native-paper';
+// tslint:disable-next-line: max-line-length
+import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator } from '../../form';
+import { Showcase } from '../../containers/components/common/showcase.component';
+import { ComponentProps } from '../../core/navigation';
+import { any } from 'prop-types';
 export type SurveyFormComponentProps = ThemedComponentProps & ComponentProps;
 
 interface SurveyFormComponentState {
@@ -55,7 +56,7 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgwNDk0NzksImV4cCI6MTU2ODEzNTg3OX0.zUP4kHxUVtLfHNkUSjswB62YtBAzZrUwmowdFPbM3Uw';
+    const token = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgxNTg3ODYsImV4cCI6MTU2ODI0NTE4Nn0.GcpY7iZWFY0Pls05LeOpJtisyiMBvmymdPqi2eOkAAY';
     return request('http://192.168.2.22:5000/graphql',
       'forms',
       requestBody,
@@ -66,7 +67,6 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
           file.content = JSON.parse(file.content);
           const root = RootSection.fromJSON(file);
           const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
-
           this.setState({
             root: root,
             activeSection: root,
@@ -74,42 +74,70 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
             allQuestions: allq,
           });
         }
-      });
+      }).catch(err => console.log(err));
   }
   getQuestionPage(): ReactNode {
     const currentQuestion = this.state.allQuestions[this.state.currentQuestionIndex];
-    if (currentQuestion.data instanceof QAQuestion) {
-
-
-      const questionText = currentQuestion.data.questionContent.content;
-      const valueInput = this.getValueInput(currentQuestion.data.answerType);
+    if (currentQuestion && currentQuestion.data instanceof QAQuestion) {
+      const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
+        {currentQuestion.data.questionContent.content}
+      </Text>;
+      const valueInput = this.getValueInput(currentQuestion.data.answerType,
+        currentQuestion.data.options, currentQuestion.data);
       return (
-        <>{questionText}
-          {valueInput}</>
+        <View style={{ paddingTop: 20 }}>{questionText}
+          {valueInput}
+        </View>
       );
     }
   }
 
-  getValueInput(type: IValueType) {
-    let comp = null;
-    switch (type.name) {
-      case ANSWER_TYPES.NUMBER:
-        comp = <Input
-          placeholder=''
-          keyboardType='numeric'
-        />;
-        break;
-      case ANSWER_TYPES.STRING:
-        comp = <Input keyboardType='default' />;
-        break;
-      case ANSWER_TYPES.DATE:
-        comp = null;
-        break;
-      case ANSWER_TYPES.SELECT:
-        comp = null;
-        break;
-    }
+  storeAnswers(questionId: string, value: string) {
+    this.setState((prevState: SurveyFormComponentState) => {
+      const newAnswers = prevState.answers;
+      newAnswers[questionId] = value;
+      return {
+        answers: newAnswers,
+      };
+    });
   }
+
+  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
+    let comp = null;
+    if (type) {
+
+      switch (type.name) {
+        case ANSWER_TYPES.NUMBER:
+          comp = <Input
+            defaultValue={this.state.answers[question.id]}
+            onChangeText={this.storeAnswers.bind(this, question.id)}
+            placeholder=''
+            keyboardType='number-pad'
+          />;
+          break;
+        case ANSWER_TYPES.STRING:
+          comp = <Input
+            defaultValue={this.state.answers[question.id]}
+            onChangeText={this.storeAnswers.bind(this, question.id)} />;
+          break;
+        case ANSWER_TYPES.DATE:
+          comp = null;
+          break;
+        case ANSWER_TYPES.SELECT:
+          comp = <SelInput
+            question={question}
+            definedQuestions={this.state.allQuestions}
+            answerStore={this.state.answers}
+            value={this.state.answers[question.id]}
+            onSelectionChange={this.storeAnswers.bind(this, question.id)}
+            answerType={type}
+            options={options} />;
+          break;
+      }
+    }
+    return comp;
+  }
+
 
 
   handleNext() {
@@ -126,7 +154,7 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
     if (this.state.currentQuestionIndex > 0) {
       this.setState((prevState: SurveyFormComponentState) => {
         return {
-          currentQuestionIndex: ++prevState.currentQuestionIndex,
+          currentQuestionIndex: --prevState.currentQuestionIndex,
         };
       });
     }
@@ -140,12 +168,9 @@ class SurveyFormComponent extends React.Component<SurveyFormComponentProps, Surv
             <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
             <Button onPress={this.handleNext.bind(this)}>Next</Button>
           </View>
-
-
           {this.getQuestionPage()}
         </View>
       </Showcase>
-
     );
   }
 }
@@ -204,4 +229,94 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
 }));
 
 
+interface SelInputProps {
+  options: AnswerOptions;
+  answerType: IValueType;
+  onSelectionChange: (optId: string) => void;
+  value?: string;
+  definedQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
+  answerStore: { [key: string]: string };
+  question: QAQuestion;
 
+}
+export class SelInput extends React.Component<SelInputProps, any> {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    };
+  }
+  evaluateCondition(condition: QACondition) {
+    let result = true;
+    condition.literals.forEach(item => {
+      const question = this.props.question;
+      const answer = this.props.answerStore[item.questionRef];
+      console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
+      if (question) {
+        switch (item.comparisonOperator) {
+          case QAComparisonOperator.Equal:
+            result = item.comparisonValue.content === answer;
+            console.log(result);
+            break;
+          case QAComparisonOperator.Greater_Than:
+            result = item.comparisonValue.content > answer;
+            break;
+          case QAComparisonOperator.Greater_Than_Or_Equal:
+            result = item.comparisonValue.content >= answer;
+            break;
+          case QAComparisonOperator.Less_Than:
+            result = item.comparisonValue.content < answer;
+            break;
+          case QAComparisonOperator.Less_Than_Or_Equal:
+            result = item.comparisonValue.content <= answer;
+            break;
+        }
+      }
+    });
+    console.log("value is", result)
+    return result;
+  }
+  filterByCondition() {
+    const { groups, rootOptions } = this.props.options.SortedOptions;
+    const g = groups.filter(item => this.evaluateCondition(item.appearingCondition));
+    const options = rootOptions.filter(item => this.evaluateCondition(item.appearingCondition));
+    return { groups: g, rootOptions: options };
+
+  }
+  getOptions() {
+    const { groups, rootOptions } = this.filterByCondition();
+    let returnComp = groups.map(item => {
+      return <View key={item.id} >
+        <View>
+          <Text style={{ fontSize: 10, opacity: 0.5 }}>{item.name}</Text>
+        </View>
+        <View>
+          {item.members.map(option => {
+            return <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }} key={option.id}>
+              <Text>{option.value}</Text>
+              <RadioButton value={option.id} />
+            </View>;
+          })}
+        </View>
+      </View>;
+    });
+    const groupless = rootOptions.map(item => {
+      return <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }} key={item.id}>
+        <Text>{item.value}</Text>
+        <RadioButton value={item.id} /></View>;
+    });
+    returnComp = returnComp.concat(...groupless);
+    return returnComp;
+
+
+  }
+  render() {
+    console.log('pr', this.props.value);
+    return (
+      <RadioButton.Group value={this.props.value} onValueChange={this.props.onSelectionChange}>
+        {this.getOptions()}
+      </RadioButton.Group>
+    );
+  }
+
+}
