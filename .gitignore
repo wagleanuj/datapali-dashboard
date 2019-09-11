@@ -3,7 +3,7 @@
 # dependencies
 /server/node_modules
 /client/node_modules
-/dpmobile
+/dpmobile/node_modules
 
 /.pnp
 .pnp.js

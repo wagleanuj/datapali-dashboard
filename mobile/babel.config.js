@@ -14,7 +14,7 @@ const moduleResolverConfig = {
     '@kitten/ui': path.resolve(Config.KITTEN_PATH, 'ui'),
     '@eva-design/eva': path.resolve(Config.MAPPING_PATH),
     '@eva-design/processor': path.resolve(Config.PROCESSOR_PATH),
-    'dpform':path.resolve(Config.FORM_PATH)
+    '@dpform':path.resolve(Config.FORM_PATH)
   },
 };
 
