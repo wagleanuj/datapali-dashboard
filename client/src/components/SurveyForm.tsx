@@ -1,7 +1,7 @@
 
 import { Intent, IToastProps, ITreeNode, Toaster } from "@blueprintjs/core";
 import copy from "copy-to-clipboard";
-import { Constants, IDupeSettings, QAQuestion, QuestionSection, request, RootSection } from "dpform";
+import { Constants, IDupeSettings, QAQuestion, QuestionSection, request, RootSection, QORS } from "dpform";
 import _ from "lodash";
 import React from "react";
 import { Row } from "reactstrap";
@@ -71,6 +71,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 console.log(file.id);
 
                 let root: RootSection = RootSection.fromJSON(file);
+                let valbag: (QuestionSection | QAQuestion)[] = []
+                let iterated = this.getAllEntries([0,1], 6, root, null, true, valbag);
+                console.log(iterated);
                 // let ir = this.Iterator2(root, [0], 0, QORS.QUESTION);
                 this.setState({
                     root: root,
@@ -80,7 +83,32 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         });
     }
-    
+
+    getAllEntries(startSectionPath: number[], startIndex: number, root: RootSection, fetchType: QORS|null, first: boolean = true, returnbag: (QuestionSection | QAQuestion)[]) {
+        if (startSectionPath.length <= 0) return;
+        let section = RootSection.getFromPath(startSectionPath, [root]);
+        if (!section) return;
+        for (let i = startIndex; i < section.content.length; i++) {
+            let current = section.content[i];
+            if (current instanceof QAQuestion) {
+                if (fetchType === QORS.QUESTION || !fetchType) returnbag.push(current);
+
+            }
+            else if (current instanceof QuestionSection) {
+                if (fetchType === QORS.SECTION || !fetchType) returnbag.push(current);
+                this.getAllEntries(startSectionPath.concat(i), 0, root, fetchType, false, returnbag);
+            }
+        }
+        if (first) {
+            let cloned = startSectionPath.slice(0);
+            let index = cloned.pop();
+            if (typeof (index) === "number") {
+                this.getAllEntries(cloned, index, root, fetchType, true, returnbag);
+            }
+        }
+        return returnbag;
+    }
+
     handleAddSection() {
         this.setState((prevState: SurveyFormState) => {
             let cloned = _.clone(prevState.root);
