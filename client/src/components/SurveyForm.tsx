@@ -9,7 +9,7 @@ import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 
 import copy from "copy-to-clipboard";
-import { QuestionSection, RootSection, Constants, QAQuestion, IDupeSettings, request, QORS } from "@dpForm/dist";
+import { QuestionSection, RootSection, Constants, QAQuestion, IDupeSettings, request, QORS } from "dpform";
 
 
 
@@ -24,7 +24,9 @@ interface SurveyFormState {
 }
 interface SurveyFormProps {
     root: RootSection,
-    onChange: (root: RootSection) => void
+    onChange: (root: RootSection) => void,
+    token: string,
+
 }
 
 
@@ -61,8 +63,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 formId: "root-5eadfe10-ed7a-3898-769b-490bbd5d849e"
             }
         }
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgxMzc3MjAsImV4cCI6MTU2ODIyNDEyMH0.pFUxpkVIiQ8osj8dSHHzOLhd4_8Idf6Trq9XnbBiwDc";
-        return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
+        let token = this.props.token;
+        return request("http://142.93.151.160:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
             file = file[0]
             if (file) {
                 file.content = JSON.parse(file.content);
@@ -70,7 +72,6 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
                 let root: RootSection = RootSection.fromJSON(file);
                 // let ir = this.Iterator2(root, [0], 0, QORS.QUESTION);
-                console.log(ir.map((item:any)=>item.data));
                 this.setState({
                     root: root,
                     activeSection: root,
@@ -165,9 +166,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 saveFile: file
             }
         }
-        let token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgxMzc3MjAsImV4cCI6MTU2ODIyNDEyMH0.pFUxpkVIiQ8osj8dSHHzOLhd4_8Idf6Trq9XnbBiwDc";
-
-        return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token).then(re => console.log(re));
+        let token = this.props.token;
+        return request("http://142.93.151.160:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token).then(re => console.log(re));
     }
 
 

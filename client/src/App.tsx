@@ -3,13 +3,17 @@ import './App.css';
 import { SurveyForm } from './components/SurveyForm';
 import { getPradeshData } from './testData/pradeshdata';
 import { RootSection } from 'dpform';
-
- export default class App extends React.Component<any, any> {
+import { Login } from './ui/login';
+export default class App extends React.Component<any, any> {
   constructor(props: any) {
     super(props);
+    this.state = {
+      isLoggedIn: false,
+      token: null,
+    }
 
   }
-  
+
   handleChange(form: RootSection) {
     this.setState({
       form: form
@@ -17,14 +21,14 @@ import { RootSection } from 'dpform';
   }
 
   render() {
-    console.log(getPradeshData());
     return (
       <div className={"wrapper"}>
-        <div className="main-panel">
+        {!this.state.isLoggedIn && <Login onLoggedIn={token => this.setState({ token: token, isLoggedIn: true })} />}
+        {this.state.isLoggedIn && <div className="main-panel">
           <div className="content">
-            <SurveyForm root={RootSection.fromJSON(demo)} onChange={this.handleChange.bind(this)} />
+            <SurveyForm token={this.state.token} root={RootSection.fromJSON(demo)} onChange={this.handleChange.bind(this)} />
           </div>
-        </div>
+        </div>}
       </div>
     )
   }

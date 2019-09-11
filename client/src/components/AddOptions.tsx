@@ -233,6 +233,12 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
             options: this.props.options
         }
     }
+    shouldComponentUpdate(nextProps: QAAoptionSectionProps, nextState:QAAddOptionsSectionState ){
+        if(nextProps.options.length!==this.props.options.length || nextProps.groups.length!==this.props.groups.length){
+            return true;
+        }
+        return false;
+    }
 
     generateAddGroupInput(option: IOption) {
         let creatableOptions = this.props.groups.map(item => ({ value: item.name, label: item.name }));
