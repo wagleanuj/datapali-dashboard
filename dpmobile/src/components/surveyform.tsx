@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react';
 import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { RadioButton, Button, Text, TextInput as Input, Headline } from 'react-native-paper';
+import { RadioButton, Button, Text, TextInput as Input, Headline, List } from 'react-native-paper';
 // tslint:disable-next-line: max-line-length
-import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral } from 'dpform';
+import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType } from 'dpform';
 import _ from 'lodash';
 export type SurveyFormComponentProps = {}
 
@@ -56,8 +56,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgyMDY2MDMsImV4cCI6MTU2ODI5MzAwM30.8CfX_7_wx75nYSvG83dXscuIbhQqcrHqbnu30XWvR8A";
-
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgzMDEzMTIsImV4cCI6MTU2ODM4NzcxMn0.dYfY4zz4b5zx9nynbbo9Y4Oigk8r1r7pDJQkNIJbE6I";
     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
@@ -164,6 +163,11 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       let kk = i === curRIndex ? startIndex : 0;
       if ((currSection instanceof QAQuestion)) return;
       let isSectionValid = this.evaluateCondition(currSection.appearingCondition);
+      let isDuplicating = currSection.duplicatingSettings.isEnabled;
+      if(isDuplicating && isSectionValid) {
+        console.log("duplicating section")
+        return {path: [0, i], data: currSection}
+      }
       if (isSectionValid && kk <= currSection.content.length) {
         for (let j = kk; j < currSection.content.length; j++) {
           let item = currSection.content[j];
@@ -176,14 +180,14 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
-  getSectionPage(section: QuestionSection): ReactNode {
-    let comp = section.content.map(item => {
+  getSectionPage(section: QuestionSection, path: number[]): ReactNode {
+    let comp = section.content.map((item, index) => {
       let isValid = this.evaluateCondition(item.appearingCondition);
       if (item instanceof QAQuestion) {
-        return isValid ? this.getQuestionPage(item) : <></>;
+        return isValid ? this.getQuestionPage(item, path.concat(index)) : <></>;
       }
       else if (item instanceof QuestionSection) {
-        return isValid ? this.getSectionPage(item) : <></>;
+        return isValid ? this.getSectionPage(item, path.concat(index)) : <></>;
       }
     });
     return <View key={section.id}>
@@ -192,10 +196,10 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
   }
 
-  getQuestionPage(currentQuestion: QAQuestion): ReactNode {
+  getQuestionPage(currentQuestion: QAQuestion, path: number[]): ReactNode {
     if (currentQuestion && currentQuestion instanceof QAQuestion) {
       const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-        {currentQuestion.questionContent.content}
+        {getReadablePath(path)}{" : "}{currentQuestion.questionContent.content}
       </Text>;
       const valueInput = this.getValueInput(currentQuestion.answerType,
         currentQuestion.options, currentQuestion);
@@ -308,12 +312,40 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
-  renderQuestionOrSection(item: QuestionSection | QAQuestion) {
-    if (item instanceof QuestionSection) {
-      return this.getSectionPage(item);
+  renderDuplicatingSection(section: QuestionSection, path: number[]) {
+    let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
+    let times = 0;
+    if (repeatType === "number") {
+      times = parseInt(section.duplicatingSettings.duplicateTimes.value);
+    } else {
+      let ans = this.state.answers[section.duplicatingSettings.duplicateTimes.value];
+      if (ans) {
+        times = parseInt(ans);
+      }
     }
-    else {
-      return this.getQuestionPage(item)
+    times = 5;
+    let children = []
+    for (let i = 0; i < times; i++) {
+      children.push(
+        <View key={section.id + i}>
+          <List.Accordion title="duplicate 1">
+            {this.getSectionPage(section, path.concat(i))}
+          </List.Accordion>
+        </View>
+      )
+    }
+    return <View>
+      {children}
+    </View>
+  }
+
+  renderQuestionOrSection(item: { data: (QuestionSection | QAQuestion), path: number[] }) {
+    if (item.data instanceof QuestionSection) {
+      if (item.data.duplicatingSettings.isEnabled) return this.renderDuplicatingSection(item.data, item.path);
+      return this.getSectionPage(item.data, item.path);
+    }
+    else if (item.data instanceof QAQuestion) {
+      return this.getQuestionPage(item.data, item.path)
     }
   }
 
@@ -326,7 +358,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           <Button mode="contained" onPress={this.handleNext.bind(this)}>Next</Button>
         </View>
         <ScrollView>
-          {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem.data)}
+          {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem)}
         </ScrollView>
       </View>
     );
@@ -336,7 +368,7 @@ export const styles = StyleSheet.create({
   container: {
     flex: 1,
     paddingVertical: 24,
-    paddingHorizontal: 16,
+    paddingHorizontal: 0,
   },
   signInContainer: {
     flexDirection: 'row',
