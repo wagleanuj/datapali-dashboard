@@ -6,7 +6,7 @@ export declare class QuestionSection {
     content: (QuestionSection | QAQuestion)[];
     id: string;
     duplicatingSettings: IDupeSettings;
-    condition: QACondition;
+    appearingCondition: QACondition;
     constructor();
     static toJSON(a: QuestionSection): any;
     setID(id: string): this;

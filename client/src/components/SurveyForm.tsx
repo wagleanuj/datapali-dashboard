@@ -72,7 +72,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
                 let root: RootSection = RootSection.fromJSON(file);
                 let valbag: (QuestionSection | QAQuestion)[] = []
-                let iterated = this.getAllEntries([0,1], 6, root, null, true, valbag);
+                let iterated = this.getAllEntries([0, 1], 6, root, null, true, valbag);
                 console.log(iterated);
                 // let ir = this.Iterator2(root, [0], 0, QORS.QUESTION);
                 this.setState({
@@ -84,7 +84,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         });
     }
 
-    getAllEntries(startSectionPath: number[], startIndex: number, root: RootSection, fetchType: QORS|null, first: boolean = true, returnbag: (QuestionSection | QAQuestion)[]) {
+    getAllEntries(startSectionPath: number[], startIndex: number, root: RootSection, fetchType: QORS | null, first: boolean = true, returnbag?: (QuestionSection | QAQuestion)[]) {
+        if (!returnbag) returnbag = [];
         if (startSectionPath.length <= 0) return;
         let section = RootSection.getFromPath(startSectionPath, [root]);
         if (!section) return;

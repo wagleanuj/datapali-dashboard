@@ -13,13 +13,13 @@ var QuestionSection = /** @class */ (function () {
             duplicateTimes: { value: '', type: 'number' },
         };
         this.content = [];
-        this.condition = new condition_1.QACondition;
+        this.appearingCondition = new condition_1.QACondition;
     }
     QuestionSection.toJSON = function (a) {
         return ({
             name: a.name,
             id: a.id,
-            condition: condition_1.QACondition.toJSON(a.condition),
+            condition: condition_1.QACondition.toJSON(a.appearingCondition),
             content: a.content.map(function (item) {
                 if (item instanceof QuestionSection) {
                     return QuestionSection.toJSON(item);

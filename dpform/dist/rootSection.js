@@ -179,8 +179,8 @@ var RootSection = /** @class */ (function () {
                 var section = new questionSection_1.QuestionSection();
                 section.id = a.id;
                 section.name = a.name;
-                if (a.condition) {
-                    section.condition = condition_1.QACondition.fromJSON(a.condition);
+                if (a.appearingCondition) {
+                    section.appearingCondition = condition_1.QACondition.fromJSON(a.appearingCondition);
                 }
                 section.duplicatingSettings = duplicateSettings_1.dupeSettingsFromJSON(a.duplicatingSettings);
                 r.addSection(parentPath, [section]);

@@ -1,6 +1,6 @@
 import React, { ReactNode } from 'react';
-import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput } from 'react-native';
-import { RadioButton, Button, Text, TextInput as Input } from 'react-native-paper';
+import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
+import { RadioButton, Button, Text, TextInput as Input, Headline } from 'react-native-paper';
 // tslint:disable-next-line: max-line-length
 import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral } from 'dpform';
 import _ from 'lodash';
@@ -13,7 +13,10 @@ interface SurveyFormComponentState {
   answers: { [key: string]: string };
   activeQuestion: number[];
   allQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
+  history: { data: (QuestionSection | QAQuestion), path: number[] }[]
   currentQuestionIndex: number;
+  currentItem?: { data: (QuestionSection | QAQuestion), path: number[] }
+
 }
 
 
@@ -29,6 +32,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       activeQuestion: [],
       allQuestions: [],
       currentQuestionIndex: 0,
+      history: []
     };
   }
   componentDidMount() {
@@ -57,32 +61,146 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
-      'Could not delete the game file',
+      'Could not find the file',
       token).then(file => {
         file = file[0];
         if (file) {
           file.content = JSON.parse(file.content);
           const root = RootSection.fromJSON(file);
-          const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
+          console.log(root.content.length);
+
+          let firstItem = this.getNextQuestion([0], 0, root);
+          // console.log(firstItem);
+          // const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
           this.setState({
             root: root,
+            currentItem: firstItem,
             activeSection: root,
             activeSectionPath: [0],
-            allQuestions: allq,
+
           });
         }
       }).catch(err => console.log(err));
   }
-  getQuestionPage(): ReactNode {
-    const currentQuestion = this.state.allQuestions[this.state.currentQuestionIndex];
-    if (currentQuestion && currentQuestion.data instanceof QAQuestion) {
+
+  getReactNodeFor(questionOrSection: QuestionSection | QAQuestion) {
+
+  }
+  transformValueToType(type: IValueType, value: string) {
+    switch (type.name) {
+      case ANSWER_TYPES.BOOLEAN:
+        return Boolean(value);
+      case ANSWER_TYPES.DATE:
+        return new Date(value);
+      case ANSWER_TYPES.NUMBER:
+        return parseFloat(value);
+      case ANSWER_TYPES.STRING:
+        return value;
+      case ANSWER_TYPES.TIME:
+        return new Date(value);
+    }
+    return value;
+  }
+
+  evaluateCondition(condition: QACondition) {
+    let finalResult = true;
+    let pendingOperator = null;
+    condition.literals.forEach(literal => {
+      const getValid = (item: ILiteral) => {
+        let result = true;
+        const answer = this.state.answers[item.questionRef];
+        const question = this.state.root.questions[item.questionRef];
+        console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
+        let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
+        let c1 = this.transformValueToType(question.answerType, answer);
+
+        if (question) {
+          switch (item.comparisonOperator) {
+            case QAComparisonOperator.Equal:
+              result = c1 === c2;
+              console.log(result);
+              break;
+            case QAComparisonOperator.Greater_Than:
+              result = c1 > c2;
+              break;
+            case QAComparisonOperator.Greater_Than_Or_Equal:
+              result = c1 >= c2;
+              break;
+            case QAComparisonOperator.Less_Than:
+              result = c1 < c2;
+              break;
+            case QAComparisonOperator.Less_Than_Or_Equal:
+              result = c1 >= c2;
+              break;
+          }
+        }
+        return result;
+      }
+      let currentResult = getValid(literal);
+      if (!pendingOperator) {
+        finalResult = currentResult;
+        pendingOperator = literal.followingOperator
+      }
+      else if (pendingOperator) {
+        switch (pendingOperator) {
+          case QAFollowingOperator.AND:
+            finalResult = finalResult && currentResult;
+            break;
+          case QAFollowingOperator.OR:
+            finalResult = finalResult || currentResult;
+            break;
+        }
+      }
+
+    });
+    return finalResult;
+  }
+
+  getNextQuestion(startPath: number[], startIndex: number, root: RootSection) {
+    if (startPath.length > 2) return;
+    let curRIndex = startPath[startPath.length - 1];
+    for (let i = curRIndex; i < root.content.length; i++) {
+      let currSection = root.content[i];
+      let kk = i === curRIndex ? startIndex : 0;
+      if ((currSection instanceof QAQuestion)) return;
+      let isSectionValid = this.evaluateCondition(currSection.appearingCondition);
+      if (isSectionValid && kk <= currSection.content.length) {
+        for (let j = kk; j < currSection.content.length; j++) {
+          let item = currSection.content[j];
+          let isItemValid = this.evaluateCondition(item.appearingCondition);
+          if (isItemValid) {
+            return { path: [0, i, j], data: item };
+          }
+        }
+      }
+    }
+  }
+
+  getSectionPage(section: QuestionSection): ReactNode {
+    let comp = section.content.map(item => {
+      let isValid = this.evaluateCondition(item.appearingCondition);
+      if (item instanceof QAQuestion) {
+        return isValid ? this.getQuestionPage(item) : <></>;
+      }
+      else if (item instanceof QuestionSection) {
+        return isValid ? this.getSectionPage(item) : <></>;
+      }
+    });
+    return <View key={section.id}>
+      {comp}
+    </View>
+
+  }
+
+  getQuestionPage(currentQuestion: QAQuestion): ReactNode {
+    if (currentQuestion && currentQuestion instanceof QAQuestion) {
       const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-        {currentQuestion.data.questionContent.content}
+        {currentQuestion.questionContent.content}
       </Text>;
-      const valueInput = this.getValueInput(currentQuestion.data.answerType,
-        currentQuestion.data.options, currentQuestion.data);
+      const valueInput = this.getValueInput(currentQuestion.answerType,
+        currentQuestion.options, currentQuestion);
       return (
-        <View style={{ paddingTop: 20 }}>{questionText}
+        <View key={currentQuestion.id} style={{ paddingTop: 20 }}>{questionText}
           {valueInput}
         </View>
       );
@@ -98,14 +216,10 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       };
     });
   }
-  evaluateCondition(){
-    
-  }
+
   async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
     try {
       const { action, year, month, day } = await DatePickerAndroid.open({
-        // Use `new Date()` for current date.
-        // May 25 2020. Month 0 is January.
         date: defaultDate || new Date(),
       });
       if (action !== DatePickerAndroid.dismissedAction) {
@@ -165,32 +279,55 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   handleNext() {
-    if (this.state.currentQuestionIndex < this.state.allQuestions.length) {
+    if (this.state.currentItem) {
+      let path = this.state.currentItem.path.slice(0);
+      let index = path.pop() + 1;
+      let nextItem = this.getNextQuestion(path, index, this.state.root);
+      if (!nextItem) return;
       this.setState((prevState: SurveyFormComponentState) => {
+        let newhistory = _.clone(prevState.history);
+        newhistory.push(this.state.currentItem);
         return {
-          currentQuestionIndex: ++prevState.currentQuestionIndex,
+          currentItem: nextItem,
+          history: newhistory,
         };
       });
     }
   }
 
   handlePrev() {
-    if (this.state.currentQuestionIndex > 0) {
+    if (this.state.history.length >= 1) {
       this.setState((prevState: SurveyFormComponentState) => {
+        let newHistory = _.clone(prevState.history);
+        let newItem = newHistory.pop();
         return {
-          currentQuestionIndex: --prevState.currentQuestionIndex,
+          currentItem: newItem,
+          history: newHistory
         };
       });
     }
   }
+
+  renderQuestionOrSection(item: QuestionSection | QAQuestion) {
+    if (item instanceof QuestionSection) {
+      return this.getSectionPage(item);
+    }
+    else {
+      return this.getQuestionPage(item)
+    }
+  }
+
   render() {
     return (
       <View style={styles.container}>
+        <Headline>Section</Headline>
         <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
           <Button mode="contained" onPress={this.handlePrev.bind(this)}>Prev</Button>
           <Button mode="contained" onPress={this.handleNext.bind(this)}>Next</Button>
         </View>
-        {this.getQuestionPage()}
+        <ScrollView>
+          {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem.data)}
+        </ScrollView>
       </View>
     );
   }
@@ -198,7 +335,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 export const styles = StyleSheet.create({
   container: {
     flex: 1,
-    paddingTop: 50,
     paddingVertical: 24,
     paddingHorizontal: 16,
   },
@@ -377,7 +513,6 @@ export class SelInput extends React.Component<SelInputProps, any> {
 
   }
   render() {
-    console.log('pr', this.props.value);
     return (
       <RadioButton.Group value={this.props.value} onValueChange={this.props.onSelectionChange}>
         {this.getOptions()}
@@ -387,54 +522,3 @@ export class SelInput extends React.Component<SelInputProps, any> {
 
 }
 
-function  evaluateCondition(condition: QACondition, question: QAQuestion, answerStore: {[key:string]: string}) {
-  let finalResult = true;
-  let pendingOperator = null;
-  condition.literals.forEach(literal => {
-    const getValid = (item: ILiteral) => {
-      let result = true;
-      const answer = answerStore[item.questionRef];
-      let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
-      let c1 = this.transformValueToType(question.answerType, answer);
-
-      if (question) {
-        switch (item.comparisonOperator) {
-          case QAComparisonOperator.Equal:
-            result = c1 === c2;
-            console.log(result);
-            break;
-          case QAComparisonOperator.Greater_Than:
-            result = c1 > c2;
-            break;
-          case QAComparisonOperator.Greater_Than_Or_Equal:
-            result = c1 >= c2;
-            break;
-          case QAComparisonOperator.Less_Than:
-            result = c1 < c2;
-            break;
-          case QAComparisonOperator.Less_Than_Or_Equal:
-            result = c1 >= c2;
-            break;
-        }
-      }
-      return result;
-    }
-    let currentResult = getValid(literal);
-    if (!pendingOperator) {
-      finalResult = currentResult;
-      pendingOperator = literal.followingOperator
-    }
-    else if (pendingOperator) {
-      switch (pendingOperator) {
-        case QAFollowingOperator.AND:
-          finalResult = finalResult && currentResult;
-          break;
-        case QAFollowingOperator.OR:
-          finalResult = finalResult || currentResult;
-          break;
-      }
-    }
-
-  });
-  return finalResult;
-}
