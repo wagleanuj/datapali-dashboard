@@ -2,7 +2,7 @@ import React from 'react';
 import { StyleSheet, Text, View, StatusBar, ImageProps } from 'react-native';
 import { SurveyForm } from './src/components/surveyform';
 import { mapping, dark as DarkTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, BottomNavigation, BottomNavigationTab } from 'react-native-ui-kitten';
+import { ApplicationProvider, Layout, BottomNavigation, BottomNavigationTab, Icon, IconProps } from 'react-native-ui-kitten';
 import { TopNavigationBar } from './src/components/topbar';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar';
 
@@ -33,7 +33,9 @@ export default class App extends React.Component<AppProps, AppState> {
     this.setState({ subtitle: newSub })
   }
   render() {
-
+    let ipr: IconProps = {
+      name: "cog",
+    }
     return (
       <ApplicationProvider
         mapping={mapping}
@@ -45,13 +47,13 @@ export default class App extends React.Component<AppProps, AppState> {
           setSubTitle={this.setSubTitle.bind(this)} />
         <BottomNavigation>
           <BottomNavigationTab
-            title='Screen 1'
+            title='Survey Form'
           />
           <BottomNavigationTab
-            title='Screen 2'
+            title='Filled Forms'
           />
           <BottomNavigationTab
-            title='Screen 3'
+            title='Settings'
           />
         </BottomNavigation>
       </ApplicationProvider>

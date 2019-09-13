@@ -9,6 +9,7 @@ import { List } from 'react-native-paper';
 import { ScrollableAvoidKeyboard } from './scrollableAvoidKeyboard';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
+import { Section } from 'react-native-paper/typings/components/Drawer';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -21,9 +22,11 @@ interface SurveyFormComponentState {
   answers: { [key: string]: string };
   activeQuestion: number[];
   allQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
-  history: { data: (QuestionSection | QAQuestion), path: number[] }[]
+  history: number[]
   currentQuestionIndex: number;
-  currentItem?: { data: (QuestionSection | QAQuestion), path: number[] }
+  currentItem?: { data: (QuestionSection | QAQuestion), path: number[] },
+  currentIndex: number;
+  answerStore: { [key: string]: any }
 
 }
 
@@ -40,7 +43,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       activeQuestion: [],
       allQuestions: [],
       currentQuestionIndex: 0,
-      history: []
+      history: [],
+      currentIndex: -1,
     };
   }
   componentDidMount() {
@@ -54,12 +58,11 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     this.props.setTitle(
       this.state.root.name
     )
-    let path = this.state.currentItem.path;
-    let rootItemPath = path.slice(0, 2);
-    let rS = RootSection.getFromPath(rootItemPath, [this.state.root]);
+
+    let rS = RootSection.getFromPath([0,this.state.currentIndex], [this.state.root]);
 
     if (rS instanceof QuestionSection) {
-      let sub = `${getReadablePath(rootItemPath)} : ${rS.name}`
+      let sub = `${getReadablePath([0,this.state.currentIndex])} : ${rS.name}`
       this.props.setSubTitle(sub);
     }
   }
@@ -99,6 +102,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             currentItem: firstItem,
             activeSection: root,
             activeSectionPath: [0],
+            currentIndex: 0
 
           });
         }
@@ -106,6 +110,19 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   getReactNodeFor(questionOrSection: QuestionSection | QAQuestion) {
+
+  }
+
+  storeAnswerFor(id: string, value: string) {
+    this.setState((prevState: SurveyFormComponentState) => {
+      let item = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
+      if (item instanceof QuestionSection) {
+        //TODO:: 
+      }
+      return {
+
+      }
+    })
 
   }
   transformValueToType(type: IValueType, value: string) {
@@ -202,11 +219,12 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
+
   getSectionPage(section: QuestionSection, path: number[]) {
     let comp = section.content.map((item, index) => {
       let isValid = this.evaluateCondition(item.appearingCondition);
       if (item instanceof QAQuestion) {
-        return isValid ? this.getQuestionPage(item, path.concat(index)) : <></>;
+        return isValid ? this.getQuestionPage(item, path.concat(index)) : null;
       }
       else if (item instanceof QuestionSection) {
         if (isValid) {
@@ -214,7 +232,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             console.log("duplicatable");
             return this.renderDuplicatingSection(item, path.concat(index));
           }
-          return isValid ? this.getSectionPage(item, path.concat(index)) : <></>;
+          return isValid ? this.getSectionPage(item, path.concat(index)) : null;
 
         }
       }
@@ -314,27 +332,19 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   handleNext() {
-    if (this.state.currentItem) {
-      let path = this.state.currentItem.path.slice(0);
-      let item = this.state.currentItem;
-      let index;
-      if (item.path.length === 2 && item.data instanceof QuestionSection && item.data.duplicatingSettings.isEnabled) {
-        path = [0, path[path.length - 1] + 1];
-        index = 0
-      } else {
-        index = path.pop() + 1;
-      }
-      let nextItem = this.getNextQuestion(path, index, this.state.root);
-      if (!nextItem) return;
-      this.setState((prevState: SurveyFormComponentState) => {
-        let newhistory = _.clone(prevState.history);
-        newhistory.push(this.state.currentItem);
-        return {
-          currentItem: nextItem,
-          history: newhistory,
-        };
-      }, this.handleItemChange.bind(this));
+    for (let i = this.state.currentIndex + 1; i < this.state.root.content.length; i++) {
+      let nextItem = RootSection.getFromPath([0, i], [this.state.root]);
+      if (nextItem && !(nextItem instanceof RootSection) && this.evaluateCondition(nextItem.appearingCondition)) {
+        return this.setState((prevState: SurveyFormComponentState) => {
+          let newhistory = _.clone(prevState.history);
+          newhistory.push(prevState.currentIndex);
+          return {
+            history: newhistory,
+            currentIndex: i
+          };
+        }, this.handleItemChange.bind(this));
 
+      }
     }
   }
 
@@ -344,7 +354,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         let newHistory = _.clone(prevState.history);
         let newItem = newHistory.pop();
         return {
-          currentItem: newItem,
+          currentIndex: newItem,
           history: newHistory
         };
       }, this.handleItemChange.bind(this));
@@ -367,7 +377,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     let children = []
     for (let i = 0; i < times; i++) {
       children.push(
-        <View style={{ paddingTop: 5, paddingBottom: 5 }} key={section.id + i}>
+        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5 }} key={section.id + i}>
           <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
             <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
               {this.getSectionPage(section, path.concat(i))}
@@ -376,18 +386,19 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         </View>
       )
     }
-    return <Layout key={section.id + "root-duplicated"}>
+    return <Layout style={{ marginTop: 20, marginBottom: 20 }} key={section.id + "root-duplicated"}>
+      <Text style={{ padding: 5 }}>{`${getReadablePath(path)} : ${section.name}`}</Text>
       {children}
     </Layout>
   }
 
-  renderQuestionOrSection(item: { data: (QuestionSection | QAQuestion), path: number[] }) {
-    if (item.data instanceof QuestionSection) {
-      if (item.data.duplicatingSettings.isEnabled) return this.renderDuplicatingSection(item.data, item.path);
-      return this.getSectionPage(item.data, item.path);
+  renderQuestionOrSection(index: number) {
+    let item = RootSection.getFromPath([0, index], [this.state.root]);
+    if (item instanceof QuestionSection) {
+      return <SurveySection evaluateCondition={this.evaluateCondition.bind(this)} section ={item} path = {[0, index]}/>
     }
-    else if (item.data instanceof QAQuestion) {
-      return this.getQuestionPage(item.data, item.path)
+    else if (item instanceof QAQuestion) {
+      return <QuestionComponent evaluateCondition={this.evaluateCondition.bind(this)} question ={item} path={[0, index]}/>
     }
   }
 
@@ -400,7 +411,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
               <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
               <Button onPress={this.handleNext.bind(this)}>Next</Button>
             </View>
-            {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem)}
+            {this.state.currentItem && this.renderQuestionOrSection(this.state.currentIndex)}
           </View>
         </ShowcaseItem>
 
@@ -558,4 +569,185 @@ export class SelInput extends React.Component<SelInputProps, any> {
   }
 
 }
+type SectionComponentProps = {
+  section: QuestionSection,
+  path: number[]
+  evaluateCondition: (condition: QACondition) => boolean
+} & ThemedStyleType;
 
+type SectionComponentState = {
+  answers: { [key: string]: any }[]
+}
+export class SectionComponent extends React.Component<SectionComponentProps, SectionComponentState>{
+  constructor(props: SectionComponentProps) {
+    super(props);
+    this.state = {
+      answers: []
+    }
+  }
+  renderDuplicatingSection(section: QuestionSection, path: number[]) {
+    let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
+    let times = 0;
+    if (repeatType === "number") {
+      times = parseInt(section.duplicatingSettings.duplicateTimes.value);
+    } else {
+      let ans = this.state.answers[section.duplicatingSettings.duplicateTimes.value];
+      if (ans) {
+        times = parseInt(ans);
+      }
+    }
+    times = 5;
+    let children = []
+    for (let i = 0; i < times; i++) {
+      children.push(
+        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5 }} key={section.id + i}>
+          <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
+            <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
+              {this.getSectionPage(section, path.concat(i))}
+            </View>
+          </List.Accordion>
+        </View>
+      )
+    }
+    return <Layout style={{ marginTop: 20, marginBottom: 20 }} key={section.id + "root-duplicated"}>
+      <Text style={{ padding: 5 }}>{`${getReadablePath(path)} : ${section.name}`}</Text>
+      {children}
+    </Layout>
+  }
+  getAnswer(questionId: string, iteration: number) {
+
+  }
+  setAnswer(questionId: string, iteration: number, value: string) {
+
+  }
+
+  getSectionPage(section: QuestionSection, path: number[], iteration?: number) {
+    let comp = section.content.map((item, index) => {
+      let isValid = this.props.evaluateCondition(item.appearingCondition);
+      if (item instanceof QAQuestion) {
+        return isValid ? <QuestionComponent key={item.id} path={path}
+          question = {item}
+          onValueChange={this.setAnswer.bind(this, item.id, iteration)}
+          defaultValue={this.getAnswer(item.id, null)}
+        /> : null;
+      }
+      else if (item instanceof QuestionSection) {
+        if (isValid) {
+          return <SurveySection key={item.id} section={item} path={path} evaluateCondition={this.props.evaluateCondition}></SurveySection>
+
+        }
+      }
+    });
+    return <View key={section.id}>
+      {comp}
+    </View>
+  }
+
+  render() {
+    let comp = null;
+    if (this.props.section.duplicatingSettings.isEnabled) comp = this.renderDuplicatingSection(this.props.section, this.props.path);
+    else { comp = this.getSectionPage(this.props.section, this.props.path) }
+    return <Layout>
+      {comp}
+    </Layout>
+  }
+}
+const SurveySection = withStyles(SectionComponent, (theme) => ({
+  accordion: {
+    backgroundColor: theme['color-primary-300']
+  }
+}));
+
+type QuestionComponentProps = {
+  question: QAQuestion;
+  path: number[];
+  defaultValue: string;
+  onValueChange: (newValue: string) => void
+} & ThemedStyleType;
+type QuestionComponentState = {
+
+}
+export class QuestionComponent extends React.Component<QuestionComponentProps, QuestionComponentState>{
+  constructor(props: QuestionComponentProps) {
+    super(props);
+    this.state = {
+
+    }
+  }
+  async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
+    try {
+      const { action, year, month, day } = await DatePickerAndroid.open({
+        date: defaultDate || new Date(),
+      });
+      if (action !== DatePickerAndroid.dismissedAction) {
+        // Selected year, month (0-11), day
+        if (onDateChange) onDateChange(new Date(year, month, day));
+      }
+    } catch ({ code, message }) {
+      console.warn('Cannot open date picker', message);
+    }
+  }
+  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
+    let comp = null;
+    if (type) {
+
+      switch (type.name) {
+        case ANSWER_TYPES.NUMBER:
+          comp = <Input
+            defaultValue={this.props.defaultValue}
+            onChangeText={this.props.onValueChange}
+            placeholder=''
+            keyboardType='number-pad'
+          />;
+          break;
+        case ANSWER_TYPES.STRING:
+          comp = <Input
+            defaultValue={this.props.defaultValue}
+            onChangeText={this.props.onValueChange} />;
+          break;
+        case ANSWER_TYPES.DATE:
+          let date = this.props.defaultValue ? new Date(this.props.defaultValue) : new Date();
+          comp = <TouchableOpacity onPress={this.openDatePicker.bind(this, date, (date) => {
+            let stringified = date.toDateString();
+            this.props.onValueChange(stringified);
+          })}>
+            <Input
+              defaultValue={date.toDateString()}
+              status={"primary"}
+              disabled
+            />
+          </TouchableOpacity>;
+
+          break;
+        case ANSWER_TYPES.SELECT:
+          comp = <SelInput
+            question={question}
+            definedQuestions={this.props.allQuestions}
+            answerStore={this.props.answerStore}
+            value={this.props.defaultValue}
+            onSelectionChange={this.props.onValueChange}
+            answerType={type}
+            options={options} />;
+          break;
+      }
+    }
+    return comp;
+  }
+  render() {
+    let currentQuestion = this.props.question;
+    const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
+      {`${getReadablePath(this.props.path)} : ${currentQuestion.questionContent.content}`}
+    </Text>;
+    const valueInput = this.getValueInput(currentQuestion.answerType,
+      currentQuestion.options, currentQuestion);
+    return (
+      <Layout key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
+        <View style={{ paddingLeft: 5, paddingRight: 5 }}>
+          {questionText}
+          {valueInput}
+        </View>
+      </Layout>
+    );
+  }
+
+}

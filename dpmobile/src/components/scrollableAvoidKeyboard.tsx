@@ -14,7 +14,7 @@ class ScrollableAvoidKeyboardComponent extends React.Component<ScrollableAvoidKe
 
     return (
       <KeyboardAwareScrollView
-        bounces={false}
+        bounces={true}
         bouncesZoom={false}
         alwaysBounceVertical={false}
         alwaysBounceHorizontal={false}
