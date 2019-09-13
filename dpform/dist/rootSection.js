@@ -173,6 +173,7 @@ var RootSection = /** @class */ (function () {
     RootSection.fromJSON = function (a) {
         var r = new RootSection();
         r.id = a.id;
+        r.name = a.name;
         var path = [0];
         var handleSectionAdd = function (a, parentPath, index) {
             if (a.hasOwnProperty('content')) {

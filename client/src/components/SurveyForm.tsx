@@ -1,10 +1,10 @@
 
-import { Intent, IToastProps, ITreeNode, Toaster } from "@blueprintjs/core";
+import { Intent, IToastProps, ITreeNode, Toaster, EditableText } from "@blueprintjs/core";
 import copy from "copy-to-clipboard";
 import { Constants, IDupeSettings, QAQuestion, QuestionSection, request, RootSection, QORS } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { Row } from "reactstrap";
+import { Row, Navbar } from "reactstrap";
 import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
@@ -310,6 +310,17 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             })
         }
     }
+    handleRootNameChange(newName: string) {
+        this.setState((prevState: SurveyFormState) => {
+            let cloned = _.clone(prevState.root);
+            cloned.name = newName;
+            return {
+                root: cloned
+            }
+        }, () => {
+            if (this.props.onChange) this.props.onChange(this.state.root);
+        })
+    }
 
     handleSectionChange(id: string, path: number[]) {
         this.setState((prevState: SurveyFormState) => {
@@ -367,7 +378,10 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             <Row>
                 <Toaster ref={r => r ? this.toasterRef = r : null}></Toaster>
                 <ConstantDefinitions isOpen={false}></ConstantDefinitions>
-                <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}></Toolbar>
+                <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}>
+                    <EditableText defaultValue={this.state.root.name} onChange={this.handleRootNameChange.bind(this)} />
+
+                </Toolbar>
                 <div className="container">
 
                     <div style={{ background: "transparent" }} className="sidebar">

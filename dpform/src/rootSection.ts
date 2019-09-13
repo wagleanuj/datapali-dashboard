@@ -151,6 +151,7 @@ export class RootSection {
     static fromJSON(a: any): RootSection {
         const r = new RootSection();
         r.id = a.id;
+        r.name = a.name;
         const path = [0];
         const handleSectionAdd = (a: any, parentPath: number[], index: number) => {
             if (a.hasOwnProperty('content')) {

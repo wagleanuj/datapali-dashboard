@@ -1,10 +1,18 @@
-import React, { ReactNode } from 'react';
-import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView } from 'react-native';
-import { RadioButton, Button, Text, TextInput as Input, Headline, List } from 'react-native-paper';
+import React, { ReactNode, ReactElement } from 'react';
+import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
 // tslint:disable-next-line: max-line-length
 import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType } from 'dpform';
 import _ from 'lodash';
-export type SurveyFormComponentProps = {}
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
+import { withStyles, ThemedStyleType, Layout, ThemeType, Button, Text, Input, RadioGroup, Radio } from 'react-native-ui-kitten';
+import { List } from 'react-native-paper';
+import { ScrollableAvoidKeyboard } from './scrollableAvoidKeyboard';
+import { Showcase } from './showcase';
+import { ShowcaseItem } from './showcaseitem';
+export type SurveyFormComponentProps = {
+  setTitle: (newTitle: string) => void,
+  setSubTitle: (newSub: string) => void,
+} & ThemedStyleType
 
 interface SurveyFormComponentState {
   root: RootSection;
@@ -38,7 +46,22 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   componentDidMount() {
     //  let root =  DPForm.RootSection.fromJSON()
     console.log("mounted")
-    this.loadFile();
+    this.loadFile().then(res => {
+      this.handleItemChange();
+    });
+  }
+  handleItemChange() {
+    this.props.setTitle(
+      this.state.root.name
+    )
+    let path = this.state.currentItem.path;
+    let rootItemPath = path.slice(0, 2);
+    let rS = RootSection.getFromPath(rootItemPath, [this.state.root]);
+
+    if (rS instanceof QuestionSection) {
+      let sub = `${getReadablePath(rootItemPath)} : ${rS.name}`
+      this.props.setSubTitle(sub);
+    }
   }
 
   loadFile() {
@@ -56,7 +79,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgzMDEzMTIsImV4cCI6MTU2ODM4NzcxMn0.dYfY4zz4b5zx9nynbbo9Y4Oigk8r1r7pDJQkNIJbE6I";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgzMjQyOTEsImV4cCI6MTU2ODQxMDY5MX0.xbj9Ssz4GqrxCBlsNWB1HrTiEChMT-tf4OP64aw-fHU";
     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
@@ -164,9 +187,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       if ((currSection instanceof QAQuestion)) return;
       let isSectionValid = this.evaluateCondition(currSection.appearingCondition);
       let isDuplicating = currSection.duplicatingSettings.isEnabled;
-      if(isDuplicating && isSectionValid) {
-        console.log("duplicating section")
-        return {path: [0, i], data: currSection}
+      if (isDuplicating && isSectionValid) {
+        return { path: [0, i], data: currSection }
       }
       if (isSectionValid && kk <= currSection.content.length) {
         for (let j = kk; j < currSection.content.length; j++) {
@@ -180,14 +202,21 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
-  getSectionPage(section: QuestionSection, path: number[]): ReactNode {
+  getSectionPage(section: QuestionSection, path: number[]) {
     let comp = section.content.map((item, index) => {
       let isValid = this.evaluateCondition(item.appearingCondition);
       if (item instanceof QAQuestion) {
         return isValid ? this.getQuestionPage(item, path.concat(index)) : <></>;
       }
       else if (item instanceof QuestionSection) {
-        return isValid ? this.getSectionPage(item, path.concat(index)) : <></>;
+        if (isValid) {
+          if (item.duplicatingSettings.isEnabled) {
+            console.log("duplicatable");
+            return this.renderDuplicatingSection(item, path.concat(index));
+          }
+          return isValid ? this.getSectionPage(item, path.concat(index)) : <></>;
+
+        }
       }
     });
     return <View key={section.id}>
@@ -199,14 +228,17 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   getQuestionPage(currentQuestion: QAQuestion, path: number[]): ReactNode {
     if (currentQuestion && currentQuestion instanceof QAQuestion) {
       const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-        {getReadablePath(path)}{" : "}{currentQuestion.questionContent.content}
+        {`${getReadablePath(path)} : ${currentQuestion.questionContent.content}`}
       </Text>;
       const valueInput = this.getValueInput(currentQuestion.answerType,
         currentQuestion.options, currentQuestion);
       return (
-        <View key={currentQuestion.id} style={{ paddingTop: 20 }}>{questionText}
-          {valueInput}
-        </View>
+        <Layout key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
+          <View style={{ paddingLeft: 5, paddingRight: 5 }}>
+            {questionText}
+            {valueInput}
+          </View>
+        </Layout>
       );
     }
   }
@@ -234,14 +266,13 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       console.warn('Cannot open date picker', message);
     }
   }
-  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion): ReactNode {
+  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
     let comp = null;
     if (type) {
 
       switch (type.name) {
         case ANSWER_TYPES.NUMBER:
           comp = <Input
-            mode="outlined"
             defaultValue={this.state.answers[question.id]}
             onChangeText={this.storeAnswers.bind(this, question.id)}
             placeholder=''
@@ -250,7 +281,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           break;
         case ANSWER_TYPES.STRING:
           comp = <Input
-            mode="outlined"
             defaultValue={this.state.answers[question.id]}
             onChangeText={this.storeAnswers.bind(this, question.id)} />;
           break;
@@ -260,8 +290,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             let stringified = date.toDateString();
             this.storeAnswers(question.id, stringified);
           })}>
-            <Input mode="flat"
+            <Input
               defaultValue={date.toDateString()}
+              status={"primary"}
               disabled
             />
           </TouchableOpacity>;
@@ -285,7 +316,14 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   handleNext() {
     if (this.state.currentItem) {
       let path = this.state.currentItem.path.slice(0);
-      let index = path.pop() + 1;
+      let item = this.state.currentItem;
+      let index;
+      if (item.path.length === 2 && item.data instanceof QuestionSection && item.data.duplicatingSettings.isEnabled) {
+        path = [0, path[path.length - 1] + 1];
+        index = 0
+      } else {
+        index = path.pop() + 1;
+      }
       let nextItem = this.getNextQuestion(path, index, this.state.root);
       if (!nextItem) return;
       this.setState((prevState: SurveyFormComponentState) => {
@@ -295,7 +333,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           currentItem: nextItem,
           history: newhistory,
         };
-      });
+      }, this.handleItemChange.bind(this));
+
     }
   }
 
@@ -308,7 +347,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           currentItem: newItem,
           history: newHistory
         };
-      });
+      }, this.handleItemChange.bind(this));
     }
   }
 
@@ -324,19 +363,22 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       }
     }
     times = 5;
+    let { theme } = this.props;
     let children = []
     for (let i = 0; i < times; i++) {
       children.push(
-        <View key={section.id + i}>
-          <List.Accordion title="duplicate 1">
-            {this.getSectionPage(section, path.concat(i))}
+        <View style={{ paddingTop: 5, paddingBottom: 5 }} key={section.id + i}>
+          <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
+            <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
+              {this.getSectionPage(section, path.concat(i))}
+            </View>
           </List.Accordion>
         </View>
       )
     }
-    return <View>
+    return <Layout key={section.id + "root-duplicated"}>
       {children}
-    </View>
+    </Layout>
   }
 
   renderQuestionOrSection(item: { data: (QuestionSection | QAQuestion), path: number[] }) {
@@ -351,71 +393,34 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
   render() {
     return (
-      <View style={styles.container}>
-        <Headline>Section</Headline>
-        <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
-          <Button mode="contained" onPress={this.handlePrev.bind(this)}>Prev</Button>
-          <Button mode="contained" onPress={this.handleNext.bind(this)}>Next</Button>
-        </View>
-        <ScrollView>
-          {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem)}
-        </ScrollView>
-      </View>
+      <Showcase style={this.props.themedStyle.container}>
+        <ShowcaseItem title="" >
+          <View>
+            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
+              <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
+              <Button onPress={this.handleNext.bind(this)}>Next</Button>
+            </View>
+            {this.state.currentItem && this.renderQuestionOrSection(this.state.currentItem)}
+          </View>
+        </ShowcaseItem>
+
+
+      </Showcase>
     );
   }
 }
-export const styles = StyleSheet.create({
+export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => ({
   container: {
     flex: 1,
-    paddingVertical: 24,
-    paddingHorizontal: 0,
+    paddingHorizontal: 16,
+    paddingVertical: 16,
+    backgroundColor: theme['background-basic-color-2'],
   },
-  signInContainer: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    marginTop: 24,
-  },
-  socialAuthContainer: {
-    marginTop: 48,
-  },
-  ewaButton: {
-    maxWidth: 72,
-    paddingHorizontal: 0,
-  },
-  textColor: {
-    color: 'black',
-  },
-  ewaButtonIcon: {
-    marginHorizontal: 0,
-    tintColor: 'white',
-  },
-  formContainer: {
-    flex: 1,
-    marginTop: 48,
-  },
-  signInLabel: {
-    flex: 1,
+  accordion: {
+    backgroundColor: theme['color-primary-300']
+  }
+}));
 
-    color: 'white',
-  },
-  signUpButton: {
-    flexDirection: 'row-reverse',
-    paddingHorizontal: 0,
-  },
-  signUpButtonText: {
-    color: 'white',
-  },
-  signUpButtonIcon: {
-    marginHorizontal: 0,
-    tintColor: 'white',
-  },
-  socialAuthIcon: {
-    tintColor: 'white',
-  },
-  socialAuthHint: {
-    color: 'white',
-  },
-});
 
 
 interface SelInputProps {
@@ -429,6 +434,7 @@ interface SelInputProps {
 
 }
 export class SelInput extends React.Component<SelInputProps, any> {
+  private allOptionsId: string[]
   constructor(props) {
     super(props);
     this.state = {
@@ -517,38 +523,37 @@ export class SelInput extends React.Component<SelInputProps, any> {
     return { groups: g, rootOptions: options };
 
   }
-  getOptions() {
+  getOptions(): ReactElement[] {
     const { groups, rootOptions } = this.filterByCondition();
-    let returnComp = groups.map(item => {
-      return <View key={item.id} >
-        <View>
-          <Text style={{ fontSize: 10, opacity: 0.5 }}>{item.name}</Text>
-        </View>
-        <View>
-          {item.members.map(option => {
-            return <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }} key={option.id}>
-              <Text>{option.value}</Text>
-              <RadioButton value={option.id} />
-            </View>;
-          })}
-        </View>
-      </View>;
+    this.allOptionsId = [];
+    let returnComp = [];
+    const groupItems = groups.map(item => {
+      return item.members.map(option => {
+        this.allOptionsId.push(option.id);
+        return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={option.value} />;
+      })
+
     });
+    returnComp = groupItems;
     const groupless = rootOptions.map(item => {
-      return <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }} key={item.id}>
-        <Text>{item.value}</Text>
-        <RadioButton value={item.id} /></View>;
+      this.allOptionsId.push(item.id);
+      return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.value} />
     });
-    returnComp = returnComp.concat(...groupless);
+    returnComp.push(...groupless);
+
     return returnComp;
-
-
+  }
+  onSelectionChanged(index: number) {
+    if (this.props.onSelectionChange) this.props.onSelectionChange(this.allOptionsId[index]);
+  }
+  getDefaultSelected() {
+    return this.allOptionsId && this.allOptionsId.findIndex(item => item === this.props.value);
   }
   render() {
     return (
-      <RadioButton.Group value={this.props.value} onValueChange={this.props.onSelectionChange}>
+      <RadioGroup selectedIndex={this.getDefaultSelected()} onChange={this.onSelectionChanged.bind(this)}>
         {this.getOptions()}
-      </RadioButton.Group>
+      </RadioGroup>
     );
   }
 

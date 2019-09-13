@@ -8,13 +8,18 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@eva-design/eva": "^1.0.1",
+    "@ui-kitten/eva-icons": "^4.2.0-beta.1",
     "dpform": "file:../dpform",
     "expo": "^34.0.1",
     "react": "16.8.3",
     "react-dom": "^16.8.6",
     "react-native": "https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz",
+    "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-paper": "^2.16.0",
-    "react-native-web": "^0.11.4"
+    "react-native-ui-kitten": "^4.2.0-beta.2",
+    "react-native-web": "^0.11.4",
+    "react-navigation": "^4.0.4"
   },
   "devDependencies": {
     "@types/react": "^16.8.23",
