@@ -10,6 +10,8 @@ import { ScrollableAvoidKeyboard } from './scrollableAvoidKeyboard';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { Section } from 'react-native-paper/typings/components/Drawer';
+import { AnswerStore } from '../answermachine';
+import { SurveySection, QuestionComponent } from './section';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -26,7 +28,7 @@ interface SurveyFormComponentState {
   currentQuestionIndex: number;
   currentItem?: { data: (QuestionSection | QAQuestion), path: number[] },
   currentIndex: number;
-  answerStore: { [key: string]: any }
+  answerStore: AnswerStore
 
 }
 
@@ -45,6 +47,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       currentQuestionIndex: 0,
       history: [],
       currentIndex: -1,
+      answerStore: new AnswerStore(root).init()
     };
   }
   componentDidMount() {
@@ -59,10 +62,10 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       this.state.root.name
     )
 
-    let rS = RootSection.getFromPath([0,this.state.currentIndex], [this.state.root]);
+    let rS = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
 
     if (rS instanceof QuestionSection) {
-      let sub = `${getReadablePath([0,this.state.currentIndex])} : ${rS.name}`
+      let sub = `${getReadablePath([0, this.state.currentIndex])} : ${rS.name}`
       this.props.setSubTitle(sub);
     }
   }
@@ -82,7 +85,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1NjgzMjQyOTEsImV4cCI6MTU2ODQxMDY5MX0.xbj9Ssz4GqrxCBlsNWB1HrTiEChMT-tf4OP64aw-fHU";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg1NzY4NTgsImV4cCI6MTU2ODY2MzI1OH0.vTE76XSSrfi-z1yYbTmm-0Y-MoPa7M9XeWfC_i9n_bM";
     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
@@ -102,8 +105,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             currentItem: firstItem,
             activeSection: root,
             activeSectionPath: [0],
-            currentIndex: 0
-
+            currentIndex: 0,
+            answerStore: new AnswerStore(root).init()
           });
         }
       }).catch(err => console.log(err));
@@ -113,18 +116,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
   }
 
-  storeAnswerFor(id: string, value: string) {
-    this.setState((prevState: SurveyFormComponentState) => {
-      let item = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
-      if (item instanceof QuestionSection) {
-        //TODO:: 
-      }
-      return {
 
-      }
-    })
-
-  }
   transformValueToType(type: IValueType, value: string) {
     switch (type.name) {
       case ANSWER_TYPES.BOOLEAN:
@@ -229,7 +221,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       else if (item instanceof QuestionSection) {
         if (isValid) {
           if (item.duplicatingSettings.isEnabled) {
-            console.log("duplicatable");
             return this.renderDuplicatingSection(item, path.concat(index));
           }
           return isValid ? this.getSectionPage(item, path.concat(index)) : null;
@@ -391,14 +382,34 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       {children}
     </Layout>
   }
+  setAnswerFor(path: number[], iteration: number, value: string) {
+    this.setState((prevState: SurveyFormComponentState) => {
+      let a = prevState.answerStore;
+      a.setAnswerFor(path, iteration, value);
+      return {
+        answerStore: a
+      }
+    })
+  }
 
   renderQuestionOrSection(index: number) {
     let item = RootSection.getFromPath([0, index], [this.state.root]);
     if (item instanceof QuestionSection) {
-      return <SurveySection evaluateCondition={this.evaluateCondition.bind(this)} section ={item} path = {[0, index]}/>
+      return <SurveySection
+        answerStore={this.state.answerStore}
+        setAnswer={this.setAnswerFor.bind(this)}
+        evaluateCondition={this.evaluateCondition.bind(this)}
+        section={item}
+        path={[0, index]} />
     }
     else if (item instanceof QAQuestion) {
-      return <QuestionComponent evaluateCondition={this.evaluateCondition.bind(this)} question ={item} path={[0, index]}/>
+      return <QuestionComponent
+        answerStore={this.state.answerStore}
+        evaluateCondition={this.evaluateCondition.bind(this)}
+        defaultValue={this.state.answerStore.getAnswerFor([0, index], 0)}
+        onValueChange={this.setAnswerFor.bind(this, [0, index], 0)}
+        question={item} path={[0, index]}
+      />
     }
   }
 
@@ -434,320 +445,6 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
 
 
 
-interface SelInputProps {
-  options: AnswerOptions;
-  answerType: IValueType;
-  onSelectionChange: (optId: string) => void;
-  value?: string;
-  definedQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
-  answerStore: { [key: string]: string };
-  question: QAQuestion;
 
-}
-export class SelInput extends React.Component<SelInputProps, any> {
-  private allOptionsId: string[]
-  constructor(props) {
-    super(props);
-    this.state = {
 
-    };
-  }
-  shouldComponentUpdate(nextProps, nextState) {
-    if (_.isEqual(nextProps, this.props)) {
-      return false;
-    }
-    return true;
-  }
 
-  transformValueToType(type: IValueType, value: string) {
-    switch (type.name) {
-      case ANSWER_TYPES.BOOLEAN:
-        return Boolean(value);
-      case ANSWER_TYPES.DATE:
-        return new Date(value);
-      case ANSWER_TYPES.NUMBER:
-        return parseFloat(value);
-      case ANSWER_TYPES.STRING:
-        return value;
-      case ANSWER_TYPES.TIME:
-        return new Date(value);
-
-    }
-    return value;
-  }
-  evaluateCondition(condition: QACondition, question: QAQuestion) {
-    let finalResult = true;
-    let pendingOperator = null;
-    condition.literals.forEach(literal => {
-      const getValid = (item: ILiteral) => {
-        let result = true;
-        const answer = this.props.answerStore[item.questionRef];
-        console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
-        let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
-        let c1 = this.transformValueToType(question.answerType, answer);
-
-        if (question) {
-          switch (item.comparisonOperator) {
-            case QAComparisonOperator.Equal:
-              result = c1 === c2;
-              console.log(result);
-              break;
-            case QAComparisonOperator.Greater_Than:
-              result = c1 > c2;
-              break;
-            case QAComparisonOperator.Greater_Than_Or_Equal:
-              result = c1 >= c2;
-              break;
-            case QAComparisonOperator.Less_Than:
-              result = c1 < c2;
-              break;
-            case QAComparisonOperator.Less_Than_Or_Equal:
-              result = c1 >= c2;
-              break;
-          }
-        }
-        return result;
-      }
-      let currentResult = getValid(literal);
-      if (!pendingOperator) {
-        finalResult = currentResult;
-        pendingOperator = literal.followingOperator
-      }
-      else if (pendingOperator) {
-        switch (pendingOperator) {
-          case QAFollowingOperator.AND:
-            finalResult = finalResult && currentResult;
-            break;
-          case QAFollowingOperator.OR:
-            finalResult = finalResult || currentResult;
-            break;
-        }
-      }
-
-    });
-    return finalResult;
-  }
-  filterByCondition() {
-    const { groups, rootOptions } = this.props.options.SortedOptions;
-    const g = groups.filter(item => this.evaluateCondition(item.appearingCondition, this.props.question));
-    const options = rootOptions.filter(item => this.evaluateCondition(item.appearingCondition, this.props.question));
-    return { groups: g, rootOptions: options };
-
-  }
-  getOptions(): ReactElement[] {
-    const { groups, rootOptions } = this.filterByCondition();
-    this.allOptionsId = [];
-    let returnComp = [];
-    const groupItems = groups.map(item => {
-      return item.members.map(option => {
-        this.allOptionsId.push(option.id);
-        return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={option.value} />;
-      })
-
-    });
-    returnComp = groupItems;
-    const groupless = rootOptions.map(item => {
-      this.allOptionsId.push(item.id);
-      return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.value} />
-    });
-    returnComp.push(...groupless);
-
-    return returnComp;
-  }
-  onSelectionChanged(index: number) {
-    if (this.props.onSelectionChange) this.props.onSelectionChange(this.allOptionsId[index]);
-  }
-  getDefaultSelected() {
-    return this.allOptionsId && this.allOptionsId.findIndex(item => item === this.props.value);
-  }
-  render() {
-    return (
-      <RadioGroup selectedIndex={this.getDefaultSelected()} onChange={this.onSelectionChanged.bind(this)}>
-        {this.getOptions()}
-      </RadioGroup>
-    );
-  }
-
-}
-type SectionComponentProps = {
-  section: QuestionSection,
-  path: number[]
-  evaluateCondition: (condition: QACondition) => boolean
-} & ThemedStyleType;
-
-type SectionComponentState = {
-  answers: { [key: string]: any }[]
-}
-export class SectionComponent extends React.Component<SectionComponentProps, SectionComponentState>{
-  constructor(props: SectionComponentProps) {
-    super(props);
-    this.state = {
-      answers: []
-    }
-  }
-  renderDuplicatingSection(section: QuestionSection, path: number[]) {
-    let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
-    let times = 0;
-    if (repeatType === "number") {
-      times = parseInt(section.duplicatingSettings.duplicateTimes.value);
-    } else {
-      let ans = this.state.answers[section.duplicatingSettings.duplicateTimes.value];
-      if (ans) {
-        times = parseInt(ans);
-      }
-    }
-    times = 5;
-    let children = []
-    for (let i = 0; i < times; i++) {
-      children.push(
-        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5 }} key={section.id + i}>
-          <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
-            <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
-              {this.getSectionPage(section, path.concat(i))}
-            </View>
-          </List.Accordion>
-        </View>
-      )
-    }
-    return <Layout style={{ marginTop: 20, marginBottom: 20 }} key={section.id + "root-duplicated"}>
-      <Text style={{ padding: 5 }}>{`${getReadablePath(path)} : ${section.name}`}</Text>
-      {children}
-    </Layout>
-  }
-  getAnswer(questionId: string, iteration: number) {
-
-  }
-  setAnswer(questionId: string, iteration: number, value: string) {
-
-  }
-
-  getSectionPage(section: QuestionSection, path: number[], iteration?: number) {
-    let comp = section.content.map((item, index) => {
-      let isValid = this.props.evaluateCondition(item.appearingCondition);
-      if (item instanceof QAQuestion) {
-        return isValid ? <QuestionComponent key={item.id} path={path}
-          question = {item}
-          onValueChange={this.setAnswer.bind(this, item.id, iteration)}
-          defaultValue={this.getAnswer(item.id, null)}
-        /> : null;
-      }
-      else if (item instanceof QuestionSection) {
-        if (isValid) {
-          return <SurveySection key={item.id} section={item} path={path} evaluateCondition={this.props.evaluateCondition}></SurveySection>
-
-        }
-      }
-    });
-    return <View key={section.id}>
-      {comp}
-    </View>
-  }
-
-  render() {
-    let comp = null;
-    if (this.props.section.duplicatingSettings.isEnabled) comp = this.renderDuplicatingSection(this.props.section, this.props.path);
-    else { comp = this.getSectionPage(this.props.section, this.props.path) }
-    return <Layout>
-      {comp}
-    </Layout>
-  }
-}
-const SurveySection = withStyles(SectionComponent, (theme) => ({
-  accordion: {
-    backgroundColor: theme['color-primary-300']
-  }
-}));
-
-type QuestionComponentProps = {
-  question: QAQuestion;
-  path: number[];
-  defaultValue: string;
-  onValueChange: (newValue: string) => void
-} & ThemedStyleType;
-type QuestionComponentState = {
-
-}
-export class QuestionComponent extends React.Component<QuestionComponentProps, QuestionComponentState>{
-  constructor(props: QuestionComponentProps) {
-    super(props);
-    this.state = {
-
-    }
-  }
-  async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
-    try {
-      const { action, year, month, day } = await DatePickerAndroid.open({
-        date: defaultDate || new Date(),
-      });
-      if (action !== DatePickerAndroid.dismissedAction) {
-        // Selected year, month (0-11), day
-        if (onDateChange) onDateChange(new Date(year, month, day));
-      }
-    } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
-    }
-  }
-  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
-    let comp = null;
-    if (type) {
-
-      switch (type.name) {
-        case ANSWER_TYPES.NUMBER:
-          comp = <Input
-            defaultValue={this.props.defaultValue}
-            onChangeText={this.props.onValueChange}
-            placeholder=''
-            keyboardType='number-pad'
-          />;
-          break;
-        case ANSWER_TYPES.STRING:
-          comp = <Input
-            defaultValue={this.props.defaultValue}
-            onChangeText={this.props.onValueChange} />;
-          break;
-        case ANSWER_TYPES.DATE:
-          let date = this.props.defaultValue ? new Date(this.props.defaultValue) : new Date();
-          comp = <TouchableOpacity onPress={this.openDatePicker.bind(this, date, (date) => {
-            let stringified = date.toDateString();
-            this.props.onValueChange(stringified);
-          })}>
-            <Input
-              defaultValue={date.toDateString()}
-              status={"primary"}
-              disabled
-            />
-          </TouchableOpacity>;
-
-          break;
-        case ANSWER_TYPES.SELECT:
-          comp = <SelInput
-            question={question}
-            definedQuestions={this.props.allQuestions}
-            answerStore={this.props.answerStore}
-            value={this.props.defaultValue}
-            onSelectionChange={this.props.onValueChange}
-            answerType={type}
-            options={options} />;
-          break;
-      }
-    }
-    return comp;
-  }
-  render() {
-    let currentQuestion = this.props.question;
-    const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-      {`${getReadablePath(this.props.path)} : ${currentQuestion.questionContent.content}`}
-    </Text>;
-    const valueInput = this.getValueInput(currentQuestion.answerType,
-      currentQuestion.options, currentQuestion);
-    return (
-      <Layout key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
-        <View style={{ paddingLeft: 5, paddingRight: 5 }}>
-          {questionText}
-          {valueInput}
-        </View>
-      </Layout>
-    );
-  }
-
-}

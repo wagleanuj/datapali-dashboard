@@ -1,138 +1,111 @@
-import { RootSection, QORS, QuestionSection, QAQuestion, QACondition, IValueType, ANSWER_TYPES, ILiteral, QAComparisonOperator, QAFollowingOperator } from "dpform";
-import { TouchableRipple } from "react-native-paper";
+import { RootSection, QuestionSection, QAQuestion } from "dpform";
 
-export class AnswerMachine {
-    private readonly root: RootSection;
-    private readonly entries: { data: (QuestionSection | QAQuestion), path: number[] }[];
-    private answerStore: Map<string, string> = new Map();
-    private currentIndex: number = -1;
-    private currentLevelOneSection: QuestionSection;
+import _ from "lodash";
+
+class Answer {
+    questionId: string;
+    answer: string;
+    constructor(questionId: string) {
+        this.questionId = questionId;
+    }
+    setAnswer(answer: string) {
+        this.answer = answer;
+    }
+    getAnswer() {
+        return this.answer;
+    }
+}
+
+
+export class AnswerStore {
+    root: RootSection;
+    store: any[]
+    answersMap: Map<string, Answer> = new Map();
     constructor(root: RootSection) {
         this.root = root;
-        this.entries = this.getAllEntries([0], 0, this.root, null, true);
     }
-
-
-    transformValueToType(type: IValueType, value: string) {
-        switch (type.name) {
-            case ANSWER_TYPES.BOOLEAN:
-                return Boolean(value);
-            case ANSWER_TYPES.DATE:
-                return new Date(value);
-            case ANSWER_TYPES.NUMBER:
-                return parseFloat(value);
-            case ANSWER_TYPES.STRING:
-                return value;
-            case ANSWER_TYPES.TIME:
-                return new Date(value);
+    getFromPath(path: number[], root: { [key: string]: any }[]) {
+        const el = root[path[0]];
+        if (path.length === 1) { return el; }
+        if (Array.isArray(el)) {
+            return this.getFromPath(path.slice(1), el);
         }
-        return value;
+        return undefined;
     }
 
-    evaluateCondition(condition: QACondition) {
-        let finalResult = true;
-        let pendingOperator = null;
-        condition.literals.forEach(literal => {
-            const getValid = (item: ILiteral) => {
-                let result = true;
-                const answer = this.answerStore[item.questionRef];
-                const question = this.root.questions[item.questionRef];
-                console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
-                let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
-                let c1 = this.transformValueToType(question.answerType, answer);
+    getById(id: string) {
+        let a = this.answersMap.get(id);
+        if (!a) return undefined;
+        return a.getAnswer();
+    }
 
-                if (question) {
-                    switch (item.comparisonOperator) {
-                        case QAComparisonOperator.Equal:
-                            result = c1 === c2;
-                            console.log(result);
-                            break;
-                        case QAComparisonOperator.Greater_Than:
-                            result = c1 > c2;
-                            break;
-                        case QAComparisonOperator.Greater_Than_Or_Equal:
-                            result = c1 >= c2;
-                            break;
-                        case QAComparisonOperator.Less_Than:
-                            result = c1 < c2;
-                            break;
-                        case QAComparisonOperator.Less_Than_Or_Equal:
-                            result = c1 >= c2;
-                            break;
-                    }
-                }
-                return result;
-            }
-            let currentResult = getValid(literal);
-            if (!pendingOperator) {
-                finalResult = currentResult;
-                pendingOperator = literal.followingOperator
-            }
-            else if (pendingOperator) {
-                switch (pendingOperator) {
-                    case QAFollowingOperator.AND:
-                        finalResult = finalResult && currentResult;
-                        break;
-                    case QAFollowingOperator.OR:
-                        finalResult = finalResult || currentResult;
-                        break;
+    init() {
+        const prepare = (section: QuestionSection | RootSection, path: number[]) => {
+            if (section.content.length <= 0) return [];
+            let placeholders = [];
+            for (let i = 0; i < section.content.length; i++) {
+                let current = section.content[i];
+                if (current instanceof QuestionSection) {
+                    placeholders.push(
+                        [prepare(current, path.concat(i))]
+                    );
+                } else if (current instanceof QAQuestion) {
+                    let a = new Answer(current.id);
+                    this.answersMap.set(current.id, a);
+                    placeholders.push(a);
                 }
             }
-
-        });
-        return finalResult;
+            return placeholders;
+        }
+        this.store = [prepare(this.root, [0])];
+        return this;
     }
-    //returns the next question that can appear as a single page question
-    next() {
-      
-    }
-
-    prev() {
-
-    }
-
-    getQuestion(id: string) {
-        return this.root.questions[id];
-    }
-
-    getSection(id: string) {
-        return this.root.sections[id];
+    cloneSectionEmpty(sectionArray: any[]) {
+        let re = [];
+        for (let i = 0; i < sectionArray.length; i++) {
+            if (Array.isArray(sectionArray[i])) {
+                re.push(this.cloneSectionEmpty(re[i]));
+            } else {
+                re.push(new Answer(sectionArray[i].questionId));
+            }
+        }
+        return re;
     }
 
-    setAnswer(questionId: string, value: string) {
-        this.answerStore.set(questionId, value);
+    setAnswerFor(path: number[], iteration: number, value: string) {
+        if (!this.store) throw new Error("Answer store not initiated");
+        let parent = path.slice(0);
+        let index = parent.pop();
+        let ans = this.getFromPath(parent, this.store);
+        if (!ans) return undefined;
+        if (!ans[iteration]) ans[iteration] = this.cloneSectionEmpty(ans[0]);
+        let s = ans[iteration][index];
+        if (s instanceof Answer) {
+            s.setAnswer(value);
+        }
+
         return this;
     }
 
-    removeAnswer(questionId: string) {
-        this.answerStore.delete(questionId);
-        return this;
-    }
+    getAnswerFor(path: number[], iteration: number) {
+        if (!this.store) throw new Error("Answer store not initiated");
+        let parent = path.slice(0);
+        let index = parent.pop();
 
-    getAllEntries(startSectionPath: number[], startIndex: number, root: RootSection, fetchType: QORS | null, first: boolean = true, returnbag?: { data: (QuestionSection | QAQuestion), path: number[] }[]) {
-        if (!returnbag) returnbag = [];
-        if (startSectionPath.length <= 0) return;
-        let section = RootSection.getFromPath(startSectionPath, [root]);
-        if (!section || !(section instanceof QuestionSection)) return;
-        for (let i = startIndex; i < section.content.length; i++) {
-            let current = section.content[i];
-            if (current instanceof QAQuestion) {
-                if (fetchType === QORS.QUESTION || !fetchType) returnbag.push({ path: startSectionPath.concat(i), data: current });
+        let ans = this.getFromPath(parent, this.store);
 
-            }
-            else if (current instanceof QuestionSection) {
-                if (fetchType === QORS.SECTION || !fetchType) returnbag.push({ path: startSectionPath.concat(i), data: current });
-                this.getAllEntries(startSectionPath.concat(i), 0, root, fetchType, false, returnbag);
+        if (!ans) return undefined;
+        if (!ans[iteration]) return undefined;;
+        let s = ans[iteration][index];
+        if (s instanceof Answer) {
+            return s.getAnswer();
+        }
+
+        else {
+            if (ans[index] instanceof Answer) {
+                return ans[index].getAnswer();
             }
         }
-        if (first) {
-            let cloned = startSectionPath.slice(0);
-            let index = cloned.pop();
-            if (typeof (index) === "number") {
-                this.getAllEntries(cloned, index, root, fetchType, true, returnbag);
-            }
-        }
-        return returnbag;
     }
 
 }
