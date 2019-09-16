@@ -38,12 +38,11 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         if (repeatType === "number") {
             times = parseInt(section.duplicatingSettings.duplicateTimes.value);
         } else {
-            let ans = this.state.answers[section.duplicatingSettings.duplicateTimes.value];
+            let ans = this.props.answerStore.getById(section.duplicatingSettings.duplicateTimes.value);
             if (ans) {
                 times = parseInt(ans);
             }
         }
-        times = 5;
         let children = []
         for (let i = 0; i < times; i++) {
             children.push(

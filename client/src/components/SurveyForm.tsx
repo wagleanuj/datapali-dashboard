@@ -379,7 +379,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 <Toaster ref={r => r ? this.toasterRef = r : null}></Toaster>
                 <ConstantDefinitions isOpen={false}></ConstantDefinitions>
                 <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}>
-                    <EditableText defaultValue={this.state.root.name} onChange={this.handleRootNameChange.bind(this)} />
+                    <EditableText value={this.state.root.name} onChange={this.handleRootNameChange.bind(this)} />
 
                 </Toolbar>
                 <div className="container">

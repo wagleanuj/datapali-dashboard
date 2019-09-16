@@ -54,9 +54,12 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
         if (type === "questionRef") {
             let options = Object.values(this.props.definedQuestions).map(item => ({ value: item.id, label: item.questionContent.content }));
             let selected = this.state.duplicateTimes.type === "questionRef" ? options.find(item => item.value === this.state.duplicateTimes.value) : undefined;
-            return <Select styles={customStyles} options={options} defaultValue={selected} onChange={this.handleQuestionRefChange} />
+            return <Select styles={customStyles} options={options} defaultValue={selected} onChange={this.handleQuestionRefChange.bind(this)} />
         }
-        return <input defaultValue={this.state.duplicateTimes.type === "number" ? this.state.duplicateTimes.value : ""} type="number" className="form-control" onChange={e => this.handleNumberTimesChange(e.target.value)} />
+        return <input
+            defaultValue={this.state.duplicateTimes.type === "number" ? this.state.duplicateTimes.value : ""}
+            type="number" className="form-control"
+            onChange={e => this.handleNumberTimesChange(e.target.value)} />
     }
     private handleSave() {
         let isInvalid = _.values(this.state).every(_.isEmpty);
@@ -74,7 +77,11 @@ export class DuplicateSettings extends React.Component<DuplicateSettingsProps, D
             <ButtonGroup className={classNames(Classes.ELEVATION_2, Classes.DARK)} vertical fill>
                 <Switch onChange={this.handleEnabledChange.bind(this)} defaultChecked={this.props.isEnabled}>Enabled</Switch>
                 <Divider />
-                <Select menuContainerStyle={{ zIndex: 99999 }} styles={customStyles} onChange={(e: any) => this.handleTypeChange(e)} options={typeOptions} defaultValue={defaultValue}></Select>
+                <Select menuContainerStyle={{ zIndex: 99999 }}
+                    styles={customStyles}
+                    onChange={(e: any) => this.handleTypeChange(e)}
+                    options={typeOptions}
+                    defaultValue={defaultValue}></Select>
                 {this.generateValueComponent(this.state.duplicateTimes.type)}
                 <Divider />
                 <ButtonGroup fill>

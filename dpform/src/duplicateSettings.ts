@@ -18,7 +18,7 @@ export function dupeSettingsFromJSON(a: any) {
     const r: IDupeSettings = {
         isEnabled: a.isEnabled,
         duplicateTimes: {
-            value: a.duplicateTimes,
+            value: a.duplicateTimes.value,
             type: a.duplicateTimes.type as DuplicateTimesType,
         },
         condition: QACondition.fromJSON(a.condition),

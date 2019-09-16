@@ -13,7 +13,7 @@ function dupeSettingsFromJSON(a) {
     var r = {
         isEnabled: a.isEnabled,
         duplicateTimes: {
-            value: a.duplicateTimes,
+            value: a.duplicateTimes.value,
             type: a.duplicateTimes.type,
         },
         condition: condition_1.QACondition.fromJSON(a.condition),

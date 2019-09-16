@@ -12,6 +12,7 @@ import { ShowcaseItem } from './showcaseitem';
 import { Section } from 'react-native-paper/typings/components/Drawer';
 import { AnswerStore } from '../answermachine';
 import { SurveySection, QuestionComponent } from './section';
+import { SelInput } from './selectInput';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -311,7 +312,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           comp = <SelInput
             question={question}
             definedQuestions={this.state.allQuestions}
-            answerStore={this.state.answers}
+            answerStore={this.state.answerStore}
             value={this.state.answers[question.id]}
             onSelectionChange={this.storeAnswers.bind(this, question.id)}
             answerType={type}
@@ -352,36 +353,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
-  renderDuplicatingSection(section: QuestionSection, path: number[]) {
-    let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
-    let times = 0;
-    if (repeatType === "number") {
-      times = parseInt(section.duplicatingSettings.duplicateTimes.value);
-    } else {
-      let ans = this.state.answers[section.duplicatingSettings.duplicateTimes.value];
-      if (ans) {
-        times = parseInt(ans);
-      }
-    }
-    times = 5;
-    let { theme } = this.props;
-    let children = []
-    for (let i = 0; i < times; i++) {
-      children.push(
-        <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5 }} key={section.id + i}>
-          <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
-            <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
-              {this.getSectionPage(section, path.concat(i))}
-            </View>
-          </List.Accordion>
-        </View>
-      )
-    }
-    return <Layout style={{ marginTop: 20, marginBottom: 20 }} key={section.id + "root-duplicated"}>
-      <Text style={{ padding: 5 }}>{`${getReadablePath(path)} : ${section.name}`}</Text>
-      {children}
-    </Layout>
-  }
+
   setAnswerFor(path: number[], iteration: number, value: string) {
     this.setState((prevState: SurveyFormComponentState) => {
       let a = prevState.answerStore;
