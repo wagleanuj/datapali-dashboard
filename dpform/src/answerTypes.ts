@@ -6,4 +6,5 @@ export enum ANSWER_TYPES  {
     NUMBER = 'number',
     RANGE = 'range',
     SELECT = 'select',
+    GEOLOCATION="geolocation"
 }

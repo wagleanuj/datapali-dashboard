@@ -9,4 +9,5 @@ var ANSWER_TYPES;
     ANSWER_TYPES["NUMBER"] = "number";
     ANSWER_TYPES["RANGE"] = "range";
     ANSWER_TYPES["SELECT"] = "select";
+    ANSWER_TYPES["GEOLOCATION"] = "geolocation";
 })(ANSWER_TYPES = exports.ANSWER_TYPES || (exports.ANSWER_TYPES = {}));

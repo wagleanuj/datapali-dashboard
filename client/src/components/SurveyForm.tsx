@@ -140,7 +140,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             let parent = path_.slice(0, path_.length - 1);
             let cloned = _.clone(prevState.root);
             let item = RootSection.getFromPath(path_, [this.state.root]);
-            if (deleteid !== item.id) throw new Error("cannot delete, id mismatch");
+            if (item && deleteid !== item.id) throw new Error("cannot delete, id mismatch");
             if (item instanceof QAQuestion) {
                 cloned.removeQuestion(item.id, path_);
             }
@@ -148,7 +148,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 cloned.removeSection(item.id, path_);
                 if (item.id === prevState.activeSection.id) {
                     let parentSection = RootSection.getFromPath(parent, [this.state.root]);
-                    if (!(parentSection instanceof QAQuestion)) {
+                    if (parentSection && !(parentSection instanceof QAQuestion)) {
                         activeSection = parentSection;
                         activeSectionPath = parent;
                     }
@@ -169,10 +169,10 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         if (this.state.activeSectionPath.length > 1) {
             let newSectionPath = this.state.activeSectionPath.slice(0, this.state.activeSectionPath.length - 1);
             let newSection = RootSection.getFromPath(newSectionPath, [this.state.root]);
-            if (!(newSection instanceof QAQuestion)) {
+            if (newSection && !(newSection instanceof QAQuestion)) {
                 this.setState((prevState: SurveyFormState) => {
                     return {
-                        activeSection: newSection instanceof QAQuestion ? prevState.activeSection : newSection,
+                        activeSection: !newSection ? prevState.activeSection : newSection instanceof QAQuestion ? prevState.activeSection : newSection,
                         activeSectionPath: newSectionPath
                     }
 
@@ -252,13 +252,15 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
     handleFormTreeNodeExpand(nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) {
         nodeData.isExpanded = true;
-        this.setState((prevState: SurveyFormState) => {
-            let item = RootSection.getFromPath(_nodePath, [this.state.root]);
-            let expandedNodes = _.union([item.id], prevState.expandedNodes);
-            return {
-                expandedNodes: expandedNodes
-            }
-        })
+        let item = RootSection.getFromPath(_nodePath, [this.state.root]);
+        if (item) {
+            this.setState((prevState: SurveyFormState) => {
+                let expandedNodes = item ? _.union([item.id], prevState.expandedNodes) : prevState.expandedNodes;
+                return {
+                    expandedNodes: expandedNodes
+                }
+            })
+        }
     }
 
     handleFormTreeNodeCollapse(nodeData: ITreeNode) {
@@ -273,28 +275,29 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
     handleFormTreeNodeClick(nodeData: ITreeNode, _nodePath: number[], e: React.MouseEvent<HTMLElement>) {
         let item = RootSection.getFromPath(_nodePath, [this.state.root]);
-        if (!(item instanceof QAQuestion)) {
+        if (item && !(item instanceof QAQuestion)) {
             this.setState((prevState: SurveyFormState) => {
-                let expandedNodes = _.union([item.id], prevState.expandedNodes);
-                let selectedNodes = [item.id];
+
+                let expandedNodes = item ? _.union([item.id], prevState.expandedNodes) : prevState.expandedNodes;
+                let selectedNodes = item? [item.id]: prevState.selectedNodes;
                 return {
                     selectedNodes: selectedNodes,
                     expandedNodes: expandedNodes,
-                    activeSection: !(item instanceof QAQuestion) ? item : prevState.activeSection,
+                    activeSection: item && !(item instanceof QAQuestion) ? item : prevState.activeSection,
                     activeSectionPath: _nodePath
                 }
 
             })
         }
-        else {
+        else if(item) {
             this.setState((prevState: SurveyFormState) => {
 
                 let parent = _nodePath.length > 1 ? _nodePath.slice(0, _nodePath.length - 1) : _nodePath;
                 let parentSection = RootSection.getFromPath(parent, [prevState.root]);
                 let selectedQuestion = RootSection.getFromPath(_nodePath, [prevState.root]);
                 let expandedNodes = prevState.expandedNodes;
-                let selectedNodes = [selectedQuestion.id];
-                if (!(parentSection instanceof QAQuestion)) {
+                let selectedNodes = selectedQuestion? [selectedQuestion.id]:prevState.selectedNodes;
+                if ( parentSection && !(parentSection instanceof QAQuestion)) {
                     expandedNodes = _.union([parentSection.id], expandedNodes);
                     selectedNodes.push(parentSection.id);
                 }
@@ -302,7 +305,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 return {
                     expandedNodes: expandedNodes,
                     selectedNodes: selectedNodes,
-                    activeSection: !(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
+                    activeSection: parentSection &&!(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
                     activeSectionPath: parent
                 }
 
@@ -327,14 +330,14 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             let section = RootSection.getFromPath(path, [prevState.root]);
             let expandedNodes = prevState.expandedNodes;
             let selectedNodes = []
-            if (section instanceof QuestionSection) {
+            if ( section && section instanceof QuestionSection) {
                 expandedNodes = _.union([section.id], expandedNodes);
                 selectedNodes.push(section.id);
             }
             return {
                 expandedNodes: expandedNodes,
                 selectedNodes: selectedNodes,
-                activeSection: !(section instanceof QAQuestion) ? section : prevState.activeSection,
+                activeSection: section && !(section instanceof QAQuestion) ? section : prevState.activeSection,
                 activeSectionPath: path
             }
         })

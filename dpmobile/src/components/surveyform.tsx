@@ -86,8 +86,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg1NzY4NTgsImV4cCI6MTU2ODY2MzI1OH0.vTE76XSSrfi-z1yYbTmm-0Y-MoPa7M9XeWfC_i9n_bM";
-    return request('http://142.93.151.160:5000/graphql',
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg3NTMyNjIsImV4cCI6MTU2ODgzOTY2Mn0.x6kbVhr3nIFOlPgt_HCBgE2o9PheBDrqmzvEMUHX81E";
+     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
       'Could not find the file',

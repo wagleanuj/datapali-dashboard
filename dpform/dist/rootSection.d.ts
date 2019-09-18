@@ -11,7 +11,8 @@ export declare class RootSection {
     name: string;
     id: string;
     constructor();
-    static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): RootSection | QuestionSection | QAQuestion;
+    static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): undefined | RootSection | QuestionSection | QAQuestion;
+    descendants(callback: (node: QuestionSection | QAQuestion, path: number[], parent: QuestionSection | RootSection) => void | boolean): void;
     static Entries(root: RootSection, sectionPath: number[], startIndex: number, fetchType?: QORS): {
         data: (QuestionSection | QAQuestion);
         path: number[];

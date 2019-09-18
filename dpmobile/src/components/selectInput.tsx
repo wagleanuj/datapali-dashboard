@@ -55,7 +55,6 @@ export class SelInput extends React.Component<SelInputProps, any> {
             const getValid = (item: ILiteral) => {
                 let result = true;
                 const answer = this.props.answerStore.getById(item.questionRef);
-                console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
                 let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
                 let c1 = this.transformValueToType(question.answerType, answer);
 

@@ -32,6 +32,7 @@ var duplicateSettings_1 = require("./duplicateSettings");
 var question_1 = require("./question");
 var questionSection_1 = require("./questionSection");
 var util_1 = require("./util");
+var lodash_1 = require("lodash");
 var RootSection = /** @class */ (function () {
     function RootSection() {
         this.questions = {};
@@ -45,7 +46,23 @@ var RootSection = /** @class */ (function () {
         if (path.length === 1) {
             return el;
         }
-        return RootSection.getFromPath(path.slice(1), el.content);
+        if (el.content) {
+            return RootSection.getFromPath(path.slice(1), el.content);
+        }
+    };
+    RootSection.prototype.descendants = function (callback) {
+        var iterate = function (node, path) {
+            for (var i = 0; i < node.content.length; i++) {
+                var current = node.content[i];
+                if (current) {
+                    var cont = callback(current, path.concat(i), node);
+                    if (current instanceof questionSection_1.QuestionSection && (lodash_1.isNil(cont) || cont === true)) {
+                        iterate(current, path.concat(i));
+                    }
+                }
+            }
+        };
+        iterate(this, [0]);
     };
     RootSection.Entries = function (root, sectionPath, startIndex, fetchType) {
         var stack = [];
@@ -60,18 +77,20 @@ var RootSection = /** @class */ (function () {
             var p = stack.shift();
             if (p) {
                 var section = RootSection.getFromPath(p.path, [root]);
-                for (var i = p.startIndex; i < section.content.length; i++) {
-                    var item = section.content[i];
-                    if (item instanceof question_1.QAQuestion) {
-                        if (!fetchType || fetchType === QORS.QUESTION) {
-                            rt.push({ path: p.path.concat(i), data: item });
+                if (section) {
+                    for (var i = p.startIndex; i < section.content.length; i++) {
+                        var item = section.content[i];
+                        if (item instanceof question_1.QAQuestion) {
+                            if (!fetchType || fetchType === QORS.QUESTION) {
+                                rt.push({ path: p.path.concat(i), data: item });
+                            }
                         }
-                    }
-                    else {
-                        if (!fetchType || fetchType === QORS.SECTION) {
-                            rt.push({ path: p.path.concat(i), data: item });
+                        else {
+                            if (!fetchType || fetchType === QORS.SECTION) {
+                                rt.push({ path: p.path.concat(i), data: item });
+                            }
+                            stack.push({ path: p.path.concat(i), startIndex: 0 });
                         }
-                        stack.push({ path: p.path.concat(i), startIndex: 0 });
                     }
                 }
             }
@@ -89,7 +108,7 @@ var RootSection = /** @class */ (function () {
                 throw new Error('Question id conflict');
             }
             this.questions[current.id] = current;
-            if (!(section instanceof question_1.QAQuestion)) {
+            if (section && !(section instanceof question_1.QAQuestion)) {
                 section.content.push(current);
             }
         }
@@ -106,7 +125,7 @@ var RootSection = /** @class */ (function () {
                 throw new Error('Section id conflict');
             }
             this.sections[current.id] = current;
-            if (!(section instanceof question_1.QAQuestion)) {
+            if (section && !(section instanceof question_1.QAQuestion)) {
                 section.content.push(current);
             }
         }
@@ -114,7 +133,7 @@ var RootSection = /** @class */ (function () {
     };
     RootSection.prototype.removeQuestion = function (questionId, path) {
         var parentSection = RootSection.getFromPath(path.slice(0, path.length - 1), [this]);
-        if (!(parentSection instanceof question_1.QAQuestion)) {
+        if (parentSection && !(parentSection instanceof question_1.QAQuestion)) {
             var foundIndex = parentSection.content.findIndex(function (item) { return item.id === questionId; });
             if (foundIndex > -1) {
                 parentSection.content.splice(foundIndex, 1);
@@ -125,7 +144,7 @@ var RootSection = /** @class */ (function () {
     };
     RootSection.prototype.removeSection = function (sectionId, path) {
         var parentSection = RootSection.getFromPath(path.slice(0, path.length - 1), [this]);
-        if (!(parentSection instanceof question_1.QAQuestion)) {
+        if (parentSection && !(parentSection instanceof question_1.QAQuestion)) {
             var foundIndex = parentSection.content.findIndex(function (item) { return item.id === sectionId; });
             if (foundIndex > -1) {
                 parentSection.content.splice(foundIndex, 1);
@@ -140,19 +159,21 @@ var RootSection = /** @class */ (function () {
         var oldParentPath = prevPath.slice(0, prevPath.length - 1);
         var newParent = RootSection.getFromPath(newParentPath, [this]);
         var oldParent = RootSection.getFromPath(oldParentPath, [this]);
-        var foundIndex = oldParent.content.findIndex(function (item) { return item.id === itemAtPath.id; });
-        if (foundIndex > -1 && !(oldParent instanceof question_1.QAQuestion)) {
-            var removed = oldParent.content.splice(foundIndex, 1);
-            if (!(newParent instanceof question_1.QAQuestion)) {
-                var pos = newPath[newPath.length - 1];
-                if (removed[0] instanceof questionSection_1.QuestionSection) {
-                    newParent.content.splice(pos, 0, this.sections[removed[0].id]);
+        if (oldParent && newParent && itemAtPath) {
+            var foundIndex = oldParent.content.findIndex(function (item) { return item.id === itemAtPath.id; });
+            if (foundIndex > -1 && !(oldParent instanceof question_1.QAQuestion)) {
+                var removed = oldParent.content.splice(foundIndex, 1);
+                if (!(newParent instanceof question_1.QAQuestion)) {
+                    var pos = newPath[newPath.length - 1];
+                    if (removed[0] instanceof questionSection_1.QuestionSection) {
+                        newParent.content.splice(pos, 0, this.sections[removed[0].id]);
+                    }
+                    else if (removed[0] instanceof question_1.QAQuestion) {
+                        newParent.content.splice(pos, 0, this.questions[removed[0].id]);
+                    }
                 }
-                else if (removed[0] instanceof question_1.QAQuestion) {
-                    newParent.content.splice(pos, 0, this.questions[removed[0].id]);
-                }
+                return this;
             }
-            return this;
         }
     };
     RootSection.toJSON = function (a) {

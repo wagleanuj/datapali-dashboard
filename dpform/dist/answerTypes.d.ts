@@ -5,5 +5,6 @@ export declare enum ANSWER_TYPES {
     TIME = "time",
     NUMBER = "number",
     RANGE = "range",
-    SELECT = "select"
+    SELECT = "select",
+    GEOLOCATION = "geolocation"
 }

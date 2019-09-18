@@ -3,6 +3,7 @@ import { dupeSettingsFromJSON } from './duplicateSettings';
 import { QAQuestion } from './question';
 import { QuestionSection } from './questionSection';
 import { getRandomId } from './util';
+import { isNil } from 'lodash';
 
 export class RootSection {
     questions: { [key: string]: QAQuestion } = {};
@@ -14,12 +15,29 @@ export class RootSection {
         this.id = getRandomId('root-');
     }
 
-    static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): RootSection | QuestionSection | QAQuestion {
+    static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): undefined | RootSection | QuestionSection | QAQuestion {
         const el = root[path[0]];
         if (path.length === 1) { return el; }
-        return RootSection.getFromPath(path.slice(1), el.content);
+        if (el.content) {
+            return RootSection.getFromPath(path.slice(1), el.content);
+        }
     }
-    
+
+    descendants(callback: (node: QuestionSection | QAQuestion, path: number[], parent: QuestionSection | RootSection) => void | boolean) {
+        let iterate = (node: QuestionSection | RootSection, path: number[]) => {
+            for (let i = 0; i < node.content.length; i++) {
+                let current = node.content[i];
+                if (current) {
+                    let cont = callback(current, path.concat(i), node);
+                    if (current instanceof QuestionSection && (isNil(cont) || cont === true)) {
+                        iterate(current, path.concat(i));
+                    }
+                }
+            }
+        }
+        iterate(this, [0]);
+    }
+
     static Entries(root: RootSection, sectionPath: number[], startIndex: number, fetchType?: QORS): { data: (QuestionSection | QAQuestion), path: number[] }[] {
         let stack: { path: number[], startIndex: number }[] = [];
         let rt = [];
@@ -34,18 +52,20 @@ export class RootSection {
             let p = stack.shift();
             if (p) {
                 let section = RootSection.getFromPath(p.path, [root])
-                for (let i = p.startIndex; i < section.content.length; i++) {
-                    let item = section.content[i];
-                    if (item instanceof QAQuestion) {
-                        if (!fetchType || fetchType === QORS.QUESTION) {
-                            rt.push({ path: p.path.concat(i), data: item });
+                if (section) {
+                    for (let i = p.startIndex; i < section.content.length; i++) {
+                        let item = section.content[i];
+                        if (item instanceof QAQuestion) {
+                            if (!fetchType || fetchType === QORS.QUESTION) {
+                                rt.push({ path: p.path.concat(i), data: item });
+                            }
                         }
-                    }
-                    else {
-                        if (!fetchType || fetchType === QORS.SECTION) {
-                            rt.push({ path: p.path.concat(i), data: item });
+                        else {
+                            if (!fetchType || fetchType === QORS.SECTION) {
+                                rt.push({ path: p.path.concat(i), data: item });
+                            }
+                            stack.push({ path: p.path.concat(i), startIndex: 0 });
                         }
-                        stack.push({ path: p.path.concat(i), startIndex: 0 });
                     }
                 }
             }
@@ -63,7 +83,7 @@ export class RootSection {
             const current = q[i];
             if (this.questions[current.id]) { throw new Error('Question id conflict'); }
             this.questions[current.id] = current;
-            if (!(section instanceof QAQuestion)) {
+            if (section && !(section instanceof QAQuestion)) {
                 section.content.push(current);
             }
 
@@ -79,7 +99,7 @@ export class RootSection {
             const current = q[i];
             if (this.questions[current.id]) { throw new Error('Section id conflict'); }
             this.sections[current.id] = current;
-            if (!(section instanceof QAQuestion)) {
+            if (section && !(section instanceof QAQuestion)) {
                 section.content.push(current);
             }
         }
@@ -88,7 +108,7 @@ export class RootSection {
 
     removeQuestion(questionId: string, path: number[]) {
         const parentSection = RootSection.getFromPath(path.slice(0, path.length - 1), [this]);
-        if (!(parentSection instanceof QAQuestion)) {
+        if (parentSection && !(parentSection instanceof QAQuestion)) {
             const foundIndex = parentSection.content.findIndex(item => item.id === questionId);
             if (foundIndex > -1) {
                 parentSection.content.splice(foundIndex, 1);
@@ -100,7 +120,7 @@ export class RootSection {
 
     removeSection(sectionId: string, path: number[]) {
         const parentSection = RootSection.getFromPath(path.slice(0, path.length - 1), [this]);
-        if (!(parentSection instanceof QAQuestion)) {
+        if (parentSection && !(parentSection instanceof QAQuestion)) {
             const foundIndex = parentSection.content.findIndex(item => item.id === sectionId);
             if (foundIndex > -1) {
                 parentSection.content.splice(foundIndex, 1);
@@ -116,19 +136,23 @@ export class RootSection {
         const oldParentPath = prevPath.slice(0, prevPath.length - 1);
         const newParent = RootSection.getFromPath(newParentPath, [this]);
         const oldParent = RootSection.getFromPath(oldParentPath, [this]);
-        const foundIndex = oldParent.content.findIndex(item => item.id === itemAtPath.id);
-        if (foundIndex > -1 && !(oldParent instanceof QAQuestion)) {
-            const removed = oldParent.content.splice(foundIndex, 1);
+        if (oldParent && newParent && itemAtPath) {
 
-            if (!(newParent instanceof QAQuestion)) {
-                const pos = newPath[newPath.length - 1];
-                if (removed[0] instanceof QuestionSection) {
-                    newParent.content.splice(pos, 0, this.sections[removed[0].id]);
-                } else if (removed[0] instanceof QAQuestion) {
-                    newParent.content.splice(pos, 0, this.questions[removed[0].id]);
+
+            const foundIndex = oldParent.content.findIndex(item => item.id === itemAtPath.id);
+            if (foundIndex > -1 && !(oldParent instanceof QAQuestion)) {
+                const removed = oldParent.content.splice(foundIndex, 1);
+
+                if (!(newParent instanceof QAQuestion)) {
+                    const pos = newPath[newPath.length - 1];
+                    if (removed[0] instanceof QuestionSection) {
+                        newParent.content.splice(pos, 0, this.sections[removed[0].id]);
+                    } else if (removed[0] instanceof QAQuestion) {
+                        newParent.content.splice(pos, 0, this.questions[removed[0].id]);
+                    }
                 }
+                return this;
             }
-            return this;
         }
 
     }

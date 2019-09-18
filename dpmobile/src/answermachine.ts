@@ -1,6 +1,6 @@
 import { RootSection, QuestionSection, QAQuestion } from "dpform";
 
-import _ from "lodash";
+import _, { isNil } from "lodash";
 
 class Answer {
     questionId: string;
@@ -33,10 +33,52 @@ export class AnswerStore {
         return undefined;
     }
 
-    getById(id: string) {
-        let a = this.answersMap.get(id);
-        if (!a) return undefined;
-        return a.getAnswer();
+
+    /**
+     * 
+     * @param id 
+     * @param selfPath is where the question is being accessed from.
+     */
+    getById(id: string, selfPath?: number[]) {
+        let qPath = [];
+        let found = false;
+        let parent = null;
+        this.root.descendants((node, path, parent) => {
+            if (found) return false;
+            if (node.id === id) {
+                qPath = path;
+                found = true;
+                parent = parent;
+            }
+        });
+        let r = this.getAnswerFor(qPath, 0);
+
+        if (found) {
+
+            let check = this.checkIfDuplicated(qPath);
+            if (!check.isDuplicated || (check.isDuplicated && check.fromParent)) {
+                return r;
+            }
+        }else {
+            console.log("cant find reference",id);
+        }
+
+        return undefined;
+    }
+
+    checkIfDuplicated(qPath: number[]) {
+        let question = RootSection.getFromPath(qPath, [this.root]);
+        if (!(question instanceof QAQuestion)) throw new Error("provided path is not a question");
+        let path = qPath.slice();
+        while (path.length > 1) {
+            path.pop();
+            let section = RootSection.getFromPath(path, [this.root]);
+            if (section instanceof QuestionSection && section.duplicatingSettings.isEnabled) {
+                let fromParent = path.length === qPath.length - 1
+                return { fromParent: fromParent, isDuplicated: true };
+            }
+        }
+        return { fromParent: false, isDuplicated: false };
     }
 
     init() {
