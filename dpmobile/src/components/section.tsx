@@ -76,6 +76,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
                 return isValid ? <QuestionComponent key={item.id}
                     path={newPath.concat(index)}
                     question={item}
+                    evaluateCondition = {this.props.evaluateCondition}
                     answerStore={this.props.answerStore}
                     defaultValue={this.props.answerStore.getAnswerFor(path.concat(index), iteration)}
                     onValueChange={e => this.handleValueChange(path.concat(index), iteration, e)}
@@ -121,6 +122,7 @@ type QuestionComponentProps = {
     defaultValue: string;
     onValueChange: (newValue: string) => void;
     answerStore: AnswerStore
+    evaluateCondition: (condition: QACondition)=>boolean
 } & ThemedStyleType;
 type QuestionComponentState = {
 
@@ -146,26 +148,72 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         }
     }
 
+    evaluateAutofill(question: QAQuestion){
+        if(question.autoAnswer.isEnabled){
+            let toFillValue = undefined;
+            let aa = question.autoAnswer.answeringConditions;
+            for(let i = 0; i < aa.length;i++){
+                let item = aa[i];
+                let isValid = this.props.evaluateCondition(item.condition);
+
+                if(isValid===true){
+                    toFillValue = item.ifTrue;
+                    break;
+                }else{
+                   toFillValue = item.ifFalse; 
+                }
+            }
+            return toFillValue;
+          
+        }
+        return undefined;
+    }
+
     getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
         let comp = null;
+        let autofillvalue = this.evaluateAutofill(question);
+        let defaultValue = this.props.defaultValue || autofillvalue;
         if (type) {
 
             switch (type.name) {
                 case ANSWER_TYPES.NUMBER:
                     comp = <Input
-                        defaultValue={this.props.defaultValue}
+                        defaultValue={defaultValue}
                         onChangeText={this.props.onValueChange}
                         placeholder=''
                         keyboardType='number-pad'
                     />;
                     break;
+                case ANSWER_TYPES.GEOLOCATION:
+                    let defaultLocation = (locationJSON: object) => {
+                       return  `Latitude: ${locationJSON.coords.latitude} \n
+                                            Longitude: ${locationJSON.coords.longitude}`;
+                    }
+                    let dl = defaultValue? defaultLocation(JSON.parse(defaultValue)):"";
+                    comp = <TouchableOpacity onPress={() => {
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const location = JSON.stringify(position);
+                                this.props.onValueChange(location);
+
+                            },
+                            error => { },
+                            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                        );
+                    }}>
+                        <Input
+                            defaultValue={dl}
+                            status={"primary"}
+                            disabled
+                        />
+                    </TouchableOpacity>;
                 case ANSWER_TYPES.STRING:
                     comp = <Input
-                        defaultValue={this.props.defaultValue}
+                        defaultValue={defaultValue}
                         onChangeText={this.props.onValueChange} />;
                     break;
                 case ANSWER_TYPES.DATE:
-                    let date = this.props.defaultValue ? new Date(this.props.defaultValue) : new Date();
+                    let date = defaultValue ? new Date(defaultValue) : new Date();
                     comp = <TouchableOpacity onPress={this.openDatePicker.bind(this, date, (date) => {
                         let stringified = date.toDateString();
                         this.props.onValueChange(stringified);
@@ -183,7 +231,7 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                         path={this.props.path}
                         question={question}
                         answerStore={this.props.answerStore}
-                        value={this.props.defaultValue}
+                        value={defaultValue}
                         onSelectionChange={this.props.onValueChange}
                         answerType={type}
                         options={options} />;

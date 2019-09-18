@@ -3,16 +3,11 @@ import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInpu
 // tslint:disable-next-line: max-line-length
 import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType } from 'dpform';
 import _ from 'lodash';
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 import { withStyles, ThemedStyleType, Layout, ThemeType, Button, Text, Input, RadioGroup, Radio } from 'react-native-ui-kitten';
-import { List } from 'react-native-paper';
-import { ScrollableAvoidKeyboard } from './scrollableAvoidKeyboard';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
-import { Section } from 'react-native-paper/typings/components/Drawer';
 import { AnswerStore } from '../answermachine';
 import { SurveySection, QuestionComponent } from './section';
-import { SelInput } from './selectInput';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -22,7 +17,6 @@ interface SurveyFormComponentState {
   root: RootSection;
   activeSection: RootSection | QuestionSection;
   activeSectionPath: number[];
-  answers: { [key: string]: string };
   activeQuestion: number[];
   allQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
   history: number[]
@@ -42,7 +36,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       root: root,
       activeSection: root,
       activeSectionPath: [0],
-      answers: {},
       activeQuestion: [],
       allQuestions: [],
       currentQuestionIndex: 0,
@@ -140,7 +133,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     condition.literals.forEach(literal => {
       const getValid = (item: ILiteral) => {
         let result = true;
-        const answer = this.state.answers[item.questionRef];
+        const answer = this.state.answerStore.getById(item.questionRef);
         const question = this.state.root.questions[item.questionRef];
         console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
         let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
@@ -213,115 +206,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
 
-  getSectionPage(section: QuestionSection, path: number[]) {
-    let comp = section.content.map((item, index) => {
-      let isValid = this.evaluateCondition(item.appearingCondition);
-      if (item instanceof QAQuestion) {
-        return isValid ? this.getQuestionPage(item, path.concat(index)) : null;
-      }
-      else if (item instanceof QuestionSection) {
-        if (isValid) {
-          if (item.duplicatingSettings.isEnabled) {
-            return this.renderDuplicatingSection(item, path.concat(index));
-          }
-          return isValid ? this.getSectionPage(item, path.concat(index)) : null;
 
-        }
-      }
-    });
-    return <View key={section.id}>
-      {comp}
-    </View>
 
-  }
-
-  getQuestionPage(currentQuestion: QAQuestion, path: number[]): ReactNode {
-    if (currentQuestion && currentQuestion instanceof QAQuestion) {
-      const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-        {`${getReadablePath(path)} : ${currentQuestion.questionContent.content}`}
-      </Text>;
-      const valueInput = this.getValueInput(currentQuestion.answerType,
-        currentQuestion.options, currentQuestion);
-      return (
-        <Layout key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
-          <View style={{ paddingLeft: 5, paddingRight: 5 }}>
-            {questionText}
-            {valueInput}
-          </View>
-        </Layout>
-      );
-    }
-  }
-
-  storeAnswers(questionId: string, value: string) {
-    this.setState((prevState: SurveyFormComponentState) => {
-      const newAnswers = prevState.answers;
-      newAnswers[questionId] = value;
-      return {
-        answers: newAnswers,
-      };
-    });
-  }
-
-  async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
-    try {
-      const { action, year, month, day } = await DatePickerAndroid.open({
-        date: defaultDate || new Date(),
-      });
-      if (action !== DatePickerAndroid.dismissedAction) {
-        // Selected year, month (0-11), day
-        if (onDateChange) onDateChange(new Date(year, month, day));
-      }
-    } catch ({ code, message }) {
-      console.warn('Cannot open date picker', message);
-    }
-  }
-  getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
-    let comp = null;
-    if (type) {
-
-      switch (type.name) {
-        case ANSWER_TYPES.NUMBER:
-          comp = <Input
-            defaultValue={this.state.answers[question.id]}
-            onChangeText={this.storeAnswers.bind(this, question.id)}
-            placeholder=''
-            keyboardType='number-pad'
-          />;
-          break;
-        case ANSWER_TYPES.STRING:
-          comp = <Input
-            defaultValue={this.state.answers[question.id]}
-            onChangeText={this.storeAnswers.bind(this, question.id)} />;
-          break;
-        case ANSWER_TYPES.DATE:
-          let date = this.state.answers[question.id] ? new Date(this.state.answers[question.id]) : new Date();
-          comp = <TouchableOpacity onPress={this.openDatePicker.bind(this, date, (date) => {
-            let stringified = date.toDateString();
-            this.storeAnswers(question.id, stringified);
-          })}>
-            <Input
-              defaultValue={date.toDateString()}
-              status={"primary"}
-              disabled
-            />
-          </TouchableOpacity>;
-
-          break;
-        case ANSWER_TYPES.SELECT:
-          comp = <SelInput
-            question={question}
-            definedQuestions={this.state.allQuestions}
-            answerStore={this.state.answerStore}
-            value={this.state.answers[question.id]}
-            onSelectionChange={this.storeAnswers.bind(this, question.id)}
-            answerType={type}
-            options={options} />;
-          break;
-      }
-    }
-    return comp;
-  }
 
   handleNext() {
     for (let i = this.state.currentIndex + 1; i < this.state.root.content.length; i++) {
