@@ -10,6 +10,7 @@ class Answer {
     }
     setAnswer(answer: string) {
         this.answer = answer;
+        return this;
     }
     getAnswer() {
         return this.answer;
@@ -17,12 +18,63 @@ class Answer {
 }
 
 
+
 export class AnswerStore {
     root: RootSection;
     store: any[]
-    answersMap: Map<string, Answer> = new Map();
-    constructor(root: RootSection) {
+    constructor(root?: RootSection) {
+        if (root) this.root = root;
+    }
+    _handleErrors() {
+        if (!this.root) throw new Error("Root has not been set");
+        if (!this.store) throw new Error("Store has not been initialized");
+    }
+    setRoot(root: RootSection) {
         this.root = root;
+    }
+    static fromJSON(obj: any) {
+        let a = new AnswerStore();
+        const collector = (itemarray) => {
+            let collected = [];
+
+            itemarray.forEach(g => {
+                if (Array.isArray(g)) {
+                    collected.push(collector(g));
+                } else {
+                    let ans = undefined;
+                    if (g) {
+                        ans = new Answer(g.questionId).setAnswer(g.answer);
+                    }
+                    collected.push(ans);
+
+                }
+            });
+
+            return collected;
+        }
+        a.store = collector(obj.store);
+        return a;
+    }
+    static toJSON(a: AnswerStore): any {
+        let collector = (itemarray) => {
+            let collected = [];
+            itemarray.forEach(item => {
+                if (Array.isArray(item)) {
+
+                    collected.push(collector(item))
+                } else {
+                    if (item instanceof Answer) {
+                        collected.push({ questionId: item.questionId, answer: item.answer });
+                    }
+                }
+            })
+            return collected;
+
+        }
+        let r = {
+            store: collector(a.store)
+        }
+        return r;
     }
     getFromPath(path: number[], root: { [key: string]: any }[]) {
         const el = root[path[0]];
@@ -32,14 +84,13 @@ export class AnswerStore {
         }
         return undefined;
     }
-
-
     /**
      * 
      * @param id 
      * @param selfPath is where the question is being accessed from.
      */
     getById(id: string, selfPath?: number[]) {
+        if (!this.root) throw new Error("Root has not been set.");
         let qPath = [];
         let found = false;
         let parent = null;
@@ -59,14 +110,15 @@ export class AnswerStore {
             if (!check.isDuplicated || (check.isDuplicated && check.fromParent)) {
                 return r;
             }
-        }else {
-            console.log("cant find reference",id);
+        } else {
+            console.log("cant find reference", id);
         }
 
         return undefined;
     }
 
     checkIfDuplicated(qPath: number[]) {
+        this._handleErrors();
         let question = RootSection.getFromPath(qPath, [this.root]);
         if (!(question instanceof QAQuestion)) throw new Error("provided path is not a question");
         let path = qPath.slice();
@@ -82,6 +134,7 @@ export class AnswerStore {
     }
 
     init() {
+        if (!this.root) throw new Error("Root has not been initialized");
         const prepare = (section: QuestionSection | RootSection, path: number[]) => {
             if (section.content.length <= 0) return [];
             let placeholders = [];
@@ -93,7 +146,6 @@ export class AnswerStore {
                     );
                 } else if (current instanceof QAQuestion) {
                     let a = new Answer(current.id);
-                    this.answersMap.set(current.id, a);
                     placeholders.push(a);
                 }
             }

@@ -1,13 +1,16 @@
 import React, { ReactNode, ReactElement } from 'react';
-import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView } from 'react-native';
+import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, AsyncStorage } from 'react-native';
 // tslint:disable-next-line: max-line-length
-import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType } from 'dpform';
+import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer } from 'dpform';
 import _ from 'lodash';
-import { withStyles, ThemedStyleType, Layout, ThemeType, Button, Text, Input, RadioGroup, Radio } from 'react-native-ui-kitten';
+import { withStyles, ThemedStyleType, Layout, ThemeType, Button, Text, Input, RadioGroup, Radio, Menu, MenuItem } from 'react-native-ui-kitten';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { AnswerStore } from '../answermachine';
 import { SurveySection, QuestionComponent } from './section';
+import { TopNavigationBar } from './topbar';
+import { MenuShowcase } from './menu';
+import { ProgressBar } from 'react-native-paper';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -63,6 +66,20 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       this.props.setSubTitle(sub);
     }
   }
+  _saveAnswerToStorage() {
+    let saveData = AnswerStore.toJSON(this.state.answerStore);
+    return AsyncStorage.setItem("answer", JSON.stringify(saveData));
+  }
+
+  _loadAnswerFromStorage() {
+    return AsyncStorage.getItem("answer").then(result => {
+      let store = AnswerStore.fromJSON(JSON.parse(result));
+      store.setRoot(this.state.root);
+      this.setState({
+        answerStore: store
+      })
+    })
+  }
 
   loadFile() {
     const requestBody = {
@@ -79,8 +96,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg3NTMyNjIsImV4cCI6MTU2ODgzOTY2Mn0.x6kbVhr3nIFOlPgt_HCBgE2o9PheBDrqmzvEMUHX81E";
-     return request('http://142.93.151.160:5000/graphql',
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg4NDI2ODAsImV4cCI6MTU2ODkyOTA4MH0.KVVIXmjnWnbpH_47Gz8XrE-fY4QLbqntsd0SvE3YQFM";
+    return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
       'Could not find the file',
@@ -89,9 +106,10 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         if (file) {
           file.content = JSON.parse(file.content);
           const root = RootSection.fromJSON(file);
-          console.log(root.content.length);
 
           let firstItem = this.getNextQuestion([0], 0, root);
+
+
           // console.log(firstItem);
           // const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
           this.setState({
@@ -100,8 +118,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             activeSection: root,
             activeSectionPath: [0],
             currentIndex: 0,
-            answerStore: new AnswerStore(root).init()
           });
+          this._loadAnswerFromStorage();
         }
       }).catch(err => console.log(err));
   }
@@ -272,20 +290,25 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   render() {
+
     return (
-      <Showcase style={this.props.themedStyle.container}>
-        <ShowcaseItem title="" >
-          <View>
-            <View style={{ flex: 0, flexDirection: 'row', justifyContent: 'space-between' }}>
-              <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
-              <Button onPress={this.handleNext.bind(this)}>Next</Button>
+      <View style={this.props.themedStyle.container}>
+          <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems:"center", justifyContent: 'space-between' }}>
+          <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
+          {/* <ProgressBar style={{height: 50}} progress={0.5}/> */}
+          <Button onPress={this._saveAnswerToStorage.bind(this)}>Save</Button>
+          <Button onPress={this.handleNext.bind(this)}>Next</Button>
+        </View>
+        <Showcase >
+          <ShowcaseItem title="" >
+            <View>
+
+              {this.state.currentItem && this.renderQuestionOrSection(this.state.currentIndex)}
             </View>
-            {this.state.currentItem && this.renderQuestionOrSection(this.state.currentIndex)}
-          </View>
-        </ShowcaseItem>
-
-
-      </Showcase>
+          </ShowcaseItem>
+        </Showcase>
+      
+      </View>
     );
   }
 }

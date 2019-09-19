@@ -76,7 +76,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
                 return isValid ? <QuestionComponent key={item.id}
                     path={newPath.concat(index)}
                     question={item}
-                    evaluateCondition = {this.props.evaluateCondition}
+                    evaluateCondition={this.props.evaluateCondition}
                     answerStore={this.props.answerStore}
                     defaultValue={this.props.answerStore.getAnswerFor(path.concat(index), iteration)}
                     onValueChange={e => this.handleValueChange(path.concat(index), iteration, e)}
@@ -122,7 +122,7 @@ type QuestionComponentProps = {
     defaultValue: string;
     onValueChange: (newValue: string) => void;
     answerStore: AnswerStore
-    evaluateCondition: (condition: QACondition)=>boolean
+    evaluateCondition: (condition: QACondition) => boolean
 } & ThemedStyleType;
 type QuestionComponentState = {
 
@@ -148,23 +148,23 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         }
     }
 
-    evaluateAutofill(question: QAQuestion){
-        if(question.autoAnswer.isEnabled){
+    evaluateAutofill(question: QAQuestion) {
+        if (question.autoAnswer.isEnabled) {
             let toFillValue = undefined;
             let aa = question.autoAnswer.answeringConditions;
-            for(let i = 0; i < aa.length;i++){
+            for (let i = 0; i < aa.length; i++) {
                 let item = aa[i];
                 let isValid = this.props.evaluateCondition(item.condition);
 
-                if(isValid===true){
+                if (isValid === true) {
                     toFillValue = item.ifTrue;
                     break;
-                }else{
-                   toFillValue = item.ifFalse; 
+                } else {
+                    toFillValue = item.ifFalse;
                 }
             }
             return toFillValue;
-          
+
         }
         return undefined;
     }
@@ -174,7 +174,6 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         let autofillvalue = this.evaluateAutofill(question);
         let defaultValue = this.props.defaultValue || autofillvalue;
         if (type) {
-
             switch (type.name) {
                 case ANSWER_TYPES.NUMBER:
                     comp = <Input
@@ -186,10 +185,9 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                     break;
                 case ANSWER_TYPES.GEOLOCATION:
                     let defaultLocation = (locationJSON: object) => {
-                       return  `Latitude: ${locationJSON.coords.latitude} \n
-                                            Longitude: ${locationJSON.coords.longitude}`;
+                        return `Latitude: ${locationJSON.coords.latitude}\nLongitude: ${locationJSON.coords.longitude}`;
                     }
-                    let dl = defaultValue? defaultLocation(JSON.parse(defaultValue)):"";
+                    let dl = defaultValue ? defaultLocation(JSON.parse(defaultValue)) : "";
                     comp = <TouchableOpacity onPress={() => {
                         navigator.geolocation.getCurrentPosition(
                             position => {
@@ -202,11 +200,13 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                         );
                     }}>
                         <Input
+                            multiline
                             defaultValue={dl}
                             status={"primary"}
                             disabled
                         />
                     </TouchableOpacity>;
+                    break;
                 case ANSWER_TYPES.STRING:
                     comp = <Input
                         defaultValue={defaultValue}
