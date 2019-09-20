@@ -53,21 +53,6 @@ export default class App extends React.Component<AppProps, AppState> {
         <DynamicStatusBar currentTheme={"Eva Dark"}></DynamicStatusBar>
         <TopNavigationBar title={this.state.title} subtitle={this.state.subtitle}></TopNavigationBar>
         <Router onNavigationStateChange={this.onNavigationStateChange}/>
-
-        <SurveyForm
-          setTitle={this.setTitle.bind(this)}
-          setSubTitle={this.setSubTitle.bind(this)} />
-        <BottomNavigation>
-          <BottomNavigationTab
-            title='Survey Form'
-          />
-          <BottomNavigationTab
-            title='Filled Forms'
-          />
-          <BottomNavigationTab
-            title='Settings'
-          />
-        </BottomNavigation>
       </ApplicationProvider>
 
     );

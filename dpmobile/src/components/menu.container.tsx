@@ -3,6 +3,7 @@ import { NavigationScreenProps } from 'react-navigation';
 import { Menu } from './menu.component';
 
 export class MenuContainer extends React.Component<NavigationScreenProps> {
+  
 
   private navigationKey: string = 'MenuContainer';
 

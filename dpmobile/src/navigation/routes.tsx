@@ -6,18 +6,22 @@ import {
   NavigationRouteConfigMap,
 } from 'react-navigation';
 
-import {createBottomTabNavigator} from "react-navigation-tabs";
-import {createStackNavigator} from "react-navigation-stack";
+import { createBottomTabNavigator } from "react-navigation-tabs";
+import { createStackNavigator } from "react-navigation-stack";
 import { MenuContainer } from '../components/menu.container';
-import { SurveyFormComponent } from '../components/surveyform';
+import { SurveyFormComponent, SurveyForm } from '../components/surveyform';
+import { FormList } from '../components/forms';
 
 const MenuNavigator: NavigationContainer = createBottomTabNavigator({
-  ['Forms']: SurveyFormComponent,
+  ['Forms']: FormList,
+  ['Settings']: SurveyForm,
 }, {
   tabBarComponent: MenuContainer,
-});const AppNavigator: NavigationContainer = createStackNavigator({
+});
+
+const AppNavigator: NavigationContainer = createStackNavigator({
   ['Home']: MenuNavigator,
- 
+
 }, {
   headerMode: 'screen',
   defaultNavigationOptions: {

@@ -22,6 +22,7 @@ class Answer {
 export class AnswerStore {
     root: RootSection;
     store: any[]
+    lastModified: number;
     constructor(root?: RootSection) {
         if (root) this.root = root;
     }
@@ -53,6 +54,7 @@ export class AnswerStore {
             return collected;
         }
         a.store = collector(obj.store);
+        a.lastModified = obj.lastModified;
         return a;
     }
     static toJSON(a: AnswerStore): any {
@@ -72,7 +74,8 @@ export class AnswerStore {
 
         }
         let r = {
-            store: collector(a.store)
+            store: collector(a.store),
+            lastModified: a.lastModified
         }
         return r;
     }
@@ -152,6 +155,7 @@ export class AnswerStore {
             return placeholders;
         }
         this.store = [prepare(this.root, [0])];
+        this.lastModified = new Date().getTime();
         return this;
     }
     cloneSectionEmpty(sectionArray: any[]) {
@@ -175,6 +179,7 @@ export class AnswerStore {
         if (!ans[iteration]) ans[iteration] = this.cloneSectionEmpty(ans[0]);
         let s = ans[iteration][index];
         if (s instanceof Answer) {
+            this.lastModified = new Date().getTime();
             s.setAnswer(value);
         }
 

@@ -55,16 +55,16 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     });
   }
   handleItemChange() {
-    this.props.setTitle(
-      this.state.root.name
-    )
+    // this.props.setTitle(
+    //   this.state.root.name
+    // )
 
-    let rS = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
+    // let rS = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
 
-    if (rS instanceof QuestionSection) {
-      let sub = `${getReadablePath([0, this.state.currentIndex])} : ${rS.name}`
-      this.props.setSubTitle(sub);
-    }
+    // if (rS instanceof QuestionSection) {
+    //   let sub = `${getReadablePath([0, this.state.currentIndex])} : ${rS.name}`
+    //   this.props.setSubTitle(sub);
+    // }
   }
   _saveAnswerToStorage() {
     let saveData = AnswerStore.toJSON(this.state.answerStore);
@@ -96,7 +96,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg4NDI2ODAsImV4cCI6MTU2ODkyOTA4MH0.KVVIXmjnWnbpH_47Gz8XrE-fY4QLbqntsd0SvE3YQFM";
+    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg5NDA2ODEsImV4cCI6MTU2OTAyNzA4MX0.S5-1KdZ3Z6pKPPThjWUuV8cBLbZqGM9lDZ_rFm1G5gw";
+ 
     return request('http://142.93.151.160:5000/graphql',
       'forms',
       requestBody,
