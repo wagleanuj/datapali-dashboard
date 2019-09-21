@@ -52,8 +52,8 @@ const server = new ApolloServer({
         if (err) {
           reject(new AuthenticationError("Invalid user"));
         }
-        if (decoded && decoded.username) {
-          User.findOne({ username: decoded.username })
+        if (decoded && decoded.email) {
+          User.findOne({ email: decoded.email })
             .exec()
             .then(user => {
               if (!user) reject(new AuthenticationError("Invalid user"));

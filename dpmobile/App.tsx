@@ -1,14 +1,13 @@
 import React from 'react';
-import { StyleSheet, Text, View, StatusBar, ImageProps } from 'react-native';
-import { SurveyForm } from './src/components/surveyform';
+import { StyleSheet } from 'react-native';
 import { mapping, dark as DarkTheme } from '@eva-design/eva';
-import { ApplicationProvider, Layout, BottomNavigation, BottomNavigationTab, Icon, IconProps, Menu, MenuItem } from 'react-native-ui-kitten';
-import { TopNavigationBar } from './src/components/topbar';
+import { ApplicationProvider } from 'react-native-ui-kitten';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar';
 import _ from 'lodash';
 import { NavigationState } from 'react-navigation';
 import { getCurrentStateName } from './src/navigation';
 import { Router } from './src/navigation/routes';
+import { StorageUtil } from './src/storageUtil';
 
 
 interface AppProps {
@@ -17,6 +16,7 @@ interface AppProps {
 interface AppState {
   title: string,
   subtitle: string,
+  signedIn: boolean,
 }
 
 
@@ -27,32 +27,33 @@ export default class App extends React.Component<AppProps, AppState> {
     super(props);
     this.state = {
       title: "Datapali",
-      subtitle: ""
+      subtitle: "",
+      signedIn: false,
     }
   }
-  setTitle(newTitle: string) {
-    this.setState({ title: newTitle })
+  componentDidMount() {
+    StorageUtil.getAuthToken().then(res => {
+      if (res) {
+        this.setState({
+          signedIn: true,
+          
+        })
+      }
+    })
   }
-  setSubTitle(newSub: string) {
-    this.setState({ subtitle: newSub })
-  }
+
   private onNavigationStateChange = (prevState: NavigationState, currentState: NavigationState) => {
     const prevStateName: string = getCurrentStateName(prevState);
     const currentStateName: string = getCurrentStateName(currentState);
-
-    
   };
   render() {
-    let ipr: IconProps = {
-      name: "cog",
-    }
+    let Router_ = Router(this.state.signedIn);
     return (
       <ApplicationProvider
         mapping={mapping}
         theme={DarkTheme}>
         <DynamicStatusBar currentTheme={"Eva Dark"}></DynamicStatusBar>
-        <TopNavigationBar title={this.state.title} subtitle={this.state.subtitle}></TopNavigationBar>
-        <Router onNavigationStateChange={this.onNavigationStateChange}/>
+        <Router_ onNavigationStateChange={this.onNavigationStateChange} />
       </ApplicationProvider>
 
     );

@@ -11,6 +11,7 @@ import { SurveySection, QuestionComponent } from './section';
 import { TopNavigationBar } from './topbar';
 import { MenuShowcase } from './menu';
 import { ProgressBar } from 'react-native-paper';
+import { StorageUtil } from '../storageUtil';
 export type SurveyFormComponentProps = {
   setTitle: (newTitle: string) => void,
   setSubTitle: (newSub: string) => void,
@@ -96,33 +97,35 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       },
     };
     // tslint:disable-next-line:max-line-length
-    const token = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VybmFtZSI6ImFkbWluIiwiZW1haWwiOiJhZG1pbkBhZG1pbi5jb20iLCJpYXQiOjE1Njg5NDA2ODEsImV4cCI6MTU2OTAyNzA4MX0.S5-1KdZ3Z6pKPPThjWUuV8cBLbZqGM9lDZ_rFm1G5gw";
- 
-    return request('http://142.93.151.160:5000/graphql',
-      'forms',
-      requestBody,
-      'Could not find the file',
-      token).then(file => {
-        file = file[0];
-        if (file) {
-          file.content = JSON.parse(file.content);
-          const root = RootSection.fromJSON(file);
+    return StorageUtil.getAuthToken().then(res => {
+      console.log(res);
+      return request('http://142.93.151.160:5000/graphql',
+        'forms',
+        requestBody,
+        'Could not find the file',
+        res).then(file => {
+          file = file[0];
+          if (file) {
+            file.content = JSON.parse(file.content);
+            const root = RootSection.fromJSON(file);
 
-          let firstItem = this.getNextQuestion([0], 0, root);
+            let firstItem = this.getNextQuestion([0], 0, root);
 
 
-          // console.log(firstItem);
-          // const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
-          this.setState({
-            root: root,
-            currentItem: firstItem,
-            activeSection: root,
-            activeSectionPath: [0],
-            currentIndex: 0,
-          });
-          this._loadAnswerFromStorage();
-        }
-      }).catch(err => console.log(err));
+            // console.log(firstItem);
+            // const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
+            this.setState({
+              root: root,
+              currentItem: firstItem,
+              activeSection: root,
+              activeSectionPath: [0],
+              currentIndex: 0,
+            });
+            this._loadAnswerFromStorage();
+          }
+        }).catch(err => console.log(err));
+    })
+
   }
 
   getReactNodeFor(questionOrSection: QuestionSection | QAQuestion) {
@@ -294,7 +297,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
     return (
       <View style={this.props.themedStyle.container}>
-          <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems:"center", justifyContent: 'space-between' }}>
+        <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
           <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
           {/* <ProgressBar style={{height: 50}} progress={0.5}/> */}
           <Button onPress={this._saveAnswerToStorage.bind(this)}>Save</Button>
@@ -308,7 +311,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             </View>
           </ShowcaseItem>
         </Showcase>
-      
+
       </View>
     );
   }

@@ -5,6 +5,10 @@ const { ApolloError, AuthenticationError, UserInputError } = require("apollo-ser
 const { User } = require('../../models/user');
 const { Controls } = require('../../models/controls');
 const { ResetToken } = require("../../models/resetTokens");
+const { FilledForm } = require("../../models/filledForm");
+const { FormFile } = require("../../models/form");
+
+
 const { PasswordResetTemplate } = require("../../email_templates/passwordReset");
 const SALT_WORK_FACTOR = 10;
 const nodemailer = require("nodemailer");
@@ -19,22 +23,21 @@ const transporter = nodemailer.createTransport({
 
 const resolvers = {
     Query: {
-        login: (parent, { usernameOrEmail, password }, context, info) => {
-            let findUserPromise_ = isEmail(usernameOrEmail) ? User.findOne({ email: usernameOrEmail }).populate("controls").exec() : User.findOne({ username: usernameOrEmail }).populate("controls").exec();
+        login: (parent, { email, password }, context, info) => {
+            let findUserPromise_ = User.findOne({ email: email }).populate("createdForms").populate("availableForms").populate("filledForms").exec();
             return findUserPromise_.then(user => {
-                if (!user && isEmail(usernameOrEmail)) throw new ApolloError("User with the email not found", AuthorizationErrorsCodes.USER_WITH_GIVEN_EMAIL_NOT_FOUND, { username: usernameOrEmail });
-                else if (!user) throw new ApolloError("User with the username not found", AuthorizationErrorsCodes.USER_WITH_GIVEN_USERNAME_NOT_FOUND, { username: usernameOrEmail });
+                if (!user) throw new ApolloError("User with the email not found", AuthorizationErrorsCodes.USER_WITH_GIVEN_EMAIL_NOT_FOUND, { username: usernameOrEmail });
                 return new Promise((resolve, reject) => {
                     bcrypt.compare(password, user.password, async (err, result) => {
                         if (err) reject(new AuthenticationError("Incorrect password"));
                         if (result === true) {
                             const token = jwt.sign({
-                                username: user.username, email: user.email
+                                email: user.email,
+                                accountType: user.accountType,
                             }, process.env.JWT_SECRET, {
-                                    expiresIn: "24h"
-                                });
-                           
-                            resolve({ user: user._doc, username: user.username, token: token, tokenExpiration: 1 });
+                            });
+
+                            resolve({ user: user._doc, token: token });
                         } else {
                             reject(new AuthenticationError("Incorrect password"));
                         }
@@ -102,6 +105,42 @@ const resolvers = {
                                 await newUser.save();
                                 resolve({ ...result._doc, controls: userControls, _doc: result.id });
                             })
+                        })
+                    })
+                })
+            });
+        },
+        register: async (parent, { user }, context, info) => {
+            let { email, firstName, lastName, accountType, password, createdBy } = user;
+            let referredBy = undefined;
+            if (accountType === "surveyor") {
+                referredBy = await User.findById(createdBy).exec();
+                if (!referredBy || referredBy.accountType !== "admin") throw new ApolloError("Admin must refer a surveyor");
+            }
+            return User.findOne({ email: email }).exec().then((user, err) => {
+                if (user) throw new ApolloError("User already exists", AuthorizationErrorsCodes.EMAIL_ALREADY_EXISTS, { email: email });
+                return new Promise((resolve, reject) => {
+                    bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
+                        if (err) reject(new ApolloError("Failed to generate salt", AuthorizationErrorsCodes.BCRYPT_ERROR, {}));
+                        bcrypt.hash(password, salt, null, async (err, hash) => {
+                            if (err) reject(new ApolloError("Failed to hash password", AuthorizationErrorsCodes.BCRYPT_ERROR, {}));
+                            password = hash;
+                            const newUser = new User({
+                                email: email,
+                                password: password,
+                                firstName: firstName,
+                                lastName: lastName,
+                                accountType: accountType,
+                            });
+                            if (accountType === "surveyor") {
+                                newUser.filledForms = [];
+                                newUser.availableForms = [];
+                                newUser.createdBy = referredBy._id;
+                            } else if (accountType === "admin") {
+                                newUser.createdForms = [];
+                            }
+                            let result = await newUser.save();
+                            resolve({ ...result._doc, surveyorCode: newUser._id.toString() });
                         })
                     })
                 })

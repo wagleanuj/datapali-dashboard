@@ -1,12 +1,11 @@
 const { AuthResolvers } = require('./auth');
 const { LevelResolvers } = require('./level');
-const { GameFileResolvers } = require('./gameFile');
-const { ControlsResolvers } = require("./controls");
+const { FilledFormResolvers } = require("./filledForm");
 
 const { FormFileResolvers } = require("./form");
 const rootResolver = {
-    Query: Object.assign({}, AuthResolvers.Query, FormFileResolvers.Query),
-    Mutation: Object.assign({}, AuthResolvers.Mutation, FormFileResolvers.Mutation ),
+    Query: Object.assign({}, AuthResolvers.Query, FormFileResolvers.Query, FilledFormResolvers.Query),
+    Mutation: Object.assign({}, AuthResolvers.Mutation, FormFileResolvers.Mutation, FilledFormResolvers.Mutation ),
 };
 
 module.exports = rootResolver;

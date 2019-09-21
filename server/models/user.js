@@ -4,22 +4,34 @@ const userSchema = new Schema({
         type: String,
         required: true
     },
-    username: {
-        type: String,
-        required: true
-    },
     password: {
         type: String,
         required: true
     },
-    savedLevels: [
-        {
-            type: Schema.Types.ObjectId,
-            ref: "Level"
-        }
-    ],
-    gameFiles: [{ type: Schema.Types.ObjectId, ref: "GameFile" }],
-    controls:{type: Schema.Types.ObjectId, required: false, ref:"Controls"}    
+    accountType: {
+        type: String,
+        required: true,
+        enum: ["admin","surveyor"]
+    },
+    firstName: {
+        type: String,
+        required: true,
+    },
+    lastName: {
+        type: String,
+        required: true,
+    },
+    surveyorCode: {
+        type: String,
+        required: false,
+    },
+    createdBy: {
+        type: Schema.Types.ObjectId,
+        ref: "User"
+    },
+    createdForms: [{type: Schema.Types.ObjectId, ref: "FormFile"}],
+    availableForms: [{type: Schema.Types.ObjectId, ref : "FormFile"}],
+    filledForms: [{ type: Schema.Types.ObjectId, ref: "FilledForm" }],
 }, { timestamps: true })
 module.exports = {
     User: model("User", userSchema)
