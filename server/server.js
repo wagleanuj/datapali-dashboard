@@ -18,6 +18,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("./models/user");
 const { Controls } = require("./models/controls");
 const { Level } = require("./models/Level");
+const {FormFile} = require("./models/form");
 
 const { storyLevels } = require("./storyLevels/index");
 const SALT_WORK_FACTOR = 10;
@@ -26,11 +27,11 @@ const bcrypt = require("bcrypt-nodejs");
 app.use(express.static(path.join(__dirname, "../client/build")));
 app.use("/assets", express.static(path.join(__dirname, "../client/assets")));
 
-app.get("/", function(req, res) {
+app.get("/", function (req, res) {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 
-app.get("/reset-password", function(req, res) {
+app.get("/reset-password", function (req, res) {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 //TODO:: instrospection and playground should be off in production when project is complete
@@ -48,7 +49,7 @@ const server = new ApolloServer({
     let token = req.headers.authorization;
     if (!token) return null;
     return new Promise((resolve, reject) => {
-      jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
+      jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
         if (err) {
           reject(new AuthenticationError("Invalid user"));
         }
@@ -90,7 +91,7 @@ mongoose
   });
 
 //function to initialize admin account and story levels
-function initAdmin() {
+async function initAdmin() {
   let username = process.env.STORY_LEVEL_CREATOR;
   let password = process.env.STORY_LEVEL_CREATOR_PASSWORD;
   let email = process.env.STORY_LEVEL_CREATOR_EMAIL;

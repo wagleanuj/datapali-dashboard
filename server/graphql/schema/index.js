@@ -69,13 +69,18 @@ const typeDefs =
 
     type Query {
         getFilledForms(bySurveyor: String): [FilledForm]
-        forms(id: String): [FormFile]
+        forms(id: [String]): [FormFile]
         login(email: String!, password: String!): AuthData
         sendPasswordResetEmail(email: String!): GeneralQueryResponse!
     }
 
     type Mutation {
+        makeFormAvailableFor(formId: String!, surveyorEmail: String!): GeneralQueryResponse!
+        makeFormUnavailableFor(formId: String!, surveyorEmail: String!): GeneralQueryResponse!
         saveFilledForm(filledForm: FilledFormInput!): FilledForm
+        deleteFilledForms(id: [String]!): GeneralQueryResponse!
+        deleteForm(id: [String]!): GeneralQueryResponse!
+        deleteAllFilledForms: GeneralQueryResponse!
         register(user: UserRegisterInput!): User
         saveForm(form: FormFileInput!): FormFile
         registerUser(username: String!, email: String!, password: String!): User!

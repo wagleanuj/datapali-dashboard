@@ -27,11 +27,11 @@ class MenuComponent extends React.Component<Props> {
             selectedIndex={selectedIndex}
             onSelect={this.onTabSelect}>
             <BottomNavigationTab
-              title='Survey Form'
+              title='Filled Forms'
               icon={null}
             />
             <BottomNavigationTab
-              title='Filled'
+              title='Settings'
               icon={null}
             />
           </BottomNavigation>

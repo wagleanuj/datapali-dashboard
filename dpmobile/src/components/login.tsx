@@ -1,9 +1,10 @@
-import { ThemedComponentProps, withStyles, ThemeType, Input, Button, Text } from "react-native-ui-kitten";
+import { ThemedComponentProps, withStyles, ThemeType, Input, Button, Text, Spinner } from "react-native-ui-kitten";
 import { ViewProps, View } from "react-native";
 import React from "react";
 import { request } from "dpform";
 import { APP_CONFIG } from "../config";
 import { StorageUtil } from "../storageUtil";
+import { ActivityIndicator, Button as Btn } from "react-native-paper";
 
 
 interface ComponentProps {
@@ -15,6 +16,8 @@ export type SignInProps = ThemedComponentProps & ViewProps & ComponentProps;
 interface State {
     email: string | undefined;
     password: string | undefined;
+    isLoggingIn: boolean;
+    error: { message: string }[]
 }
 
 class SignInComponent extends React.Component<SignInProps, State> {
@@ -22,6 +25,8 @@ class SignInComponent extends React.Component<SignInProps, State> {
     public state: State = {
         email: undefined,
         password: undefined,
+        isLoggingIn: false,
+        error: []
     };
 
     private onLoginPress = () => {
@@ -29,12 +34,25 @@ class SignInComponent extends React.Component<SignInProps, State> {
             query: `
               query Login($email: String!, $password: String!){
                   login(email: $email, password: $password){
-                   token
-                   user {
-                       firstName
-                       lastName
-                       surveyorCode
-                   }
+                    token
+                    user{
+                        _id
+                        firstName
+                        lastName
+                      availableForms{
+                        name
+                        id
+                        content
+                      }
+                      filledForms{
+                        id
+                        startedDate
+                        completedDate
+                        formId
+                        filledBy
+                        answerStore
+                      }
+                    }
                   }
                 }`,
             variables: {
@@ -42,25 +60,52 @@ class SignInComponent extends React.Component<SignInProps, State> {
                 password: this.state.password
             },
         };
+        this.setState({
+            isLoggingIn: true
+        });
         return request(APP_CONFIG.localServerURL, "login", requestBody, "Could not login", undefined).then(result => {
+            console.log(result);
             let toStore = {
+                userID: result.user._id,
                 firstName: result.user.firstName,
                 lastName: result.user.lastName,
                 authToken: result.token,
-                surveyorCode: result.user.surveyorCode
+                surveyorCode: result.user._id,
+                availableForms: result.user.availableForms.map(item => item.id),
+                filledForms: result.user.filledForms.map(item => item.id)
             }
+            console.log(toStore.availableForms);
+
+            result.user.filledForms.forEach(item => {
+                toStore[item.id] = item;
+            });
+
+            result.user.availableForms.forEach(item => {
+                toStore[item.id] = item;
+            });
+
             return StorageUtil.multiSet(toStore).then(r => {
                 this.props.navigation.navigate("Home");
+            }).catch(error=>{
+                this.setState({
+                    error: [{message:"Failed saving the form to local storage"}],
+                    isLoggingIn: false,
+                })
             })
-        }).catch(err => console.log(err));
+        }).catch(err => {
+            this.setState({
+                isLoggingIn: false,
+                error: [{ message: "Incorrect email or password!" }]
+            })
+        });
     }
 
     private onEmailInputTextChange = (email: string) => {
-        this.setState({ email: email });
+        this.setState({ email: email, error: [] });
     };
 
     private onPasswordInputTextChange = (password: string) => {
-        this.setState({ password: password });
+        this.setState({ password: password, error: [] });
     };
 
     private isValid = (value: any): boolean => {
@@ -79,9 +124,11 @@ class SignInComponent extends React.Component<SignInProps, State> {
                     <Text>Sign in to your surveyor account</Text>
                 </View>
                 <Input
+                    textContentType={'emailAddress'}
                     value={this.state.email}
                     placeholder='Email'
                     onChangeText={this.onEmailInputTextChange}
+
                 />
                 <Input
                     value={this.state.password}
@@ -90,12 +137,18 @@ class SignInComponent extends React.Component<SignInProps, State> {
                     secureTextEntry={true}
                     onChangeText={this.onPasswordInputTextChange}
                 />
-                <Button
+                <Btn
+                    loading={this.state.isLoggingIn}
+                    mode="contained"
                     style={themedStyle.loginButton}
                     disabled={!this.isValid(this.state)}
                     onPress={this.onLoginPress}>
                     Login
-            </Button>
+            </Btn>
+                <View style={this.props.themedStyle.errorContainer}>
+                    {this.state.error.map((item, i) => <Text key={'error' + i} style={this.props.themedStyle.errorText}>{item.message}</Text>)}
+                </View>
+
             </View>
         );
     }
@@ -105,7 +158,7 @@ export const SignIn = withStyles(SignInComponent, (theme: ThemeType) => ({
     container: {
         flex: 1,
         paddingHorizontal: 16,
-        paddingVertical: 64,
+        paddingVertical: 16,
         backgroundColor: theme['background-basic-color-2'],
     },
     header: {
@@ -126,4 +179,14 @@ export const SignIn = withStyles(SignInComponent, (theme: ThemeType) => ({
         fontSize: 15,
         color: theme['text-hint-color'],
     },
+    errorContainer: {
+        marginTop: 32,
+        flex: 0,
+        flexDirection: "column",
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    errorText: {
+        color: 'red'
+    }
 }));

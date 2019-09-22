@@ -1,4 +1,4 @@
-import { RootSection, QuestionSection, QAQuestion } from "dpform";
+import { RootSection, QuestionSection, QAQuestion, getRandomId } from "dpform";
 
 import _, { isNil } from "lodash";
 
@@ -23,8 +23,10 @@ export class AnswerStore {
     root: RootSection;
     store: any[]
     lastModified: number;
+    id: string;
     constructor(root?: RootSection) {
         if (root) this.root = root;
+        this.id = getRandomId("as-");
     }
     _handleErrors() {
         if (!this.root) throw new Error("Root has not been set");

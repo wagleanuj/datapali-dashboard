@@ -3,6 +3,7 @@ import { ImageProps } from "react-native";
 import React from "react";
 import { SafeAreaView } from "react-navigation";
 import { textStyle } from "../../themes/style";
+import { Header } from "react-navigation-stack";
 
 export interface ComponentProps {
   backIcon?: BackIconProp;
@@ -39,6 +40,7 @@ class TopNavigationBarComponent extends React.Component<TopNavigationBarProps> {
     return (
       <SafeAreaView style={themedStyle.safeArea}>
         <TopNavigation
+          style={{height: Header.HEIGHT}}
           alignment='center'
           title={title}
           titleStyle={textStyle.subtitle}

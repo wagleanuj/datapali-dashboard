@@ -13,13 +13,28 @@ import { MenuContainer } from '../components/menu.container';
 import { SurveyForm } from '../components/surveyform';
 import { FormList } from '../components/forms';
 import { SignIn } from '../components/login';
+import { MenuNavigationOptions } from './options';
+import { Settings } from '../components/settings';
+
+const FormListNavigator: NavigationContainer = createStackNavigator({
+  ["FormView"]: FormList,
+  ["SurveyForm"]: SurveyForm
+}
+);
+const SettingsNavigator: NavigationContainer = createStackNavigator({
+  ["Setting"]: Settings,
+}, {
+  headerMode: 'screen',
+  defaultNavigationOptions: MenuNavigationOptions,
+});
 
 const MenuNavigator: NavigationContainer = createBottomTabNavigator({
-  ['Forms']: FormList,
-  ['Settings']: SurveyForm,
+  ['Forms']: FormListNavigator,
+  ['Settings']: SettingsNavigator,
 }, {
   tabBarComponent: MenuContainer,
 });
+
 
 const LoginNavigator: NavigationContainer = createStackNavigator({
   Login: SignIn,
@@ -35,13 +50,11 @@ const AppNavigator: NavigationContainer = createStackNavigator({
 
 }, {
   headerMode: 'screen',
-  defaultNavigationOptions: {
-    header: null,
-  },
+  defaultNavigationOptions: MenuNavigationOptions,
 });
 
 const RootNavigator = (signedIn: boolean = false): NavigationContainer => createSwitchNavigator({
-  Home: { screen: AppNavigator },
+  Home: { screen: MenuNavigator },
   LoginPage: { screen: LoginNavigator },
 }, {
   initialRouteName: signedIn ? "Home" : "LoginPage",

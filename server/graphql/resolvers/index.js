@@ -1,5 +1,4 @@
 const { AuthResolvers } = require('./auth');
-const { LevelResolvers } = require('./level');
 const { FilledFormResolvers } = require("./filledForm");
 
 const { FormFileResolvers } = require("./form");

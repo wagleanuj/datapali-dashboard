@@ -37,7 +37,7 @@ const MenuTopNavigationParams: TopNavigationParams = {
       <TopNavigationBar
         {...props}
         title={routeName}
-        // backIcon={isRootRoute(index) && <Icon name="back"/>}
+        backIcon={()=> <Icon name="plus"/>}
         onBackPress={() => {
           props.navigation.goBack(KEY_NAVIGATION_BACK);
         }}

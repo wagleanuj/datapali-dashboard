@@ -21,17 +21,17 @@ export class Login extends React.Component<LoginProps, LoginState>{
         const password = this.passwordRef && this.passwordRef.value;
         let requestBody = {
             query: `
-            query Login($username: String!, $password: String!){
-                login(usernameOrEmail: $username, password: $password){
+            query Login($email: String!, $password: String!){
+                login(email: $email, password: $password){
                   token
                 }
               }`,
             variables: {
-                username: username,
+                email: username,
                 password: password
             }
         }
-        return request("http://142.93.151.160:5000/graphql", "login", requestBody, "Could not login", "").then(res => {
+        return request("http://localhost:5000/graphql", "login", requestBody, "Could not login", "").then(res => {
             console.log(res);
             if (this.props.onLoggedIn) this.props.onLoggedIn(res.token);
         })

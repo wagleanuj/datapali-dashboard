@@ -1,5 +1,8 @@
 import { AsyncStorage } from "react-native";
 import { FilledForm } from "./components/forms";
+import _ from "lodash";
+import { AnswerStore } from "./answermachine";
+import { RootSection } from "dpform";
 export class StorageUtil {
 
     static increamentFillCount() {
@@ -8,18 +11,26 @@ export class StorageUtil {
             return StorageUtil.storeItem('fillcount', (count + 1).toString())
         })
     }
-   
-
     static getUserId() {
-        return StorageUtil.getItem('userId');
+        return StorageUtil.getItem('userID');
+    }
+    static getUserInfo() {
+        return StorageUtil.multiGet(['firstName', 'lastName', 'availableForms', 'filledForms', 'userID']);
     }
 
     static getUserName() {
-        return StorageUtil.multiGet(['firstName','lastName']);
+        return StorageUtil.multiGet(['firstName', 'lastName']);
+    }
+
+    static getAvailableFormIds() {
+        return StorageUtil.getItem("availableForms");
+    }
+    static setAvailableFormIds(formIds: string[]) {
+        return StorageUtil.storeItem("availableForms", formIds)
     }
 
     static setUserName(firstname: string, lastName: string) {
-        return StorageUtil.multiSet({firstName: firstname, lastName: lastName});
+        return StorageUtil.multiSet({ firstName: firstname, lastName: lastName });
     }
 
     static setAuthToken(token: string) {
@@ -48,43 +59,79 @@ export class StorageUtil {
             multisetData.filledForms = filledForms;
 
         }
-        multisetData[filledForm.id] = filledForm;
+        let ff = _.clone(filledForm);
+        ff.answerStore = AnswerStore.toJSON(ff.answerStore);
+        multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }
 
-    static getFilledForm(id: string) {
-        return StorageUtil.getItem(id);
+    static getFilledForms(ids: string[], root?: RootSection) {
+        return StorageUtil.multiGet(ids).then(async res => {
+            Object.keys(res).forEach(k => {
+                let item = res[k];
+
+                item.answerStore = AnswerStore.fromJSON(item.answerStore);
+            });
+            return res;
+
+        });
+    }
+
+    static async removeFilledForm(ids: string[]) {
+        await AsyncStorage.multiRemove(ids);
+        let filledForms = await StorageUtil.getFilledFormIds();
+        ids.forEach(async id => {
+            let index = filledForms.findIndex(item => item === id);
+            filledForms.splice(index, 1);
+        });
+        await StorageUtil.setFilledFormIds(filledForms);
+
+    }
+    static setFilledFormIds(ids:string[]){
+        return StorageUtil.storeItem("filledForms", ids);
     }
 
     static getItem(key: string) {
         return AsyncStorage.getItem(key).then(result => {
             return JSON.parse(result);
         }).catch(err => {
-            return undefined;
+            return err;
         })
     }
 
     static multiGet(keys: string[]) {
         return AsyncStorage.multiGet(keys).then(result => {
-            return result.map(item => ({ [item[0]]: JSON.parse(item[1]) }));
+            let merged = {};
+            result.forEach(item => {
+                merged[item[0]] = JSON.parse(item[1])
+            })
+            return merged;
         }).catch(err => {
             return undefined;
         })
     }
 
-    static multiSet(obj: { [key: string]: object|string }) {
+    static multiSet(obj: { [key: string]: object | string }) {
         let arr = [];
         Object.keys(obj).forEach(item => {
             arr.push([item, JSON.stringify(obj[item])]);
         })
         return AsyncStorage.multiSet(arr).then(res => true).catch(err => false);
     }
-    
-    static storeItem(key: string, value: string) {
-        return AsyncStorage.setItem(key, value).then(result => {
+
+    static storeItem(key: string, value: string | object) {
+        return AsyncStorage.setItem(key, JSON.stringify(value)).then(result => {
             return true;
         }).catch(err => {
             return false;
+        })
+    }
+    static getForm(id: string) {
+        return StorageUtil.getItem(id).then(res => {
+            if (res) {
+                res.content = JSON.parse(res.content);
+            }
+            return RootSection.fromJSON(res);
         })
     }
 }

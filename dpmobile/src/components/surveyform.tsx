@@ -1,20 +1,24 @@
 import React, { ReactNode, ReactElement } from 'react';
-import { View, Picker, DatePickerAndroid, StyleSheet, TouchableOpacity, TextInput, ScrollView, KeyboardAvoidingView, AsyncStorage } from 'react-native';
+import { View, AsyncStorage } from 'react-native';
 // tslint:disable-next-line: max-line-length
-import { QAQuestion, RootSection, QuestionSection, QORS, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer } from 'dpform';
+import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer } from 'dpform';
 import _ from 'lodash';
-import { withStyles, ThemedStyleType, Layout, ThemeType, Button, Text, Input, RadioGroup, Radio, Menu, MenuItem } from 'react-native-ui-kitten';
+import { withStyles, ThemedStyleType, Layout, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select } from 'react-native-ui-kitten';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { AnswerStore } from '../answermachine';
 import { SurveySection, QuestionComponent } from './section';
-import { TopNavigationBar } from './topbar';
-import { MenuShowcase } from './menu';
-import { ProgressBar } from 'react-native-paper';
+import { User, FilledForm } from './forms';
 import { StorageUtil } from '../storageUtil';
+import { ArrowIosBackFill, BulbIconFill, SaveIcon } from '../assets/icons';
+import { Header } from 'react-navigation-stack';
+import { textStyle } from '../themes/style';
+import { KEY_NAVIGATION_BACK } from '../navigation/constants';
 export type SurveyFormComponentProps = {
-  setTitle: (newTitle: string) => void,
-  setSubTitle: (newSub: string) => void,
+  answerStore: AnswerStore,
+  root: RootSection,
+  user: User,
+
 } & ThemedStyleType
 
 interface SurveyFormComponentState {
@@ -27,15 +31,38 @@ interface SurveyFormComponentState {
   currentQuestionIndex: number;
   currentItem?: { data: (QuestionSection | QAQuestion), path: number[] },
   currentIndex: number;
-  answerStore: AnswerStore
-
+  filledForm: FilledForm,
 }
 
-
+const routeName = "Survey Form";
 export class SurveyFormComponent extends React.Component<SurveyFormComponentProps, SurveyFormComponentState> {
+  static navigationOptions = (props) => {
+
+    const renderLeftIcon = () => {
+      return <TopNavigationAction onPress={() => props.navigation.goBack(KEY_NAVIGATION_BACK)} icon={ArrowIosBackFill} />
+    }
+    const renderRightControls = () => {
+      let save = props.navigation.getParam("onSaveClick");
+      return <TopNavigationAction onPress={() => save()} icon={SaveIcon} />
+    }
+    return {
+      header: props => <TopNavigation
+        style={{ height: Header.HEIGHT }}
+        alignment='center'
+        title={"Datapali"}
+        subtitle={routeName}
+        subtitleStyle={textStyle.caption1}
+        leftControl={renderLeftIcon()}
+        rightControls={renderRightControls()}
+      />
+    }
+  }
   constructor(props: SurveyFormComponentProps) {
     super(props);
-    const root = new RootSection();
+    let root = this.props.navigation.getParam("root") || new RootSection();
+
+    let filledForm = this.props.navigation.getParam("filledForm")
+
     this.state = {
       root: root,
       activeSection: root,
@@ -45,86 +72,28 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       currentQuestionIndex: 0,
       history: [],
       currentIndex: -1,
-      answerStore: new AnswerStore(root).init()
+      filledForm: filledForm,
     };
   }
+
   componentDidMount() {
-    //  let root =  DPForm.RootSection.fromJSON()
-    console.log("mounted")
-    this.loadFile().then(res => {
-      this.handleItemChange();
-    });
+    this.loadFile();
+    this.props.navigation.setParams({ onSaveClick: this._saveAnswerToStorage.bind(this) })
   }
-  handleItemChange() {
-    // this.props.setTitle(
-    //   this.state.root.name
-    // )
 
-    // let rS = RootSection.getFromPath([0, this.state.currentIndex], [this.state.root]);
-
-    // if (rS instanceof QuestionSection) {
-    //   let sub = `${getReadablePath([0, this.state.currentIndex])} : ${rS.name}`
-    //   this.props.setSubTitle(sub);
-    // }
-  }
   _saveAnswerToStorage() {
-    let saveData = AnswerStore.toJSON(this.state.answerStore);
-    return AsyncStorage.setItem("answer", JSON.stringify(saveData));
+    StorageUtil.saveFilledForm(this.state.filledForm);
   }
 
-  _loadAnswerFromStorage() {
-    return AsyncStorage.getItem("answer").then(result => {
-      let store = AnswerStore.fromJSON(JSON.parse(result));
-      store.setRoot(this.state.root);
-      this.setState({
-        answerStore: store
-      })
-    })
-  }
+
 
   loadFile() {
-    const requestBody = {
-      query: `
-        query GetForm($formId: String!){
-            forms(id: $formId){
-              id
-              name
-              content
-            }
-          }`,
-      variables: {
-        formId: 'root-5eadfe10-ed7a-3898-769b-490bbd5d849e',
-      },
-    };
-    // tslint:disable-next-line:max-line-length
-    return StorageUtil.getAuthToken().then(res => {
-      console.log(res);
-      return request('http://142.93.151.160:5000/graphql',
-        'forms',
-        requestBody,
-        'Could not find the file',
-        res).then(file => {
-          file = file[0];
-          if (file) {
-            file.content = JSON.parse(file.content);
-            const root = RootSection.fromJSON(file);
-
-            let firstItem = this.getNextQuestion([0], 0, root);
-
-
-            // console.log(firstItem);
-            // const allq = RootSection.Entries(root, [0], 0, QORS.QUESTION);
-            this.setState({
-              root: root,
-              currentItem: firstItem,
-              activeSection: root,
-              activeSectionPath: [0],
-              currentIndex: 0,
-            });
-            this._loadAnswerFromStorage();
-          }
-        }).catch(err => console.log(err));
-    })
+    let firstItem = this.getNextQuestion([0], 0, this.state.root);
+    this.setState({
+      currentItem: firstItem,
+      activeSectionPath: [0],
+      currentIndex: 0,
+    });
 
   }
 
@@ -152,10 +121,11 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   evaluateCondition(condition: QACondition) {
     let finalResult = true;
     let pendingOperator = null;
-    condition.literals.forEach(literal => {
+    if (!condition) return true;
+    condition.literals && condition.literals.forEach(literal => {
       const getValid = (item: ILiteral) => {
         let result = true;
-        const answer = this.state.answerStore.getById(item.questionRef);
+        const answer = this.state.filledForm.answerStore.getById(item.questionRef);
         const question = this.state.root.questions[item.questionRef];
         console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
         let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
@@ -242,7 +212,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             history: newhistory,
             currentIndex: i
           };
-        }, this.handleItemChange.bind(this));
+        });
 
       }
     }
@@ -257,26 +227,27 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           currentIndex: newItem,
           history: newHistory
         };
-      }, this.handleItemChange.bind(this));
+      });
     }
   }
 
 
   setAnswerFor(path: number[], iteration: number, value: string) {
     this.setState((prevState: SurveyFormComponentState) => {
-      let a = prevState.answerStore;
-      a.setAnswerFor(path, iteration, value);
+      let a = prevState.filledForm;
+      a.answerStore.setAnswerFor(path, iteration, value);
       return {
-        answerStore: a
+        filledForm: a
       }
     })
   }
 
   renderQuestionOrSection(index: number) {
     let item = RootSection.getFromPath([0, index], [this.state.root]);
+    console.log(item);
     if (item instanceof QuestionSection) {
       return <SurveySection
-        answerStore={this.state.answerStore}
+        answerStore={this.state.filledForm.answerStore}
         setAnswer={this.setAnswerFor.bind(this)}
         evaluateCondition={this.evaluateCondition.bind(this)}
         section={item}
@@ -284,9 +255,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
     else if (item instanceof QAQuestion) {
       return <QuestionComponent
-        answerStore={this.state.answerStore}
+        answerStore={this.state.filledForm.answerStore}
         evaluateCondition={this.evaluateCondition.bind(this)}
-        defaultValue={this.state.answerStore.getAnswerFor([0, index], 0)}
+        defaultValue={this.state.filledForm.answerStore.getAnswerFor([0, index], 0)}
         onValueChange={this.setAnswerFor.bind(this, [0, index], 0)}
         question={item} path={[0, index]}
       />
@@ -294,14 +265,27 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   render() {
-
     return (
       <View style={this.props.themedStyle.container}>
+        <ButtonGroup >
+     
+        </ButtonGroup>
         <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
-          <Button onPress={this.handlePrev.bind(this)}>Prev</Button>
-          {/* <ProgressBar style={{height: 50}} progress={0.5}/> */}
-          <Button onPress={this._saveAnswerToStorage.bind(this)}>Save</Button>
-          <Button onPress={this.handleNext.bind(this)}>Next</Button>
+        <Button status="success" icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
+          <Select
+            style={{width:200}}
+            
+            data={[{ text: 'Option 1' },
+            { text: 'Option 2' },
+            { text: 'Option 3' },
+            { text: 'Option 4' },
+            { text: 'Option 5' },
+            { text: 'Option 6' },
+            { text: 'Option 8' }]}
+            selectedOption={null}
+            onSelect={()=>{}}
+          />
+          <Button status="success" icon={() => <Icon name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
         </View>
         <Showcase >
           <ShowcaseItem title="" >

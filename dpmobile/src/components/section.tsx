@@ -33,6 +33,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         }
     }
     renderDuplicatingSection(section: QuestionSection, path: number[]) {
+        console.log("rendering duplicated");
         let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
         let times = 0;
         if (repeatType === "number") {
@@ -66,6 +67,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     }
 
     getSectionPage(section: QuestionSection, path: number[], iteration: number) {
+        console.log("Rendering section");
         let comp = section.content.map((item, index) => {
             let isValid = this.props.evaluateCondition(item.appearingCondition);
             let newPath = path.slice(0);

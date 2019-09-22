@@ -52,7 +52,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     loadForm() {
         let requestBody = {
             query: `
-            query GetForm($formId: String!){
+            query GetForm($formId: [String]!){
                 forms(id: $formId){
                   id
                   name
@@ -60,11 +60,11 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 }
               }`,
             variables: {
-                formId: "root-5eadfe10-ed7a-3898-769b-490bbd5d849e"
+                formId: "root-53c37497-3808-cfd8-c886-1361dbaab171"
             }
         }
         let token = this.props.token;
-        return request("http://142.93.151.160:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
+        return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
             file = file[0]
             if (file) {
                 file.content = JSON.parse(file.content);
@@ -183,10 +183,11 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     private handleSave() {
         let file = RootSection.toJSON(this.state.root);
         file.content = JSON.stringify(file.content);
+        if(!file.name) file.name = "Main Form";
         console.log(file);
         let requestBody = {
             query: `
-            mutation SaveForm($saveFile: RootSectionInput!){
+            mutation SaveForm($saveFile: FormFileInput!){
                 saveForm(form: $saveFile){
                   id
                 }
@@ -196,7 +197,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         }
         let token = this.props.token;
-        return request("http://142.93.151.160:5000/graphql", "saveForm", requestBody, "Could not delete the game file", token).then(re => console.log(re));
+        console.log(token);
+        return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
     }
 
 
