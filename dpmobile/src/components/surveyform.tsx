@@ -1,9 +1,9 @@
 import React, { ReactNode, ReactElement } from 'react';
-import { View, AsyncStorage } from 'react-native';
+import { View, AsyncStorage, Picker } from 'react-native';
 // tslint:disable-next-line: max-line-length
 import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer } from 'dpform';
 import _ from 'lodash';
-import { withStyles, ThemedStyleType, Layout, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select } from 'react-native-ui-kitten';
+import { withStyles, ThemedStyleType, Layout, Text, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select } from 'react-native-ui-kitten';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { AnswerStore } from '../answermachine';
@@ -244,7 +244,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
   renderQuestionOrSection(index: number) {
     let item = RootSection.getFromPath([0, index], [this.state.root]);
-    console.log(item);
     if (item instanceof QuestionSection) {
       return <SurveySection
         answerStore={this.state.filledForm.answerStore}
@@ -263,28 +262,27 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       />
     }
   }
+  makeSectionOptions(){
+    let options = 
+  }
 
   render() {
     return (
       <View style={this.props.themedStyle.container}>
         <ButtonGroup >
-     
+
         </ButtonGroup>
         <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
-        <Button status="success" icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
-          <Select
-            style={{width:200}}
-            
-            data={[{ text: 'Option 1' },
-            { text: 'Option 2' },
-            { text: 'Option 3' },
-            { text: 'Option 4' },
-            { text: 'Option 5' },
-            { text: 'Option 6' },
-            { text: 'Option 8' }]}
-            selectedOption={null}
-            onSelect={()=>{}}
-          />
+          <Button status="success" icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
+          <View style={this.props.themedStyle.selectContainer}>
+            <Picker selectedValue={null}
+              style={this.props.themedStyle.select}
+              onValueChange={(itemValue, itemIndex) => { }}>
+              {}
+
+            </Picker>
+          </View>
+
           <Button status="success" icon={() => <Icon name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
         </View>
         <Showcase >
@@ -309,11 +307,62 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
   },
   accordion: {
     backgroundColor: theme['color-primary-300']
-  }
+  },
+  selectContainer: {
+    flex: 0,
+    flexDirection: "row",
+    width: 150,
+    backgroundColor: theme['color-primary-300'],
+    borderRadius: 5,
+  },
+  select: {
+    width: 150
+  },
+  customOptionStyle: {
+    color: 'red',
+  },
+  labelStyle: {
+    backgroundColor: 'white',
+  },
+  placeholderStyle: {
+  },
+  controlStyle: {
+    backgroundColor: 'black',
+  },
 }));
 
 
+// type CustomSelectProps = {
 
+// }
+// type CustomSelectState = {
+//   data: { text: string }[]
+// }
+// class CustomSelectComponent extends React.Component<CustomSelectProps, CustomSelectState> {
+//   constructor(props: CustomSelectProps) {
+//     super(props);
+//     this.state = {
+//       data: []
+//     }
+//   }
+//   renderItem(item) {
+//     return (
+//       <View>
+//         <Text>{item.item.text}</Text>
+//       </View>
+//     )
+//   }
+//   render() {
+//     return (
+//       <Select
 
+//         data={this.state.data}
+//       />
+//     )
+//   }
+// }
+// export const CustomSelect = withStyles(CustomSelectComponent, theme => ({
+
+// }))
 
 
