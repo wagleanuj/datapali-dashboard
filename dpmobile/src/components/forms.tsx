@@ -1,13 +1,13 @@
 import React from 'react';
-import { ListRenderItemInfo, View, AsyncStorage } from 'react-native';
-import { FAB } from 'react-native-paper';
+import { ListRenderItemInfo, View, AsyncStorage, SwipeableListView, TouchableHighlight, RefreshControl, ScrollView } from 'react-native';
+import { FAB, IconButton } from 'react-native-paper';
 import { List, ListItem, ThemedStyleType, ThemeType, withStyles, Layout, Menu, MenuItem, Button, Text, Icon, TopNavigation, TopNavigationAction } from 'react-native-ui-kitten';
 import { AnswerStore } from '../answermachine';
 import { StorageUtil } from '../storageUtil';
 import { request, RootSection, getRandomId } from 'dpform';
 import { Header } from 'react-navigation-stack';
 import { textStyle } from '../themes/style';
-
+import { SwipeListView } from "react-native-swipe-list-view"
 
 type FormsProps = {
 
@@ -20,6 +20,7 @@ type FormsState = {
     loadedRootForms: { [key: string]: RootSection },
     mainForm: RootSection,
     user: User,
+    refreshing: boolean,
 }
 type FormItemType = {
     title: string,
@@ -29,7 +30,7 @@ const routeName = "Forms";
 class FormsComponent extends React.Component<FormsProps, FormsState>{
     static navigationOptions = {
         header: (props) => {
-         
+
             return <TopNavigation
                 style={{ height: Header.HEIGHT }}
                 alignment='center'
@@ -47,6 +48,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
             data: [
 
             ],
+            refreshing: true,
             availableForms: [],
             filledForms: {},
             mainForm: new RootSection(),
@@ -81,8 +83,19 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
             user: user,
             loadedRootForms: { [root.id]: root },
             filledForms: filledForms,
-            data: data
+            data: data,
+            refreshing: false,
 
+        })
+    }
+    async refreshLoadedForms() {
+        this.setState({
+            refreshing: true
+        });
+        let availableForms = await StorageUtil.getAvailableFormIds();
+        await this.loadRootFormFromStorage(availableForms);
+        this.setState({
+            refreshing: false,
         })
     }
 
@@ -91,7 +104,6 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         let rootForm = this.state.loadedRootForms[formId];
         if (!rootForm) {
             let load = await StorageUtil.getForm(formId).catch(err => {
-                console.log(err);
                 return;
             });
             rootForm = RootSection.fromJSON(load);
@@ -122,23 +134,27 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         }, this.loadSurveyForm.bind(this, (newFilledForm.id)));
 
     }
-    async loadRootFormFromStorage(formId: string) {
-        let form = await StorageUtil.getForm(formId);
-        if (!form) return;
+    async loadRootFormFromStorage(formId: string[]) {
+        let forms = await StorageUtil.getForms(formId);
+        if (!forms) return;
         this.setState((prevState: FormsState) => {
             let loadedRootForms = prevState.loadedRootForms;
-            loadedRootForms[form.id] = form;
+
+            Object.keys(forms).forEach(item => {
+                loadedRootForms[item] = forms[item];
+            })
 
             return {
                 loadedRootForms: loadedRootForms
             }
         });
-        return form;
+        return forms;
     }
 
     async loadSurveyForm(filledFormId: string) {
         let filledform = this.state.filledForms[filledFormId];
-        let root = await this.loadRootFormFromStorage(filledform.formId);
+        let roots = await this.loadRootFormFromStorage([filledform.formId]);
+        let root = roots[filledform.formId];
         if (!filledform.answerStore.root) filledform.answerStore.setRoot(root);
         this.props.navigation.navigate("SurveyForm", {
             root: root,
@@ -147,9 +163,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         })
     }
 
-    handleMenu(id: string) {
-        console.log("long press");
-    }
+
     async handleDeleteForm(id: string) {
         await StorageUtil.removeFilledForm([id]);
 
@@ -163,45 +177,62 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
     renderItem = (item: ListRenderItemInfo<FormItemType>) => {
         return <ListItem
             style={this.props.themedStyle.item}
-            title={item.item.title}
-            description={item.item.startedDate}
             onPress={this.loadSurveyForm.bind(this, item.item.title)}
-            onLongPress={this.handleMenu.bind(this, item.item.title)}
         >
-            <View style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-start" }}>
+            <View key={"li-content" + item.item.title} style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-start" }}>
                 <View style={{ flex: 1, flexDirection: "column" }}>
                     <Text style={{ flex: 1 }} numberOfLines={1}>{item.item.title}</Text>
                     <Text numberOfLines={1}>{new Date(item.item.startedDate).toLocaleDateString()}</Text>
                 </View>
-                <View style={{ alignSelf: "flex-end" }}>
-                    <Button
-                        onPress={this.handleDeleteForm.bind(this, item.item.title)}
-                        status="danger"
-                        style={{ width: 20, height: 20 }}
-                        icon={() => <Icon name="close"></Icon>} />
-
-                </View>
-
             </View>
 
         </ListItem>
 
     }
+    handleSend(id: string) {
+
+    }
 
     render() {
         return (
-            <Layout style={this.props.themedStyle.container}>
+            <View style={this.props.themedStyle.container}>
+                <ScrollView>
 
-                <List
-                    data={this.makeData(this.state.filledForms)}
-                    renderItem={this.renderItem}
-                />
+                    <SwipeListView
+                        refreshControl={<RefreshControl
+                            refreshing={this.state.refreshing}
+                            onRefresh={this.refreshLoadedForms.bind(this)}
+                        />}
+                        keyExtractor={item => item.title}
+                        data={this.makeData(this.state.filledForms)}
+                        renderItem={this.renderItem}
+                        renderHiddenItem={(data, rowMap) => (
+                            <View key={"hid" + data.item.title} style={this.props.themedStyle.rowBack}>
+                                <IconButton
+                                    onPress={this.handleSend.bind(this, data.item.title)}
+                                    color="white"
+                                    icon="send" />
+                                <IconButton
+                                    onPress={this.handleDeleteForm.bind(this, data.item.title)}
+                                    color="white"
+                                    icon="delete-forever" />
+                            </View>
+                        )}
+                        leftOpenValue={75}
+                        rightOpenValue={-75}
+                    >
+                    </SwipeListView>
+
+                </ScrollView>
+
+
                 <FAB
                     onPress={this.handleAddNewForm.bind(this, undefined)}
                     style={this.props.themedStyle.fab}
                     icon="add" />
 
-            </Layout>
+            </View>
+
         )
     }
 }
@@ -226,6 +257,18 @@ export const FormList = withStyles(FormsComponent, (theme: ThemeType) => ({
         right: 0,
         bottom: 0,
         backgroundColor: theme['color-primary-active']
+    },
+    rowBack: {
+        marginVertical: 8,
+        marginHorizontal: 8,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+        borderRadius: 8,
+        alignItems: 'center',
+        flex: 1,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        paddingLeft: 15,
     }
 }));
 

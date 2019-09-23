@@ -134,4 +134,17 @@ export class StorageUtil {
             return RootSection.fromJSON(res);
         })
     }
+    static getForms(ids: string[]){
+        let returnForms = {};
+        return StorageUtil.multiGet(ids).then(res=>{
+            if(res){
+                Object.keys(res).forEach(item=>{
+                    let form = res[item];
+                    form.content = JSON.parse(form.content);
+                    returnForms[form.id] = RootSection.fromJSON(form);
+                });
+            }
+            return returnForms;
+        })
+    }
 }

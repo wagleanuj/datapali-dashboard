@@ -13,6 +13,7 @@ import _ from "lodash";
 import { AnswerStore } from "../answermachine";
 import { List } from "react-native-paper";
 import { SelInput } from "./selectInput";
+import { AutoCompleteInputComponent, AutoComplete } from "./autocompleteInput";
 
 type SectionComponentProps = {
     section: QuestionSection,
@@ -178,12 +179,7 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         if (type) {
             switch (type.name) {
                 case ANSWER_TYPES.NUMBER:
-                    comp = <Input
-                        defaultValue={defaultValue}
-                        onChangeText={this.props.onValueChange}
-                        placeholder=''
-                        keyboardType='number-pad'
-                    />;
+                    comp = <AutoComplete/>;
                     break;
                 case ANSWER_TYPES.GEOLOCATION:
                     let defaultLocation = (locationJSON: object) => {
@@ -250,12 +246,12 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         const valueInput = this.getValueInput(currentQuestion.answerType,
             currentQuestion.options, currentQuestion);
         return (
-            <Layout key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
+            <View key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
                 <View style={{ paddingLeft: 5, paddingRight: 5 }}>
                     {questionText}
                     {valueInput}
                 </View>
-            </Layout>
+            </View>
         );
     }
 

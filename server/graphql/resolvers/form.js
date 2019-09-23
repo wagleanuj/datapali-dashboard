@@ -6,7 +6,7 @@ const { AuthenticationError, ApolloError } = require("apollo-server-express");
 const resolvers = {
     Query: {
         forms: async (parent, { id }, context, info) => {
-            if (!context._id || (context.accountType !== "admin" && !id)) throw new AuthenticationError();
+            if (!context._id ) throw new AuthenticationError();
             return FormFile.find({}).then(formFiles => {
                 if (!formFiles) return [];
                 if (id) {
@@ -16,15 +16,12 @@ const resolvers = {
                     } else {
                         found = formFiles.filter(item => id.includes(item.id));
                     }
-                    return found.map(item => {
-                        return {
-                            id: item.id,
-                            name: item.name,
-                            content: item.content
-                        }
-                    })
+                    return found;
                 }
-                return formFiles.map(item => ({ id: item.id, name: item.id, content: item.content }))
+                if(context.accountType==="surveyor"){
+                    return formFiles.filter(item=>context.availableForms.includes(item._id));
+                }
+                return formFiles;
             })
         }
 

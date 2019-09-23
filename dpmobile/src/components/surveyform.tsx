@@ -263,7 +263,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
   makeSectionOptions(){
-    let options = 
+    // let options = 
   }
 
   render() {

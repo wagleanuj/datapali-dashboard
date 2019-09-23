@@ -74,7 +74,6 @@ class SignInComponent extends React.Component<SignInProps, State> {
                 availableForms: result.user.availableForms.map(item => item.id),
                 filledForms: result.user.filledForms.map(item => item.id)
             }
-            console.log(toStore.availableForms);
 
             result.user.filledForms.forEach(item => {
                 toStore[item.id] = item;
