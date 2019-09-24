@@ -18,8 +18,6 @@ export type SurveyFormComponentProps = {
   answerStore: AnswerStore,
   root: RootSection,
   user: User,
-  allFilledForms: FilledForm[],
-
 } & ThemedStyleType
 
 interface SurveyFormComponentState {

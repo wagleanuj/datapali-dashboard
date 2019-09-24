@@ -107,7 +107,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
             let answers: { [key: string]: AutoCompleteItem } = {};
             Object.keys(this.state.filledForms).forEach(key => {
                 let form = this.state.filledForms[key];
-                if (formID === form.formId && form.id!==filledFormID) {
+                if (formID === form.formId && form.id !== filledFormID) {
                     let answerStore = form.answerStore;
                     let answer = answerStore.getAnswerFor(path, iteration);
                     console.log(answer);
@@ -121,7 +121,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
 
             });
             let answerValues = Object.values(answers);
-            answerValues.sort((a,b)=>b.strength-a.strength);
+            answerValues.sort((a, b) => b.strength - a.strength);
             return answerValues;
         }.bind(this)
 
@@ -225,35 +225,31 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
     render() {
         return (
             <View style={this.props.themedStyle.container}>
-                <ScrollView>
 
-                    <SwipeListView
-                        refreshControl={<RefreshControl
-                            refreshing={this.state.refreshing}
-                            onRefresh={this.refreshLoadedForms.bind(this)}
-                        />}
-                        keyExtractor={item => item.title}
-                        data={this.makeData(this.state.filledForms)}
-                        renderItem={this.renderItem}
-                        renderHiddenItem={(data, rowMap) => (
-                            <View key={"hid" + data.item.title} style={this.props.themedStyle.rowBack}>
-                                <IconButton
-                                    onPress={this.handleSend.bind(this, data.item.title)}
-                                    color="white"
-                                    icon="send" />
-                                <IconButton
-                                    onPress={this.handleDeleteForm.bind(this, data.item.title)}
-                                    color="white"
-                                    icon="delete-forever" />
-                            </View>
-                        )}
-                        leftOpenValue={75}
-                        rightOpenValue={-75}
-                    >
-                    </SwipeListView>
-
-                </ScrollView>
-
+                <SwipeListView
+                    refreshControl={<RefreshControl
+                        refreshing={this.state.refreshing}
+                        onRefresh={this.refreshLoadedForms.bind(this)}
+                    />}
+                    keyExtractor={item => item.title}
+                    data={this.makeData(this.state.filledForms)}
+                    renderItem={this.renderItem}
+                    renderHiddenItem={(data, rowMap) => (
+                        <View key={"hid" + data.item.title} style={this.props.themedStyle.rowBack}>
+                            <IconButton
+                                onPress={this.handleSend.bind(this, data.item.title)}
+                                color="white"
+                                icon="send" />
+                            <IconButton
+                                onPress={this.handleDeleteForm.bind(this, data.item.title)}
+                                color="white"
+                                icon="delete-forever" />
+                        </View>
+                    )}
+                    leftOpenValue={75}
+                    rightOpenValue={-75}
+                >
+                </SwipeListView>
 
                 <FAB
                     onPress={this.handleAddNewForm.bind(this, undefined)}

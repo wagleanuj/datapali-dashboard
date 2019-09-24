@@ -1,4 +1,4 @@
-import { Input, OverflowMenu, Button, OverflowMenuItemType, State, StyleType, Popover, Text, withStyles, StyledComponentProps } from "react-native-ui-kitten";
+import { Input, OverflowMenu, Button, OverflowMenuItemType, State, StyleType, Popover, Text, withStyles, StyledComponentProps, ThemedComponentProps } from "react-native-ui-kitten";
 import React, { Component } from "react";
 import { ImageProps, Image, ViewPropTypes, View, FlatList } from "react-native";
 import { TouchableOpacity, TextInput } from "react-native-gesture-handler";
@@ -8,7 +8,7 @@ type AutoCompleteProps = {
     onChange: (text: string) => void,
     data: { text: string }[],
     defaultValue: string,
-}
+} & ThemedComponentProps
 type AutoCompleteState = {
     menuVisible: boolean,
     selectedIndex: number,
@@ -86,34 +86,46 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         let foundResult = this.findItem(this.state.value);
         console.log(foundResult);
         return (
-            <Autocomplete
-                hideResults={this.state.hideResults}
-                inputContainerStyle={this.props.themedStyle.inputContainerStyle}
-                data={foundResult}
-                keyExtractor={(item, index) => "item-" + index}
-                renderTextInput={() => <Input onChangeText={text => this.onValueChange(text)} value={this.state.value} ref={r => this.input = r} onFocus={this.onFocus.bind(this)} onBlur={this.onBlur.bind(this)} />}
-                listStyle={this.props.themedStyle.listStyle}
-                containerStyle={this.props.themedStyle.autocompleteContainer}
+            <View style={this.props.themedStyle.container}>
+                <Autocomplete
+                    hideResults={this.state.hideResults}
+                    inputContainerStyle={this.props.themedStyle.inputContainerStyle}
+                    data={foundResult}
+                    keyExtractor={(item, index) => "item-" + index}
+                    renderTextInput={() => <Input onChangeText={text => this.onValueChange(text)}
+                        value={this.state.value}
+                        ref={r => this.input = r}
+                        onFocus={this.onFocus.bind(this)}
+                        onBlur={this.onBlur.bind(this)}
+                    />}
+                    listStyle={this.props.themedStyle.listStyle}
+                    containerStyle={this.props.themedStyle.autocompleteContainer}
 
-                renderItem={({ item, i }) => (
-                    <TouchableOpacity
-                        style={this.props.themedStyle.itemStyle}
-                        key={i}
-                        onPress={this.onResultSelect.bind(this, item)}>
-                        <Text
-                            style={this.props.themedStyle.itemText}
-                            key={'text' + item.text}
-                        >
-                            {item.text}
-                        </Text>
-                    </TouchableOpacity>
-                )}
-            />
+                    renderItem={({ item, i }) => (
+                        <TouchableOpacity
+                            style={this.props.themedStyle.itemStyle}
+                            key={i}
+                            onPress={this.onResultSelect.bind(this, item)}>
+                            <Text
+                                style={this.props.themedStyle.itemText}
+                                key={'text' + item.text}
+                            >
+                                {item.text}
+                            </Text>
+                        </TouchableOpacity>
+                    )}
+                />
+            </View>
         );
     }
 }
 
 export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
+    container: {
+        flex: 1,
+        paddingTop: 25,
+        paddingBottom: 25,
+    },
     autocompleteContainer: {
         flex: 1,
         left: 0,

@@ -189,7 +189,6 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                         defaultValue={defaultValue}
                         data={this.props.autoCompleteData}
                         onChange={this.props.onValueChange}
-
                     />;
                     break;
                 case ANSWER_TYPES.GEOLOCATION:
