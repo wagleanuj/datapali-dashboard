@@ -1,16 +1,16 @@
 import React, { ReactNode, ReactElement } from 'react';
 import { View, AsyncStorage, Picker } from 'react-native';
 // tslint:disable-next-line: max-line-length
-import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer } from 'dpform';
+import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer, QORS } from 'dpform';
 import _ from 'lodash';
 import { withStyles, ThemedStyleType, Layout, Text, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select } from 'react-native-ui-kitten';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { AnswerStore } from '../answermachine';
 import { SurveySection, QuestionComponent } from './section';
-import { User, FilledForm } from './forms';
+import { User, FilledForm, AutoCompleteItem } from './forms';
 import { StorageUtil } from '../storageUtil';
-import { ArrowIosBackFill, BulbIconFill, SaveIcon } from '../assets/icons';
+import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
 import { Header } from 'react-navigation-stack';
 import { textStyle } from '../themes/style';
 import { KEY_NAVIGATION_BACK } from '../navigation/constants';
@@ -18,6 +18,7 @@ export type SurveyFormComponentProps = {
   answerStore: AnswerStore,
   root: RootSection,
   user: User,
+  allFilledForms: FilledForm[],
 
 } & ThemedStyleType
 
@@ -30,7 +31,7 @@ interface SurveyFormComponentState {
   history: number[]
   currentQuestionIndex: number;
   currentItem?: { data: (QuestionSection | QAQuestion), path: number[] },
-  currentIndex: number;
+  currentSectionIndex: number;
   filledForm: FilledForm,
 }
 
@@ -39,11 +40,18 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   static navigationOptions = (props) => {
 
     const renderLeftIcon = () => {
-      return <TopNavigationAction onPress={() => props.navigation.goBack(KEY_NAVIGATION_BACK)} icon={ArrowIosBackFill} />
+      return <TopNavigationAction onPress={() => {
+        const save = props.navigation.getParam("onSaveClick");
+        save().then(res => {
+          props.navigation.goBack(KEY_NAVIGATION_BACK)
+
+        })
+      }} icon={ArrowIosBackFill} />
     }
     const renderRightControls = () => {
-      let save = props.navigation.getParam("onSaveClick");
-      return <TopNavigationAction onPress={() => save()} icon={SaveIcon} />
+      const save = props.navigation.getParam("onSaveClick");
+      const saveComponent = <TopNavigationAction onPress={() => save()} icon={SaveIcon} />
+      return [saveComponent];
     }
     return {
       header: props => <TopNavigation
@@ -57,11 +65,14 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       />
     }
   }
+  getAutoCompleteDataForPath: (path: number[], iteration: number) => AutoCompleteItem[];
+  private sectionOptions: { data: QuestionSection | QAQuestion; path: number[]; }[] = [];
   constructor(props: SurveyFormComponentProps) {
     super(props);
     let root = this.props.navigation.getParam("root") || new RootSection();
 
-    let filledForm = this.props.navigation.getParam("filledForm")
+    let filledForm = this.props.navigation.getParam("filledForm");
+    this.getAutoCompleteDataForPath = this.props.navigation.getParam("getAutoCompleteDataForPath")
 
     this.state = {
       root: root,
@@ -71,7 +82,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       allQuestions: [],
       currentQuestionIndex: 0,
       history: [],
-      currentIndex: -1,
+      currentSectionIndex: -1,
       filledForm: filledForm,
     };
   }
@@ -82,7 +93,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
   _saveAnswerToStorage() {
-    StorageUtil.saveFilledForm(this.state.filledForm);
+    return StorageUtil.saveFilledForm(this.state.filledForm);
   }
 
 
@@ -92,8 +103,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     this.setState({
       currentItem: firstItem,
       activeSectionPath: [0],
-      currentIndex: 0,
-    });
+      currentSectionIndex: 0,
+    }, this.makeSectionOptions.bind(this))
 
   }
 
@@ -197,20 +208,16 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
   }
 
-
-
-
-
   handleNext() {
-    for (let i = this.state.currentIndex + 1; i < this.state.root.content.length; i++) {
+    for (let i = this.state.currentSectionIndex + 1; i < this.state.root.content.length; i++) {
       let nextItem = RootSection.getFromPath([0, i], [this.state.root]);
       if (nextItem && !(nextItem instanceof RootSection) && this.evaluateCondition(nextItem.appearingCondition)) {
         return this.setState((prevState: SurveyFormComponentState) => {
           let newhistory = _.clone(prevState.history);
-          newhistory.push(prevState.currentIndex);
+          newhistory.push(prevState.currentSectionIndex);
           return {
             history: newhistory,
-            currentIndex: i
+            currentSectionIndex: i
           };
         });
 
@@ -224,7 +231,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         let newHistory = _.clone(prevState.history);
         let newItem = newHistory.pop();
         return {
-          currentIndex: newItem,
+          currentSectionIndex: newItem,
           history: newHistory
         };
       });
@@ -246,6 +253,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     let item = RootSection.getFromPath([0, index], [this.state.root]);
     if (item instanceof QuestionSection) {
       return <SurveySection
+        getAutoCompleteDataForPath={this.getAutoCompleteDataForPath}
         answerStore={this.state.filledForm.answerStore}
         setAnswer={this.setAnswerFor.bind(this)}
         evaluateCondition={this.evaluateCondition.bind(this)}
@@ -254,6 +262,8 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
     else if (item instanceof QAQuestion) {
       return <QuestionComponent
+        autoCompleteData={this.getAutoCompleteDataForPath([0, index], 0)}
+        allFilledForms={this.props.allFilledForms}
         answerStore={this.state.filledForm.answerStore}
         evaluateCondition={this.evaluateCondition.bind(this)}
         defaultValue={this.state.filledForm.answerStore.getAnswerFor([0, index], 0)}
@@ -262,11 +272,41 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       />
     }
   }
-  makeSectionOptions(){
-    // let options = 
+  makeSectionOptions() {
+    let options = RootSection.Entries(this.state.root, [0], 0, QORS.SECTION);
+    let filtered = options.filter(item => item.path.length <= 2 && item.data instanceof QuestionSection);
+    this.sectionOptions = filtered;
   }
 
+  jumpToSection(path: number[]) {
+    this.setState((prevState: SurveyFormComponentState) => {
+      let newHistory = _.clone(prevState.history);
+      let newIndex = path[path.length - 1];
+      let currentIndex = prevState.currentSectionIndex;
+      if (newIndex > currentIndex) {
+        newHistory.push(prevState.currentSectionIndex);
+        for (let i = newHistory[newHistory.length - 1] + 1; i < newIndex; i++) {
+          newHistory.push(i);
+        }
+      }else if(newIndex<currentIndex){
+        newHistory = [];
+        for(let i = 0; i<newIndex;i++){
+          newHistory.push(i);
+        }
+      }
+      return {
+        history: newHistory,
+        currentSectionIndex: newIndex
+      }
+    })
+
+  }
+
+
+
   render() {
+    let selectedSection = this.sectionOptions.find(item => item.path[item.path.length - 1] === this.state.currentSectionIndex);
+    let selectedValue = selectedSection ? selectedSection.path : null;
     return (
       <View style={this.props.themedStyle.container}>
         <ButtonGroup >
@@ -275,10 +315,22 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
           <Button status="success" icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
           <View style={this.props.themedStyle.selectContainer}>
-            <Picker selectedValue={null}
+            <Picker
+              selectedValue={selectedValue}
               style={this.props.themedStyle.select}
-              onValueChange={(itemValue, itemIndex) => { }}>
-              {}
+
+              onValueChange={(itemPath, itemIndex) => {
+                this.jumpToSection(itemPath)
+              }}>
+              {this.sectionOptions.map(item => {
+                if (item.data instanceof QuestionSection) {
+                  return <Picker.Item
+                    value={item.path}
+                    key={"opt-" + item.data.id}
+                    label={`${getReadablePath(item.path)}: ${item.data.name}`} />
+                }
+                return null;
+              })}
 
             </Picker>
           </View>
@@ -289,7 +341,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           <ShowcaseItem title="" >
             <View>
 
-              {this.state.currentItem && this.renderQuestionOrSection(this.state.currentIndex)}
+              {this.state.currentItem && this.renderQuestionOrSection(this.state.currentSectionIndex)}
             </View>
           </ShowcaseItem>
         </Showcase>

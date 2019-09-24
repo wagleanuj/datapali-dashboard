@@ -13,7 +13,8 @@ import _ from "lodash";
 import { AnswerStore } from "../answermachine";
 import { List } from "react-native-paper";
 import { SelInput } from "./selectInput";
-import { AutoCompleteInputComponent, AutoComplete } from "./autocompleteInput";
+import { AutoComplete } from "./autocompleteInput";
+import { FilledForm, AutoCompleteItem } from "./forms";
 
 type SectionComponentProps = {
     section: QuestionSection,
@@ -21,6 +22,7 @@ type SectionComponentProps = {
     evaluateCondition: (condition: QACondition) => boolean,
     answerStore: AnswerStore,
     setAnswer: (path: number[], iteration: number, value: string) => void,
+    getAutoCompleteDataForPath: ( path: number[], iteration: number) => AutoCompleteItem[]
 } & ThemedStyleType;
 
 type SectionComponentState = {
@@ -34,7 +36,6 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         }
     }
     renderDuplicatingSection(section: QuestionSection, path: number[]) {
-        console.log("rendering duplicated");
         let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
         let times = 0;
         if (repeatType === "number") {
@@ -77,8 +78,10 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
             if (item instanceof QAQuestion) {
 
                 return isValid ? <QuestionComponent key={item.id}
+                    autoCompleteData={this.props.getAutoCompleteDataForPath(path.concat(index), iteration)}
                     path={newPath.concat(index)}
                     question={item}
+                    iteration={iteration}
                     evaluateCondition={this.props.evaluateCondition}
                     answerStore={this.props.answerStore}
                     defaultValue={this.props.answerStore.getAnswerFor(path.concat(index), iteration)}
@@ -88,6 +91,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
             else if (item instanceof QuestionSection) {
 
                 return isValid ? <SurveySection
+                    getAutoCompleteDataForPath={this.props.getAutoCompleteDataForPath}
                     key={item.id}
                     section={item}
                     setAnswer={this.props.setAnswer}
@@ -125,7 +129,8 @@ type QuestionComponentProps = {
     defaultValue: string;
     onValueChange: (newValue: string) => void;
     answerStore: AnswerStore
-    evaluateCondition: (condition: QACondition) => boolean
+    evaluateCondition: (condition: QACondition) => boolean,
+    autoCompleteData: AutoCompleteItem[]
 } & ThemedStyleType;
 type QuestionComponentState = {
 
@@ -150,6 +155,7 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
             console.warn('Cannot open date picker', message);
         }
     }
+
 
     evaluateAutofill(question: QAQuestion) {
         if (question.autoAnswer.isEnabled) {
@@ -179,7 +185,12 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         if (type) {
             switch (type.name) {
                 case ANSWER_TYPES.NUMBER:
-                    comp = <AutoComplete/>;
+                    comp = <AutoComplete
+                        defaultValue={defaultValue}
+                        data={this.props.autoCompleteData}
+                        onChange={this.props.onValueChange}
+
+                    />;
                     break;
                 case ANSWER_TYPES.GEOLOCATION:
                     let defaultLocation = (locationJSON: object) => {

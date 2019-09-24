@@ -77,13 +77,14 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
     onValueChange(text: string) {
         this.setState({
             value: text
-        })
+        }, this.handleChange.bind(this))
     }
 
 
 
     public render(): React.ReactNode {
         let foundResult = this.findItem(this.state.value);
+        console.log(foundResult);
         return (
             <Autocomplete
                 hideResults={this.state.hideResults}

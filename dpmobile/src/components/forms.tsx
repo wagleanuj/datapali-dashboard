@@ -88,6 +88,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
 
         })
     }
+
     async refreshLoadedForms() {
         this.setState({
             refreshing: true
@@ -97,6 +98,33 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         this.setState({
             refreshing: false,
         })
+    }
+
+    getAutoCompleteDataForPath(filledForm: FilledForm): (path: number[], iteration: number) => AutoCompleteItem[] {
+        let formID = filledForm.formId;
+        let filledFormID = filledForm.id;
+        return function (path: number[], iteration: number) {
+            let answers: { [key: string]: AutoCompleteItem } = {};
+            Object.keys(this.state.filledForms).forEach(key => {
+                let form = this.state.filledForms[key];
+                if (formID === form.formId && form.id!==filledFormID) {
+                    let answerStore = form.answerStore;
+                    let answer = answerStore.getAnswerFor(path, iteration);
+                    console.log(answer);
+                    if (answer) {
+                        if (!answers[answer]) answers[answer] = { text: answer, strength: 1 }
+                        else {
+                            answers[answer].strength++;
+                        }
+                    }
+                }
+
+            });
+            let answerValues = Object.values(answers);
+            answerValues.sort((a,b)=>b.strength-a.strength);
+            return answerValues;
+        }.bind(this)
+
     }
 
     async handleAddNewForm(formId?: string) {
@@ -159,7 +187,8 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         this.props.navigation.navigate("SurveyForm", {
             root: root,
             filledForm: filledform,
-            user: this.state.user
+            user: this.state.user,
+            getAutoCompleteDataForPath: this.getAutoCompleteDataForPath(filledform),
         })
     }
 
@@ -286,4 +315,8 @@ export interface User {
     id: string;
     availableForms: string[],
     filledForms: string[]
+}
+export type AutoCompleteItem = {
+    text: string,
+    strength: number,
 }
