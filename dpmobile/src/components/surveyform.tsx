@@ -3,7 +3,7 @@ import { View, AsyncStorage, Picker } from 'react-native';
 // tslint:disable-next-line: max-line-length
 import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer, QORS } from 'dpform';
 import _ from 'lodash';
-import { withStyles, ThemedStyleType, Layout, Text, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select } from 'react-native-ui-kitten';
+import { withStyles, Layout, Text, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select, ThemedComponentProps } from 'react-native-ui-kitten';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { AnswerStore } from '../answermachine';
@@ -14,11 +14,12 @@ import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
 import { Header } from 'react-navigation-stack';
 import { textStyle } from '../themes/style';
 import { KEY_NAVIGATION_BACK } from '../navigation/constants';
+import { NavigationScreenProps } from 'react-navigation';
 export type SurveyFormComponentProps = {
   answerStore: AnswerStore,
   root: RootSection,
   user: User,
-} & ThemedStyleType
+} & ThemedComponentProps & NavigationScreenProps
 
 interface SurveyFormComponentState {
   root: RootSection;
@@ -261,7 +262,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     else if (item instanceof QAQuestion) {
       return <QuestionComponent
         autoCompleteData={this.getAutoCompleteDataForPath([0, index], 0)}
-        allFilledForms={this.props.allFilledForms}
         answerStore={this.state.filledForm.answerStore}
         evaluateCondition={this.evaluateCondition.bind(this)}
         defaultValue={this.state.filledForm.answerStore.getAnswerFor([0, index], 0)}
@@ -286,9 +286,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         for (let i = newHistory[newHistory.length - 1] + 1; i < newIndex; i++) {
           newHistory.push(i);
         }
-      }else if(newIndex<currentIndex){
+      } else if (newIndex < currentIndex) {
         newHistory = [];
-        for(let i = 0; i<newIndex;i++){
+        for (let i = 0; i < newIndex; i++) {
           newHistory.push(i);
         }
       }
@@ -307,11 +307,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     let selectedValue = selectedSection ? selectedSection.path : null;
     return (
       <View style={this.props.themedStyle.container}>
-        <ButtonGroup >
 
-        </ButtonGroup>
-        <View style={{ left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between' }}>
-          <Button status="success" icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
+        <View style={this.props.themedStyle.toolbarGroup}>
+          <Button style={this.props.themedStyle.toolbarButton} icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
           <View style={this.props.themedStyle.selectContainer}>
             <Picker
               selectedValue={selectedValue}
@@ -333,9 +331,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             </Picker>
           </View>
 
-          <Button status="success" icon={() => <Icon name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
+          <Button style={this.props.themedStyle.toolbarButton} icon={() => <Icon style={{color: 'white'}} name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
         </View>
-        <Showcase >
+        <Showcase style={this.props.themedStyle.showcaseContainer}>
           <ShowcaseItem title="" >
             <View>
 
@@ -354,6 +352,17 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
     paddingHorizontal: 16,
     paddingVertical: 16,
     backgroundColor: theme['background-basic-color-2'],
+  },
+  showcaseContainer: {
+    marginTop: 5,
+  },
+  
+  toolbarGroup: {
+    left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between'
+  },
+  toolbarButton:{
+    backgroundColor: theme['background-basic-color-1'],
+    borderWidth: 0,
   },
   accordion: {
     backgroundColor: theme['color-primary-300']
@@ -380,39 +389,3 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
     backgroundColor: 'black',
   },
 }));
-
-
-// type CustomSelectProps = {
-
-// }
-// type CustomSelectState = {
-//   data: { text: string }[]
-// }
-// class CustomSelectComponent extends React.Component<CustomSelectProps, CustomSelectState> {
-//   constructor(props: CustomSelectProps) {
-//     super(props);
-//     this.state = {
-//       data: []
-//     }
-//   }
-//   renderItem(item) {
-//     return (
-//       <View>
-//         <Text>{item.item.text}</Text>
-//       </View>
-//     )
-//   }
-//   render() {
-//     return (
-//       <Select
-
-//         data={this.state.data}
-//       />
-//     )
-//   }
-// }
-// export const CustomSelect = withStyles(CustomSelectComponent, theme => ({
-
-// }))
-
-

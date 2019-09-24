@@ -1,20 +1,14 @@
 import { QuestionSection, QACondition, DuplicateTimesType, getReadablePath, QAQuestion, IValueType, AnswerOptions, ANSWER_TYPES } from "dpform";
 
-import { ThemedStyleType } from "@eva-design/dss";
-
 import React from "react";
-
 import { View, DatePickerAndroid, TouchableOpacity } from "react-native";
-
-import { Layout, withStyles, Input, Text } from "react-native-ui-kitten";
-
+import { Layout, withStyles, Input, Text, ThemedComponentProps } from "react-native-ui-kitten";
 import _ from "lodash";
-
 import { AnswerStore } from "../answermachine";
 import { List } from "react-native-paper";
 import { SelInput } from "./selectInput";
 import { AutoComplete } from "./autocompleteInput";
-import { FilledForm, AutoCompleteItem } from "./forms";
+import { AutoCompleteItem } from "./forms";
 
 type SectionComponentProps = {
     section: QuestionSection,
@@ -22,8 +16,8 @@ type SectionComponentProps = {
     evaluateCondition: (condition: QACondition) => boolean,
     answerStore: AnswerStore,
     setAnswer: (path: number[], iteration: number, value: string) => void,
-    getAutoCompleteDataForPath: ( path: number[], iteration: number) => AutoCompleteItem[]
-} & ThemedStyleType;
+    getAutoCompleteDataForPath: (path: number[], iteration: number) => AutoCompleteItem[]
+} & ThemedComponentProps;
 
 type SectionComponentState = {
     answers: { [key: string]: any }[]
@@ -112,12 +106,15 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         let comp = null;
         if (this.props.section.duplicatingSettings.isEnabled) comp = this.renderDuplicatingSection(this.props.section, this.props.path);
         else { comp = this.getSectionPage(this.props.section, this.props.path, 0) }
-        return <Layout>
+        return <Layout style={this.props.themedStyle.container}>
             {comp}
         </Layout>
     }
 }
 export const SurveySection = withStyles(SectionComponent, (theme) => ({
+    container:{
+        marginTop: 0
+    },
     accordion: {
         backgroundColor: theme['color-primary-300']
     }
@@ -131,7 +128,7 @@ type QuestionComponentProps = {
     answerStore: AnswerStore
     evaluateCondition: (condition: QACondition) => boolean,
     autoCompleteData: AutoCompleteItem[]
-} & ThemedStyleType;
+} & ThemedComponentProps;
 type QuestionComponentState = {
 
 }
@@ -236,7 +233,6 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                     break;
                 case ANSWER_TYPES.SELECT:
                     comp = <SelInput
-                        path={this.props.path}
                         question={question}
                         answerStore={this.props.answerStore}
                         value={defaultValue}
@@ -256,7 +252,7 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
         const valueInput = this.getValueInput(currentQuestion.answerType,
             currentQuestion.options, currentQuestion);
         return (
-            <View key={currentQuestion.id} style={{ paddingTop: 20, paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
+            <View key={currentQuestion.id} style={{ paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
                 <View style={{ paddingLeft: 5, paddingRight: 5 }}>
                     {questionText}
                     {valueInput}

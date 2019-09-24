@@ -1,7 +1,7 @@
 import React from 'react';
 import { ListRenderItemInfo, View, AsyncStorage, SwipeableListView, TouchableHighlight, RefreshControl, ScrollView } from 'react-native';
 import { FAB, IconButton } from 'react-native-paper';
-import { List, ListItem, ThemedStyleType, ThemeType, withStyles, Layout, Menu, MenuItem, Button, Text, Icon, TopNavigation, TopNavigationAction } from 'react-native-ui-kitten';
+import { List, ListItem, ThemeType, withStyles, Layout, Menu, MenuItem, Button, Text, Icon, TopNavigation, TopNavigationAction, ThemedComponentProps } from 'react-native-ui-kitten';
 import { AnswerStore } from '../answermachine';
 import { StorageUtil } from '../storageUtil';
 import { request, RootSection, getRandomId } from 'dpform';
@@ -11,7 +11,7 @@ import { SwipeListView } from "react-native-swipe-list-view"
 
 type FormsProps = {
 
-} & ThemedStyleType;
+} & ThemedComponentProps;
 
 type FormsState = {
     data: any[],

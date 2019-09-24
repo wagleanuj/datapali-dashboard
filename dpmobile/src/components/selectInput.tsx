@@ -12,7 +12,6 @@ interface SelInputProps {
     answerType: IValueType;
     onSelectionChange: (optId: string) => void;
     value?: string;
-    definedQuestions: { data: (QuestionSection | QAQuestion), path: number[] }[];
     answerStore: AnswerStore;
     question: QAQuestion;
 
