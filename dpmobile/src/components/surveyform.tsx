@@ -309,7 +309,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       <View style={this.props.themedStyle.container}>
 
         <View style={this.props.themedStyle.toolbarGroup}>
-          <Button style={this.props.themedStyle.toolbarButton} icon={() => <Icon name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
+          <Button style={this.props.themedStyle.toolbarButton} icon={(style) => <Icon {...style} name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
           <View style={this.props.themedStyle.selectContainer}>
             <Picker
               selectedValue={selectedValue}
@@ -331,7 +331,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
             </Picker>
           </View>
 
-          <Button style={this.props.themedStyle.toolbarButton} icon={() => <Icon style={{color: 'white'}} name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
+          <Button style={this.props.themedStyle.toolbarButton} icon={(style) => <Icon {...style} name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
         </View>
         <Showcase style={this.props.themedStyle.showcaseContainer}>
           <ShowcaseItem title="" >
