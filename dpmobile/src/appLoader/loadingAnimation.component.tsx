@@ -1,9 +1,5 @@
 import React from 'react';
-import {
-  Animated,
-  Easing,
-  StyleSheet,
-} from 'react-native';
+import { Animated, Easing, StyleSheet } from 'react-native';
 import { splash } from './../assets/images';
 
 interface Props {

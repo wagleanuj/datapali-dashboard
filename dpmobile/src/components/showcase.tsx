@@ -1,11 +1,7 @@
 import React from 'react';
-import {
-  FlexStyle,
-  Platform,
-  ViewProps,
-} from 'react-native';
-import { ThemedComponentProps, withStyles, ThemeType } from 'react-native-ui-kitten';
-import { ScrollableAvoidKeyboardProps, ScrollableAvoidKeyboard } from './scrollableAvoidKeyboard';
+import { FlexStyle, Platform, ViewProps } from 'react-native';
+import { ThemedComponentProps, ThemeType, withStyles } from 'react-native-ui-kitten';
+import { ScrollableAvoidKeyboard, ScrollableAvoidKeyboardProps } from './scrollableAvoidKeyboard';
 
 
 interface ComponentProps {
@@ -15,7 +11,7 @@ interface ComponentProps {
 type ChildrenProp = ShowcaseSectionElement | ShowcaseSectionElement[];
 
 export type ShowcaseProps = ThemedComponentProps & ComponentProps & ScrollableAvoidKeyboardProps;
-type ShowcaseSectionProps =  ThemedComponentProps & ViewProps & ComponentProps;
+type ShowcaseSectionProps = ThemedComponentProps & ViewProps & ComponentProps;
 type ShowcaseSectionElement = React.ReactElement<ShowcaseSectionProps>;
 
 class ShowcaseComponent extends React.Component<ShowcaseProps> {

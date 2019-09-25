@@ -1,14 +1,14 @@
-import { QuestionSection, QACondition, DuplicateTimesType, getReadablePath, QAQuestion, IValueType, AnswerOptions, ANSWER_TYPES } from "dpform";
-
-import React from "react";
-import { View, DatePickerAndroid, TouchableOpacity } from "react-native";
-import { Layout, withStyles, Input, Text, ThemedComponentProps } from "react-native-ui-kitten";
+import { AnswerOptions, ANSWER_TYPES, DuplicateTimesType, getReadablePath, IValueType, QACondition, QAQuestion, QuestionSection } from "dpform";
 import _ from "lodash";
-import { AnswerStore } from "../answermachine";
+import React from "react";
+import { DatePickerAndroid, TouchableOpacity, View } from "react-native";
 import { List } from "react-native-paper";
-import { SelInput } from "./selectInput";
+import { Input, Layout, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { AnswerStore } from "../answermachine";
 import { AutoComplete } from "./autocompleteInput";
 import { AutoCompleteItem } from "./forms";
+import { SelInput } from "./selectInput";
+
 
 type SectionComponentProps = {
     section: QuestionSection,
@@ -43,17 +43,17 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         let children = []
         for (let i = 0; i < times; i++) {
             children.push(
-                <View style={{ paddingTop: 5, paddingBottom: 5, paddingLeft: 5, paddingRight: 5 }} key={section.id + i}>
+                <View style={this.props.themedStyle.accordionContainer} key={section.id + i}>
                     <List.Accordion style={this.props.themedStyle.accordion} title={getReadablePath(path.concat(i))}>
-                        <View style={{ paddingLeft: 5, paddingRight: 5, paddingBottom: 20 }}>
+                        <View style={this.props.themedStyle.duplicatingSectionContainer}>
                             {this.getSectionPage(section, path, i)}
                         </View>
                     </List.Accordion>
                 </View>
             )
         }
-        return <Layout style={{ marginTop: 20, marginBottom: 20 }} key={section.id + "root-duplicated"}>
-            <Text style={{ padding: 5 }}>{`${getReadablePath(path)} : ${section.name}`}</Text>
+        return <Layout style={this.props.themedStyle.duplicatedRootSection} key={section.id + "root-duplicated"}>
+            <Text style={this.props.themedStyle.duplicatedSectionTitle}>{`${getReadablePath(path)} : ${section.name}`}</Text>
             {children}
         </Layout>
     }
@@ -63,7 +63,6 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     }
 
     getSectionPage(section: QuestionSection, path: number[], iteration: number) {
-        console.log("Rendering section");
         let comp = section.content.map((item, index) => {
             let isValid = this.props.evaluateCondition(item.appearingCondition);
             let newPath = path.slice(0);
@@ -71,11 +70,10 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
 
             if (item instanceof QAQuestion) {
 
-                return isValid ? <QuestionComponent key={item.id}
+                return isValid ? <Question key={item.id}
                     autoCompleteData={this.props.getAutoCompleteDataForPath(path.concat(index), iteration)}
                     path={newPath.concat(index)}
                     question={item}
-                    iteration={iteration}
                     evaluateCondition={this.props.evaluateCondition}
                     answerStore={this.props.answerStore}
                     defaultValue={this.props.answerStore.getAnswerFor(path.concat(index), iteration)}
@@ -112,11 +110,29 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
     }
 }
 export const SurveySection = withStyles(SectionComponent, (theme) => ({
-    container:{
+    container: {
         marginTop: 0
     },
     accordion: {
         backgroundColor: theme['color-primary-300']
+    },
+    accordionContainer: {
+        paddingTop: 5,
+        paddingBottom: 5,
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    duplicatingSectionContainer: {
+        paddingLeft: 5,
+        paddingRight: 5,
+        paddingBottom: 20
+    },
+    duplicatedRootSection: {
+        marginTop: 20,
+        marginBottom: 20,
+    },
+    duplicatedSectionTitle: {
+        padding: 5,
     }
 }));
 
@@ -246,14 +262,14 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
     }
     render() {
         let currentQuestion = this.props.question;
-        const questionText = <Text style={{ fontSize: 15, paddingBottom: 20 }}>
-            {`${getReadablePath(this.props.path)} : ${currentQuestion.questionContent.content}`}
+        const questionText = <Text style={this.props.themedStyle.questionTitle}>
+            {`${getReadablePath(this.props.path)} : ${currentQuestion.questionContent.content} ${currentQuestion.isRequired ? '*' : ''}`}
         </Text>;
         const valueInput = this.getValueInput(currentQuestion.answerType,
             currentQuestion.options, currentQuestion);
         return (
-            <View key={currentQuestion.id} style={{ paddingBottom: 20, paddingLeft: 5, paddingRight: 5, marginBottom: 5, marginTop: 5 }}>
-                <View style={{ paddingLeft: 5, paddingRight: 5 }}>
+            <View key={currentQuestion.id} style={this.props.themedStyle.container}>
+                <View style={this.props.themedStyle.questionContainer}>
                     {questionText}
                     {valueInput}
                 </View>
@@ -262,3 +278,20 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
     }
 
 }
+export const Question = withStyles(QuestionComponent, theme => ({
+    container: {
+        paddingBottom: 20,
+        paddingLeft: 5,
+        paddingRight: 5,
+        marginBottom: 5,
+        marginTop: 5,
+    },
+    questionContainer: {
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    questionTitle: {
+        fontSize: 15,
+        paddingBottom: 20,
+    }
+}))

@@ -1,20 +1,15 @@
-import React from 'react';
 import { useScreens } from 'react-native-screens';
-import {
-  createAppContainer,
-  NavigationContainer,
-  NavigationRouteConfigMap,
-  createSwitchNavigator,
-} from 'react-navigation';
-
-import { createBottomTabNavigator } from "react-navigation-tabs";
+import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
-import { MenuContainer } from '../components/menu.container';
-import { SurveyForm } from '../components/surveyform';
+import { createBottomTabNavigator } from "react-navigation-tabs";
 import { FormList } from '../components/forms';
 import { SignIn } from '../components/login';
-import { MenuNavigationOptions } from './options';
+import { MenuContainer } from '../components/menu.container';
 import { Settings } from '../components/settings';
+import { SurveyForm } from '../components/surveyform';
+import { SettingsContainer } from '../settings/settings.container';
+import { MenuNavigationOptions } from './options';
+
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
   ["FormView"]: FormList,
@@ -22,7 +17,7 @@ const FormListNavigator: NavigationContainer = createStackNavigator({
 }
 );
 const SettingsNavigator: NavigationContainer = createStackNavigator({
-  ["Setting"]: Settings,
+  ["Settings"]: SettingsContainer,
 }, {
   headerMode: 'screen',
   defaultNavigationOptions: MenuNavigationOptions,

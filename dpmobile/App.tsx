@@ -1,15 +1,13 @@
+import { mapping } from '@eva-design/eva';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import React from 'react';
-import { StyleSheet } from 'react-native';
-import { mapping, dark as DarkTheme } from '@eva-design/eva';
+import { AsyncStorage } from 'react-native';
 import { ApplicationProvider, IconRegistry } from 'react-native-ui-kitten';
+import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar';
-import _ from 'lodash';
-import { NavigationState } from 'react-navigation';
-import { getCurrentStateName } from './src/navigation';
 import { Router } from './src/navigation/routes';
 import { StorageUtil } from './src/storageUtil';
-import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
-import { EvaIconsPack } from '@ui-kitten/eva-icons'; 
+import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
 
 const fonts: { [key: string]: number } = {
   'opensans-semibold': require('./src/assets/fonts/opensans-semibold.ttf'),
@@ -23,9 +21,8 @@ interface AppProps {
 
 }
 interface AppState {
-  title: string,
-  subtitle: string,
   signedIn: boolean,
+  theme: ThemeKey
 }
 
 
@@ -35,45 +32,53 @@ export default class App extends React.Component<AppProps, AppState> {
   constructor(props: AppProps) {
     super(props);
     this.state = {
-      title: "Datapali",
-      subtitle: "",
       signedIn: false,
+      theme: 'Eva Dark',
     }
   }
-  componentDidMount() {
-    StorageUtil.getAuthToken().then(res => {
-      if (res) {
-        this.setState({
-          signedIn: true,
 
-        })
-      }
-    })
+
+  async componentDidMount() {
+    const theme = await AsyncStorage.getItem("theme");
+    if (theme) {
+      this.setState({
+        theme: theme as ThemeKey
+      })
+    }
+    const authToken = await StorageUtil.getAuthToken();
+    if (authToken) {
+      this.setState({
+        signedIn: true
+      })
+    }
   }
 
-  private onNavigationStateChange = (prevState: NavigationState, currentState: NavigationState) => {
-    const prevStateName: string = getCurrentStateName(prevState);
-    const currentStateName: string = getCurrentStateName(currentState);
+  private onSwitchTheme = (theme: ThemeKey) => {
+    ThemeStore.setTheme(theme).then(() => {
+      this.setState({ theme });
+    });
   };
+
   render() {
     let Router_ = Router(this.state.signedIn);
+    const contextValue: ThemeContextType = {
+      currentTheme: this.state.theme,
+      toggleTheme: this.onSwitchTheme,
+    };
+
     return (
       <ApplicationLoader assets={{ fonts: fonts, images: [] }}>
-        <ApplicationProvider
-          mapping={mapping}
-          theme={DarkTheme}>
-          <IconRegistry icons={EvaIconsPack} />
-          <DynamicStatusBar currentTheme={"Eva Dark"} />
-          <Router_ onNavigationStateChange={this.onNavigationStateChange} />
-        </ApplicationProvider>
+        <ThemeContext.Provider value={contextValue}>
+          <ApplicationProvider
+            mapping={mapping}
+            theme={themes[this.state.theme]}>
+            <IconRegistry icons={EvaIconsPack} />
+            <DynamicStatusBar currentTheme={this.state.theme} />
+            <Router_ />
+          </ApplicationProvider>
+        </ThemeContext.Provider>
       </ApplicationLoader>
 
     );
   }
 }
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-});

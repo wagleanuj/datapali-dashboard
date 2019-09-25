@@ -1,7 +1,7 @@
 import React from 'react';
-import { ThemedComponentProps, ThemeProvider, BottomNavigation, BottomNavigationTab, withStyles, ThemeType } from 'react-native-ui-kitten';
-import { themes } from '../themes';
+import { BottomNavigation, BottomNavigationTab, ThemedComponentProps, ThemeProvider, ThemeType, withStyles } from 'react-native-ui-kitten';
 import { SafeAreaView } from 'react-navigation';
+import { themes } from '../themes';
 
 interface ComponentProps {
   selectedIndex: number;

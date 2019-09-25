@@ -1,8 +1,8 @@
-import { Input, OverflowMenu, Button, OverflowMenuItemType, State, StyleType, Popover, Text, withStyles, StyledComponentProps, ThemedComponentProps } from "react-native-ui-kitten";
-import React, { Component } from "react";
-import { ImageProps, Image, ViewPropTypes, View, FlatList } from "react-native";
-import { TouchableOpacity, TextInput } from "react-native-gesture-handler";
+import React from "react";
+import { Image, ImageProps, View } from "react-native";
 import Autocomplete from "react-native-autocomplete-input";
+import { TouchableOpacity } from "react-native-gesture-handler";
+import { Input, StyleType, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 
 type AutoCompleteProps = {
     onChange: (text: string) => void,
@@ -84,7 +84,6 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
     public render(): React.ReactNode {
         let foundResult = this.findItem(this.state.value);
-        console.log(foundResult);
         return (
             <View style={this.props.themedStyle.container}>
                 <Autocomplete

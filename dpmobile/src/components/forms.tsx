@@ -1,17 +1,18 @@
+import { getRandomId, RootSection } from 'dpform';
 import React from 'react';
-import { ListRenderItemInfo, View, AsyncStorage, SwipeableListView, TouchableHighlight, RefreshControl, ScrollView } from 'react-native';
+import { ListRenderItemInfo, RefreshControl, View } from 'react-native';
 import { FAB, IconButton } from 'react-native-paper';
-import { List, ListItem, ThemeType, withStyles, Layout, Menu, MenuItem, Button, Text, Icon, TopNavigation, TopNavigationAction, ThemedComponentProps } from 'react-native-ui-kitten';
+import { SwipeListView } from "react-native-swipe-list-view";
+import { ListItem, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from 'react-native-ui-kitten';
+import { NavigationScreenProps } from 'react-navigation';
+import { Header } from 'react-navigation-stack';
 import { AnswerStore } from '../answermachine';
 import { StorageUtil } from '../storageUtil';
-import { request, RootSection, getRandomId } from 'dpform';
-import { Header } from 'react-navigation-stack';
 import { textStyle } from '../themes/style';
-import { SwipeListView } from "react-native-swipe-list-view"
 
 type FormsProps = {
 
-} & ThemedComponentProps;
+} & ThemedComponentProps & NavigationScreenProps;
 
 type FormsState = {
     data: any[],
@@ -110,7 +111,6 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
                 if (formID === form.formId && form.id !== filledFormID) {
                     let answerStore = form.answerStore;
                     let answer = answerStore.getAnswerFor(path, iteration);
-                    console.log(answer);
                     if (answer) {
                         if (!answers[answer]) answers[answer] = { text: answer, strength: 1 }
                         else {

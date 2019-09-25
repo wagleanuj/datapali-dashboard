@@ -1,11 +1,11 @@
-import { AnswerOptions, IValueType, QuestionSection, QAQuestion, ANSWER_TYPES, QACondition, ILiteral, QAComparisonOperator, QAFollowingOperator } from "dpform";
-
-import React, { ReactElement } from "react";
-
+import { AnswerOptions, ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion } from "dpform";
 import _ from "lodash";
-
+import React, { ReactElement } from "react";
 import { Radio, RadioGroup } from "react-native-ui-kitten";
 import { AnswerStore } from "../answermachine";
+
+
+
 
 interface SelInputProps {
     options: AnswerOptions;

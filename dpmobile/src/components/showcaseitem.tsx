@@ -1,10 +1,6 @@
 import React from 'react';
-import {
-    View,
-    ViewProps,
-} from 'react-native';
-import { ThemedComponentProps, withStyles, ThemeType, Text } from 'react-native-ui-kitten';
-import { textStyle } from '../themes/style';
+import { View, ViewProps } from 'react-native';
+import { Text, ThemedComponentProps, ThemeType, withStyles } from 'react-native-ui-kitten';
 
 interface ComponentProps {
     title: string;

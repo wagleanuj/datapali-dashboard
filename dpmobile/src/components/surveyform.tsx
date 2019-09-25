@@ -1,20 +1,22 @@
-import React, { ReactNode, ReactElement } from 'react';
-import { View, AsyncStorage, Picker } from 'react-native';
 // tslint:disable-next-line: max-line-length
-import { QAQuestion, RootSection, QuestionSection, IValueType, ANSWER_TYPES, request, AnswerOptions, QACondition, QAComparisonOperator, QAFollowingOperator, ILiteral, getReadablePath, DuplicateTimesType, Answer, QORS } from 'dpform';
+import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QORS, QuestionSection, RootSection } from 'dpform';
 import _ from 'lodash';
-import { withStyles, Layout, Text, ThemeType, Button, TopNavigationAction, TopNavigation, Icon, ButtonGroup, Select, ThemedComponentProps } from 'react-native-ui-kitten';
+import React from 'react';
+import { View } from 'react-native';
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from 'react-native-ui-kitten';
+import { NavigationScreenProps } from 'react-navigation';
+import { Header } from 'react-navigation-stack';
+import { AnswerStore } from '../answermachine';
+import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
+import { KEY_NAVIGATION_BACK } from '../navigation/constants';
+import { StorageUtil } from '../storageUtil';
+import { textStyle } from '../themes/style';
+import { AutoCompleteItem, FilledForm, User } from './forms';
+import { Question, SurveySection } from './section';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
-import { AnswerStore } from '../answermachine';
-import { SurveySection, QuestionComponent } from './section';
-import { User, FilledForm, AutoCompleteItem } from './forms';
-import { StorageUtil } from '../storageUtil';
-import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
-import { Header } from 'react-navigation-stack';
-import { textStyle } from '../themes/style';
-import { KEY_NAVIGATION_BACK } from '../navigation/constants';
-import { NavigationScreenProps } from 'react-navigation';
+import { Toolbar } from './toolbar';
+import { ProgressBar } from 'react-native-paper';
 export type SurveyFormComponentProps = {
   answerStore: AnswerStore,
   root: RootSection,
@@ -49,7 +51,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     }
     const renderRightControls = () => {
       const save = props.navigation.getParam("onSaveClick");
-      const saveComponent = <TopNavigationAction onPress={() => save()} icon={SaveIcon} />
+      const saveComponent = <TopNavigationAction onPress={save} icon={SaveIcon} />
+     
+
       return [saveComponent];
     }
     return {
@@ -58,6 +62,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         alignment='center'
         title={"Datapali"}
         subtitle={routeName}
+
         subtitleStyle={textStyle.caption1}
         leftControl={renderLeftIcon()}
         rightControls={renderRightControls()}
@@ -137,7 +142,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         let result = true;
         const answer = this.state.filledForm.answerStore.getById(item.questionRef);
         const question = this.state.root.questions[item.questionRef];
-        console.log(question.id, item.comparisonValue.content, item.comparisonOperator, answer);
         let c2 = this.transformValueToType(question.answerType, item.comparisonValue.content);
         let c1 = this.transformValueToType(question.answerType, answer);
 
@@ -145,7 +149,6 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
           switch (item.comparisonOperator) {
             case QAComparisonOperator.Equal:
               result = c1 === c2;
-              console.log(result);
               break;
             case QAComparisonOperator.Greater_Than:
               result = c1 > c2;
@@ -260,7 +263,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         path={[0, index]} />
     }
     else if (item instanceof QAQuestion) {
-      return <QuestionComponent
+      return <Question
         autoCompleteData={this.getAutoCompleteDataForPath([0, index], 0)}
         answerStore={this.state.filledForm.answerStore}
         evaluateCondition={this.evaluateCondition.bind(this)}
@@ -308,35 +311,18 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     return (
       <View style={this.props.themedStyle.container}>
 
-        <View style={this.props.themedStyle.toolbarGroup}>
-          <Button style={this.props.themedStyle.toolbarButton} icon={(style) => <Icon {...style} name="arrow-back"></Icon>} onPress={this.handlePrev.bind(this)}></Button>
-          <View style={this.props.themedStyle.selectContainer}>
-            <Picker
-              selectedValue={selectedValue}
-              style={this.props.themedStyle.select}
-
-              onValueChange={(itemPath, itemIndex) => {
-                this.jumpToSection(itemPath)
-              }}>
-              {this.sectionOptions.map(item => {
-                if (item.data instanceof QuestionSection) {
-                  return <Picker.Item
-                    value={item.path}
-                    key={"opt-" + item.data.id}
-                    label={`${getReadablePath(item.path)}: ${item.data.name}`} />
-                }
-                return null;
-              })}
-
-            </Picker>
-          </View>
-
-          <Button style={this.props.themedStyle.toolbarButton} icon={(style) => <Icon {...style} name="arrow-forward"></Icon>} onPress={this.handleNext.bind(this)}></Button>
-        </View>
+        <Toolbar
+          backButtonDisabled={this.state.currentSectionIndex === 0}
+          nextButtonDisabled={false}
+          onBackButtonPress={this.handlePrev.bind(this)}
+          onNextButtonPress={this.handleNext.bind(this)}
+          jumpToSection={this.jumpToSection.bind(this)}
+          selectedSectionPath={selectedValue}
+          sectionOptions={this.sectionOptions}
+        />
         <Showcase style={this.props.themedStyle.showcaseContainer}>
           <ShowcaseItem title="" >
             <View>
-
               {this.state.currentItem && this.renderQuestionOrSection(this.state.currentSectionIndex)}
             </View>
           </ShowcaseItem>
@@ -356,36 +342,11 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
   showcaseContainer: {
     marginTop: 5,
   },
-  
-  toolbarGroup: {
-    left: 0, right: 0, bottom: 0, flex: 0, flexDirection: 'row', alignItems: "center", justifyContent: 'space-between'
-  },
-  toolbarButton:{
-    backgroundColor: theme['background-basic-color-1'],
-    borderWidth: 0,
-  },
+
+
   accordion: {
     backgroundColor: theme['color-primary-300']
   },
-  selectContainer: {
-    flex: 0,
-    flexDirection: "row",
-    width: 150,
-    backgroundColor: theme['color-primary-300'],
-    borderRadius: 5,
-  },
-  select: {
-    width: 150
-  },
-  customOptionStyle: {
-    color: 'red',
-  },
-  labelStyle: {
-    backgroundColor: 'white',
-  },
-  placeholderStyle: {
-  },
-  controlStyle: {
-    backgroundColor: 'black',
-  },
+
+
 }));

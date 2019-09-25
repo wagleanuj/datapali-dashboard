@@ -1,17 +1,18 @@
-import { ThemedComponentProps, withStyles, ThemeType, Input, Button, Text, Spinner } from "react-native-ui-kitten";
-import { ViewProps, View } from "react-native";
-import React from "react";
 import { request } from "dpform";
+import React from "react";
+import { View, ViewProps } from "react-native";
+import { Button as Btn } from "react-native-paper";
+import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
+import { NavigationScreenProps } from "react-navigation";
 import { APP_CONFIG } from "../config";
 import { StorageUtil } from "../storageUtil";
-import { ActivityIndicator, Button as Btn } from "react-native-paper";
 
 
 interface ComponentProps {
     onLoginPress: (email: string, password: string) => void;
 }
 
-export type SignInProps = ThemedComponentProps & ViewProps & ComponentProps;
+export type SignInProps = ThemedComponentProps & ViewProps & ComponentProps & NavigationScreenProps;
 
 interface State {
     email: string | undefined;
@@ -83,15 +84,15 @@ class SignInComponent extends React.Component<SignInProps, State> {
                 toStore[item.id] = item;
             });
 
-            return StorageUtil.multiSet(toStore).then(r => {
+            return StorageUtil.multiSet(toStore).then(() => {
                 this.props.navigation.navigate("Home");
-            }).catch(error=>{
+            }).catch(() => {
                 this.setState({
-                    error: [{message:"Failed saving the form to local storage"}],
+                    error: [{ message: "Failed saving the form to local storage" }],
                     isLoggingIn: false,
                 })
             })
-        }).catch(err => {
+        }).catch(() => {
             this.setState({
                 isLoggingIn: false,
                 error: [{ message: "Incorrect email or password!" }]
@@ -115,7 +116,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
     };
 
     public render(): React.ReactNode {
-        const { style, themedStyle, ...restProps } = this.props;
+        const { themedStyle } = this.props;
 
         return (
             <View style={themedStyle.container}>
