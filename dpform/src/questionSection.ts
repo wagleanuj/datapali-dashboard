@@ -9,6 +9,7 @@ export class QuestionSection {
     id: string;
     duplicatingSettings: IDupeSettings;
     appearingCondition: QACondition;
+    customId: string='';
     constructor() {
         this.id = getRandomId('ss-');
         this.duplicatingSettings = {
@@ -24,7 +25,8 @@ export class QuestionSection {
         return ({
             name: a.name,
             id: a.id,
-            condition: QACondition.toJSON(a.appearingCondition),
+            appearingCondition: QACondition.toJSON(a.appearingCondition),
+            customId: a.customId,
             content: a.content.map(item => {
                 if (item instanceof QuestionSection) {
                     return QuestionSection.toJSON(item);

@@ -1,6 +1,6 @@
-import { QACondition } from './condition';
 import { IContent, QAType } from './answer';
 import { AnswerOptions } from './AnswerOptions';
+import { QACondition } from './condition';
 import { IValueType } from './valueType';
 export declare class QAQuestion {
     id: string;
@@ -12,6 +12,7 @@ export declare class QAQuestion {
     options: AnswerOptions;
     answerType: IValueType;
     content: never[];
+    customId: string;
     constructor();
     static toJSON(a: QAQuestion): {
         id: string;
@@ -71,6 +72,7 @@ export declare class QAQuestion {
         answerType: {
             [key: string]: any;
         } | undefined;
+        customId: string;
     };
     static fromJSON(a: any): QAQuestion;
     updateFromQuestion(q: QAQuestion): this;

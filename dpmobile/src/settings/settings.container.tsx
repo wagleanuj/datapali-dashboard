@@ -1,5 +1,6 @@
 import { request } from 'dpform';
 import React from 'react';
+import { AsyncStorage } from 'react-native';
 import { TopNavigation } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
@@ -72,8 +73,9 @@ export class SettingsContainer extends React.Component<NavigationScreenProps, St
     })
   };
 
-  private onLogoutPress = () => {
-
+  private async onLogoutPress() {
+    await AsyncStorage.clear();
+    this.props.navigation.navigate("AuthLoading");
   };
 
 
@@ -91,7 +93,7 @@ export class SettingsContainer extends React.Component<NavigationScreenProps, St
       <Settings
         darkModeEnabled={this.state.darkModeEnabled}
         onDownloadFormsPress={this.onDownloadFormsPress}
-        onLogoutPress={this.onLogoutPress}
+        onLogoutPress={this.onLogoutPress.bind(this)}
         onToggleDarkMode={this.onDarkModeToggle}
         isLoadingAvailableForms={this.state.isLoadingAvailableForms}
       />

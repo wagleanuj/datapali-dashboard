@@ -1,13 +1,14 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
-var condition_1 = require("./condition");
 var answer_1 = require("./answer");
 var AnswerOptions_1 = require("./AnswerOptions");
+var condition_1 = require("./condition");
 var util_1 = require("./util");
 var valueType_1 = require("./valueType");
 var QAQuestion = /** @class */ (function () {
     function QAQuestion() {
         this.content = [];
+        this.customId = '';
         this.autoAnswer = {
             isEnabled: false,
             answeringConditions: [],
@@ -25,6 +26,7 @@ var QAQuestion = /** @class */ (function () {
             autoAnswer: autoAnswerToJSON(a.autoAnswer),
             options: AnswerOptions_1.AnswerOptions.toJSON(a.options),
             answerType: a.answerType ? valueType_1.answerTypeToJSON(a.answerType) : undefined,
+            customId: a.customId
         };
         return r;
     };
@@ -43,6 +45,7 @@ var QAQuestion = /** @class */ (function () {
         if (a.autoAnswer) {
             q.autoAnswer = autoAnswerFromJSON(a.autoAnswer);
         }
+        a.customId = q.customId || "";
         return q;
     };
     QAQuestion.prototype.updateFromQuestion = function (q) {

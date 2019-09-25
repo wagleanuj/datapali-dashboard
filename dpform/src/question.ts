@@ -1,9 +1,9 @@
-import { QACondition } from './condition';
+import { isNil } from "lodash";
 import { IContent, QAType } from './answer';
 import { AnswerOptions } from './AnswerOptions';
-import {  getRandomId } from './util';
-import { IValueType, answerTypeToJSON, answerTypeFromJSON } from './valueType';
-
+import { QACondition } from './condition';
+import { getRandomId } from './util';
+import { answerTypeFromJSON, answerTypeToJSON, IValueType } from './valueType';
 export class QAQuestion {
     id!: string;
     isRequired!: boolean;
@@ -14,6 +14,7 @@ export class QAQuestion {
     options!: AnswerOptions;
     answerType!: IValueType;
     content = [];
+    customId: string = '';
 
     constructor() {
         this.autoAnswer = {
@@ -34,6 +35,7 @@ export class QAQuestion {
             autoAnswer: autoAnswerToJSON(a.autoAnswer),
             options: AnswerOptions.toJSON(a.options),
             answerType: a.answerType ? answerTypeToJSON(a.answerType) : undefined,
+            customId: a.customId
         };
         return r;
     }
@@ -46,6 +48,7 @@ export class QAQuestion {
         if (a.options) { q.options = AnswerOptions.fromJSON(a.options); }
         if (a.answerType) { q.answerType = answerTypeFromJSON(a.answerType); }
         if (a.autoAnswer) { q.autoAnswer = autoAnswerFromJSON(a.autoAnswer); }
+        a.customId = q.customId || "";
         return q;
     }
 

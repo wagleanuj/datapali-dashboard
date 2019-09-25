@@ -2,10 +2,10 @@ import { useScreens } from 'react-native-screens';
 import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import { AuthLoading } from '../components/authloading';
 import { FormList } from '../components/forms';
 import { SignIn } from '../components/login';
 import { MenuContainer } from '../components/menu.container';
-import { Settings } from '../components/settings';
 import { SurveyForm } from '../components/surveyform';
 import { SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
@@ -32,6 +32,7 @@ const MenuNavigator: NavigationContainer = createBottomTabNavigator({
 
 
 const LoginNavigator: NavigationContainer = createStackNavigator({
+  AuthLoading: AuthLoading,
   Login: SignIn,
 }, {
   headerMode: 'screen',
@@ -40,19 +41,11 @@ const LoginNavigator: NavigationContainer = createStackNavigator({
   },
 })
 
-const AppNavigator: NavigationContainer = createStackNavigator({
-  ['Home']: MenuNavigator,
-
-}, {
-  headerMode: 'screen',
-  defaultNavigationOptions: MenuNavigationOptions,
-});
-
-const RootNavigator = (signedIn: boolean = false): NavigationContainer => createSwitchNavigator({
+const RootNavigator: NavigationContainer = createSwitchNavigator({
   Home: { screen: MenuNavigator },
-  LoginPage: { screen: LoginNavigator },
+  AuthLoading: { screen: LoginNavigator },
 }, {
-  initialRouteName: signedIn ? "Home" : "LoginPage",
+  initialRouteName: "AuthLoading",
 })
 
 
@@ -62,4 +55,4 @@ const createAppRouter = (container: NavigationContainer): NavigationContainer =>
 };
 
 
-export const Router = (isSignedIn: boolean = false): NavigationContainer => createAppRouter(RootNavigator(isSignedIn));
+export const Router: NavigationContainer = createAppRouter(RootNavigator);

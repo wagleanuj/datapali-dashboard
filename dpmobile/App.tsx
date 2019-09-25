@@ -6,7 +6,6 @@ import { ApplicationProvider, IconRegistry } from 'react-native-ui-kitten';
 import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar';
 import { Router } from './src/navigation/routes';
-import { StorageUtil } from './src/storageUtil';
 import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
 
 const fonts: { [key: string]: number } = {
@@ -45,12 +44,7 @@ export default class App extends React.Component<AppProps, AppState> {
         theme: theme as ThemeKey
       })
     }
-    const authToken = await StorageUtil.getAuthToken();
-    if (authToken) {
-      this.setState({
-        signedIn: true
-      })
-    }
+
   }
 
   private onSwitchTheme = (theme: ThemeKey) => {
@@ -58,9 +52,10 @@ export default class App extends React.Component<AppProps, AppState> {
       this.setState({ theme });
     });
   };
+  onNavigationStateChange(prevState, newState) {
+  }
 
   render() {
-    let Router_ = Router(this.state.signedIn);
     const contextValue: ThemeContextType = {
       currentTheme: this.state.theme,
       toggleTheme: this.onSwitchTheme,
@@ -74,7 +69,7 @@ export default class App extends React.Component<AppProps, AppState> {
             theme={themes[this.state.theme]}>
             <IconRegistry icons={EvaIconsPack} />
             <DynamicStatusBar currentTheme={this.state.theme} />
-            <Router_ />
+            <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
           </ApplicationProvider>
         </ThemeContext.Provider>
       </ApplicationLoader>

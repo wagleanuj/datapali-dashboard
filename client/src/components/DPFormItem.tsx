@@ -11,7 +11,7 @@ import {
     FormGroup,
 } from "reactstrap";
 import Modal from "react-modal";
-import {openModal, destroyModal} from "../utils"
+import { openModal, destroyModal } from "../utils"
 import { AutofillCondition } from "./AutofillCondition";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { Switch } from "@blueprintjs/core";
@@ -134,14 +134,12 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
         }
     }
     shouldComponentUpdate(nextProps: FormItemProps, nextState: FormItemState) {
-        if (_.isEqual(nextProps.question, this.state.question)) {
-            return false;
-        }
-        return true;
+        return false;
     }
     handleChange() {
         if (this.props.onChange) this.props.onChange(this.state.question)
     }
+    
     handleRequiredChange(e: any) {
         this.setState((prevState: FormItemState) => {
             let question = _.clone(prevState.question);
@@ -212,6 +210,16 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
         }, this.handleChange.bind(this))
     }
 
+    handleCustomIdChange(newId: string) {
+        this.setState((prevState: any) => {
+            let cloned: QAQuestion = _.clone(prevState.question);
+            cloned.customId = newId;
+            return {
+                question: cloned
+            }
+        }, this.handleChange.bind(this))
+    }
+
     render() {
         return (
 
@@ -222,6 +230,10 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
                             <h5 className="title">Add Question</h5>
                         </CardHeader>
                         <CardBody>
+                            <FormGroup>
+                                <label htmlFor="customid">Custom ID</label>
+                                <input defaultValue={this.state.question.customId} className="form-control" onChange={e => this.handleCustomIdChange(e.target.value)} id="custom_id" name="custom_id" placeholder="Custom id" />
+                            </FormGroup>
                             <FormGroup>
                                 <label htmlFor="question">Question</label>
                                 <textarea defaultValue={this.state.question.questionContent.content} className="form-control" onChange={e => this.handleQuestionChange(e.target.value)} id="question" name="question" placeholder="" />

@@ -6,6 +6,7 @@ var util_1 = require("./util");
 var duplicateSettings_1 = require("./duplicateSettings");
 var QuestionSection = /** @class */ (function () {
     function QuestionSection() {
+        this.customId = '';
         this.id = util_1.getRandomId('ss-');
         this.duplicatingSettings = {
             condition: undefined,
@@ -19,7 +20,8 @@ var QuestionSection = /** @class */ (function () {
         return ({
             name: a.name,
             id: a.id,
-            condition: condition_1.QACondition.toJSON(a.appearingCondition),
+            appearingCondition: condition_1.QACondition.toJSON(a.appearingCondition),
+            customId: a.customId,
             content: a.content.map(function (item) {
                 if (item instanceof QuestionSection) {
                     return QuestionSection.toJSON(item);

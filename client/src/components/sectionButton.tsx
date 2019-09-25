@@ -4,15 +4,18 @@ import React, { ReactNode, useState } from "react";
 import { ButtonGroup, Button, Collapse, EditableText, Card, Divider, H5, Navbar, Alignment, NavbarDivider } from "@blueprintjs/core";
 
 interface SectionButtonProps {
-    sectionId: string,
-    onClick: (id: string, path: number[]) => void,
-    path: number[],
-    readablePath: string,
-    handleDeletion: (id: string, path: number[]) => void,
-    handleMoveUp: (id: string, path: number[]) => void,
-    children: ReactNode,
-    handleSectionNameChange: (v: string) => void,
-    sectionName: string,
+    sectionId: string;
+    onClick: (id: string, path: number[]) => void;
+    path: number[];
+    readablePath: string;
+    handleDeletion: (id: string, path: number[]) => void;
+    handleMoveUp: (id: string, path: number[]) => void;
+    children: ReactNode;
+    handleSectionNameChange: (v: string) => void;
+    handleOpenConditionSettings: () => void;
+    handleCustomIdChange: (v: string)=>void;
+    sectionName: string;
+    customId: string;
 
 }
 export const SectionButton = (props: SectionButtonProps) => {
@@ -31,6 +34,10 @@ export const SectionButton = (props: SectionButtonProps) => {
                         </H5>
                     </Navbar.Group>
                     <Navbar.Group align={Alignment.RIGHT}>
+                        <EditableText onChange={props.handleCustomIdChange} placeholder="Custom Id" defaultValue={props.customId}> </EditableText>
+
+                        <Button icon="key" onClick={() => props.handleOpenConditionSettings()}></Button>
+
                         <Button onClick={() => setIsExpanded(!isExpanded)} icon="cog"></Button>
                         <Button icon="folder-open" onClick={() => props.onClick(props.sectionId, props.path)}></Button>
                     </Navbar.Group>

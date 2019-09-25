@@ -1,6 +1,6 @@
 import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
-import { Button, Spinner, Text, ThemedComponentProps, ThemeType, Toggle, withStyles, Icon } from 'react-native-ui-kitten';
+import { Button, Icon, Spinner, Text, ThemedComponentProps, ThemeType, Toggle, withStyles } from 'react-native-ui-kitten';
 import { textStyle } from '../themes/style';
 
 
@@ -65,8 +65,13 @@ class SettingsComponent extends React.Component<SettingsProps> {
 
         <Section
           style={[themedStyle.section, themedStyle.notificationSection]}
-          onPress={this.onLogoutPress}>
-          <Button icon={(style) => (<Icon {...style} name="log-out" />)}>Logout</Button>
+        >
+          <Button
+            onPress={this.onLogoutPress}
+            icon={(style) => (<Icon {...style} name="log-out" />)}
+          >
+            Logout
+          </Button>
         </Section>
       </View>
     );
@@ -89,12 +94,14 @@ const Section = (props?: SectionProps): React.ReactElement<TouchableOpacityProps
 export const Settings = withStyles(SettingsComponent, (theme: ThemeType) => ({
   container: {
     flex: 1,
-    backgroundColor: theme['background-basic-color-1'],
+    backgroundColor: theme['background-basic-color-2'],
+    paddingHorizontal: 16,
+    paddingVertical: 16,
   },
   section: {
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme['border-basic-color-2'],
+    borderBottomColor: theme['border-basic-color-1'],
   },
   notificationSection: {
     paddingTop: 40,
@@ -111,7 +118,7 @@ export const Settings = withStyles(SettingsComponent, (theme: ThemeType) => ({
     justifyContent: "space-between",
     padding: 16,
     borderBottomWidth: 1,
-    borderBottomColor: theme['border-basic-color-2'],
+    borderBottomColor: theme['border-basic-color-1'],
   },
   sectionText: textStyle.subtitle,
 }));

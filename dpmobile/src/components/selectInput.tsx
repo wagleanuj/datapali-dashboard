@@ -131,9 +131,10 @@ export class SelInput extends React.Component<SelInputProps, any> {
         return this.allOptionsId && this.allOptionsId.findIndex(item => item === this.props.value);
     }
     render() {
+        const allOptionsComponent = this.getOptions();
         return (
             <RadioGroup selectedIndex={this.getDefaultSelected()} onChange={this.onSelectionChanged.bind(this)}>
-                {this.getOptions()}
+                {allOptionsComponent}
             </RadioGroup>
         );
     }

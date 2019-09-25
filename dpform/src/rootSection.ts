@@ -1,9 +1,9 @@
+import { isNil } from 'lodash';
 import { QACondition } from './condition';
 import { dupeSettingsFromJSON } from './duplicateSettings';
 import { QAQuestion } from './question';
 import { QuestionSection } from './questionSection';
 import { getRandomId } from './util';
-import { isNil } from 'lodash';
 
 export class RootSection {
     questions: { [key: string]: QAQuestion } = {};
@@ -182,6 +182,8 @@ export class RootSection {
                 const section = new QuestionSection();
                 section.id = a.id;
                 section.name = a.name;
+                section.customId = a.customId || '';
+                if (a.customId) section.customId = a.customId;
                 if (a.appearingCondition) { section.appearingCondition = QACondition.fromJSON(a.appearingCondition); }
                 section.duplicatingSettings = dupeSettingsFromJSON(a.duplicatingSettings);
                 r.addSection(parentPath, [section]);

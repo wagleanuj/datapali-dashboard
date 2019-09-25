@@ -2,7 +2,7 @@
 import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QORS, QuestionSection, RootSection } from 'dpform';
 import _ from 'lodash';
 import React from 'react';
-import { View } from 'react-native';
+import { ToastAndroid, View } from 'react-native';
 import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
@@ -212,15 +212,19 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   handleNext() {
     for (let i = this.state.currentSectionIndex + 1; i < this.state.root.content.length; i++) {
       let nextItem = RootSection.getFromPath([0, i], [this.state.root]);
-      if (nextItem && !(nextItem instanceof RootSection) && this.evaluateCondition(nextItem.appearingCondition)) {
-        return this.setState((prevState: SurveyFormComponentState) => {
-          let newhistory = _.clone(prevState.history);
-          newhistory.push(prevState.currentSectionIndex);
-          return {
-            history: newhistory,
-            currentSectionIndex: i
-          };
-        });
+      if (nextItem && !(nextItem instanceof RootSection)) {
+        const isValid = this.evaluateCondition(nextItem.appearingCondition);
+        if (!isValid) ToastAndroid.show("This section is not unlocked, skipping", 500);
+        if (isValid) {
+          return this.setState((prevState: SurveyFormComponentState) => {
+            let newhistory = _.clone(prevState.history);
+            newhistory.push(prevState.currentSectionIndex);
+            return {
+              history: newhistory,
+              currentSectionIndex: i
+            };
+          });
+        }
 
       }
     }
@@ -283,6 +287,12 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       let newHistory = _.clone(prevState.history);
       let newIndex = path[path.length - 1];
       let currentIndex = prevState.currentSectionIndex;
+      const nextSection = RootSection.getFromPath(path, [this.state.root]);
+      const isValid = nextSection instanceof QuestionSection && this.evaluateCondition(nextSection.appearingCondition);
+      if (!isValid) {
+        ToastAndroid.show("This section has not unlocked yet", 500);
+        return;
+      }
       if (newIndex > currentIndex) {
         newHistory.push(prevState.currentSectionIndex);
         for (let i = newHistory[newHistory.length - 1] + 1; i < newIndex; i++) {

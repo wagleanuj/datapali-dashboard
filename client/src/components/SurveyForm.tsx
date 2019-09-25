@@ -1,10 +1,10 @@
 
-import { Intent, IToastProps, ITreeNode, Toaster, EditableText } from "@blueprintjs/core";
+import { EditableText, Intent, IToastProps, ITreeNode, Toaster } from "@blueprintjs/core";
 import copy from "copy-to-clipboard";
-import { Constants, IDupeSettings, QAQuestion, QuestionSection, request, RootSection, QORS } from "dpform";
+import { Constants, IDupeSettings, ILiteral, QAQuestion, QORS, QuestionSection, request, RootSection } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { Row, Navbar } from "reactstrap";
+import { Row } from "reactstrap";
 import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
@@ -183,8 +183,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     private handleSave() {
         let file = RootSection.toJSON(this.state.root);
         file.content = JSON.stringify(file.content);
-        if(!file.name) file.name = "Main Form";
-        console.log(file);
+        if (!file.name) file.name = "Main Form";
         let requestBody = {
             query: `
             mutation SaveForm($saveFile: FormFileInput!){
@@ -197,7 +196,6 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         }
         let token = this.props.token;
-        console.log(token);
         return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
     }
 
@@ -281,7 +279,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             this.setState((prevState: SurveyFormState) => {
 
                 let expandedNodes = item ? _.union([item.id], prevState.expandedNodes) : prevState.expandedNodes;
-                let selectedNodes = item? [item.id]: prevState.selectedNodes;
+                let selectedNodes = item ? [item.id] : prevState.selectedNodes;
                 return {
                     selectedNodes: selectedNodes,
                     expandedNodes: expandedNodes,
@@ -291,15 +289,14 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
 
             })
         }
-        else if(item) {
+        else if (item) {
             this.setState((prevState: SurveyFormState) => {
-
                 let parent = _nodePath.length > 1 ? _nodePath.slice(0, _nodePath.length - 1) : _nodePath;
                 let parentSection = RootSection.getFromPath(parent, [prevState.root]);
                 let selectedQuestion = RootSection.getFromPath(_nodePath, [prevState.root]);
                 let expandedNodes = prevState.expandedNodes;
-                let selectedNodes = selectedQuestion? [selectedQuestion.id]:prevState.selectedNodes;
-                if ( parentSection && !(parentSection instanceof QAQuestion)) {
+                let selectedNodes = selectedQuestion ? [selectedQuestion.id] : prevState.selectedNodes;
+                if (parentSection && !(parentSection instanceof QAQuestion)) {
                     expandedNodes = _.union([parentSection.id], expandedNodes);
                     selectedNodes.push(parentSection.id);
                 }
@@ -307,7 +304,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 return {
                     expandedNodes: expandedNodes,
                     selectedNodes: selectedNodes,
-                    activeSection: parentSection &&!(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
+                    activeSection: parentSection && !(parentSection instanceof QAQuestion) ? parentSection : prevState.activeSection,
                     activeSectionPath: parent
                 }
 
@@ -332,7 +329,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             let section = RootSection.getFromPath(path, [prevState.root]);
             let expandedNodes = prevState.expandedNodes;
             let selectedNodes = []
-            if ( section && section instanceof QuestionSection) {
+            if (section && section instanceof QuestionSection) {
                 expandedNodes = _.union([section.id], expandedNodes);
                 selectedNodes.push(section.id);
             }
@@ -370,12 +367,31 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             if (newPath[newPath.length - 1] > 0) {
                 newPath[newPath.length - 1] = newPath[newPath.length - 1] - 1;
             }
-            console.log(newPath, path)
             cloned.moveItem(path, newPath);
             return {
                 root: cloned
             }
         })
+    }
+    handleSectionConditionChange(sectionId: string, literals: ILiteral[]) {
+        this.setState((prevState: SurveyFormState) => {
+            let cloned = _.clone(prevState.root);
+            cloned.sections[sectionId].appearingCondition.setLiterals(literals);
+            return {
+                root: cloned
+            }
+        });
+    }
+
+    handleSectionCustomIdChange(sectionId: string, v: string) {
+        this.setState((prevState: SurveyFormState) => {
+            let cloned = _.clone(prevState.root);
+            cloned.sections[sectionId].customId = v;
+
+            return {
+                root: cloned
+            }
+        });
     }
     render() {
 
@@ -403,6 +419,8 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                     </div>
                     <div className="content">
                         <SectionC
+                            handleSectionCustomIdChange={this.handleSectionCustomIdChange.bind(this)}
+                            handleSectionConditionChange={this.handleSectionConditionChange.bind(this)}
                             handleMoveUp={this.handleMoveUp.bind(this)}
                             constants={this.state.constants}
                             handleSectionNameChange={this.handleSectionNameChange.bind(this)}

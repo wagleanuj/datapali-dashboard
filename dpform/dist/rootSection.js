@@ -27,12 +27,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
     }
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+var lodash_1 = require("lodash");
 var condition_1 = require("./condition");
 var duplicateSettings_1 = require("./duplicateSettings");
 var question_1 = require("./question");
 var questionSection_1 = require("./questionSection");
 var util_1 = require("./util");
-var lodash_1 = require("lodash");
 var RootSection = /** @class */ (function () {
     function RootSection() {
         this.questions = {};
@@ -201,6 +201,9 @@ var RootSection = /** @class */ (function () {
                 var section = new questionSection_1.QuestionSection();
                 section.id = a.id;
                 section.name = a.name;
+                section.customId = a.customId || '';
+                if (a.customId)
+                    section.customId = a.customId;
                 if (a.appearingCondition) {
                     section.appearingCondition = condition_1.QACondition.fromJSON(a.appearingCondition);
                 }
