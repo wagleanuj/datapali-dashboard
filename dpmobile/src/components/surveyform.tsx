@@ -16,7 +16,6 @@ import { Question, SurveySection } from './section';
 import { Showcase } from './showcase';
 import { ShowcaseItem } from './showcaseitem';
 import { Toolbar } from './toolbar';
-import { ProgressBar } from 'react-native-paper';
 export type SurveyFormComponentProps = {
   answerStore: AnswerStore,
   root: RootSection,
@@ -52,7 +51,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     const renderRightControls = () => {
       const save = props.navigation.getParam("onSaveClick");
       const saveComponent = <TopNavigationAction onPress={save} icon={SaveIcon} />
-     
+
 
       return [saveComponent];
     }
@@ -342,7 +341,6 @@ export const SurveyForm = withStyles(SurveyFormComponent, (theme: ThemeType) => 
   showcaseContainer: {
     marginTop: 5,
   },
-
 
   accordion: {
     backgroundColor: theme['color-primary-300']

@@ -1,5 +1,5 @@
 import React from 'react';
-import { BottomNavigation, BottomNavigationTab, ThemedComponentProps, ThemeProvider, ThemeType, withStyles } from 'react-native-ui-kitten';
+import { BottomNavigation, BottomNavigationTab, Icon, ThemedComponentProps, ThemeProvider, ThemeType, withStyles } from 'react-native-ui-kitten';
 import { SafeAreaView } from 'react-navigation';
 import { themes } from '../themes';
 
@@ -21,18 +21,18 @@ class MenuComponent extends React.Component<Props> {
 
     return (
       <SafeAreaView style={themedStyle.safeAreaContainer}>
-        <ThemeProvider theme={{...this.props.theme, ...themes['App Theme']}}>
+        <ThemeProvider theme={{ ...this.props.theme, ...themes['App Theme'] }}>
           <BottomNavigation
             appearance='noIndicator'
             selectedIndex={selectedIndex}
             onSelect={this.onTabSelect}>
             <BottomNavigationTab
               title='Filled Forms'
-              icon={null}
+              icon={(style) => (<Icon {...style} name="archive" />)}
             />
             <BottomNavigationTab
               title='Settings'
-              icon={null}
+              icon={(style) => (<Icon {...style} name="settings-2" />)}
             />
           </BottomNavigation>
         </ThemeProvider>

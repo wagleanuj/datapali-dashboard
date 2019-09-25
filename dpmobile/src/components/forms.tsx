@@ -1,12 +1,13 @@
 import { getRandomId, RootSection } from 'dpform';
 import React from 'react';
 import { ListRenderItemInfo, RefreshControl, View } from 'react-native';
-import { FAB, IconButton } from 'react-native-paper';
+import { FAB } from 'react-native-paper';
 import { SwipeListView } from "react-native-swipe-list-view";
-import { ListItem, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from 'react-native-ui-kitten';
+import { Button, Icon, ListItem, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
 import { AnswerStore } from '../answermachine';
+import { PaperPlaneIconFill } from '../assets/icons';
 import { StorageUtil } from '../storageUtil';
 import { textStyle } from '../themes/style';
 
@@ -236,14 +237,16 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
                     renderItem={this.renderItem}
                     renderHiddenItem={(data, rowMap) => (
                         <View key={"hid" + data.item.title} style={this.props.themedStyle.rowBack}>
-                            <IconButton
+                            <Button
+                                size="giant"
+                                appearance={'ghost'}
                                 onPress={this.handleSend.bind(this, data.item.title)}
-                                color="white"
-                                icon="send" />
-                            <IconButton
+                                icon={(style) => (<Icon {...style} name="paper-plane" />)} />
+                            <Button
+                                size="giant"
+                                appearance={'ghost'}
                                 onPress={this.handleDeleteForm.bind(this, data.item.title)}
-                                color="white"
-                                icon="delete-forever" />
+                                icon={(style) => (<Icon {...style} name="trash-2" />)} />
                         </View>
                     )}
                     leftOpenValue={75}
