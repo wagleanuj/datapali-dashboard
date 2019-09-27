@@ -1,6 +1,7 @@
 import { request } from "dpform";
 import React from "react";
 import { Button, Container, FormGroup, Row } from "reactstrap";
+import { CONFIG } from "../APPCONFIG";
 interface LoginProps {
     onLoggedIn: (token: string) => void
 }
@@ -31,7 +32,7 @@ export class Login extends React.Component<LoginProps, LoginState>{
                 password: password
             }
         }
-        return request("http://localhost:5000/graphql", "login", requestBody, "Could not login", "").then(res => {
+        return request(CONFIG.PROD_SERVER, "login", requestBody, "Could not login", "").then(res => {
             console.log(res);
             if (this.props.onLoggedIn) this.props.onLoggedIn(res.token);
         })

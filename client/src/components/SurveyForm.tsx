@@ -9,6 +9,7 @@ import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 import { Toolbar } from "./Toolbar";
+import { CONFIG } from "../APPCONFIG";
 
 
 
@@ -64,7 +65,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         }
         let token = this.props.token;
-        return request("http://localhost:5000/graphql", "forms", requestBody, "Could not delete the game file", token).then(file => {
+        return request(CONFIG.PROD_SERVER, "forms", requestBody, "Could not delete the game file", token).then(file => {
             file = file[0]
             if (file) {
                 file.content = JSON.parse(file.content);
@@ -196,7 +197,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
             }
         }
         let token = this.props.token;
-        return request("http://localhost:5000/graphql", "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
+        return request(CONFIG.PROD_SERVER, "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
     }
 
 
