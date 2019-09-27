@@ -235,8 +235,9 @@ function optionFromJSON(a) {
         appearingCondition: condition_1.QACondition.fromJSON(a.appearingCondition),
         id: a.id,
         value: a.value,
-        type: valueType_1.answerTypeFromJSON(a.type),
     };
+    if (a.type)
+        option.type = valueType_1.answerTypeFromJSON(a.type);
     return option;
 }
 exports.optionFromJSON = optionFromJSON;

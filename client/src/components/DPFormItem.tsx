@@ -133,9 +133,9 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
             question: this.props.question
         }
     }
-    shouldComponentUpdate(nextProps: FormItemProps, nextState: FormItemState) {
-        return false;
-    }
+    // shouldComponentUpdate(nextProps: FormItemProps, nextState: FormItemState) {
+    //     // return false;
+    // }
     handleChange() {
         if (this.props.onChange) this.props.onChange(this.state.question)
     }

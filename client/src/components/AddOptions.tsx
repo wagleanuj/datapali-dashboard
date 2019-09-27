@@ -1,15 +1,15 @@
-import { AnswerOptions,Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant } from "dpform";
+import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant, getRandomId, ANSWER_TYPES } from "dpform";
 import React from "react";
 import _ from "lodash";
 import { CreateConditionModal } from "./CreateConditionModal";
-import {  Table } from "reactstrap";
-import { H5, Divider , Button, ButtonGroup} from "@blueprintjs/core";
+import { Table } from "reactstrap";
+import { H5, Divider, Button, ButtonGroup } from "@blueprintjs/core";
 import Select from "react-select/";
 import { customStyles } from "./DPFormItem";
 import { AnswerTypeInput } from "./AnswerType";
 import { ValInput } from "./ValInput";
 import Creatable from "react-select/creatable"
-import {openModal, destroyModal} from "../utils"
+import { openModal, destroyModal } from "../utils"
 
 interface QAAddOptionsState {
     options: AnswerOptions,
@@ -26,10 +26,47 @@ enum OPTION_OR_GROUP {
     GROUP = 2
 }
 export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOptionsState>{
+    constantNameInputRef: HTMLInputElement | null = null;
+    makeFromTextInputRef: HTMLTextAreaElement | null = null;
     constructor(props: QAAddOptionsProps) {
         super(props);
         this.state = {
             options: this.props.options || []
+        }
+    }
+    makeConstant() {
+        let name = 'const';
+        if (this.constantNameInputRef) {
+            name = this.constantNameInputRef.value;
+        }
+        this.props.constants.addConstant({
+            id: getRandomId('const-'),
+            name: name,
+            type: { name: ANSWER_TYPES.SELECT, ofType: { name: ANSWER_TYPES.STRING } },
+            value: AnswerOptions.fromJSON(AnswerOptions.toJSON((this.state.options)))
+        });
+    }
+    makeOptionsFromText() {
+        if (this.makeFromTextInputRef) {
+            let text = this.makeFromTextInputRef.value;
+            let optionsText = text.split("\n");
+            this.setState(prevState => {
+                let options = _.clone(prevState.options);
+                optionsText.forEach(item=>{
+                    options.addOption({
+                        id: "opt-" + Object.keys(options.optionsMap).length,
+                        appearingCondition: undefined,
+                        groupName: undefined,
+                        type: this.props.defaultOptionType.ofType,
+                        value: item,
+                    })
+                })
+                
+                return {
+                    options: options
+                }
+            })
+
         }
     }
     handleChange() {
@@ -38,7 +75,14 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
     handleAddNewOption() {
         this.setState((prevState: QAAddOptionsState) => {
             let cloned = _.clone(prevState.options);
-            cloned.addOption();
+            let newOption: IOption = {
+                id: "opt-" + Object.keys(prevState.options.optionsMap).length,
+                appearingCondition: undefined,
+                groupName: undefined,
+                type: this.props.defaultOptionType.ofType,
+                value: undefined
+            }
+            cloned.addOption(newOption);
             return {
                 options: cloned
             }
@@ -169,18 +213,27 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
         console.log(constant);
         if (constant && constant.value instanceof AnswerOptions) {
             this.setState({
-                options: constant.value
-            },this.handleChange.bind(this))
+                options: AnswerOptions.fromJSON(AnswerOptions.toJSON(constant.value))
+            }, this.handleChange.bind(this))
         }
     }
 
     render() {
-        let constantsOptions = this.props.constants.ConstantsArray.map((item:IConstant) => ({ label: item.name, value: item.name }));
+        let constantsOptions = this.props.constants.ConstantsArray.map((item: IConstant) => ({ label: item.name, value: item.id }));
         return (
             <ButtonGroup fill={true} vertical={true}>
                 <H5>Import From Constant </H5>
+
                 <Select styles={customStyles} options={constantsOptions} onChange={this.handleImportFromConstant.bind(this)}></Select>
+                <Divider />
+                <H5>Export To Constant</H5>
+                <input type="text" ref={r => this.constantNameInputRef = r} /><Button onClick={this.makeConstant.bind(this)}>Export</Button>
+                <Divider />
+                <H5>Make From Text</H5>
+                <textarea ref={r => this.makeFromTextInputRef = r}></textarea>
+                <Button onClick={this.makeOptionsFromText.bind(this)}>Make From Text</Button>
                 <QAOptionSection
+                    defaultType={this.props.defaultOptionType}
                     groups={this.state.options.optionGroupMap ? Object.values(this.state.options.optionGroupMap) : []}
                     handleGroupAssignment={this.handleGroupAssignment.bind(this)}
                     handleOptionTypeChange={this.handleOptionTypeChange.bind(this)}
@@ -209,6 +262,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
 }
 
 interface QAAoptionSectionProps {
+    defaultType: IValueType,
     options: IOption[],
     groups: IOptionGroup[],
     handleAddNewOption?: () => void,
@@ -233,8 +287,8 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
             options: this.props.options
         }
     }
-    shouldComponentUpdate(nextProps: QAAoptionSectionProps, nextState:QAAddOptionsSectionState ){
-        if(nextProps.options.length!==this.props.options.length || nextProps.groups.length!==this.props.groups.length){
+    shouldComponentUpdate(nextProps: QAAoptionSectionProps, nextState: QAAddOptionsSectionState) {
+        if (nextProps.options.length !== this.props.options.length || nextProps.groups.length !== this.props.groups.length) {
             return true;
         }
         return false;

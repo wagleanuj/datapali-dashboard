@@ -241,8 +241,8 @@ export function optionFromJSON(a: any) {
         appearingCondition: QACondition.fromJSON(a.appearingCondition),
         id: a.id,
         value: a.value,
-        type: answerTypeFromJSON(a.type),
     };
+    if(a.type) option.type= answerTypeFromJSON(a.type);
     return option;
 }
 
