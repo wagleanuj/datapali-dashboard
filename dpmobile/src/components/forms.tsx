@@ -6,8 +6,7 @@ import { SwipeListView } from "react-native-swipe-list-view";
 import { Button, Icon, ListItem, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
-import { AnswerStore } from '../answermachine';
-import { PaperPlaneIconFill } from '../assets/icons';
+import { AnswerStore, AnswerSection } from '../answer.store';
 import { StorageUtil } from '../storageUtil';
 import { textStyle } from '../themes/style';
 
@@ -139,7 +138,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
 
         }
         let newFilledForm: FilledForm = {
-            answerStore: new AnswerStore(rootForm).init(),
+            answerStore: new AnswerSection(rootForm),
             completedDate: undefined,
             startedDate: new Date().getTime(),
             filledBy: this.state.user.id,
@@ -184,7 +183,7 @@ class FormsComponent extends React.Component<FormsProps, FormsState>{
         let filledform = this.state.filledForms[filledFormId];
         let roots = await this.loadRootFormFromStorage([filledform.formId]);
         let root = roots[filledform.formId];
-        if (!filledform.answerStore.root) filledform.answerStore.setRoot(root);
+        // if (!filledform.answerStore) filledform.answerStore.setRoot(root);
         this.props.navigation.navigate("SurveyForm", {
             root: root,
             filledForm: filledform,
@@ -305,7 +304,7 @@ export interface FilledForm {
     completedDate: number;
     formId: string;
     filledBy: string;
-    answerStore: AnswerStore;
+    answerStore: AnswerSection;
     id: string;
 }
 export interface User {

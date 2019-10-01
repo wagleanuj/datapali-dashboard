@@ -64,7 +64,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
         this.setState({
             isLoggingIn: true
         });
-        return request(APP_CONFIG.localServerURL, "login", requestBody, "Could not login", undefined).then(result => {
+        return request(APP_CONFIG.serverURL, "login", requestBody, "Could not login", undefined).then(result => {
             console.log(result);
             let toStore = {
                 userID: result.user._id,

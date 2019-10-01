@@ -3,6 +3,7 @@ import _ from "lodash";
 import { AsyncStorage } from "react-native";
 import { AnswerStore } from "./answermachine";
 import { FilledForm } from "./components/forms";
+import { AnswerSection } from "./answer.store";
 export class StorageUtil {
 
     static increamentFillCount() {
@@ -60,7 +61,7 @@ export class StorageUtil {
 
         }
         let ff = _.clone(filledForm);
-        ff.answerStore = AnswerStore.toJSON(ff.answerStore);
+        ff.answerStore = AnswerSection.toJSON(ff.answerStore);
         multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }
@@ -70,7 +71,7 @@ export class StorageUtil {
             Object.keys(res).forEach(k => {
                 let item = res[k];
 
-                item.answerStore = AnswerStore.fromJSON(item.answerStore);
+                item.answerStore = AnswerSection.fromJSON(item.answerStore);
             });
             return res;
 

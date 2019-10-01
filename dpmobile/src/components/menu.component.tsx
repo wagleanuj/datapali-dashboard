@@ -21,7 +21,6 @@ class MenuComponent extends React.Component<Props> {
 
     return (
       <SafeAreaView style={themedStyle.safeAreaContainer}>
-        <ThemeProvider theme={{ ...this.props.theme, ...themes['App Theme'] }}>
           <BottomNavigation
             appearance='noIndicator'
             selectedIndex={selectedIndex}
@@ -35,7 +34,6 @@ class MenuComponent extends React.Component<Props> {
               icon={(style) => (<Icon {...style} name="settings-2" />)}
             />
           </BottomNavigation>
-        </ThemeProvider>
       </SafeAreaView>
     );
   }

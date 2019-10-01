@@ -53,7 +53,7 @@ export class SettingsContainer extends React.Component<NavigationScreenProps, St
 
       },
     };
-    let result = await request(APP_CONFIG.localServerURL, "forms", requestBody, "Could not fetch available forms, try again", authToken).catch(err => {
+    let result = await request(APP_CONFIG.serverURL, "forms", requestBody, "Could not fetch available forms, try again", authToken).catch(err => {
       this.setState({
         isLoadingAvailableForms: false
       })

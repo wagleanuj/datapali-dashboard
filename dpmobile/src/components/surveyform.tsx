@@ -6,6 +6,7 @@ import { ToastAndroid, View } from 'react-native';
 import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
+import { AnswerSection } from '../answer.store';
 import { AnswerStore } from '../answermachine';
 import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
 import { KEY_NAVIGATION_BACK } from '../navigation/constants';
@@ -33,10 +34,14 @@ interface SurveyFormComponentState {
   currentItem?: { data: (QuestionSection | QAQuestion), path: number[] },
   currentSectionIndex: number;
   filledForm: FilledForm,
+  answerSection: AnswerSection,
 }
 
 const routeName = "Survey Form";
 export class SurveyFormComponent extends React.Component<SurveyFormComponentProps, SurveyFormComponentState> {
+  getAutoCompleteDataForPath: (path: number[], iteration: number) => AutoCompleteItem[];
+  private sectionOptions: { data: QuestionSection | QAQuestion; path: number[]; }[] = [];
+  as: AnswerSection;
   static navigationOptions = (props) => {
 
     const renderLeftIcon = () => {
@@ -68,14 +73,14 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       />
     }
   }
-  getAutoCompleteDataForPath: (path: number[], iteration: number) => AutoCompleteItem[];
-  private sectionOptions: { data: QuestionSection | QAQuestion; path: number[]; }[] = [];
+
   constructor(props: SurveyFormComponentProps) {
     super(props);
     let root = this.props.navigation.getParam("root") || new RootSection();
 
     let filledForm = this.props.navigation.getParam("filledForm");
-    this.getAutoCompleteDataForPath = this.props.navigation.getParam("getAutoCompleteDataForPath")
+    this.getAutoCompleteDataForPath = this.props.navigation.getParam("getAutoCompleteDataForPath");
+    this.as = new AnswerSection(root);
 
     this.state = {
       root: root,
@@ -87,6 +92,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       history: [],
       currentSectionIndex: -1,
       filledForm: filledForm,
+      answerSection: this.as,
     };
   }
 
@@ -244,12 +250,12 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   }
 
 
-  setAnswerFor(path: number[], iteration: number, value: string) {
+  setAnswerFor(path: number[], value: string) {
     this.setState((prevState: SurveyFormComponentState) => {
-      let a = prevState.filledForm;
-      a.answerStore.setAnswerFor(path, iteration, value);
+      let ff = prevState.filledForm;
+      ff.answerStore.setAnswerFor(path, value);
       return {
-        filledForm: a
+        filledForm: ff
       }
     })
   }
@@ -258,6 +264,9 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
     let item = RootSection.getFromPath([0, index], [this.state.root]);
     if (item instanceof QuestionSection) {
       return <SurveySection
+        iteration={0}
+        handleAnswerSectionChange={()=>this.setState(prevState=>({answerSection: prevState.answerSection}))}
+        answerSection={AnswerSection.getItem(this.state.filledForm.answerStore, 0, index)}
         getAutoCompleteDataForPath={this.getAutoCompleteDataForPath}
         answerStore={this.state.filledForm.answerStore}
         setAnswer={this.setAnswerFor.bind(this)}

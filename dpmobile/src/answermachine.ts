@@ -1,8 +1,7 @@
-import { RootSection, QuestionSection, QAQuestion, getRandomId } from "dpform";
+import { getRandomId, QAQuestion, QuestionSection, RootSection } from "dpform";
 
-import _, { isNil } from "lodash";
 
-class Answer {
+export class Answer {
     questionId: string;
     answer: string;
     constructor(questionId: string) {
@@ -81,13 +80,23 @@ export class AnswerStore {
         }
         return r;
     }
-    getFromPath(path: number[], root: { [key: string]: any }[]) {
-        const el = root[path[0]];
-        if (path.length === 1) { return el; }
-        if (Array.isArray(el)) {
-            return this.getFromPath(path.slice(1), el);
+
+    getFromPath(path: number[]) {
+        const copiedPath = path.slice(0);
+        let currentItem = this.store;
+        while (copiedPath.length > 0) {
+            const current = copiedPath.shift();
+            let tempCurrentItem = currentItem[current];
+            if (!tempCurrentItem) {
+                if (!currentItem[0]) return;
+                let cloned = this.cloneSectionEmpty(currentItem[0]);
+                currentItem[current] = cloned;
+                currentItem = currentItem[current];
+            } else {
+                currentItem = tempCurrentItem;
+            }
         }
-        return undefined;
+        return currentItem;
     }
     /**
      * 
@@ -158,13 +167,15 @@ export class AnswerStore {
         }
         this.store = [prepare(this.root, [0])];
         this.lastModified = new Date().getTime();
+        console.log(this.store);
         return this;
     }
+
     cloneSectionEmpty(sectionArray: any[]) {
         let re = [];
         for (let i = 0; i < sectionArray.length; i++) {
             if (Array.isArray(sectionArray[i])) {
-                re.push(this.cloneSectionEmpty(re[i]));
+                re.push(this.cloneSectionEmpty(sectionArray[i]));
             } else {
                 re.push(new Answer(sectionArray[i].questionId));
             }
@@ -172,40 +183,25 @@ export class AnswerStore {
         return re;
     }
 
-    setAnswerFor(path: number[], iteration: number, value: string) {
+    setAnswerFor(path: number[], value: string) {
         if (!this.store) throw new Error("Answer store not initiated");
-        let parent = path.slice(0);
-        let index = parent.pop();
-        let ans = this.getFromPath(parent, this.store);
-        if (!ans) return undefined;
-        if (!ans[iteration]) ans[iteration] = this.cloneSectionEmpty(ans[0]);
-        let s = ans[iteration][index];
-        if (s instanceof Answer) {
+        let ans = this.getFromPath(path);
+        console.log(path);
+        console.log(ans);
+        if (!ans) throw new Error("answer store is not set correctly");
+        if (ans instanceof Answer) {
             this.lastModified = new Date().getTime();
-            s.setAnswer(value);
+            ans.setAnswer(value);
         }
-
         return this;
     }
 
-    getAnswerFor(path: number[], iteration: number) {
+    getAnswerFor(path: number[]) {
         if (!this.store) throw new Error("Answer store not initiated");
-        let parent = path.slice(0);
-        let index = parent.pop();
-
-        let ans = this.getFromPath(parent, this.store);
-
-        if (!ans) return undefined;
-        if (!ans[iteration]) return undefined;;
-        let s = ans[iteration][index];
+        let s = this.getFromPath(path);
+        if (!s) return undefined;
         if (s instanceof Answer) {
             return s.getAnswer();
-        }
-
-        else {
-            if (ans[index] instanceof Answer) {
-                return ans[index].getAnswer();
-            }
         }
     }
 
