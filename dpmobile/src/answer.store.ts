@@ -1,4 +1,4 @@
-import { QAQuestion, QuestionSection, RootSection } from "dpform";
+import { QuestionSection, RootSection } from "dpform";
 import { Answer } from "./answermachine";
 type AnswerContent = Array<AnswerSection | Answer>;
 export class AnswerSection {
@@ -54,38 +54,36 @@ export class AnswerSection {
     }
 
     static toJSON(a: AnswerSection): Array<Array<any>> {
-        const ret: Array<Array<any>> = [];
+        let ret: Array<Array<any>> = [];
         a.content.forEach((placeholder, index) => {
-            if (placeholder) {
+            if (placeholder && placeholder.length > 0) {
                 let data = [];
                 placeholder.forEach((item, i) => {
                     if (item instanceof AnswerSection) {
                         data.push(AnswerSection.toJSON(item));
                     } else if (item instanceof Answer) {
-                        data.push(JSON.parse(JSON.stringify(item)));
+                        data.push(Answer.toJSON(item));
                     }
                 });
-                ret[index] = placeholder;
+                ret[index] = data;
             };
         });
         return ret;
     }
 
     static fromJSON(a: Array<Array<any>>): AnswerSection {
-        const ret = new AnswerSection();
-
+        let ret = new AnswerSection();
         a.forEach((placeholder, index) => {
-            if (placeholder) {
+            if (placeholder && placeholder.length > 0) {
                 let content: Array<Answer | AnswerSection> = [];
                 placeholder.forEach((item, index) => {
                     if (Array.isArray(item)) {
                         content.push(AnswerSection.fromJSON(item));
                     } else {
-                        content.push(item as Answer);
+                        content.push(Answer.fromJSON(item));
                     }
                 });
-                if (index === 0) {
-                }
+
                 ret.setContent(index, content);
             }
         });
@@ -118,16 +116,13 @@ export class AnswerSection {
     }
 
     setAnswerFor(path, value) {
-        console.log(path);
         // console.log(this.content);
         let ans = AnswerSection.getFromPath(path.slice(0), this);
         if (ans instanceof Answer) {
             ans.setAnswer(value);
         } else {
-            // throw new Error("Invalid path");
-            console.log("invalid path");
+            throw new Error("Invalid path");
         }
-        console.log(ans);
 
     }
     getAnswerFor(path) {
@@ -138,24 +133,4 @@ export class AnswerSection {
         return undefined;
     }
 
-}
-export class AnswerStore {
-    private root: RootSection;
-    constructor() {
-
-    }
-    init(root: RootSection) {
-        this.root = root;
-        const prepare = (section: RootSection | QuestionSection) => {
-            if (section.content.length <= 0) return [];
-            section.content.forEach((item, index) => {
-                if (item instanceof QuestionSection) {
-
-                } else if (item instanceof QAQuestion) {
-
-                }
-            })
-        }
-
-    }
 }

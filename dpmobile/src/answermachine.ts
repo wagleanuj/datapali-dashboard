@@ -7,6 +7,15 @@ export class Answer {
     constructor(questionId: string) {
         this.questionId = questionId;
     }
+    static toJSON(a: Answer):any{
+        return {
+            questionId: a.questionId,
+            answer: a.answer,
+        }
+    }
+    static fromJSON(a: any):Answer{
+        return new Answer(a.questionId).setAnswer(a.answer);
+    }
     setAnswer(answer: string) {
         this.answer = answer;
         return this;

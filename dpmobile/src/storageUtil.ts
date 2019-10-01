@@ -1,9 +1,8 @@
 import { RootSection } from "dpform";
 import _ from "lodash";
 import { AsyncStorage } from "react-native";
-import { AnswerStore } from "./answermachine";
-import { FilledForm } from "./components/forms";
 import { AnswerSection } from "./answer.store";
+import { FilledForm } from "./components/forms";
 export class StorageUtil {
 
     static increamentFillCount() {
@@ -55,13 +54,13 @@ export class StorageUtil {
         let multisetData: any = {
         }
         if (!filledForms.includes(filledForm.id)) {
-
             filledForms.push(filledForm.id);
             multisetData.filledForms = filledForms;
 
         }
-        let ff = _.clone(filledForm);
-        ff.answerStore = AnswerSection.toJSON(ff.answerStore);
+        let ff: any = _.cloneDeep(filledForm);
+        ff.answerStore = AnswerSection.toJSON(filledForm.answerStore);
+        console.log(AnswerSection.fromJSON(ff.answerStore));
         multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }
@@ -88,7 +87,7 @@ export class StorageUtil {
         await StorageUtil.setFilledFormIds(filledForms);
 
     }
-    static setFilledFormIds(ids:string[]){
+    static setFilledFormIds(ids: string[]) {
         return StorageUtil.storeItem("filledForms", ids);
     }
 
@@ -135,11 +134,11 @@ export class StorageUtil {
             return RootSection.fromJSON(res);
         })
     }
-    static getForms(ids: string[]){
+    static getForms(ids: string[]) {
         let returnForms = {};
-        return StorageUtil.multiGet(ids).then(res=>{
-            if(res){
-                Object.keys(res).forEach(item=>{
+        return StorageUtil.multiGet(ids).then(res => {
+            if (res) {
+                Object.keys(res).forEach(item => {
                     let form = res[item];
                     form.content = JSON.parse(form.content);
                     returnForms[form.id] = RootSection.fromJSON(form);

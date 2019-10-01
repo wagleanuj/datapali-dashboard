@@ -137,8 +137,8 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
 
     }
     getValueFor(iteration: number, index: number) {
-        return  this.props.answerSection.getAnswerFor([iteration, index]);
-        
+        return this.props.answerSection.getAnswerFor([iteration, index]);
+
     }
 
     renderSection(section: QuestionSection, iteration: number = 0) {
@@ -158,7 +158,6 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
             } else if (item instanceof QAQuestion) {
                 return <Question
                     key={item.id}
-                    // autoCompleteData={this.props.getAutoCompleteDataForPath(this.props.path.concat(0, index), iteration)}
                     path={this.props.path.concat(index)}
                     question={item}
                     parentPath={this.props.path}
