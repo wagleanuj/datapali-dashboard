@@ -149,6 +149,29 @@ export class AnswerSection {
         }
         return undefined;
     }
+    static descendants(ansSection: AnswerSection, startPos:number[]=[], callback: (pos: number[], node: AnswerSection|Answer, parent: AnswerSection)=>boolean|undefined){
+        for(let i = 0; i< ansSection.content.length;i++){
+            let placeholder = ansSection.content[i];
+            for(let j = 0; j< placeholder.length;i++){
+                let currItem = placeholder[j];
+                if(currItem instanceof Answer){
+                    let returnV = callback(startPos.concat(i,j), currItem, ansSection);
+                    if(returnV===false) return ;
+                }else if(currItem instanceof AnswerSection){
+                    let returnV = callback(startPos.concat(i,j), currItem, ansSection);
+                    if(returnV===false) return ;
+                    AnswerSection.descendants(currItem, startPos.concat(i,j), callback);
+                }
+            }
+        }
+        
+    }
+
+   static getAnswerByQuestionRef(ref: string, referredFrom: number[], answerSection: AnswerSection){
+        const path =referredFrom.slice(0);
+
+
+    }
 
 
 }
