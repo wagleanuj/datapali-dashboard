@@ -3,10 +3,14 @@ import { Answer } from "./answermachine";
 type AnswerContent = Array<AnswerSection | Answer>;
 export class AnswerSection {
     private content: Array<AnswerContent> = [[]];
+    private id: string;
+    private lastModified: number;
 
     constructor(section?: QuestionSection | RootSection) {
         if (section) this.init(section);
+        this.lastModified = new Date().getTime();
     }
+
     static getFromPath(path: number[], a: AnswerSection): AnswerSection | Answer {
         if (path.length % 2 !== 0) throw new Error("Should be even");
         if (path.length >= 2) {
@@ -19,6 +23,9 @@ export class AnswerSection {
             console.log("invalid path");
         }
 
+    }
+    getId() {
+        return this.id;
     }
     static getItem(section: AnswerSection, iteration: number, index: number): any {
         let iter = section.content[iteration];
@@ -53,8 +60,10 @@ export class AnswerSection {
         return newContent;
     }
 
-    static toJSON(a: AnswerSection): Array<Array<any>> {
-        let ret: Array<Array<any>> = [];
+    static toJSON(a: AnswerSection): { id: string, content: Array<Array<any>> } {
+        let ret: { id: string, content: Array<Array<any>>, lastModified: number } = { id: undefined, content: [], lastModified: undefined };
+        ret.id = a.id;
+        ret.lastModified = a.lastModified;
         a.content.forEach((placeholder, index) => {
             if (placeholder && placeholder.length > 0) {
                 let data = [];
@@ -65,25 +74,30 @@ export class AnswerSection {
                         data.push(Answer.toJSON(item));
                     }
                 });
-                ret[index] = data;
+                ret.content[index] = data;
             };
         });
         return ret;
     }
 
-    static fromJSON(a: Array<Array<any>>): AnswerSection {
+    getLastModified() {
+        return new Date(this.lastModified);
+    }
+
+    static fromJSON(a: { id: string, content: Array<Array<any>>, lastModified: number }): AnswerSection {
         let ret = new AnswerSection();
-        a.forEach((placeholder, index) => {
+        ret.id = a.id;
+        ret.lastModified = a.lastModified;
+        a.content.forEach((placeholder, index) => {
             if (placeholder && placeholder.length > 0) {
                 let content: Array<Answer | AnswerSection> = [];
-                placeholder.forEach((item, index) => {
-                    if (Array.isArray(item)) {
+                placeholder.forEach((item, i) => {
+                    if (item.hasOwnProperty('content')) {
                         content.push(AnswerSection.fromJSON(item));
                     } else {
                         content.push(Answer.fromJSON(item));
                     }
                 });
-
                 ret.setContent(index, content);
             }
         });
@@ -102,6 +116,8 @@ export class AnswerSection {
             });
             return placeholder;
         }
+        this.id = section.id;
+        this.content = [];
         return this.setContent(0, prepare(section));
     }
 
@@ -120,11 +136,12 @@ export class AnswerSection {
         let ans = AnswerSection.getFromPath(path.slice(0), this);
         if (ans instanceof Answer) {
             ans.setAnswer(value);
+            this.lastModified = new Date().getTime();
         } else {
             throw new Error("Invalid path");
         }
-
     }
+
     getAnswerFor(path) {
         let ans = AnswerSection.getFromPath(path, this);
         if (ans instanceof Answer) {
@@ -132,5 +149,6 @@ export class AnswerSection {
         }
         return undefined;
     }
+
 
 }
