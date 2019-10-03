@@ -59,7 +59,7 @@ export class StorageUtil {
 
         }
         let ff: any = _.cloneDeep(filledForm);
-        ff.answerStore = AnswerSection.toJSON(filledForm.answerStore);
+        ff.answerSection = AnswerSection.toJSON(filledForm.answerSection);
         multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }
@@ -69,7 +69,7 @@ export class StorageUtil {
             Object.keys(res).forEach(k => {
                 let item = res[k];
 
-                item.answerStore = AnswerSection.fromJSON(item.answerStore);
+                item.answerSection = AnswerSection.fromJSON(item.answerSection);
             });
             return res;
 
