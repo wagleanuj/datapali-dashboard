@@ -2,11 +2,11 @@ import { useScreens } from 'react-native-screens';
 import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { AuthLoading } from '../components/authloading';
-import { FormList } from '../components/forms';
-import { SignIn } from '../components/login';
+import { AuthLoading } from '../components/authloading.component';
+import { FormList } from '../components/forms.component';
+import { SignIn } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
-import { SurveyForm } from '../components/surveyform';
+import { SurveyForm } from '../components/surveyform.component';
 import { SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
 

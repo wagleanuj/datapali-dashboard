@@ -2,7 +2,7 @@ import { RootSection } from "dpform";
 import _ from "lodash";
 import { AsyncStorage } from "react-native";
 import { AnswerSection } from "./answer.store";
-import { FilledForm } from "./components/forms";
+import { FilledForm } from "./components/forms.component";
 export class StorageUtil {
 
     static increamentFillCount() {
@@ -60,7 +60,6 @@ export class StorageUtil {
         }
         let ff: any = _.cloneDeep(filledForm);
         ff.answerStore = AnswerSection.toJSON(filledForm.answerStore);
-        console.log(AnswerSection.fromJSON(ff.answerStore));
         multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }

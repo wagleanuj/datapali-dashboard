@@ -4,7 +4,7 @@ import React from 'react';
 import { AsyncStorage } from 'react-native';
 import { ApplicationProvider, IconRegistry } from 'react-native-ui-kitten';
 import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
-import { DynamicStatusBar } from './src/components/dynamicstatusbar';
+import { DynamicStatusBar } from './src/components/dynamicstatusbar.component';
 import { Router } from './src/navigation/routes';
 import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
 

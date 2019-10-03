@@ -1,14 +1,78 @@
 import { QuestionSection, RootSection } from "dpform";
-import { Answer } from "./answermachine";
 type AnswerContent = Array<AnswerSection | Answer>;
+
+export class Answer {
+    questionId: string;
+    answer: string;
+    constructor(questionId: string) {
+        this.questionId = questionId;
+    }
+    static toJSON(a: Answer): any {
+        return {
+            questionId: a.questionId,
+            answer: a.answer,
+        }
+    }
+    static fromJSON(a: any): Answer {
+        return new Answer(a.questionId).setAnswer(a.answer);
+    }
+    setAnswer(answer: string) {
+        this.answer = answer;
+        return this;
+    }
+    getAnswer() {
+        return this.answer;
+    }
+}
+
+
+export class AnswerCache {
+    private cache: Map<string, Map<string, string>> = new Map();
+
+    setForQuestion(id: string, path: number[], value: string) {
+        if (!this.cache.has(id)) {
+            this.cache.set(id, new Map());
+        }
+        this.cache.get(id).set(path.join("."), value);
+    }
+    getAnswerFor(id: string, path?: number[]): { path: number[], value: string }[] {
+        const m = this.cache.get(id);
+        if (!m) return [];
+        if (path) return [{ path: path, value: m.get(path.join(".")) }];
+        let returnv = [];
+        m.forEach((value, key) => {
+            returnv.push({ path: key.split('.').map(i => parseInt(i)), value: value });
+        });
+        return returnv;
+    }
+
+}
 export class AnswerSection {
     private content: Array<AnswerContent> = [[]];
     private id: string;
     private lastModified: number;
+    private cache: AnswerCache;
 
     constructor(section?: QuestionSection | RootSection) {
         if (section) this.init(section);
         this.lastModified = new Date().getTime();
+    }
+
+    hasCache() {
+        return !!this.cache;
+    }
+    getCache() {
+        return this.cache;
+    }
+
+    buildCache() {
+        this.cache = new AnswerCache();
+        this.descendants((pos, node, parent) => {
+            if (node instanceof Answer && node.getAnswer()) {
+                this.cache.setForQuestion(node.questionId, pos, node.getAnswer())
+            }
+        });
+        return this;
     }
 
     static getFromPath(path: number[], a: AnswerSection): AnswerSection | Answer {
@@ -132,10 +196,12 @@ export class AnswerSection {
     }
 
     setAnswerFor(path, value) {
-        // console.log(this.content);
         let ans = AnswerSection.getFromPath(path.slice(0), this);
         if (ans instanceof Answer) {
             ans.setAnswer(value);
+            if (this.cache) {
+                this.cache.setForQuestion(ans.questionId, path, value);
+            }
             this.lastModified = new Date().getTime();
         } else {
             throw new Error("Invalid path");
@@ -149,29 +215,57 @@ export class AnswerSection {
         }
         return undefined;
     }
-    static descendants(ansSection: AnswerSection, startPos:number[]=[], callback: (pos: number[], node: AnswerSection|Answer, parent: AnswerSection)=>boolean|undefined){
-        for(let i = 0; i< ansSection.content.length;i++){
+
+    descendants(callback: (pos: number[], node: AnswerSection | Answer, parent: AnswerSection) => boolean | void) {
+        AnswerSection.descendants(this, callback, [])
+    }
+
+    static descendants(ansSection: AnswerSection, callback: (pos: number[], node: AnswerSection | Answer, parent: AnswerSection) => boolean | void, startPos: number[] = []) {
+        for (let i = 0; i < ansSection.content.length; i++) {
             let placeholder = ansSection.content[i];
-            for(let j = 0; j< placeholder.length;i++){
+            for (let j = 0; j < placeholder.length; j++) {
                 let currItem = placeholder[j];
-                if(currItem instanceof Answer){
-                    let returnV = callback(startPos.concat(i,j), currItem, ansSection);
-                    if(returnV===false) return ;
-                }else if(currItem instanceof AnswerSection){
-                    let returnV = callback(startPos.concat(i,j), currItem, ansSection);
-                    if(returnV===false) return ;
-                    AnswerSection.descendants(currItem, startPos.concat(i,j), callback);
+                if (currItem instanceof Answer) {
+                    let returnV = callback(startPos.concat(i, j), currItem, ansSection);
+                    if (returnV === false) return;
+                } else if (currItem instanceof AnswerSection) {
+                    let returnV = callback(startPos.concat(i, j), currItem, ansSection);
+                    if (returnV === false) return;
+                    AnswerSection.descendants(currItem, callback, startPos.concat(i, j));
                 }
             }
         }
-        
-    }
-
-   static getAnswerByQuestionRef(ref: string, referredFrom: number[], answerSection: AnswerSection){
-        const path =referredFrom.slice(0);
-
+        return;
 
     }
 
+    static getAnswerByQuestionRef(ref: string, referredFrom: number[], answerSection: AnswerSection) {
+        const path = referredFrom.slice(0);
+        let found = { node: undefined, pos: undefined, parent: undefined };
+        answerSection.descendants((pos, node, parent) => {
+            if (found.node) { return false };
+            if (node instanceof Answer && node.questionId === ref) {
+                found.node = node;
+                found.parent = parent;
+                found.pos = pos;
+                return false;
+            }
+        });
+        return found;
 
+    }
+
+    getById(id: string): string | undefined {
+        if (!this.cache) this.buildCache();
+        const val = this.cache.getAnswerFor(id);
+        if (val[0]) return val[0].value;
+
+
+        return undefined;
+    }
+
+
+}
+
+class Validator {
 }
