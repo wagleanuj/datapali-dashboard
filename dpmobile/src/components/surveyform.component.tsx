@@ -13,7 +13,7 @@ import { StorageUtil } from '../storageUtil';
 import { textStyle } from '../themes/style';
 import { AutoCompleteItem, FilledForm, User } from './forms.component';
 import { Question } from './question.component';
-import { SurveySection } from './section.component';
+import { QSection } from './section';
 import { Showcase } from './showcase.component';
 import { ShowcaseItem } from './showcaseitem.component';
 import { Toolbar } from './toolbar';
@@ -259,16 +259,24 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
   renderQuestionOrSection(index: number) {
     let item = RootSection.getFromPath([0, index], [this.state.root]);
     if (item instanceof QuestionSection) {
-      return <SurveySection
-        iteration={0}
-        handleAnswerSectionChange={() => this.setState(prevState => ({ answerSection: prevState.answerSection }))}
+      // return <SurveySection
+      //   iteration={0}
+      //   handleAnswerSectionChange={() => this.setState(prevState => ({ answerSection: prevState.answerSection }))}
+      //   answerSection={this.state.filledForm.answerSection}
+      //   getAutoCompleteDataForPath={this.getAutoCompleteDataForPath}
+      //   setAnswer={this.setAnswerFor.bind(this)}
+      //   evaluateCondition={this.evaluateCondition.bind(this)}
+      //   section={item}
+      //   _path={[0, index]}
+      //   path={[0, index]}
+      // />
+      return <QSection
         answerSection={this.state.filledForm.answerSection}
-        getAutoCompleteDataForPath={this.getAutoCompleteDataForPath}
-        setAnswer={this.setAnswerFor.bind(this)}
-        evaluateCondition={this.evaluateCondition.bind(this)}
         section={item}
-        _path={[0, index]}
-        path={[0, index]}
+        evaluateCondition={this.evaluateCondition.bind(this)}
+        setAnswer={this.setAnswerFor.bind(this)}
+        _path={[0,index]}
+
       />
     }
     else if (item instanceof QAQuestion) {

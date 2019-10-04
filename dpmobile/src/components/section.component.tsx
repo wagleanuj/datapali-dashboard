@@ -35,6 +35,10 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         this.props.handleAnswerSectionChange();
     }
 
+    makeData(){
+        
+    }
+
     renderDupe(section: QuestionSection) {
         if (section.duplicatingSettings.isEnabled) {
             let repeatType: DuplicateTimesType = section.duplicatingSettings.duplicateTimes.type;
@@ -59,10 +63,10 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
                     </View>
                 )
             }
-            return <Layout style={this.props.themedStyle.duplicatedRootSection} key={section.id + "root-duplicated"}>
+            return <View style={this.props.themedStyle.duplicatedRootSection} key={section.id + "root-duplicated"}>
                 <Text style={this.props.themedStyle.duplicatedSectionTitle}>{`${getReadablePath(this.props.path)} : ${section.name}`}</Text>
                 {children}
-            </Layout>
+            </View>
         }
 
     }
@@ -116,7 +120,7 @@ class SectionComponent extends React.Component<SectionComponentProps, SectionCom
         </Layout>
     }
 }
-export const SurveySection = React.memo(withStyles(SectionComponent, (theme) => ({
+export const SurveySection = (withStyles(SectionComponent, (theme) => ({
     container: {
         marginTop: 0,
         paddingLeft: 8,

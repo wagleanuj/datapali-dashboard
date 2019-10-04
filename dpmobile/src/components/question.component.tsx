@@ -2,13 +2,16 @@ import { AnswerOptions, ANSWER_TYPES, getReadablePath, IValueType, QACondition, 
 import _ from "lodash";
 import React from "react";
 import { DatePickerAndroid, View } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { TouchableHighlight, TouchableOpacity } from "react-native-gesture-handler";
+import { Input, Text, ThemedComponentProps, withStyles, Button, Icon } from "react-native-ui-kitten";
+import { AnswerSection } from "../answer.store";
 import { AutoComplete } from "./autocompleteinput.component";
 import { AutoCompleteItem } from "./forms.component";
 import { SelInput } from "./selectinput.component";
-import { AnswerSection } from "../answer.store";
-
+type ValidationResult = {
+    result: boolean,
+    reason?: string[],
+}
 type QuestionComponentProps = {
     question: QAQuestion;
     path: number[];
@@ -19,12 +22,18 @@ type QuestionComponentProps = {
     iteration: number;
     answerSection: AnswerSection
 } & ThemedComponentProps;
+type QuesstionComponentState = {
+    error: string
+}
 
-export class QuestionComponent extends React.Component<QuestionComponentProps, {}>{
+export class QuestionComponent extends React.Component<QuestionComponentProps, QuesstionComponentState>{
     constructor(props: QuestionComponentProps) {
         super(props);
+        this.state = {
+            error: ''
+        }
     }
-    async openDatePicker(defaultDate: Date, onDateChange?: (date: Date) => void) {
+    openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
         try {
             const { action, year, month, day } = await DatePickerAndroid.open({
                 date: defaultDate || new Date(),
@@ -59,6 +68,28 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, {
         }
         return undefined;
     }
+    validate(question: QAQuestion, value: string): ValidationResult {
+        let validationResult: ValidationResult = { result: true }
+        if (question.isRequired && !value) {
+            validationResult.result = false;
+            if (!validationResult.reason) validationResult.reason = [];
+            validationResult.reason.push("Required field.")
+            return validationResult;
+        }
+
+        //type validation: TODO::
+        return validationResult;
+
+
+    }
+    handleValidation(value: string) {
+        const result = this.validate(this.props.question, value);
+        if (result.result === false) {
+            this.setState({
+                error: result.reason[0]
+            })
+        }
+    }
 
     getValueInput(type: IValueType, options: AnswerOptions, question: QAQuestion) {
         let comp = null;
@@ -68,13 +99,18 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, {
             switch (type.name) {
                 case ANSWER_TYPES.NUMBER:
                     comp = <AutoComplete
+                        keyboardType={'numeric'}
+                        textContentType={'telephoneNumber'}
                         defaultValue={defaultValue}
                         data={this.props.autoCompleteData}
                         onChange={this.props.onValueChange}
+                        error={this.state.error}
+                        onBlur={this.handleValidation.bind(this)}
+
                     />;
                     break;
                 case ANSWER_TYPES.GEOLOCATION:
-                    let defaultLocation = (locationJSON: object) => {
+                    let defaultLocation = (locationJSON: any) => {
                         return `Latitude: ${locationJSON.coords.latitude}\nLongitude: ${locationJSON.coords.longitude}`;
                     }
                     let dl = defaultValue ? defaultLocation(JSON.parse(defaultValue)) : "";
@@ -98,22 +134,28 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, {
                     </TouchableOpacity>;
                     break;
                 case ANSWER_TYPES.STRING:
-                    comp = <Input
+                    comp = <AutoComplete
+                        textContentType={'name'}
                         defaultValue={defaultValue}
-                        onChangeText={this.props.onValueChange} />;
+                        data={this.props.autoCompleteData}
+                        onChange={this.props.onValueChange}
+                        error={this.state.error}
+                        onBlur={this.handleValidation.bind(this)}
+
+
+                    />;
                     break;
                 case ANSWER_TYPES.DATE:
                     let date = defaultValue ? new Date(defaultValue) : new Date();
-                    comp = <TouchableOpacity onPress={this.openDatePicker.bind(this, date, (date) => {
-                        let stringified = date.toDateString();
-                        this.props.onValueChange(stringified);
-                    })}>
-                        <Input
-                            defaultValue={date.toDateString()}
-                            status={"primary"}
-                            disabled
-                        />
-                    </TouchableOpacity>;
+                    comp =
+                        <Button
+                            appearance='outline'
+                            icon={(style) => (<Icon {...style} name="calendar" />)}
+                            onPress={() => this.openDatePicker(date, (date) => {
+                                let stringified = date.toDateString();
+                                this.props.onValueChange(stringified);
+                            })}
+                        >{date.toDateString()}</Button>
 
                     break;
                 case ANSWER_TYPES.SELECT:
@@ -123,7 +165,9 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, {
                         value={defaultValue}
                         onSelectionChange={this.props.onValueChange}
                         answerType={type}
-                        options={options} />;
+                        options={options}
+                        error={this.state.error}
+                    />;
                     break;
             }
         }
@@ -151,7 +195,7 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, {
     }
 
 }
-export const Question = React.memo(withStyles(QuestionComponent, theme => ({
+export const Question = (withStyles(QuestionComponent, theme => ({
     container: {
         paddingBottom: 20,
         paddingLeft: 5,

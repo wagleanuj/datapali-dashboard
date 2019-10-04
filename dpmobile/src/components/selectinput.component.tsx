@@ -1,7 +1,8 @@
 import { AnswerOptions, ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion } from "dpform";
 import _ from "lodash";
-import React, { ReactElement } from "react";
-import { Radio, RadioGroup } from "react-native-ui-kitten";
+import React from "react";
+import { View } from "react-native";
+import { Radio, RadioGroup, Text } from "react-native-ui-kitten";
 import { AnswerSection } from "../answer.store";
 
 
@@ -12,23 +13,24 @@ interface SelInputProps {
     value?: string;
     answerSection: AnswerSection;
     question: QAQuestion;
+    error: string;
 
 }
 export class SelInput extends React.Component<SelInputProps, any> {
-    private allOptionsId: string[]
+    private allOptions: { text: string, id: string }[]
     constructor(props) {
         super(props);
         this.state = {
-
+            value: this.props.value
         };
     }
     shouldComponentUpdate(nextProps, nextState) {
-        if (_.isEqual(nextProps, this.props)) {
-            return false;
-        }
+        // if (!_.isEqual(this.props.answerSection.getCache(), nextProps.answerSection.getCache())) {
+        //     return true;
+        // }
+        // return false;
         return true;
     }
-
     transformValueToType(type: IValueType, value: string) {
         switch (type.name) {
             case ANSWER_TYPES.BOOLEAN:
@@ -102,39 +104,68 @@ export class SelInput extends React.Component<SelInputProps, any> {
         return { groups: g, rootOptions: options };
 
     }
-    getOptions(): ReactElement[] {
+    getOptions() {
         const { groups, rootOptions } = this.filterByCondition();
-        this.allOptionsId = [];
-        let returnComp = [];
-        const groupItems = groups.map(item => {
-            return item.members.map(option => {
-                this.allOptionsId.push(option.id);
-                return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={option.value} />;
+        this.allOptions = [];
+        groups.forEach(item => {
+            return item.members.forEach(option => {
+                this.allOptions.push({ id: option.id, text: option.value });
             })
 
         });
-        returnComp = groupItems;
-        const groupless = rootOptions.map(item => {
-            this.allOptionsId.push(item.id);
-            return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.value} />
+        rootOptions.forEach(option => {
+            this.allOptions.push({ id: option.id, text: option.value });
         });
-        returnComp.push(...groupless);
 
-        return returnComp;
+        return this.allOptions;
     }
-    onSelectionChanged(index: number) {
-        if (this.props.onSelectionChange) this.props.onSelectionChange(this.allOptionsId[index]);
+    onSelectionChanged(value: { text: string, id: string }) {
+        if (this.props.onSelectionChange) this.props.onSelectionChange(value.id);
     }
     getDefaultSelected() {
-        return this.allOptionsId && this.allOptionsId.findIndex(item => item === this.props.value);
+        return this.allOptions && this.allOptions.findIndex(item => item.id === this.props.value);
     }
     render() {
-        const allOptionsComponent = this.getOptions();
-        return (
-            <RadioGroup selectedIndex={this.getDefaultSelected()} onChange={this.onSelectionChanged.bind(this)}>
-                {allOptionsComponent}
-            </RadioGroup>
+        const options = this.getOptions();
+        return (<View>
+            <RadioInput onSelectionChange={this.onSelectionChanged.bind(this)} defaultSelected={this.getDefaultSelected()} options={options} />
+            <Text style={{ color: 'red' }}>{this.props.error}</Text>
+        </View >
         );
     }
 
 }
+type RadioInputProps = {
+    defaultSelected: number;
+    options: { text: string, id: string }[];
+    onSelectionChange: (value: { text: string, id: string }) => void;
+}
+type RadioInputState = {
+    selected: number,
+}
+class RadioInput extends React.Component<RadioInputProps, RadioInputState>{
+    constructor(props: RadioInputProps) {
+        super(props);
+        this.state = {
+            selected: this.props.defaultSelected
+        }
+    }
+
+    renderOption(item: { text: string, id: string }) {
+        return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.text} />
+    }
+    handleSelectionChange() {
+        if (this.props.onSelectionChange) this.props.onSelectionChange(this.props.options[this.state.selected]);
+    }
+    onSelectionChange(index) {
+        this.setState({
+            selected: index
+        }, this.handleSelectionChange.bind(this))
+    }
+    render() {
+        return <RadioGroup onChange={this.onSelectionChange.bind(this)} selectedIndex={this.state.selected} >
+            {this.props.options.map(option => this.renderOption(option))}
+        </RadioGroup>
+    }
+}
+

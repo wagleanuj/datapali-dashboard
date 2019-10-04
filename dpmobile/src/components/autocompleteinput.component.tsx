@@ -1,13 +1,44 @@
 import React from "react";
-import { View } from "react-native";
+import { View, KeyboardType } from "react-native";
 import Autocomplete from "react-native-autocomplete-input";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
-
+type TextContentType = | "none"
+    | "URL"
+    | "addressCity"
+    | "addressCityAndState"
+    | "addressState"
+    | "countryName"
+    | "creditCardNumber"
+    | "emailAddress"
+    | "familyName"
+    | "fullStreetAddress"
+    | "givenName"
+    | "jobTitle"
+    | "location"
+    | "middleName"
+    | "name"
+    | "namePrefix"
+    | "nameSuffix"
+    | "nickname"
+    | "organizationName"
+    | "postalCode"
+    | "streetAddressLine1"
+    | "streetAddressLine2"
+    | "sublocality"
+    | "telephoneNumber"
+    | "username"
+    | "password"
+    | "newPassword"
+    | "oneTimeCode";
 type AutoCompleteProps = {
     onChange: (text: string) => void,
     data: { text: string }[],
     defaultValue: string,
+    textContentType?: TextContentType,
+    keyboardType?: KeyboardType,
+    onBlur: (value: string) => void,
+    error: string,
 } & ThemedComponentProps
 type AutoCompleteState = {
     menuVisible: boolean,
@@ -43,6 +74,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         this.setState({
             hideResults: true,
         })
+        if (this.props.onBlur) this.props.onBlur(this.state.value);
     }
     private handleChange() {
         if (this.props.onChange) this.props.onChange(this.state.value);
@@ -85,12 +117,17 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     inputContainerStyle={this.props.themedStyle.inputContainerStyle}
                     data={foundResult}
                     keyExtractor={(item, index) => "item-" + index}
-                    renderTextInput={() => <Input onChangeText={text => this.onValueChange(text)}
+                    renderTextInput={() => <View><Input onChangeText={text => this.onValueChange(text)}
+                        textContentType={this.props.textContentType}
                         value={this.state.value}
                         ref={r => this.input = r}
                         onFocus={this.onFocus.bind(this)}
+                        keyboardType={this.props.keyboardType}
                         onBlur={this.onBlur.bind(this)}
-                    />}
+                    />
+                        <Text style={this.props.themedStyle.errorText}>{this.props.error}</Text>
+                    </View>
+                    }
                     listStyle={this.props.themedStyle.listStyle}
                     containerStyle={this.props.themedStyle.autocompleteContainer}
 
@@ -147,6 +184,9 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
         flexDirection: "column",
         height: 40,
     },
+    errorText: {
+        color: 'red'
+    }
 
 }));
 
