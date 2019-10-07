@@ -9,6 +9,7 @@ import { Header } from 'react-navigation-stack';
 import { AnswerSection } from '../answer.store';
 import { StorageUtil } from '../storageUtil';
 import { textStyle } from '../themes/style';
+import { IAnswerSection } from '../redux/helper';
 
 type FormsProps = {
 
@@ -306,15 +307,18 @@ export interface FilledForm {
     completedDate: number;
     formId: string;
     filledBy: string;
-    answerSection: AnswerSection;
+    answerSection: IAnswerSection;
     id: string;
+    history?:number[];
+    currentIndex?: number;
 }
 export interface User {
     firstName: string;
     lastName: string;
     id: string;
     availableForms: string[],
-    filledForms: string[]
+    filledForms: string[],
+    token?: string;
 }
 export type AutoCompleteItem = {
     text: string,

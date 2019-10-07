@@ -3,17 +3,17 @@ import { createAppContainer, createSwitchNavigator, NavigationContainer } from '
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { AuthLoading } from '../components/authloading.component';
-import { FormList } from '../components/forms.component';
 import { SignIn } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
-import { SurveyForm } from '../components/surveyform.component';
+import { FilledFormsList } from '../formComponents/forms';
+import { Survey } from '../formComponents/survey';
 import { SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
 
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
-  ["FormView"]: FormList,
-  ["SurveyForm"]: SurveyForm
+  ["FormView"]: FilledFormsList,
+  ["SurveyForm"]: Survey
 }
 );
 const SettingsNavigator: NavigationContainer = createStackNavigator({

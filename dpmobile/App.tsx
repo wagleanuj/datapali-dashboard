@@ -3,10 +3,14 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import React from 'react';
 import { AsyncStorage } from 'react-native';
 import { ApplicationProvider, IconRegistry } from 'react-native-ui-kitten';
+import { createStore } from 'redux';
 import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar.component';
 import { Router } from './src/navigation/routes';
+import { Helper } from './src/redux/helper';
+import { rootReducer } from './src/redux/reducers/rootReducer';
 import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
+import { Provider } from 'react-redux';
 
 const fonts: { [key: string]: number } = {
   'opensans-semibold': require('./src/assets/fonts/opensans-semibold.ttf'),
@@ -21,7 +25,8 @@ interface AppProps {
 }
 interface AppState {
   signedIn: boolean,
-  theme: ThemeKey
+  theme: ThemeKey,
+  store: any
 }
 
 
@@ -33,15 +38,19 @@ export default class App extends React.Component<AppProps, AppState> {
     this.state = {
       signedIn: false,
       theme: 'Eva Dark',
+      store: createStore(rootReducer, undefined)
     }
   }
 
 
   async componentDidMount() {
     const theme = await AsyncStorage.getItem("theme");
+    const appstate = await Helper.generateAppState();
+    const store = createStore(rootReducer, appstate)
     if (theme) {
       this.setState({
-        theme: theme as ThemeKey
+        theme: theme as ThemeKey,
+        store: store
       })
     }
 
@@ -68,8 +77,12 @@ export default class App extends React.Component<AppProps, AppState> {
             mapping={mapping}
             theme={themes[this.state.theme]}>
             <IconRegistry icons={EvaIconsPack} />
-            <DynamicStatusBar currentTheme={this.state.theme} />
-            <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
+            <Provider store={this.state.store}>
+
+              <DynamicStatusBar currentTheme={this.state.theme} />
+              <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
+            </Provider>
+
           </ApplicationProvider>
         </ThemeContext.Provider>
       </ApplicationLoader>

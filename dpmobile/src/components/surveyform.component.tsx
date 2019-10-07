@@ -9,6 +9,7 @@ import { Header } from 'react-navigation-stack';
 import { AnswerSection } from '../answer.store';
 import { ArrowIosBackFill, SaveIcon } from '../assets/icons';
 import { KEY_NAVIGATION_BACK } from '../navigation/constants';
+import { init } from '../redux/helper';
 import { StorageUtil } from '../storageUtil';
 import { textStyle } from '../themes/style';
 import { AutoCompleteItem, FilledForm, User } from './forms.component';
@@ -78,7 +79,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
 
     let filledForm = this.props.navigation.getParam("filledForm");
     this.getAutoCompleteDataForPath = this.props.navigation.getParam("getAutoCompleteDataForPath");
-
+    const r = init(root, [0, 0]);
     this.state = {
       root: root,
       activeSection: root,
@@ -198,7 +199,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
       let isDuplicating = currSection.duplicatingSettings.isEnabled;
       if (isDuplicating && isSectionValid) {
         return { path: [0, i], data: currSection }
-      }
+      }c
       if (isSectionValid && kk <= currSection.content.length) {
         for (let j = kk; j < currSection.content.length; j++) {
           let item = currSection.content[j];
@@ -275,7 +276,7 @@ export class SurveyFormComponent extends React.Component<SurveyFormComponentProp
         section={item}
         evaluateCondition={this.evaluateCondition.bind(this)}
         setAnswer={this.setAnswerFor.bind(this)}
-        _path={[0,index]}
+        _path={[0, index]}
 
       />
     }

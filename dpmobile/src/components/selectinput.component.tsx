@@ -1,5 +1,4 @@
 import { AnswerOptions, ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion } from "dpform";
-import _ from "lodash";
 import React from "react";
 import { View } from "react-native";
 import { Radio, RadioGroup, Text } from "react-native-ui-kitten";
@@ -24,13 +23,7 @@ export class SelInput extends React.Component<SelInputProps, any> {
             value: this.props.value
         };
     }
-    shouldComponentUpdate(nextProps, nextState) {
-        // if (!_.isEqual(this.props.answerSection.getCache(), nextProps.answerSection.getCache())) {
-        //     return true;
-        // }
-        // return false;
-        return true;
-    }
+
     transformValueToType(type: IValueType, value: string) {
         switch (type.name) {
             case ANSWER_TYPES.BOOLEAN:
@@ -143,7 +136,7 @@ type RadioInputProps = {
 type RadioInputState = {
     selected: number,
 }
-class RadioInput extends React.Component<RadioInputProps, RadioInputState>{
+export class RadioInput extends React.Component<RadioInputProps, RadioInputState>{
     constructor(props: RadioInputProps) {
         super(props);
         this.state = {

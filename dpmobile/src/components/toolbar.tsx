@@ -5,7 +5,7 @@ import { Button, Icon, Layout, ThemedComponentProps, withStyles } from "react-na
 
 type ToolbarProps = {
     selectedSectionPath: number[];
-    jumpToSection: (path: number[]) => void;
+    jumpToSection: (path: number) => void;
     sectionOptions: { data: QuestionSection | QAQuestion, path: number[] }[];
     onBackButtonPress: () => void;
     onNextButtonPress: () => void;
