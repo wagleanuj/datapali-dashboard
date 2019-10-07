@@ -14,14 +14,15 @@ import { getFilledForm } from "../redux/selectors/formSelector";
 import { textStyle } from "../themes/style";
 import { FilledForm } from "../components/forms.component";
 import { Page } from "./page";
-import { getAvailableForms } from "../redux/selectors/availableFormSelector";
-import { getFilledFormsState } from "../redux/selectors/filledFormSelectors";
+import { getAvailableForms, getAvailableRootForm, getRootFormById } from "../redux/selectors/availableFormSelector";
+import { getFilledFormsState, getFilledFormById } from "../redux/selectors/filledFormSelectors";
+import { RootSection } from "dpform";
 type ComponentProps = {
     handlePrev: () => void;
     handleNext: () => void;
     handleJump: (index: number) => void;
     form: FilledForm;
-    availableForms: AvailableFormsState;
+    root: RootSection;
 }
 type SurveyProps = SurveyState & NavigationScreenProps & ThemedComponentProps & ComponentProps;
 const routeName = "Sruvey Form";
@@ -58,7 +59,7 @@ export class Survey_ extends React.Component<SurveyProps>{
     }
 
     render() {
-        const { form, availableForms } = this.props;
+        const { form, root } = this.props;
         return (
             <View>
                 <Toolbar
@@ -71,8 +72,10 @@ export class Survey_ extends React.Component<SurveyProps>{
                     sectionOptions={[]}
                 />
                 <Page
-                    content={form.answerSection[form.currentIndex]}
-                    root = {availableForms[]}
+                    // content={form.answerSection[form.currentIndex]}
+                    // root = {availableForms[]}
+                    filledFormId = {form.id}
+                    rootId = {form.formId}
                 />
             </View>
         )
@@ -96,10 +99,12 @@ const SurveyForm_ = withStyles(Survey_, (theme: ThemeType) => ({
 
 }));
 const mapStateToProps = (state: AppState, props: SurveyProps) => {
-    const formId = props.navigation.getParam('id');
+    const filledFormId = props.navigation.getParam('ffId');
+    let selected = getFilledFormById(state,props,filledFormId);
     return {
-        form: getFilledFormsState(state,  formId ),
-        root: getAvailableForms(state, props),
+        form: selected,
+        // root: getRootFormById(state, rootId),
+
     }
 }
 

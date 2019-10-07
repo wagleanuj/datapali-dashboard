@@ -33,6 +33,12 @@ export function filledFormReducer(
         case DELETE_FILLED_FORM:
             return state;
         case UPDATE_FORM_ANSWER:
+            (function () {
+                const { formId: id, path, questionId, value } = action.payload;
+                
+
+            })();
+
             return state;
         case JUMP_TO:
             const { formId, index: newIndex } = action.payload

@@ -10,15 +10,15 @@ import { connect } from "react-redux"
 import { Action } from "redux"
 import { handleAddNewForm, handleJump, handleNext } from "../redux/actions/action"
 import { AppState, AvailableFormsState, FilledFormsState } from "../redux/actions/types"
-import { getAvailableForms } from "../redux/selectors/availableFormSelector"
-import { getFilledFormsState } from "../redux/selectors/filledFormSelectors"
+import { getAvailableForms, getAvailableRootForm, getAllAvailableRootForms } from "../redux/selectors/availableFormSelector"
+import { getFilledFormsState, getFIlledFormsTransformedData } from "../redux/selectors/filledFormSelectors"
 import { textStyle } from "../themes/style"
 type FormItemType = {
     title: string,
     startedDate: string,
 }
 type ComponentProps = {
-    filledForms: FilledFormsState;
+    filledFormsData: {title: string, startedDate: number}[];
     availableForms: AvailableFormsState
     userId: string;
     handleAddNewForm: (root: RootSection, userId: string) => void;
@@ -35,18 +35,15 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
                 alignment='center'
                 title={"Datapali"}
                 subtitle={routeName}
-
                 subtitleStyle={textStyle.caption1}
             />
         },
 
     }
-    constructor(props: FilledFormProps) {
-        super(props);
-    }
+
     loadSurveyForm(id: string) {
         this.props.navigation.navigate("SurveyForm", {
-            id: id,
+            ffId: id,
             // root: root,
             // filledForm: filledform,
             // user: this.state.user,
@@ -81,14 +78,6 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     handleDeleteForm(id: string) {
 
     }
-    makeData(filledForms: FilledFormsState) {
-        return Object.keys(filledForms).map(item => {
-            return {
-                title: filledForms[item].id,
-                startedDate: filledForms[item].startedDate
-            }
-        })
-    }
 
     render() {
         return (
@@ -100,7 +89,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
                         onRefresh={this.refreshLoadedForms.bind(this)}
                     />}
                     keyExtractor={item => item.title}
-                    data={this.makeData(this.props.filledForms)}
+                    data={this.props.filledFormData}
                     renderItem={this.renderItem}
                     renderHiddenItem={(data, rowMap) => (
                         <View key={"hid" + data.item.title} style={this.props.themedStyle.rowBack}>
@@ -167,10 +156,9 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 
 
 const mapStateToProps = (state: AppState, props:FilledFormProps) => {
-    const formId = props.navigation.getParam("id");
     return {
-        filledForms: getFilledFormsState(state, props),
-        availableForms : getAvailableForms(state, props),
+        availableForms : getAllAvailableRootForms(state),
+        filledFormData: getFIlledFormsTransformedData(state, props),
         userId: state.user.id
     }
 }

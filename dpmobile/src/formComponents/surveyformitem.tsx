@@ -1,12 +1,19 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import React from "react";
 import { DatePickerAndroid, View } from "react-native";
-import { Button, Icon, Text, ThemedComponentProps } from "react-native-ui-kitten";
+import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { AutoComplete } from "../components/autocompleteinput.component";
 import { AutoCompleteItem } from "../components/forms.component";
 import { RadioInput } from "../components/selectinput.component";
+import { Dispatch, Action } from "redux";
+import { AppState } from "../redux/actions/types";
+import { connect } from "react-redux";
+import { getQuestionTitle, getQuestionType } from "../redux/selectors/questionSelector";
 
 type FormItemProps = {
+    questionId: string;
+    formId: string;
+    rootId: string;
     path: number[];
     value: string;
     options?: { id: string, text: string }[];
@@ -21,10 +28,9 @@ type FormItemProps = {
 } & ThemedComponentProps;
 
 //replacement for question component
-export class FormItem extends React.Component<FormItemProps, {}> {
+ class FormItem_ extends React.Component<FormItemProps, {}> {
     constructor(props: FormItemProps) {
         super(props);
-
     }
     render() {
         const { themedStyle,
@@ -63,6 +69,24 @@ export class FormItem extends React.Component<FormItemProps, {}> {
 
 }
 
+export const FormItemStyled = withStyles(FormItem_, theme=>({
+    container: {
+        paddingBottom: 20,
+        paddingLeft: 5,
+        paddingRight: 5,
+        marginBottom: 5,
+        marginTop: 5,
+    },
+    questionContainer: {
+        paddingLeft: 5,
+        paddingRight: 5,
+    },
+    questionTitle: {
+        fontSize: 15,
+        paddingBottom: 20,
+    }
+}))
+
 interface FormInputProps {
     type: IValueType;
     value: string;
@@ -75,7 +99,7 @@ interface FormInputProps {
 
 }
 function FormInput(props: FormInputProps) {
-    const defaultValue = this.props.value || this.props.autoFillValue;
+    const defaultValue = props.value || props.autoFillValue;
     const openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
         try {
             const { action, year, month, day } = await DatePickerAndroid.open({
@@ -174,3 +198,22 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
         </View>
     }
 }
+
+const mapStateToProps = (state: AppState, props:FormItemProps ) => {
+
+    return {
+        title: getQuestionTitle(state, props),
+        type: getQuestionType(state, props)
+        // value: getQuestionAnswer(state, props.id, props.path),
+        // options: getQuestionOptions(state, props.id),
+
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>)=>{
+    return {
+
+    }
+};
+
+export const FormItem = connect(mapStateToProps, mapDispatchToProps)(FormItemStyled)
