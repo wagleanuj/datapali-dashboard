@@ -55,7 +55,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
                 <View>
                     <Text>
-                        {`${getReadablePath(path.slice(1))} : ${title} ${isRequired ? '*' : ''}`}
+                        {`${path?getReadablePath(path.slice(1)):''} : ${title} ${isRequired ? '*' : ''}`}
                     </Text>
                     <FormInput
                         autoCompleteData={autoCompleteData}

@@ -1,22 +1,32 @@
-import { SurveyActions, NEXT, PREV, JUMP, FilledFormActions, ADD_FILLED_FORM, AddFilledForm, UPDATE_FORM_ANSWER } from ".";
 import { RootSection } from "dpform";
+import { ADD_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER } from ".";
 
-export function handleNext(): SurveyActions {
+export function handleNext(formId: string): FilledFormActions {
     return {
-        type: NEXT,
-        payload: undefined
+        type: NEXT_FORM_ITEM,
+        payload: {
+            formId: formId
+        }
     }
 }
 
-export function handlePrev(): SurveyActions {
+export function handlePrev(formId: string): FilledFormActions {
     return {
-        type: PREV,
-        payload: undefined
+        type: PREV_FORM_ITEM,
+        payload: {
+            formId: formId
+        }
     }
 }
 
-export function handleJump(newSectionIndex: number): SurveyActions {
-    return { type: JUMP, payload: { index: newSectionIndex } }
+export function handleJump(formId: string, newSectionIndex: number): FilledFormActions {
+    return {
+        type: JUMP_TO,
+        payload: {
+            formId: formId,
+            index: newSectionIndex
+        }
+    }
 }
 
 export function handleAddNewForm(root: RootSection, userId: string): FilledFormActions {
@@ -28,15 +38,15 @@ export function handleAddNewForm(root: RootSection, userId: string): FilledFormA
         }
     }
 }
-export function handleUpdateAnswer(formId:string, path: number[], questionId: string, value: string){
+export function handleUpdateAnswer(formId: string, path: number[], questionId: string, value: string) {
     return {
         type: UPDATE_FORM_ANSWER,
-        payload:{
+        payload: {
             formId: formId,
             path: path,
-            questionId: questionId ,
+            questionId: questionId,
             value: value
-            
+
         }
     }
 }

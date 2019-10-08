@@ -1,4 +1,4 @@
-import { RootSection } from 'dpform';
+import { IDupeSettings, RootSection } from 'dpform';
 import { AppState } from "react-native";
 import { createSelector } from 'reselect';
 import { Helper } from "../helper";
@@ -13,14 +13,47 @@ const $getQuestionId = (state, props) => props.questionId;
 const $getFilledForms = (state, props) => state.filledForms;
 const $getFilledFormId = (state, props) => props.formId;
 const $getPathForQuestion = (state, props) => props.path;
+const $getProps = (state, props) => props;
+const $getState = (state, props) => state;
+const $getSectionId = (state, props) => props.sectionId;
 
-export const getQuestionsForForm = createSelector([$getRootForm, $getRootFormId],
+export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
     (rootForms, rootId) => {
         return rootForms[rootId]
     }
-)
+);
+export const getRootFormQuestions = createSelector([getRootFormById],
+    root => root.questions);
 
-export const getQuestionById = createSelector([getQuestionsForForm, $getQuestionId],
+export const getRootFormSection = createSelector([getRootFormById],
+    (root) => root.sections);
+export const getRootFormSectionById = createSelector([getRootFormSection, $getSectionId], (sections, sectionId) => sections[sectionId]);
+export const getDuplicatingSettingsForSection = createSelector([getRootFormSectionById],
+    (section) => section.duplicatingSetings);
+
+export const getDuplicatingSettingsValueForSection = createSelector([getDuplicatingSettingsForSection, $getState, $getProps],
+    (dupe: IDupeSettings, state, props) => {
+        if (!dupe.isEnabled) return undefined;
+        if (dupe.duplicateTimes.type === 'number') {
+            return parseInt(dupe.duplicateTimes.value);
+        }
+        const ref = dupe.duplicateTimes.value;
+        if (!ref) return undefined;
+        let cache = getCacheForFilledForm(state, props);
+        const m = cache.get(ref);
+        if (!m) {
+            return undefined;
+        }
+        const v = m.entries().next();
+        if (!v) {
+            return undefined;
+        }
+        return parseInt(v.value[1]);
+
+    });
+
+
+export const getQuestionById = createSelector([getRootFormById, $getQuestionId],
     (root: RootSection, questionId: string) => root.questions[questionId]);
 
 export const getQuestionOptions = createSelector([getQuestionById], (question) => question.options);
@@ -74,7 +107,7 @@ export const getDependencyValues = createSelector([getDependenciesOfOptions, get
     return ret;
 });
 
-export const getValidOptions = createSelector([getSortedOptions, getDependencyValues, getQuestionsForForm],
+export const getValidOptions = createSelector([getSortedOptions, getDependencyValues, getRootFormById],
     (options, vals, questions) => {
         const { groups, rootOptions } = options;
         let g = groups.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions.questions));

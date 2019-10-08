@@ -33,7 +33,8 @@ export function filledFormReducer(
                 filledBy: userId,
                 formId: root.id,
                 id: getRandomId("filledform-"),
-                cache_: new Map()
+                cache_: new Map(),
+                currentIndex: 0,
 
             };
             let newState = produce(state, draft => {
@@ -84,7 +85,13 @@ export function filledFormReducer(
             }
             return state;
         case NEXT_FORM_ITEM:
-            return state;
+            return (function () {
+                const { formId } = action.payload;
+                return produce(state, draft => {
+                    const form = draft[formId];
+                    form.currentIndex++
+                })
+            })()
         case PREV_FORM_ITEM:
             return state;
         default:

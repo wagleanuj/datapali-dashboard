@@ -1,17 +1,13 @@
 import React from "react";
-import { ThemedComponentProps, Layout, withStyles } from "react-native-ui-kitten";
+import { FlatList } from "react-native-gesture-handler";
+import { Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
+import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { AppState } from "../redux/actions/types";
 import { IAnswer, IAnswerSection } from "../redux/helper";
-import { RootSection, ANSWER_TYPES } from "dpform";
 import { getCurrentFilledFormContent } from "../redux/selectors/filledFormSelectors";
-import { connect } from "react-redux";
-import { Item } from "react-native-paper/typings/components/Drawer";
-import { FlatList } from "react-native-gesture-handler";
 import { FormItem } from "./surveyformitem";
-import { Showcase } from "../components/showcase.component";
-import { ShowcaseItem } from "../components/showcaseitem.component";
 
 type PageProps = {
     content: IAnswer | IAnswerSection;
@@ -39,7 +35,7 @@ export class Page_ extends React.Component<PageProps, {}>{
 
                 })
             }
-        } else {
+        } else if (content.questionId) {
             //simply add the question
             data.push({
                 title: content.questionId,
@@ -49,6 +45,7 @@ export class Page_ extends React.Component<PageProps, {}>{
         return data;
     }
     renderItem(item) {
+        if (!item || !item.item.path) return <></>
         return <FormItem
             path={item.item.path}
             formId={this.props.filledFormId}
@@ -61,7 +58,9 @@ export class Page_ extends React.Component<PageProps, {}>{
         return (
             <Layout style={this.props.themedStyle.container} >
                 <FlatList
-                    keyExtractor={item => item.title}
+                    keyExtractor={item => {
+                        return 'li' + item.title
+                    }}
                     data={this.makeData(this.props.content, [])}
                     renderItem={this.renderItem.bind(this)}
                 />

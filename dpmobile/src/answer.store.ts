@@ -76,7 +76,7 @@ export class AnswerSection {
     }
 
     static getFromPath(path: number[], a: AnswerSection): AnswerSection | Answer {
-        if (path.length % 2 !== 0) throw new Error("Should be even");
+        if (pathpath.length % 2 !== 0) throw new Error("Should be even");
         if (path.length >= 2) {
             let item = AnswerSection.getItem(a, path[0], path[1]);
             if (item && item instanceof AnswerSection && path.slice(2).length >= 2) {

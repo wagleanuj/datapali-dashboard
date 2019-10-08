@@ -62,7 +62,7 @@ export class Helper {
         return section.content[iteration][index];
     }
     static getAnswerSectionItemFromPath(answerSection: IAnswerSection, path: number[]) {
-        if (path.length % 2 !== 0) throw new Error("Should be even");
+        if (!path || path.length % 2 !== 0) throw new Error("Should be even");
         if (path.length >= 2) {
             let item = Helper.getItemInAnswerSection(answerSection, path[0], path[1]);
             if (item && item.hasOwnProperty('content') && path.slice(2).length >= 2) {

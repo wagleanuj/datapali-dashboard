@@ -16,9 +16,9 @@ import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
 import { textStyle } from "../themes/style";
 import { Page } from "./page";
 type ComponentProps = {
-    handlePrev: () => void;
-    handleNext: () => void;
-    handleJump: (index: number) => void;
+    handlePrev: (formId: string) => void;
+    handleNext: (formId: string) => void;
+    handleJump: (formId: string, index: number) => void;
     form: FilledForm;
     root: RootSection;
 }
@@ -55,6 +55,12 @@ export class Survey_ extends React.Component<SurveyProps>{
             />
         }
     }
+    handleNext() {
+        this.props.handleNext(this.props.form.id)
+    }
+    handlePrev() {
+        this.props.handlePrev(this.props.form.id)
+    }
 
     render() {
         const { form, root } = this.props;
@@ -63,8 +69,8 @@ export class Survey_ extends React.Component<SurveyProps>{
                 <Toolbar
                     backButtonDisabled={this.props.currentIndex === 0}
                     nextButtonDisabled={false}
-                    onBackButtonPress={this.props.handlePrev}
-                    onNextButtonPress={this.props.handleNext}
+                    onBackButtonPress={this.handlePrev.bind(this)}
+                    onNextButtonPress={this.handleNext.bind(this)}
                     jumpToSection={this.props.handleJump}
                     selectedSectionPath={[]}
                     sectionOptions={[]}
@@ -105,8 +111,8 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
-    handleNext: () => dispatch(handleNext()),
-    handlePrev: () => dispatch(handlePrev()),
+    handleNext: (formId: string) => dispatch(handleNext(formId)),
+    handlePrev: (formId: string) => dispatch(handlePrev(formId)),
     handleJump: (i: number) => dispatch(handleJump(i))
 });
 export const Survey = connect(

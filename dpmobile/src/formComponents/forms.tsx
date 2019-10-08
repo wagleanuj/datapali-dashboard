@@ -10,15 +10,15 @@ import { connect } from "react-redux"
 import { Action } from "redux"
 import { handleAddNewForm, handleJump, handleNext } from "../redux/actions/action"
 import { AppState, AvailableFormsState, FilledFormsState } from "../redux/actions/types"
-import { getAvailableForms, getAvailableRootForm, getAllAvailableRootForms } from "../redux/selectors/availableFormSelector"
-import { getFilledFormsState, getFIlledFormsTransformedData } from "../redux/selectors/filledFormSelectors"
+import { getAllAvailableRootForms } from "../redux/selectors/availableFormSelector"
+import { getFIlledFormsTransformedData } from "../redux/selectors/filledFormSelectors"
 import { textStyle } from "../themes/style"
 type FormItemType = {
     title: string,
     startedDate: string,
 }
 type ComponentProps = {
-    filledFormsData: {title: string, startedDate: number}[];
+    filledFormsData: { title: string, startedDate: number }[];
     availableForms: AvailableFormsState
     userId: string;
     handleAddNewForm: (root: RootSection, userId: string) => void;
@@ -75,6 +75,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
         const firstForm = this.props.availableForms[Object.keys(this.props.availableForms)[0]]
         this.props.handleAddNewForm(firstForm, this.props.userId)
     }
+    
     handleDeleteForm(id: string) {
 
     }
@@ -155,9 +156,9 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 }));
 
 
-const mapStateToProps = (state: AppState, props:FilledFormProps) => {
+const mapStateToProps = (state: AppState, props: FilledFormProps) => {
     return {
-        availableForms : getAllAvailableRootForms(state),
+        availableForms: getAllAvailableRootForms(state),
         filledFormData: getFIlledFormsTransformedData(state, props),
         userId: state.user.id
     }
