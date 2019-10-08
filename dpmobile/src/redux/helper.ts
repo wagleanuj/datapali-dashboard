@@ -1,16 +1,17 @@
 import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection } from "dpform";
 import { StorageUtil } from "../storageUtil";
 import { AnswerState, AppState, AvailableFormsState, FilledFormsState } from "./actions/types";
+import _ from "lodash";
 
 
-export function init(section: QuestionSection | RootSection, path: number[]) {
+export function init(section: QuestionSection | RootSection, path: number[], answers: Map<string, Map<string, string>>) {
     const self: any = {
         id: undefined,
         content: undefined,
         _type: section instanceof QuestionSection ? "section" : "root"
     };
 
-    const prepare = (section: QuestionSection | RootSection, path: number[]) => {
+    const prepare = (section: QuestionSection | RootSection, path: number[], iteration: number = 0) => {
         let placeholder = [];
         section.content.forEach((item, index) => {
             if (item instanceof QuestionSection) {
@@ -38,6 +39,122 @@ export function init(section: QuestionSection | RootSection, path: number[]) {
 }
 
 export class Helper {
+
+    static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean=false): IAnswerSection {
+        const prepareSection = (section:QuestionSection|RootSection, path: number[]=[],as : Map<string, Map<string, string>>, iteration: number = 0)=>{
+            const dupe = Helper.getDuplicatingTimes(section, as);
+            const self: IAnswerSection = {
+                id: section.id,
+                content: [],
+                path: path,
+                name: section.name
+            }
+            if(skipDupe || dupe===-1){
+                section.content.forEach((item, index)=>{
+                    if(!self.content[iteration]) self.content[iteration] = [];
+
+                    if(item instanceof QAQuestion){
+                        self.content[iteration].push({
+                            questionId: item.id,
+                            answer: undefined,
+                            path: path.concat(iteration, index)
+                            
+                        } as IAnswer)
+                    }
+                    else if(item instanceof QuestionSection){
+                        self.content[iteration].push(prepareSection(item, path.concat(iteration, index), as))
+                    }
+                })
+
+            } else{
+                for(let i = 0;i < dupe;i++){
+                    section.content.forEach((item, index)=>{
+                        if(!self.content[i]) self.content[i] = [];
+                        if(item instanceof QAQuestion){
+                            self.content[i].push({
+                                questionId: item.id,
+                                answer: undefined,
+                                path: path.concat(i, index)
+                            });
+                        }
+                        else if(item instanceof QuestionSection){
+                            self.content[i].push(prepareSection(item, path.concat(i, index), as))
+                        }
+                    })
+                }
+            }
+            return self;
+        }
+        return prepareSection(section, path,as);
+    }
+    static makeDataForSection(section: QuestionSection, as: Map<string, Map<string, string>>) {
+        const dupe = Helper.getDuplicatingTimes(section, as);
+        let toReturn: any[] = []
+        if (dupe === -1) {
+            //collect normally
+        }
+        else if (dupe > 0) {
+
+        }
+        return toReturn;
+    }
+    static getDuplicatingTimes(item: QuestionSection|RootSection, as: Map<string, Map<string, string>>) {
+        if(item instanceof RootSection) return -1;
+        if (item.duplicatingSettings.isEnabled) {
+            if (item.duplicatingSettings.duplicateTimes.type === 'number') {
+                return parseInt(item.duplicatingSettings.duplicateTimes.value);
+            } else {
+                const ref = (item.duplicatingSettings.duplicateTimes.value);
+            
+                const ans = Helper.getValueFromAnswerCache(as, ref);
+                console.log('answer of ', ref,ans)
+                return 2;
+                if (!ans) return 0;
+                return parseInt(ans);
+            }
+        }
+        return -1;
+    }
+    static makePage(root: RootSection, index: number, as: Map<string, Map<string, string>>, container: any[]) {
+        const item = root.content[index];
+        const sectionContentCollector = (section: QuestionSection, path: number[]) => {
+            let con = [];
+            section.content.forEach((item, index) => {
+                if (item instanceof QuestionSection) {
+                    const times = Helper.getDuplicatingTimes(item, as);
+                    for (let i = 0; i < times; i++) {
+                        con.push(sectionContentCollector(item, path.concat(iteration, index)))
+                    }
+
+                }
+            })
+        };
+        let flattened = [];
+        if (item instanceof QuestionSection) {
+            let times = Helper.getDuplicatingTimes(item, as);
+            if (times !== undefined) {
+
+            }
+
+        } else if (item instanceof QAQuestion) {
+
+        }
+    }
+
+    static makeTree(root: RootSection | QuestionSection, tree: any = {}) {
+        tree[root.id] = _.cloneDeep(root);
+        for (let i = 0; i < tree[root.id].content.length; i++) {
+            let item = tree[root.id].content[i];
+            if (item instanceof QuestionSection) {
+                Helper.makeTree(item, tree);
+                tree[root.id].childNodes.push(item.id);
+            } else if (item instanceof QAQuestion) {
+                tree[item.id] = _.cloneDeep(item);
+                tree[root.id].childNodes.push(item.id);
+            }
+        }
+        return tree;
+    }
     static async generateAppState(): Promise<AppState> {
         const user = await StorageUtil.getUserInfo();
         const rootForms = await StorageUtil.getForms(user.availableForms);
@@ -73,6 +190,17 @@ export class Helper {
             console.log("invalid path");
         }
     }
+    static getValueFromAnswerCache(cache: Map<string, Map<string, string>>, ref: string) {
+        const m = cache.get(ref);
+        if (!m) {
+            return undefined;
+        }
+        const v = m.entries().next();
+        if (!v) {
+            return undefined;
+        }
+    }
+
     static getAnswerById(store: AnswerState, id: string, path?: number[]): { path: number[], value: string }[] {
         const m = store.answers.get(id);
         if (!m) return [];
@@ -191,5 +319,6 @@ export interface IAnswer {
 export interface IAnswerSection {
     id: string;
     path: number[];
+    name?:string;
     content: Array<Array<IAnswer | IAnswerSection>>
 }

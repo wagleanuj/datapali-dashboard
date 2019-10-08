@@ -142,7 +142,6 @@ export class QuestionComponent extends React.Component<QuestionComponentProps, Q
                         error={this.state.error}
                         onBlur={this.handleValidation.bind(this)}
 
-
                     />;
                     break;
                 case ANSWER_TYPES.DATE:
