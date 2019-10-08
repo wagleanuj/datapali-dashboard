@@ -309,9 +309,11 @@ export interface FilledForm {
     filledBy: string;
     answerSection: IAnswerSection;
     id: string;
-    history?:number[];
+    history?: number[];
     currentIndex?: number;
+    cache_?: Map<string, Map<string, string>>
 }
+
 export interface User {
     firstName: string;
     lastName: string;

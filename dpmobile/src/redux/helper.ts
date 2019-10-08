@@ -1,7 +1,6 @@
-import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection, Answer } from "dpform";
+import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection } from "dpform";
 import { StorageUtil } from "../storageUtil";
 import { AnswerState, AppState, AvailableFormsState, FilledFormsState } from "./actions/types";
-import { AnswerSection } from "../answer.store";
 
 
 export function init(section: QuestionSection | RootSection, path: number[]) {
@@ -59,6 +58,21 @@ export class Helper {
         }
         return res;
     }
+    static getItemInAnswerSection(section: IAnswerSection, iteration: number, index: number): any {
+        return section.content[iteration][index];
+    }
+    static getAnswerSectionItemFromPath(answerSection: IAnswerSection, path: number[]) {
+        if (path.length % 2 !== 0) throw new Error("Should be even");
+        if (path.length >= 2) {
+            let item = Helper.getItemInAnswerSection(answerSection, path[0], path[1]);
+            if (item && item.hasOwnProperty('content') && path.slice(2).length >= 2) {
+                return Helper.getAnswerSectionItemFromPath(item, path.slice(2));
+            }
+            return item;
+        } else {
+            console.log("invalid path");
+        }
+    }
     static getAnswerById(store: AnswerState, id: string, path?: number[]): { path: number[], value: string }[] {
         const m = store.answers.get(id);
         if (!m) return [];
@@ -84,12 +98,11 @@ export class Helper {
         }
         return value;
     }
-    static isLiteralValid = (item: ILiteral, answerStore: AnswerState, questionStore: Map<string, QAQuestion>) => {
+    static isLiteralValid = (item: ILiteral, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion }) => {
         let result = true;
-        const answers = Helper.getAnswerById(answerStore, item.questionRef);
-        const answer = answers[0] ? answers[0].value : undefined;
-        const question = questionStore.get(item.questionRef);
-        if (!question) throw new Error("question store does not have the referred question");
+        const answer = answerStore[item.questionRef];
+        const question = questionStore[item.questionRef]
+        if (!question) throw new Error('wtf');
         let c2 = Helper.transformValueToType(question.answerType, item.comparisonValue.content);
         let c1 = Helper.transformValueToType(question.answerType, answer);
 
@@ -114,7 +127,7 @@ export class Helper {
         return result;
     }
 
-    static evaluateCondition(condition: QACondition, answerStore: AnswerState, questionStore: Map<string, QAQuestion>) {
+    static evaluateCondition(condition: QACondition, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion }) {
         let finalResult = true;
         let pendingOperator = null;
         if (!condition) return finalResult;

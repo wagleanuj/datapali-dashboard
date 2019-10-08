@@ -1,4 +1,4 @@
-import { SurveyActions, NEXT, PREV, JUMP, FilledFormActions, ADD_FILLED_FORM, AddFilledForm } from ".";
+import { SurveyActions, NEXT, PREV, JUMP, FilledFormActions, ADD_FILLED_FORM, AddFilledForm, UPDATE_FORM_ANSWER } from ".";
 import { RootSection } from "dpform";
 
 export function handleNext(): SurveyActions {
@@ -25,6 +25,18 @@ export function handleAddNewForm(root: RootSection, userId: string): FilledFormA
         payload: {
             root: root,
             userId: userId
+        }
+    }
+}
+export function handleUpdateAnswer(formId:string, path: number[], questionId: string, value: string){
+    return {
+        type: UPDATE_FORM_ANSWER,
+        payload:{
+            formId: formId,
+            path: path,
+            questionId: questionId ,
+            value: value
+            
         }
     }
 }

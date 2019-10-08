@@ -1,3 +1,4 @@
+import { RootSection } from "dpform";
 import React from "react";
 import { View } from "react-native";
 import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
@@ -6,17 +7,14 @@ import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
+import { FilledForm } from "../components/forms.component";
 import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
 import { handleJump, handleNext, handlePrev } from "../redux/actions/action";
-import { SurveyState, AvailableFormsState, AppState } from "../redux/actions/types";
-import { getFilledForm } from "../redux/selectors/formSelector";
+import { AppState, SurveyState } from "../redux/actions/types";
+import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
 import { textStyle } from "../themes/style";
-import { FilledForm } from "../components/forms.component";
 import { Page } from "./page";
-import { getAvailableForms, getAvailableRootForm, getRootFormById } from "../redux/selectors/availableFormSelector";
-import { getFilledFormsState, getFilledFormById } from "../redux/selectors/filledFormSelectors";
-import { RootSection } from "dpform";
 type ComponentProps = {
     handlePrev: () => void;
     handleNext: () => void;
@@ -61,7 +59,7 @@ export class Survey_ extends React.Component<SurveyProps>{
     render() {
         const { form, root } = this.props;
         return (
-            <View>
+            <View style={this.props.themedStyle.container}>
                 <Toolbar
                     backButtonDisabled={this.props.currentIndex === 0}
                     nextButtonDisabled={false}
@@ -72,10 +70,8 @@ export class Survey_ extends React.Component<SurveyProps>{
                     sectionOptions={[]}
                 />
                 <Page
-                    // content={form.answerSection[form.currentIndex]}
-                    // root = {availableForms[]}
-                    filledFormId = {form.id}
-                    rootId = {form.formId}
+                    filledFormId={form.id}
+                    rootId={form.formId}
                 />
             </View>
         )
@@ -100,7 +96,7 @@ const SurveyForm_ = withStyles(Survey_, (theme: ThemeType) => ({
 }));
 const mapStateToProps = (state: AppState, props: SurveyProps) => {
     const filledFormId = props.navigation.getParam('ffId');
-    let selected = getFilledFormById(state,props,filledFormId);
+    let selected = getFilledFormById(state, props, filledFormId);
     return {
         form: selected,
         // root: getRootFormById(state, rootId),

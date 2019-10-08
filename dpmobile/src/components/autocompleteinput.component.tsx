@@ -1,5 +1,5 @@
 import React from "react";
-import { View, KeyboardType } from "react-native";
+import { KeyboardType, View } from "react-native";
 import Autocomplete from "react-native-autocomplete-input";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";

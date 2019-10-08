@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemedComponentProps, Layout } from "react-native-ui-kitten";
+import { ThemedComponentProps, Layout, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Action, Dispatch } from "redux";
 import { AppState } from "../redux/actions/types";
@@ -51,26 +51,34 @@ export class Page_ extends React.Component<PageProps, {}>{
     renderItem(item) {
         return <FormItem
             path={item.item.path}
-            formId ={this.props.filledFormId}
-            rootId ={this.props.rootId}
+            formId={this.props.filledFormId}
+            rootId={this.props.rootId}
             questionId={item.item.title}
-            type={{ name: ANSWER_TYPES.STRING }}
         />
     }
 
     render() {
         return (
-            <Layout>
-                    <FlatList
-                        keyExtractor={item => item.title}
-                        data={this.makeData(this.props.content, [])}
-                        renderItem={this.renderItem.bind(this)}
-                    />
+            <Layout style={this.props.themedStyle.container} >
+                <FlatList
+                    keyExtractor={item => item.title}
+                    data={this.makeData(this.props.content, [])}
+                    renderItem={this.renderItem.bind(this)}
+                />
             </Layout>
 
         )
     }
 }
+
+const PageStyled = withStyles(Page_, theme => ({
+    container: {
+        marginTop: 16,
+        paddingHorizontal: 16,
+        paddingVertical: 16,
+    },
+}));
+
 const mapStateToProps = (state: AppState, props: PageProps) => {
     return {
         content: getCurrentFilledFormContent(state, props, props.filledFormId)
@@ -80,4 +88,4 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
     // saveAnswer: 
 });
 
-export const Page = connect(mapStateToProps, mapDispatchToProps)(Page_);
+export const Page = connect(mapStateToProps, mapDispatchToProps)(PageStyled);

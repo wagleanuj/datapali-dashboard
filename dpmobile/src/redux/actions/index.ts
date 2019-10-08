@@ -129,3 +129,4 @@ export interface SetUser {
 }
 
 export type UserActions = SetUser;
+export type ActionTypes = UserActions | AvailableFormActions | FilledFormActions | SurveyActions;

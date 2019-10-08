@@ -8,7 +8,7 @@ import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar.component';
 import { Router } from './src/navigation/routes';
 import { Helper } from './src/redux/helper';
-import { rootReducer } from './src/redux/reducers/rootReducer';
+import { rootReducer, rootReducer_ } from './src/redux/reducers/rootReducer';
 import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
 import { Provider } from 'react-redux';
 

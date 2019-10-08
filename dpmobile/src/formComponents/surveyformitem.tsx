@@ -2,13 +2,14 @@ import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import React from "react";
 import { DatePickerAndroid, View } from "react-native";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
 import { AutoComplete } from "../components/autocompleteinput.component";
 import { AutoCompleteItem } from "../components/forms.component";
 import { RadioInput } from "../components/selectinput.component";
-import { Dispatch, Action } from "redux";
+import { handleUpdateAnswer } from "../redux/actions/action";
 import { AppState } from "../redux/actions/types";
-import { connect } from "react-redux";
-import { getQuestionTitle, getQuestionType } from "../redux/selectors/questionSelector";
+import { getAnswerAtPath, getQuestionTitle, getQuestionType, getAnswerValueAtPath, getAnswerVAtPath, getTransformedValidOptions } from "../redux/selectors/questionSelector";
 
 type FormItemProps = {
     questionId: string;
@@ -25,12 +26,16 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
+    updateAnswer: (formId: string, path: number[], questionId: string, value: string) => void;
 } & ThemedComponentProps;
 
 //replacement for question component
- class FormItem_ extends React.Component<FormItemProps, {}> {
+class FormItem_ extends React.Component<FormItemProps, {}> {
     constructor(props: FormItemProps) {
         super(props);
+    }
+    updateAnswer(value: string) {
+        this.props.updateAnswer(this.props.formId, this.props.path, this.props.questionId, value);
     }
     render() {
         const { themedStyle,
@@ -47,17 +52,17 @@ type FormItemProps = {
             type,
         } = this.props;
         return (
-            <View style={themedStyle.container}>
+            <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
                 <View>
                     <Text>
-                        {`${getReadablePath(path)} : ${title} ${isRequired ? '*' : ''}`}
+                        {`${getReadablePath(path.slice(1))} : ${title} ${isRequired ? '*' : ''}`}
                     </Text>
                     <FormInput
                         autoCompleteData={autoCompleteData}
                         autoFillValue={autoFillValue}
                         error={error}
                         onBlur={onBlur}
-                        onValueChange={onChange}
+                        onValueChange={this.updateAnswer.bind(this)}
                         options={options}
                         value={value}
                         type={type}
@@ -69,7 +74,7 @@ type FormItemProps = {
 
 }
 
-export const FormItemStyled = withStyles(FormItem_, theme=>({
+export const FormItemStyled = withStyles(FormItem_, theme => ({
     container: {
         paddingBottom: 20,
         paddingLeft: 5,
@@ -199,20 +204,20 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     }
 }
 
-const mapStateToProps = (state: AppState, props:FormItemProps ) => {
+const mapStateToProps = (state: AppState, props: FormItemProps) => {
 
     return {
         title: getQuestionTitle(state, props),
-        type: getQuestionType(state, props)
-        // value: getQuestionAnswer(state, props.id, props.path),
-        // options: getQuestionOptions(state, props.id),
+        type: getQuestionType(state, props),
+        value: getAnswerValueAtPath(state, props),
+        options: getTransformedValidOptions(state, props),
 
     }
 }
 
-const mapDispatchToProps = (dispatch: Dispatch<Action<any>>)=>{
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
     return {
-
+        updateAnswer: (formId: string, path: number[], questionId: string, value: string) => dispatch(handleUpdateAnswer(formId, path, questionId, value))
     }
 };
 
