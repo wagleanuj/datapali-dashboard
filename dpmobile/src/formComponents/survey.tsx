@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
-import { SectionPage } from "../components/reduxFormComponents/formPage";
+import { SectionPage, SecForm } from "../components/reduxFormComponents/formPage";
 import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
 import { handleNext, handlePrev } from "../redux/actions/action";
@@ -81,7 +81,7 @@ export class Survey_ extends React.Component<SurveyProps>{
                     formId={form.id}
                     rootId={form.formId}
                 /> */}
-                <SectionPage sectionId={form.answerSection.content[0][form.currentIndex].id}  formId={form.id} rootId={form.formId} />
+                <SecForm sectionId={form.answerSection.content[0][form.currentIndex].id}  formId={form.id} rootId={form.formId} />
 
             </View>
         )
