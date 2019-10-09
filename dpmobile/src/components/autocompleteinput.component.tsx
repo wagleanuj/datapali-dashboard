@@ -1,5 +1,5 @@
 import React from "react";
-import { KeyboardType, View } from "react-native";
+import { KeyboardType, View, TextInputProps } from "react-native";
 import Autocomplete from "react-native-autocomplete-input";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
@@ -34,12 +34,12 @@ type TextContentType = | "none"
 type AutoCompleteProps = {
     onChange: (text: string) => void,
     data: { text: string }[],
-    defaultValue: string,
+    value: string,
     textContentType?: TextContentType,
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
     error: string,
-} & ThemedComponentProps
+} & ThemedComponentProps & TextInputProps
 type AutoCompleteState = {
     menuVisible: boolean,
     selectedIndex: number,
@@ -52,7 +52,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         menuVisible: false,
         selectedIndex: null,
         hideResults: true,
-        value: this.props.defaultValue || ""
+        value: this.props.value || ""
     };
 
 
@@ -65,16 +65,17 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
     ];
     input: any;
-    private onFocus() {
+    private onFocus(e) {
         this.setState({
             hideResults: false,
-        })
+        });
+        this.props.onFocus(e)
     }
-    private onBlur() {
+    private onBlur(e) {
         this.setState({
             hideResults: true,
         })
-        if (this.props.onBlur) this.props.onBlur(this.state.value);
+        if (this.props.onBlur) this.props.onBlur(e);
     }
     private handleChange() {
         if (this.props.onChange) this.props.onChange(this.state.value);

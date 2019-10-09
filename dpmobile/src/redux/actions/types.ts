@@ -55,4 +55,5 @@ export interface AppState {
     user?: User;
     availableForms: AvailableFormsState;
     filledForms: FilledFormsState;
+    filled: FilledFormsState
 }

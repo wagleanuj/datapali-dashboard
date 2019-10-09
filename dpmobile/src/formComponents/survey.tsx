@@ -1,20 +1,20 @@
 import { RootSection } from "dpform";
 import React from "react";
 import { View } from "react-native";
-import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles, ViewPager } from "react-native-ui-kitten";
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
+import { SectionPage } from "../components/reduxFormComponents/formPage";
 import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
-import { handleJump, handleNext, handlePrev } from "../redux/actions/action";
+import { handleNext, handlePrev } from "../redux/actions/action";
 import { AppState, SurveyState } from "../redux/actions/types";
 import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
 import { textStyle } from "../themes/style";
-import { Page } from "./page";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
     handleNext: (formId: string) => void;
@@ -75,18 +75,14 @@ export class Survey_ extends React.Component<SurveyProps>{
                     selectedSectionPath={[]}
                     sectionOptions={[]}
                 />
-             
 
-                <ViewPager
 
-                >
-                    <Page key='1123213123'
+                {/* <Page key='1123213123'
                     formId={form.id}
                     rootId={form.formId}
-                />
-                
+                /> */}
+                <SectionPage sectionId={form.answerSection.content[0][form.currentIndex].id}  formId={form.id} rootId={form.formId} />
 
-                </ViewPager>
             </View>
         )
     }
@@ -121,7 +117,7 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
     handleNext: (formId: string) => dispatch(handleNext(formId)),
     handlePrev: (formId: string) => dispatch(handlePrev(formId)),
-    handleJump: (i: number) => dispatch(handleJump(i))
+    // handleJump: (i: number) => dispatch(handleJump(i))
 });
 export const Survey = connect(
     mapStateToProps,

@@ -4,6 +4,10 @@ import * as Font from 'expo-font';
 import React from 'react';
 import { ImageRequireSource } from 'react-native';
 import { LoadingAnimationComponent } from './loadingAnimation.component';
+import { Provider } from 'react-redux';
+import { createStore } from 'redux';
+import { Helper } from '../redux/helper';
+import { rootReducer } from '../redux/reducers/rootReducer';
 
 export interface Assets {
   images: ImageRequireSource[];
@@ -17,6 +21,7 @@ interface Props {
 
 interface State {
   loaded: boolean;
+  store: any;
 }
 
 type LoadingElement = React.ReactElement<{}>;
@@ -33,6 +38,7 @@ export class ApplicationLoader extends React.Component<Props, State> {
 
   public state: State = {
     loaded: false,
+    store: {},
   };
 
   private onLoadSuccess = () => {
@@ -67,7 +73,15 @@ export class ApplicationLoader extends React.Component<Props, State> {
     return Promise.all([
       this.loadFonts(fonts),
       this.loadImages(images),
+      this.loadStore(),
     ]);
+  }
+  private async loadStore(): Promise<void> {
+    // const appstate = await Helper.generateAppState();
+    // const store = createStore(rootReducer, appstate);
+    // this.setState({
+    //   store: store
+    // })
   }
 
   private renderLoading = (): LoadingElement => {

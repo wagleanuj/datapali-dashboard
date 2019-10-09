@@ -9,7 +9,7 @@
       "android",
       "web"
     ],
-    "android":{      
+    "android": {
       "package": "com.wagle.datapali"
     },
     "version": "1.0.0",

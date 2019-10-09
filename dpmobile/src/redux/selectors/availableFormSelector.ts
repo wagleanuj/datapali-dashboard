@@ -3,20 +3,20 @@ import _ from 'lodash';
 import { createSelector } from 'reselect';
 
 
-const $getAvailableForms = (state) => {
+const $getAvailableForms = (state, props) => {
     return state.availableForms;
 }
 
-const $getAvailableFormId = (state,  formId)=>formId;
+const $getAvailableFormId = (state, formId) => formId;
 
 export const getAllAvailableRootForms = createSelector([$getAvailableForms],
-    (af)=>af);
+    (af) => af);
 
 export const getAvailableRootForm = createSelector([$getAvailableForms, $getAvailableFormId],
-    (availableForms, formId) => formId? availableForms[formId]: availableForms)
+    (availableForms, formId) => formId ? availableForms[formId] : availableForms)
 
 export const getRootFormById = createSelector([$getAvailableForms, $getAvailableFormId],
-    (availableForms, formId)=> availableForms[formId])
+    (availableForms, formId) => availableForms[formId])
 
 export const getAvailableForms = (formIds: string[]) => {
     return createSelector(

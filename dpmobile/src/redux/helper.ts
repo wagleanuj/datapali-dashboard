@@ -1,7 +1,7 @@
 import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection } from "dpform";
+import _ from "lodash";
 import { StorageUtil } from "../storageUtil";
 import { AnswerState, AppState, AvailableFormsState, FilledFormsState } from "./actions/types";
-import _ from "lodash";
 
 
 export function init(section: QuestionSection | RootSection, path: number[], answers: Map<string, Map<string, string>>) {
@@ -39,9 +39,11 @@ export function init(section: QuestionSection | RootSection, path: number[], ans
 }
 
 export class Helper {
+    static generateForm(form) {
 
-    static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean=false): IAnswerSection {
-        const prepareSection = (section:QuestionSection|RootSection, path: number[]=[],as : Map<string, Map<string, string>>, iteration: number = 0)=>{
+    }
+    static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean = false): IAnswerSection {
+        const prepareSection = (section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, iteration: number = 0) => {
             const dupe = Helper.getDuplicatingTimes(section, as);
             const self: IAnswerSection = {
                 id: section.id,
@@ -49,35 +51,35 @@ export class Helper {
                 path: path,
                 name: section.name
             }
-            if(skipDupe || dupe===-1){
-                section.content.forEach((item, index)=>{
-                    if(!self.content[iteration]) self.content[iteration] = [];
+            if (skipDupe || dupe === -1) {
+                section.content.forEach((item, index) => {
+                    if (!self.content[iteration]) self.content[iteration] = [];
 
-                    if(item instanceof QAQuestion){
+                    if (item instanceof QAQuestion) {
                         self.content[iteration].push({
                             questionId: item.id,
                             answer: undefined,
                             path: path.concat(iteration, index)
-                            
+
                         } as IAnswer)
                     }
-                    else if(item instanceof QuestionSection){
+                    else if (item instanceof QuestionSection) {
                         self.content[iteration].push(prepareSection(item, path.concat(iteration, index), as))
                     }
                 })
 
-            } else{
-                for(let i = 0;i < dupe;i++){
-                    section.content.forEach((item, index)=>{
-                        if(!self.content[i]) self.content[i] = [];
-                        if(item instanceof QAQuestion){
+            } else {
+                for (let i = 0; i < dupe; i++) {
+                    section.content.forEach((item, index) => {
+                        if (!self.content[i]) self.content[i] = [];
+                        if (item instanceof QAQuestion) {
                             self.content[i].push({
                                 questionId: item.id,
                                 answer: undefined,
                                 path: path.concat(i, index)
                             });
                         }
-                        else if(item instanceof QuestionSection){
+                        else if (item instanceof QuestionSection) {
                             self.content[i].push(prepareSection(item, path.concat(i, index), as))
                         }
                     })
@@ -85,7 +87,7 @@ export class Helper {
             }
             return self;
         }
-        return prepareSection(section, path,as);
+        return prepareSection(section, path, as);
     }
     static makeDataForSection(section: QuestionSection, as: Map<string, Map<string, string>>) {
         const dupe = Helper.getDuplicatingTimes(section, as);
@@ -98,16 +100,16 @@ export class Helper {
         }
         return toReturn;
     }
-    static getDuplicatingTimes(item: QuestionSection|RootSection, as: Map<string, Map<string, string>>) {
-        if(item instanceof RootSection) return -1;
+    static getDuplicatingTimes(item: QuestionSection | RootSection, as: Map<string, Map<string, string>>) {
+        if (item instanceof RootSection) return -1;
         if (item.duplicatingSettings.isEnabled) {
             if (item.duplicatingSettings.duplicateTimes.type === 'number') {
                 return parseInt(item.duplicatingSettings.duplicateTimes.value);
             } else {
                 const ref = (item.duplicatingSettings.duplicateTimes.value);
-            
+
                 const ans = Helper.getValueFromAnswerCache(as, ref);
-                console.log('answer of ', ref,ans)
+                console.log('answer of ', ref, ans)
                 return 2;
                 if (!ans) return 0;
                 return parseInt(ans);
@@ -162,8 +164,9 @@ export class Helper {
         const token = await StorageUtil.getAuthToken();
         const availableForms: AvailableFormsState = rootForms;
         const res: AppState = {
+            
             availableForms: availableForms,
-            filledForms: filledForms,
+            filledForms: filledForms || {},
             user: {
                 availableForms: user.availableForms,
                 filledForms: user.filledForms,
@@ -319,6 +322,6 @@ export interface IAnswer {
 export interface IAnswerSection {
     id: string;
     path: number[];
-    name?:string;
+    name?: string;
     content: Array<Array<IAnswer | IAnswerSection>>
 }
