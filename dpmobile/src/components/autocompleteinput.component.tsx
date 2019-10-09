@@ -39,7 +39,7 @@ type AutoCompleteProps = {
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
     error: string,
-} & ThemedComponentProps & TextInputProps
+} & ThemedComponentProps ;
 type AutoCompleteState = {
     menuVisible: boolean,
     selectedIndex: number,
@@ -69,7 +69,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         this.setState({
             hideResults: false,
         });
-        this.props.onFocus(e)
+        if (this.props.onFocus) this.props.onFocus(e)
     }
     private onBlur(e) {
         this.setState({
@@ -118,9 +118,10 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     inputContainerStyle={this.props.themedStyle.inputContainerStyle}
                     data={foundResult}
                     keyExtractor={(item, index) => "item-" + index}
-                    renderTextInput={() => <View><Input onChangeText={text => this.onValueChange(text)}
+                    renderTextInput={() => <View><Input 
+                        onChangeText={this.props.onChange}
                         textContentType={this.props.textContentType}
-                        value={this.state.value}
+                        value={this.props.value}
                         ref={r => this.input = r}
                         onFocus={this.onFocus.bind(this)}
                         keyboardType={this.props.keyboardType}

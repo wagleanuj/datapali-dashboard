@@ -1,7 +1,7 @@
 import { RootSection } from "dpform";
 import React from "react";
 import { View } from "react-native";
-import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles, ViewPager } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
@@ -81,7 +81,11 @@ export class Survey_ extends React.Component<SurveyProps>{
                     formId={form.id}
                     rootId={form.formId}
                 /> */}
-                <SecForm sectionId={form.answerSection.content[0][form.currentIndex].id}  formId={form.id} rootId={form.formId} />
+                {/* <ViewPager> */}
+                {/* <SecForm sectionId={form.answerSection.content[0][0].id}  formId={form.id} rootId={form.formId} /> */}
+                <SecForm sectionId={form.answerSection.content[0][1].id}  formId={form.id} rootId={form.formId} />
+
+                {/* </ViewPager> */}
 
             </View>
         )

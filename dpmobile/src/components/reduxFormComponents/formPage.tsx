@@ -1,10 +1,16 @@
-import { QAQuestion, QuestionSection } from 'dpform';
-import React from 'react';
+import { QAQuestion, QuestionSection, RootSection } from 'dpform';
+import React, { useImperativeHandle } from 'react';
 import { Input, Text, ThemedComponentProps } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { Field, FieldArray, InjectedFormProps, reduxForm } from 'redux-form';
 import { getRootFormSectionById } from '../../redux/selectors/questionSelector';
-import { Formik, FieldArray as FA, Field as FIELD, FormikValues, FieldProps } from 'formik';
+import { Formik, FieldArray as FA, Field as FIELD, FormikValues, FieldProps, FastField } from 'formik';
+import { AutoComplete } from '../autocompleteinput.component';
+import { getRootFormById } from '../../redux/selectors/availableFormSelector';
+import { FormItem } from '../../formComponents/surveyformitem';
+import { ScrollView } from 'react-native';
+import prettyFormat from 'pretty-format';
+import { Helper } from '../../redux/helper';
 type SectionPageProps = {
     sectionId: string;
     section: QuestionSection;
@@ -13,8 +19,6 @@ type SectionPageProps = {
     rootId: string;
 } & InjectedFormProps
 export class SectionPage_ extends React.Component<SectionPageProps>{
-
-
     renderField(props) {
         const { input, ...inputProps } = props;
         return <Input
@@ -46,7 +50,7 @@ export class SectionPage_ extends React.Component<SectionPageProps>{
                     return <SectionPage key={'section-' + item.id} id={item.id} />
                 }
             })
-        })
+        });
     }
     render() {
         return <>
@@ -58,9 +62,11 @@ export class SectionPage_ extends React.Component<SectionPageProps>{
 
 
 const mapStateToProps = (state, props) => {
+    const s = getRootFormSectionById(state, props);
     return {
-        section: getRootFormSectionById(state, props),
-        form: props.formId
+        section: s,
+        form: props.formId,
+        root: getRootFormById(state, props)
     }
 };
 const mapDispatchToProps = (dispatch) => ({
@@ -76,6 +82,7 @@ export const SectionPage = connect(mapStateToProps, mapDispatchToProps)(Form)
 type SectionFormProps = {
     section: QuestionSection;
     sectionId: string;
+    root: RootSection;
     formId: string;
     rootId: string;
     duplicateTimes: number;
@@ -97,7 +104,7 @@ export class SectionForm_ extends React.Component<SectionFormProps, {}>{
             section.content.forEach((item, index) => {
                 if (!values[iteration]) values[iteration] = {};
                 if (item instanceof QAQuestion) {
-                    values[iteration][item.id] = 'test value'; //load
+                    values[iteration][item.id] = undefined;
                 }
                 else if (item instanceof QuestionSection) {
                     values[iteration][item.id] = this.makeFields(item);
@@ -107,52 +114,66 @@ export class SectionForm_ extends React.Component<SectionFormProps, {}>{
         return values;
     }
 
-    renderFieldArray(item: any[], name: string, handleChange) {
-        console.log(name);
+    renderFieldArray(item: any[], name: string, handleChange, path: number[]) {
+
         return <FA
+            key={name}
             name={name}
             render={(arrayHelpers) => {
-                return item.map((it, index) => this.renderFieldArrayItem(it, name.concat(`[${index}]`), handleChange))
+                return item.map((it, index) => this.renderFieldArrayItem(it, name.concat(`[${index}]`), handleChange, path.concat(index)))
             }}
         />
     }
-    renderFieldArrayItem(item: { [key: string]: any }, name: string, handleChange) {
+    renderFieldArrayItem(item: { [key: string]: any }, name: string, handleChange, path) {
         return Object.keys(item).map((key, ind) => {
             const currItem = item[key];
-            if (Array.isArray(currItem)) {
-                return this.renderFieldArray(currItem, name.concat('.', key), handleChange);
+            if (currItem && Array.isArray(currItem)) {
+                return this.renderFieldArray(currItem, name.concat('.', key), handleChange, path.concat(ind));
             } else {
                 let newName = name.concat('.', key);
-                return <FIELD
-                    key={newName}
-                    name={newName}
-                    render={(props: FieldProps) => {
-                        const { field, form } = props;
-                        return <Input
-                            onChangeText={handleChange(newName)}
-                            onBlur={props.field.onBlur}
-                            {...field}
-                        />
-                    }}
+                console.log(this.props.root)
+                // const question: QAQuestion = this.props.root.questions[key];
+                // let shouldbefastfield = !Helper.checkIfQuestionHasCondition(question);
+
+                let child = (props) => <FormItem
+
+                    value={props.field.value}
+                    path={path.concat(ind)}
+                    formId={this.props.formId}
+                    rootId={this.props.rootId}
+                    questionId={key}
+                    onChange={handleChange(newName)}
                 />
+                if (true) {
+                    return <FastField
+                        key={newName}
+                        name={newName}
+                        render={child}
+                    />
+                }
+                return <FIELD name={newName} key={newName} render={child} />
             }
         })
     }
     render() {
-        return <Formik
-            initialValues={{ [this.props.sectionId]: this.makeFields(this.props.section) }}
-            enableReinitialize={true}
-            onSubmit={(values) => {
-                console.log(values);
-            }}
-            render={({ values, errors, touched, handleReset, handleChange, setFieldValue }) => {
-                return <>
-                    {this.renderFieldArray(values[this.props.sectionId], this.props.sectionId, handleChange)}
-                    <Text>{JSON.stringify(values)}</Text>
-                </>
+        const res = this.makeFields(this.props.section);
+        return <ScrollView>
+            <Formik
+                initialValues={{ [this.props.sectionId]: res }}
+                onSubmit={(values) => {
+                    console.log(values);
+                }}
+                render={({ values, errors, touched, handleReset, handleChange, setFieldValue }) => {
+                    return <>
+                        {this.renderFieldArray(values[this.props.sectionId], this.props.sectionId, handleChange, [0, 0])}
+                        <Text>{prettyFormat(values)}</Text>
+                    </>
 
-            }}
-        />
+                }}
+            />
+        </ScrollView>
     }
 }
 export const SecForm = connect(mapStateToProps, mapDispatchToProps)(SectionForm_)
+
+

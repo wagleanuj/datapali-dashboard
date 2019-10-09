@@ -10,6 +10,7 @@ import { RadioInput } from "../components/selectinput.component";
 import { handleUpdateAnswer } from "../redux/actions/action";
 import { AppState } from "../redux/actions/types";
 import { getAnswerAtPath, getQuestionTitle, getQuestionType, getAnswerValueAtPath, getAnswerVAtPath, getTransformedValidOptions } from "../redux/selectors/questionSelector";
+import _ from "lodash";
 
 type FormItemProps = {
     questionId: string;
@@ -21,6 +22,7 @@ type FormItemProps = {
     type: IValueType;
     error: string;
     title: string;
+    name: string;
     onChange: (value: string) => void;
     onBlur: (value: string) => void;
     isRequired: boolean;
@@ -62,7 +64,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                         autoFillValue={autoFillValue}
                         error={error}
                         onBlur={onBlur}
-                        onValueChange={this.updateAnswer.bind(this)}
+                        onValueChange={onChange}
                         options={options}
                         value={value}
                         type={type}
@@ -124,7 +126,7 @@ function FormInput(props: FormInputProps) {
             return <AutoComplete
                 keyboardType={'numeric'}
                 textContentType={'telephoneNumber'}
-                defaultValue={defaultValue}
+                value={defaultValue}
                 data={props.autoCompleteData}
                 onChange={props.onValueChange}
                 onBlur={props.onBlur}
@@ -133,7 +135,7 @@ function FormInput(props: FormInputProps) {
         case ANSWER_TYPES.STRING:
             return <AutoComplete
                 textContentType={'name'}
-                defaultValue={defaultValue}
+                value={defaultValue}
                 data={props.autoCompleteData}
                 onChange={props.onValueChange}
                 error={props.error}
@@ -162,7 +164,8 @@ function FormInput(props: FormInputProps) {
                 {dl}
             </Button>
         case ANSWER_TYPES.DATE:
-            let date = defaultValue ? new Date(defaultValue) : new Date();
+            let defDate = new Date(defaultValue);
+            let date = defDate && !_.isNaN(defDate.getTime()) ? defDate : new Date();
             return <Button
                 appearance='outline'
                 icon={(style) => (<Icon {...style} name="calendar" />)}
@@ -209,7 +212,6 @@ const mapStateToProps = (state: AppState, props: FormItemProps) => {
     return {
         title: getQuestionTitle(state, props),
         type: getQuestionType(state, props),
-        value: getAnswerValueAtPath(state, props),
         options: getTransformedValidOptions(state, props),
 
     }

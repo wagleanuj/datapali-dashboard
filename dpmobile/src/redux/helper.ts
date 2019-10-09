@@ -42,6 +42,16 @@ export class Helper {
     static generateForm(form) {
 
     }
+
+    static checkIfQuestionHasCondition(question: QAQuestion){
+        if(question.appearingCondition.literals.length>0) return true;
+        let options = question.options && question.options.SortedOptions;
+        let {groups, rootOptions} = options;
+        let found = groups.find(item=> item.appearingCondition.literals.length>0);
+        if(found) return true;
+        if(rootOptions.find(item=>item.appearingCondition.literals.length>0)) return true;
+        return false;
+    }
     static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean = false): IAnswerSection {
         const prepareSection = (section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, iteration: number = 0) => {
             const dupe = Helper.getDuplicatingTimes(section, as);
@@ -233,7 +243,7 @@ export class Helper {
         let result = true;
         const answer = answerStore[item.questionRef];
         const question = questionStore[item.questionRef]
-        if (!question) throw new Error('wtf');
+        if (!question) throw new Error('No question was provided');
         let c2 = Helper.transformValueToType(question.answerType, item.comparisonValue.content);
         let c1 = Helper.transformValueToType(question.answerType, answer);
 
