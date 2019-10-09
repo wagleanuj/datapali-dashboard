@@ -11,6 +11,7 @@ import { FormItem } from '../../formComponents/surveyformitem';
 import { ScrollView } from 'react-native';
 import prettyFormat from 'pretty-format';
 import { Helper } from '../../redux/helper';
+import Accordion from 'react-native-collapsible/Accordion';
 type SectionPageProps = {
     sectionId: string;
     section: QuestionSection;
@@ -177,3 +178,55 @@ export class SectionForm_ extends React.Component<SectionFormProps, {}>{
 export const SecForm = connect(mapStateToProps, mapDispatchToProps)(SectionForm_)
 
 
+class SectionAccordionView extends React.Component<any, any>{
+
+    const data = [
+        {   type: 'section',
+            path: '1',
+            valueName: 'formik value name',
+            title: 'section 1.1',
+            content: [
+                {
+                    type: 'question',
+                    path: '1.1.1',
+                    valueName: 'formik value name'
+                },
+                {
+                    type: 'section',
+                    path: '1.1.2',
+                    valueName: 'formik value name',
+                    title: 'section 1.1.2',
+                    content: [
+                        
+                    ]
+                },
+                {
+                    
+                }
+            ]
+        },
+        {
+            type: 'section',
+            path: 'path number',
+            valueName: 'formik value name',
+            title: 'section 1.2',
+            content: [
+
+            ]
+        }
+    ]
+    renderSectionTitle = section=>{
+
+    }
+    renderSectionHeader = section=>{
+
+    }
+    renderContent = section =>{
+
+    }
+    render(){
+        return <Accordion
+        />
+
+    }
+}
