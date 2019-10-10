@@ -2,6 +2,8 @@ import { IDupeSettings, RootSection } from 'dpform';
 import { AppState } from "react-native";
 import { createSelector } from 'reselect';
 import { Helper } from "../helper";
+import { getFormValues } from 'redux-form';
+import _ from 'lodash';
 
 const $getRootForm = (state, props) => {
     return state.availableForms;
@@ -16,6 +18,7 @@ const $getPathForQuestion = (state, props) => props.path;
 const $getProps = (state, props) => props;
 const $getState = (state, props) => state;
 const $getSectionId = (state, props) => props.sectionId;
+const $getValueLocationName = (state, props)=>props.valueLocationName;
 
 export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
     (rootForms, rootId) => {
@@ -52,7 +55,7 @@ export const getDuplicatingSettingsValueForSection = createSelector([getDuplicat
 
     });
 
-
+export const getFilledFormValues = createSelector([$getFilledFormId, $getState],(fid, state)=> getFormValues(fid)(state));
 export const getQuestionById = createSelector([getRootFormById, $getQuestionId],
     (root: RootSection, questionId: string) => root.questions[questionId]);
 
@@ -71,10 +74,19 @@ export const getDependenciesOfOptions = createSelector([getSortedOptions], (opti
     });
     rootOptions.forEach(item => {
         dependencies = dependencies.concat(item.appearingCondition.literals.map(item => item.questionRef));
-    })
-    return dependencies;
+    });
+    
+    return Array.from(new Set(dependencies));
 }));
+export const getValuesOfDependencies = createSelector([$getValueLocationName, getDependenciesOfOptions, getFilledFormValues],(location, deps, vals)=>{
+    //for each deps , find the value that is closest to the path that it is asking from.
+    let depValues = {};
+    console.log(location);
+    deps.forEach(dep=>{
+        _.get(vals, location);
+    })
 
+})
 
 
 export const getQuestionTitle = createSelector([getQuestionById],
