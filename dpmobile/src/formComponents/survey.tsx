@@ -1,19 +1,20 @@
 import { RootSection } from "dpform";
 import React from "react";
 import { View } from "react-native";
-import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles, ViewPager } from "react-native-ui-kitten";
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
-import { SectionPage, SecForm } from "../components/reduxFormComponents/formPage";
+import { makeData, SecForm, SectionPaged } from "../components/reduxFormComponents/formPage";
 import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
 import { handleNext, handlePrev } from "../redux/actions/action";
 import { AppState, SurveyState } from "../redux/actions/types";
 import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
+import { getRootFormById } from "../redux/selectors/questionSelector";
 import { textStyle } from "../themes/style";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
@@ -64,6 +65,7 @@ export class Survey_ extends React.Component<SurveyProps>{
 
     render() {
         const { form, root } = this.props;
+        const data = (makeData(this.props.navigation.getParam('root').content[1], [0,0]));
         return (
             <View style={this.props.themedStyle.container}>
                 <Toolbar
@@ -83,8 +85,14 @@ export class Survey_ extends React.Component<SurveyProps>{
                 /> */}
                 {/* <ViewPager> */}
                 {/* <SecForm sectionId={form.answerSection.content[0][0].id}  formId={form.id} rootId={form.formId} /> */}
-                <SecForm sectionId={form.answerSection.content[0][1].id}  formId={form.id} rootId={form.formId} />
+                {/* <SecForm sectionId={form.answerSection.content[0][1].id} formId={form.id} rootId={form.formId} /> */}
 
+                <SectionPaged
+                    sectionId={form.answerSection.content[0][0].id}
+                    formId={form.id}
+                    rootId={form.formId}
+                    data={data}
+                />
                 {/* </ViewPager> */}
 
             </View>
@@ -113,7 +121,7 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
     let selected = getFilledFormById(state, props, filledFormId);
     return {
         form: selected,
-        // root: getRootFormById(state, rootId),
+        root: getRootFormById(state, props),
 
     }
 }

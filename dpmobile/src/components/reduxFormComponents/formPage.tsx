@@ -1,17 +1,15 @@
 import { QAQuestion, QuestionSection, RootSection } from 'dpform';
-import React, { useImperativeHandle } from 'react';
-import { Input, Text, ThemedComponentProps } from 'react-native-ui-kitten';
+import { FastField, Field as FIELD, FieldArray as FA, Formik } from 'formik';
+import prettyFormat from 'pretty-format';
+import React, { Component } from 'react';
+import { FlatList, ScrollView, StyleSheet, View } from 'react-native';
+import { Button, Input, Text, ThemedComponentProps } from 'react-native-ui-kitten';
 import { connect } from 'react-redux';
 import { Field, FieldArray, InjectedFormProps, reduxForm } from 'redux-form';
-import { getRootFormSectionById } from '../../redux/selectors/questionSelector';
-import { Formik, FieldArray as FA, Field as FIELD, FormikValues, FieldProps, FastField } from 'formik';
-import { AutoComplete } from '../autocompleteinput.component';
-import { getRootFormById } from '../../redux/selectors/availableFormSelector';
 import { FormItem } from '../../formComponents/surveyformitem';
-import { ScrollView } from 'react-native';
-import prettyFormat from 'pretty-format';
-import { Helper } from '../../redux/helper';
-import Accordion from 'react-native-collapsible/Accordion';
+import { getRootFormById } from '../../redux/selectors/availableFormSelector';
+import { getRootFormSectionById } from '../../redux/selectors/questionSelector';
+import { Showcase } from '../showcase.component';
 type SectionPageProps = {
     sectionId: string;
     section: QuestionSection;
@@ -178,55 +176,174 @@ export class SectionForm_ extends React.Component<SectionFormProps, {}>{
 export const SecForm = connect(mapStateToProps, mapDispatchToProps)(SectionForm_)
 
 
-class SectionAccordionView extends React.Component<any, any>{
-
-    const data = [
-        {   type: 'section',
-            path: '1',
-            valueName: 'formik value name',
-            title: 'section 1.1',
-            content: [
-                {
-                    type: 'question',
-                    path: '1.1.1',
-                    valueName: 'formik value name'
-                },
-                {
-                    type: 'section',
-                    path: '1.1.2',
-                    valueName: 'formik value name',
-                    title: 'section 1.1.2',
-                    content: [
-                        
-                    ]
-                },
-                {
-                    
-                }
-            ]
-        },
-        {
-            type: 'section',
-            path: 'path number',
-            valueName: 'formik value name',
-            title: 'section 1.2',
-            content: [
-
-            ]
+type SectionContentListProps = {
+    data: any[],
+    parentProps: SectionPagedProps
+}
+export class SectionContentList extends Component<SectionContentListProps, {}>{
+    child = (props, item, handleChange) => <FormItem
+        formId={this.props.parentProps.formId}
+        path={item.path}
+        rootId={this.props.parentProps.rootId}
+        questionId={item.id}
+        value={props.field.value}
+        onChange={handleChange(item.valueLocationName)}
+    />
+    renderItem(item, handleChange) {
+        if (Array.isArray(item.item)) {
+            return <SectionPaged {...this.props.parentProps} data={item.item} />
         }
-    ]
-    renderSectionTitle = section=>{
-
-    }
-    renderSectionHeader = section=>{
-
-    }
-    renderContent = section =>{
-
-    }
-    render(){
-        return <Accordion
+        return <FastField
+            name={item.item.valueLocationName}
+            render={props => this.child(props, item.item, handleChange)}
         />
+    }
+    render() {
+        return <Formik
+            initialValues={{}}
+            onSubmit={(values) => {
+                console.log(values);
+            }}
+            render={({ values, errors, touched, handleReset, handleChange, setFieldValue }) => {
+                return <View>
+                    <FlatList
+                        data={this.props.data}
+                        keyExtractor={(item) => Array.isArray(item) ? item[0].id : item.id}
+                        renderItem={item => this.renderItem(item, handleChange)}
+                    />
+                    <Text>{prettyFormat(values)}</Text>
+                </View>
+            }} />
 
     }
 }
+
+
+type SectionPagedProps = {
+    sectionId: string;
+    formId: string;
+    rootId: string;
+    data: any[]
+}
+export class SectionPaged extends Component<SectionPagedProps, {}> {
+    render() {
+        let comp: any = [];
+        if (this.props.data.length > 1) {
+            this.props.data.forEach((item, index) => {
+                comp.push(
+                    <Button appearance='outline' >{item.title}</Button>
+                )
+            })
+        } else {
+            comp = <Showcase>
+                <View style={styles.header}>
+                    <Text style={styles.headerText}>{this.props.data[0].title}</Text>
+                </View>
+                <SectionContentList parentProps={this.props} data={this.props.data[0].content} />
+            </Showcase>
+
+        }
+        return comp;
+
+    }
+}
+// const mapStateToPropsR= (state, props)=>{
+//     let root = state.availableForms[Object.keys(state.availableForms)[1]];
+//     let section = root.content[1];
+//     return {
+//         section: section
+//     }
+// }
+// const Aspp = connect(mapStateToPropsR, {})(Aspp2)
+
+const styles = StyleSheet.create({
+    container: {
+        flex: 1,
+        backgroundColor: 'black',
+        // paddingTop: Constants.statusBarHeight,
+    },
+    title: {
+        textAlign: 'center',
+        fontSize: 22,
+        fontWeight: '300',
+        marginBottom: 20,
+    },
+    header: {
+        backgroundColor: '#F5FCFF',
+        padding: 10,
+    },
+    headerText: {
+        textAlign: 'center',
+        fontSize: 14,
+        fontWeight: '500',
+    },
+    content: {
+        padding: 20,
+        backgroundColor: '#fff',
+    },
+    active: {
+        backgroundColor: 'rgba(255,255,255,1)',
+    },
+    inactive: {
+        backgroundColor: 'rgba(245,252,255,1)',
+    },
+    selectors: {
+        marginBottom: 10,
+        flexDirection: 'row',
+        justifyContent: 'center',
+    },
+    selector: {
+        backgroundColor: '#F5FCFF',
+        padding: 10,
+    },
+    activeSelector: {
+        fontWeight: 'bold',
+    },
+    selectTitle: {
+        fontSize: 14,
+        fontWeight: '500',
+        padding: 10,
+    },
+    multipleToggle: {
+        flexDirection: 'row',
+        justifyContent: 'center',
+        marginVertical: 30,
+        alignItems: 'center',
+    },
+    multipleToggle__title: {
+        fontSize: 16,
+        marginRight: 8,
+    },
+});
+
+export function makeData(section: QuestionSection, path: number[] = [0, 0], valueLocationName?: string) {
+    if (!valueLocationName) valueLocationName = section.id;
+    let content = [];
+    let duplicateTimes = 1;
+    for (let i = 0; i < duplicateTimes; i++) {
+        let sectionItem = {
+            title: section.name + (duplicateTimes > 1 ? " " + (i + 1) : ''),
+            id: section.id,
+            path: path.concat(i),
+            content: []
+        }
+        section.content.forEach((item, index) => {
+            if (item instanceof QuestionSection) {
+                sectionItem.content.push(makeData(item, path.concat(i, index), valueLocationName.concat(`[${i}].${item.id}`)));
+            } else if (item instanceof QAQuestion) {
+                sectionItem.content.push({
+                    id: item.id,
+                    title: item.questionContent.content,
+                    valueLocationName: valueLocationName.concat('[', i.toString(), ']', '.', item.id),
+                    path: path.concat(i, index),
+                    answerType: item.answerType,
+                    isRequired: item.isRequired,
+
+                })
+            }
+        })
+        content.push(sectionItem);
+    }
+    return content;
+}
+

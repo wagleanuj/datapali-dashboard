@@ -43,6 +43,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     loadSurveyForm(id: string) {
         this.props.navigation.navigate("SurveyForm", {
             ffId: id,
+            root: this.props.availableForms[Object.keys(this.props.availableForms)[0]]
             // root: root,
             // filledForm: filledform,
             // user: this.state.user,
