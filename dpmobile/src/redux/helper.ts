@@ -322,6 +322,39 @@ export class Helper {
 
     }
 
+ static makeFormData(section: QuestionSection, path: number[] = [0, 0], valueLocationName?: string) {
+    if (!valueLocationName) valueLocationName = section.id;
+    let content = [];
+    let duplicateTimes = 1;
+    for (let i = 0; i < duplicateTimes; i++) {
+        let sectionItem = {
+            title: section.name + (duplicateTimes > 1 ? " " + (i + 1) : ''),
+            id: section.id,
+            path: path.concat(i),
+            content: []
+        }
+        section.content.forEach((item, index) => {
+            if (item instanceof QuestionSection) {
+                sectionItem.content.push(Helper.makeFormData(item, path.concat(i, index), valueLocationName.concat(`[${i}].${item.id}`)));
+            } else if (item instanceof QAQuestion) {
+                sectionItem.content.push({
+                    id: item.id,
+                    title: item.questionContent.content,
+                    valueLocationName: valueLocationName.concat('[', i.toString(), ']', '.', item.id),
+                    path: path.concat(i, index),
+                    answerType: item.answerType,
+                    isRequired: item.isRequired,
+
+                })
+            }
+        })
+        content.push(sectionItem);
+    }
+    return content;
+}
+
+
+
 }
 
 export interface IAnswer {
