@@ -2,8 +2,9 @@ import React from "react";
 import { FlatList, View } from "react-native";
 import { Button, Text } from "react-native-ui-kitten";
 import { connect } from "react-redux";
-import { Field, InjectedFormProps, reduxForm } from 'redux-form';
+import { Field, FormSection, InjectedFormProps, reduxForm } from 'redux-form';
 import { FormItem } from "../../formComponents/surveyformitem";
+import { getCurrentSectionData } from "../../redux/selectors/filledFormSelectors";
 import { getRootFormById, getRootFormSectionById } from "../../redux/selectors/questionSelector";
 type SectionPagedProps = {
     sectionId: string;
@@ -21,12 +22,14 @@ export class PagedSection_ extends React.Component<SectionPagedProps, {}> {
                 )
             })
         } else {
-            comp = <View>
+            comp = <FormSection name='' component={() => <View>
                 <View>
                     <Text>{this.props.data[0].title}</Text>
                 </View>
+
                 <SectionContentList parentProps={this.props} data={this.props.data[0].content} />
-            </View>
+            </View>} />
+
         }
         return comp;
     }
@@ -40,13 +43,14 @@ type SectionContentListProps = {
 export class SectionContentList extends React.Component<SectionContentListProps, {}>{
     child = (props, item) => {
         return <FormItem
+            isDependent={item.dependency.all.length > 0}
+            valueLocationName={item.valueLocationName}
             formId={this.props.parentProps.formId}
             path={item.path}
             rootId={this.props.parentProps.rootId}
             questionId={item.id}
             value={props.input.value}
             onChange={props.input.onChange}
-            onBlur={props.input.onChange}
         />
     }
     renderItem(item) {
@@ -63,6 +67,9 @@ export class SectionContentList extends React.Component<SectionContentListProps,
 
         return <View>
             <FlatList
+                initialNumToRender={10}
+                updateCellsBatchingPeriod={50}
+                windowSize={21}
                 data={this.props.data}
                 keyExtractor={(item) => Array.isArray(item) ? item[0].id : item.id}
                 renderItem={item => this.renderItem(item)}
@@ -82,6 +89,7 @@ const mapStateToProps = (state, props) => {
     return {
         section: s,
         form: props.formId,
+        data: getCurrentSectionData(state, props),
         root: getRootFormById(state, props)
     }
 }
@@ -92,3 +100,4 @@ const mapDisPatchToProps = (dispatch) => {
 };
 
 export const SectionPageContainer = connect(mapStateToProps, mapDisPatchToProps)(PagedSection);
+

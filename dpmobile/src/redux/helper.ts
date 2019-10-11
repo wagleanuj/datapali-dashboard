@@ -43,13 +43,13 @@ export class Helper {
 
     }
 
-    static checkIfQuestionHasCondition(question: QAQuestion){
-        if(question.appearingCondition.literals.length>0) return true;
+    static checkIfQuestionHasCondition(question: QAQuestion) {
+        if (question.appearingCondition.literals.length > 0) return true;
         let options = question.options && question.options.SortedOptions;
-        let {groups, rootOptions} = options;
-        let found = groups.find(item=> item.appearingCondition.literals.length>0);
-        if(found) return true;
-        if(rootOptions.find(item=>item.appearingCondition.literals.length>0)) return true;
+        let { groups, rootOptions } = options;
+        let found = groups.find(item => item.appearingCondition.literals.length > 0);
+        if (found) return true;
+        if (rootOptions.find(item => item.appearingCondition.literals.length > 0)) return true;
         return false;
     }
     static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean = false): IAnswerSection {
@@ -174,7 +174,7 @@ export class Helper {
         const token = await StorageUtil.getAuthToken();
         const availableForms: AvailableFormsState = rootForms;
         const res: AppState = {
-            
+
             availableForms: availableForms,
             filledForms: filledForms || {},
             user: {
@@ -321,37 +321,65 @@ export class Helper {
         return self;
 
     }
-
- static makeFormData(section: QuestionSection, path: number[] = [0, 0], valueLocationName?: string) {
-    if (!valueLocationName) valueLocationName = section.id;
-    let content = [];
-    let duplicateTimes = 1;
-    for (let i = 0; i < duplicateTimes; i++) {
-        let sectionItem = {
-            title: section.name + (duplicateTimes > 1 ? " " + (i + 1) : ''),
-            id: section.id,
-            path: path.concat(i),
-            content: []
+    static collectDependencies(item: QuestionSection | QAQuestion) {
+        let apConditionRef: string[] = [];
+        let groupConditionRefs: string[] = [];
+        let rootOptionConditionRefs: string[] = [];
+        let autoFillConditionRefs: string[] = [];
+        let duplicationRef: string = null;
+        if (item instanceof QAQuestion) {
+            apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
+            item.autoAnswer.answeringConditions.forEach(ac => ac.condition.literals.forEach(item => autoFillConditionRefs.push(item.questionRef)));
+            let { groups, rootOptions } = item.options.SortedOptions;
+            groups.forEach(group => group.appearingCondition.Literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
+            rootOptions.forEach(opt => opt.appearingCondition.Literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
+        } else if (item instanceof QuestionSection) {
+            apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
+            duplicationRef = item.duplicatingSettings.isEnabled && item.duplicatingSettings.duplicateTimes.type === 'questionRef' ? item.duplicatingSettings.duplicateTimes.value : null;
         }
-        section.content.forEach((item, index) => {
-            if (item instanceof QuestionSection) {
-                sectionItem.content.push(Helper.makeFormData(item, path.concat(i, index), valueLocationName.concat(`[${i}].${item.id}`)));
-            } else if (item instanceof QAQuestion) {
-                sectionItem.content.push({
-                    id: item.id,
-                    title: item.questionContent.content,
-                    valueLocationName: valueLocationName.concat('[', i.toString(), ']', '.', item.id),
-                    path: path.concat(i, index),
-                    answerType: item.answerType,
-                    isRequired: item.isRequired,
-
-                })
-            }
-        })
-        content.push(sectionItem);
+        let ns = new Set([].concat(apConditionRef, groupConditionRefs, rootOptionConditionRefs, duplicationRef?[duplicationRef]:[]));
+        return {
+            all: Array.from(ns),
+            autoFillConditions: Array.from(new Set(apConditionRef)),
+            groupConditions: Array.from(new Set(groupConditionRefs)),
+            rootOptionConditions: Array.from(new Set(rootOptionConditionRefs)),
+            duplicationRef: duplicationRef
+        };
     }
-    return content;
-}
+
+    static makeFormData(section: QuestionSection, path: number[] = [0, 0], valueLocationName?: string) {
+        if (!valueLocationName) valueLocationName = section.id;
+        let content = [];
+        let duplicateTimes = 1;
+        let dependency = Helper.collectDependencies(section);
+        for (let i = 0; i < duplicateTimes; i++) {
+            let sectionItem = {
+                title: section.name + (duplicateTimes > 1 ? " " + (i + 1) : ''),
+                id: section.id,
+                path: path.concat(i),
+                content: [],
+                dependency: dependency,
+            }
+            section.content.forEach((item, index) => {
+                if (item instanceof QuestionSection) {
+                    sectionItem.content.push(Helper.makeFormData(item, path.concat(i, index), valueLocationName.concat(`[${i}].${item.id}`)));
+                } else if (item instanceof QAQuestion) {
+                    sectionItem.content.push({
+                        id: item.id,
+                        title: item.questionContent.content,
+                        valueLocationName: valueLocationName.concat('[', i.toString(), ']', '.', item.id),
+                        path: path.concat(i, index),
+                        answerType: item.answerType,
+                        isRequired: item.isRequired,
+                        isDependent: Helper.checkIfQuestionHasCondition(item),
+                        dependency: Helper.collectDependencies(item)
+                    })
+                }
+            })
+            content.push(sectionItem);
+        }
+        return content;
+    }
 
 
 

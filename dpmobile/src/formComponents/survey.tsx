@@ -1,13 +1,11 @@
 import { RootSection } from "dpform";
-import prettyFormat from 'pretty-format';
 import React from "react";
 import { View } from "react-native";
-import { Text, ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
-import { getFormValues } from "redux-form";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
 import { SectionPageContainer } from "../components/reduxFormComponents/sectionPage.component";
@@ -16,7 +14,6 @@ import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
 import { handleNext, handlePrev } from "../redux/actions/action";
 import { AppState, SurveyState } from "../redux/actions/types";
-import { Helper } from "../redux/helper";
 import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
 import { getRootFormById } from "../redux/selectors/questionSelector";
 import { textStyle } from "../themes/style";
@@ -35,10 +32,12 @@ export class Survey_ extends React.Component<SurveyProps>{
         const renderLeftIcon = () => {
             return <TopNavigationAction onPress={() => {
                 const save = props.navigation.getParam("onSaveClick");
-                save().then(res => {
+                if (save) save().then(res => {
                     props.navigation.goBack(KEY_NAVIGATION_BACK)
 
                 })
+                else props.navigation.goBack(KEY_NAVIGATION_BACK)
+
             }} icon={ArrowIosBackFill} />
         }
         const renderRightControls = () => {
@@ -69,8 +68,6 @@ export class Survey_ extends React.Component<SurveyProps>{
 
     render() {
         const { form, root } = this.props;
-        const data = (Helper.makeFormData(this.props.navigation.getParam('root').content[1], [0, 0]));
-        console.log(this.props.values);
         return (
             <View style={this.props.themedStyle.container}>
                 <Toolbar
@@ -86,9 +83,7 @@ export class Survey_ extends React.Component<SurveyProps>{
                     <SectionPageContainer
                         formId={form.id}
                         rootId={form.formId}
-                        data={data}
                     />
-                    <Text>{prettyFormat(this.props.values)}</Text>
 
                 </Showcase>
             </View>
@@ -118,8 +113,7 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
     return {
         form: selected,
         root: getRootFormById(state, props),
-        values: getFormValues(filledFormId)(state)
-        
+
     }
 }
 

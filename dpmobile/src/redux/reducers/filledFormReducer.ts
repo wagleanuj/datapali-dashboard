@@ -83,7 +83,6 @@ export function filledFormReducer(
                 history: newHistory,
                 currentSectionIndex: newIndex
             }
-            return state;
         case NEXT_FORM_ITEM:
             return (function () {
                 const { formId } = action.payload;
@@ -93,7 +92,13 @@ export function filledFormReducer(
                 })
             })()
         case PREV_FORM_ITEM:
-            return state;
+                return (function () {
+                    const { formId } = action.payload;
+                    return produce(state, draft => {
+                        const form = draft[formId];
+                        form.currentIndex--
+                    })
+                })()
         default:
             return state;
     }

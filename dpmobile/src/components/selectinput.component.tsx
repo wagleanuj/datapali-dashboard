@@ -3,6 +3,7 @@ import React from "react";
 import { View } from "react-native";
 import { Radio, RadioGroup, Text } from "react-native-ui-kitten";
 import { AnswerSection } from "../answer.store";
+import _ from "lodash";
 
 
 interface SelInputProps {
@@ -145,15 +146,16 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
     }
 
     renderOption(item: { text: string, id: string }) {
-        return <Radio style={{ paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.text} />
+        return <Radio style={{ paddingTop: 8,paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.text} />
     }
     handleSelectionChange() {
         if (this.props.onSelectionChange) this.props.onSelectionChange(this.props.options[this.state.selected]);
     }
-    onSelectionChange(index) {
+    onSelectionChange(index: number) {
+        if (this.state.selected === index) return;
         this.setState({
             selected: index
-        }, this.handleSelectionChange.bind(this))
+        }, _.debounce(this.handleSelectionChange.bind(this),20))
     }
     render() {
         return <RadioGroup onChange={this.onSelectionChange.bind(this)} selectedIndex={this.state.selected} >

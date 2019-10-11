@@ -1,4 +1,5 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
+import _ from "lodash";
 import React from "react";
 import { DatePickerAndroid, View } from "react-native";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
@@ -9,8 +10,7 @@ import { AutoCompleteItem } from "../components/forms.component";
 import { RadioInput } from "../components/selectinput.component";
 import { handleUpdateAnswer } from "../redux/actions/action";
 import { AppState } from "../redux/actions/types";
-import { getAnswerAtPath, getQuestionTitle, getQuestionType, getAnswerValueAtPath, getAnswerVAtPath, getTransformedValidOptions } from "../redux/selectors/questionSelector";
-import _ from "lodash";
+import { getQuestionTitle, getQuestionType, getTransformedValidOptions } from "../redux/selectors/questionSelector";
 
 type FormItemProps = {
     questionId: string;
@@ -57,7 +57,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
                 <View>
                     <Text>
-                        {`${path?getReadablePath(path.slice(1)):''} : ${title} ${isRequired ? '*' : ''}`}
+                        {`${path ? getReadablePath(path.slice(1)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                     </Text>
                     <FormInput
                         autoCompleteData={autoCompleteData}
@@ -95,6 +95,9 @@ export const FormItemStyled = withStyles(FormItem_, theme => ({
 }))
 
 interface FormInputProps {
+    questionId: string;
+    isDependent: boolean;
+    valueLocationName: string;
     type: IValueType;
     value: string;
     options?: { text: string, id: string }[]
@@ -105,81 +108,87 @@ interface FormInputProps {
     onBlur: (value: string) => void;
 
 }
-function FormInput(props: FormInputProps) {
-    const defaultValue = props.value || props.autoFillValue;
-    const openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
-        try {
-            const { action, year, month, day } = await DatePickerAndroid.open({
-                date: defaultDate || new Date(),
-            });
-            if (action !== DatePickerAndroid.dismissedAction) {
-                // Selected year, month (0-11), day
-                if (onDateChange) onDateChange(new Date(year, month, day));
-            }
-        } catch ({ code, message }) {
-            console.warn('Cannot open date picker', message);
-        }
+class FormInput extends React.Component<FormInputProps, {}> {
+    shouldComponentUpdate() {
+        return true;
     }
-
-    switch (props.type.name) {
-        case ANSWER_TYPES.NUMBER:
-            return <AutoComplete
-                keyboardType={'numeric'}
-                textContentType={'telephoneNumber'}
-                value={defaultValue}
-                data={props.autoCompleteData}
-                onChange={props.onValueChange}
-                onBlur={props.onBlur}
-                error={props.error}
-            />
-        case ANSWER_TYPES.STRING:
-            return <AutoComplete
-                textContentType={'name'}
-                value={defaultValue}
-                data={props.autoCompleteData}
-                onChange={props.onValueChange}
-                error={props.error}
-                onBlur={props.onBlur}
-            />;
-        case ANSWER_TYPES.GEOLOCATION:
-            let defaultLocation = (locationJSON: any) => {
-                return `Latitude: ${locationJSON.coords.latitude}\nLongitude: ${locationJSON.coords.longitude}`;
+    render() {
+        const { props } = this;
+        const defaultValue = props.value || props.autoFillValue;
+        const openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
+            try {
+                const { action, year, month, day } = await DatePickerAndroid.open({
+                    date: defaultDate || new Date(),
+                });
+                if (action !== DatePickerAndroid.dismissedAction) {
+                    // Selected year, month (0-11), day
+                    if (onDateChange) onDateChange(new Date(year, month, day));
+                }
+            } catch ({ code, message }) {
+                console.warn('Cannot open date picker', message);
             }
-            let dl = defaultValue ? defaultLocation(JSON.parse(defaultValue)) : "";
-            return <Button
-                appearance='outline'
-                icon={(style) => (<Icon {...style} name="calendar" />)}
+        }
 
-                onPress={() => {
-                    navigator.geolocation.getCurrentPosition(
-                        position => {
-                            const location = JSON.stringify(position);
-                            props.onValueChange(location);
+        switch (props.type.name) {
+            case ANSWER_TYPES.NUMBER:
+                return <AutoComplete
+                    keyboardType={'numeric'}
+                    textContentType={'telephoneNumber'}
+                    value={defaultValue}
+                    data={props.autoCompleteData}
+                    onChange={props.onValueChange}
+                    onBlur={props.onBlur}
+                    error={props.error}
+                />
+            case ANSWER_TYPES.STRING:
+                return <AutoComplete
+                    textContentType={'name'}
+                    value={defaultValue}
+                    data={props.autoCompleteData}
+                    onChange={props.onValueChange}
+                    error={props.error}
+                    onBlur={props.onBlur}
+                />;
+            case ANSWER_TYPES.GEOLOCATION:
+                let defaultLocation = (locationJSON: any) => {
+                    return `Latitude: ${locationJSON.coords.latitude}\nLongitude: ${locationJSON.coords.longitude}`;
+                }
+                let dl = defaultValue ? defaultLocation(JSON.parse(defaultValue)) : "";
+                return <Button
+                    appearance='outline'
+                    icon={(style) => (<Icon {...style} name="calendar" />)}
 
-                        },
-                        error => { },
-                        { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
-                    );
-                }} >
-                {dl}
-            </Button>
-        case ANSWER_TYPES.DATE:
-            let defDate = new Date(defaultValue);
-            let date = defDate && !_.isNaN(defDate.getTime()) ? defDate : new Date();
-            return <Button
-                appearance='outline'
-                icon={(style) => (<Icon {...style} name="calendar" />)}
-                onPress={() => openDatePicker(date, (date: Date) => {
-                    let stringified = date.toDateString();
-                    props.onValueChange(stringified);
-                })}
-            >{date.toDateString()}</Button>
-        case ANSWER_TYPES.SELECT:
-            return <SelectInput
-                options={props.options}
-                onChange={props.onValueChange}
-                selectedId={defaultValue}
-            />
+                    onPress={() => {
+                        navigator.geolocation.getCurrentPosition(
+                            position => {
+                                const location = JSON.stringify(position);
+                                props.onValueChange(location);
+
+                            },
+                            error => { },
+                            { enableHighAccuracy: true, timeout: 20000, maximumAge: 1000 }
+                        );
+                    }} >
+                    {dl}
+                </Button>
+            case ANSWER_TYPES.DATE:
+                let defDate = new Date(defaultValue);
+                let date = defDate && !_.isNaN(defDate.getTime()) ? defDate : new Date();
+                return <Button
+                    appearance='outline'
+                    icon={(style) => (<Icon {...style} name="calendar" />)}
+                    onPress={() => openDatePicker(date, (date: Date) => {
+                        let stringified = date.toDateString();
+                        props.onValueChange(stringified);
+                    })}
+                >{date.toDateString()}</Button>
+            case ANSWER_TYPES.SELECT:
+                return <SelectInput
+                    options={props.options}
+                    onChange={props.onValueChange}
+                    selectedId={defaultValue}
+                />
+        }
     }
 }
 type SelectInputProps = {
@@ -208,11 +217,11 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
 }
 
 const mapStateToProps = (state: AppState, props: FormItemProps) => {
-
+    const type = getQuestionType(state, props);
     return {
         title: getQuestionTitle(state, props),
-        type: getQuestionType(state, props),
-        options: getTransformedValidOptions(state, props),
+        type: type,
+        options: type.name === ANSWER_TYPES.SELECT ? getTransformedValidOptions(state, props) : [],
 
     }
 }

@@ -61,7 +61,6 @@ export class Page_ extends React.Component<PageProps, {}>{
 
     render() {
         const data = this.makeData(this.props.content, []);
-        console.log(this.props.content);
         return (
             <Layout style={this.props.themedStyle.container} >
                 <FlatList
