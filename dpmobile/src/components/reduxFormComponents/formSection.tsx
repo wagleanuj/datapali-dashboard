@@ -1,19 +1,28 @@
 import { FormSection } from "redux-form"
+import { ReactNode } from "react"
+import React from "react";
+import { View } from "react-native";
+import { Text } from 'react-native-ui-kitten';
 
 type FormSectionProps = {
     name: string;
+    children: ReactNode;
+    displayTitle: string;
 }
 
-class FormSection_ extends React.Component<FormSectionProps, {}>{
-   
+export class CustomFormSection extends React.Component<FormSectionProps, {}>{
+
     renderFields = () => {
-        return <></>
+        return <>{this.props.children}</>;
     }
 
     render() {
-        return <FormSection
-            name={this.props.name}
-            component={this.renderFields}
-        />
+        return <View>
+            <Text>{this.props.displayTitle}</Text>
+            <FormSection
+                name={this.props.name}
+                component={this.renderFields}
+            />
+        </View>
     }
 }

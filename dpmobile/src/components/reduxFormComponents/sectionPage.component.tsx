@@ -1,16 +1,16 @@
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
 import { Button, Text } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Field, FormSection, InjectedFormProps, reduxForm } from 'redux-form';
 import { FormItem } from "../../formComponents/surveyformitem";
 import { getCurrentSectionData } from "../../redux/selectors/filledFormSelectors";
-import { getRootFormById, getRootFormSectionById } from "../../redux/selectors/questionSelector";
 type SectionPagedProps = {
     sectionId: string;
     formId: string;
     rootId: string;
-    data: any[]
+    data: any[];
+    duplicateTimes: number;
 } & InjectedFormProps
 export class PagedSection_ extends React.Component<SectionPagedProps, {}> {
     render() {
@@ -44,7 +44,6 @@ export class SectionContentList extends React.Component<SectionContentListProps,
     child = (props, item) => {
         return <FormItem
             isDependent={item.dependency.all.length > 0}
-            valueLocationName={item.valueLocationName}
             formId={this.props.parentProps.formId}
             path={item.path}
             rootId={this.props.parentProps.rootId}
@@ -66,14 +65,15 @@ export class SectionContentList extends React.Component<SectionContentListProps,
     render() {
 
         return <View>
-            <FlatList
+            {/* <FlatList
                 initialNumToRender={10}
                 updateCellsBatchingPeriod={50}
                 windowSize={21}
                 data={this.props.data}
                 keyExtractor={(item) => Array.isArray(item) ? item[0].id : item.id}
                 renderItem={item => this.renderItem(item)}
-            />
+            /> */}
+
             {/* {this.props.data.map(item => this.renderItem(item, () => { }))} */}
         </View>
 
@@ -85,12 +85,10 @@ const PagedSection = (reduxForm({
 })(PagedSection_))
 
 const mapStateToProps = (state, props) => {
-    const s = getRootFormSectionById(state, props);
     return {
-        section: s,
+        // duplicateTimes: getDuplicatingTimesForSection(state, props),
         form: props.formId,
         data: getCurrentSectionData(state, props),
-        root: getRootFormById(state, props)
     }
 }
 const mapDisPatchToProps = (dispatch) => {

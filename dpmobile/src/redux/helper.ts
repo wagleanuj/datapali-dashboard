@@ -154,17 +154,19 @@ export class Helper {
     }
 
     static makeTree(root: RootSection | QuestionSection, tree: any = {}) {
-        tree[root.id] = _.cloneDeep(root);
+        tree[root.id] = { ...root, childNodes: [], _type: root instanceof QuestionSection ? 'section' : 'root' };
+        tree[root.id].childNodes = [];
         for (let i = 0; i < tree[root.id].content.length; i++) {
             let item = tree[root.id].content[i];
             if (item instanceof QuestionSection) {
                 Helper.makeTree(item, tree);
                 tree[root.id].childNodes.push(item.id);
             } else if (item instanceof QAQuestion) {
-                tree[item.id] = _.cloneDeep(item);
+                tree[item.id] = { ...item, _type: 'question' }
                 tree[root.id].childNodes.push(item.id);
             }
         }
+        delete tree[root.id].content;
         return tree;
     }
     static async generateAppState(): Promise<AppState> {
@@ -174,8 +176,8 @@ export class Helper {
         const token = await StorageUtil.getAuthToken();
         const availableForms: AvailableFormsState = rootForms;
         const res: AppState = {
-
             availableForms: availableForms,
+            rootForms: _.mapValues(availableForms, v => Helper.makeTree(v)),
             filledForms: filledForms || {},
             user: {
                 availableForms: user.availableForms,
@@ -294,6 +296,7 @@ export class Helper {
         return finalResult;
     }
 
+
     static buildContent(section: QuestionSection | RootSection, path: number[] = []): IAnswerSection {
         const self: IAnswerSection = {
             content: [],
@@ -327,17 +330,17 @@ export class Helper {
         let rootOptionConditionRefs: string[] = [];
         let autoFillConditionRefs: string[] = [];
         let duplicationRef: string = null;
-        if (item instanceof QAQuestion) {
+        if (item instanceof QAQuestion || item._type === 'question') {
             apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
             item.autoAnswer.answeringConditions.forEach(ac => ac.condition.literals.forEach(item => autoFillConditionRefs.push(item.questionRef)));
             let { groups, rootOptions } = item.options.SortedOptions;
             groups.forEach(group => group.appearingCondition.Literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
             rootOptions.forEach(opt => opt.appearingCondition.Literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
-        } else if (item instanceof QuestionSection) {
+        } else if (item instanceof QuestionSection || item._type === 'section') {
             apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
             duplicationRef = item.duplicatingSettings.isEnabled && item.duplicatingSettings.duplicateTimes.type === 'questionRef' ? item.duplicatingSettings.duplicateTimes.value : null;
         }
-        let ns = new Set([].concat(apConditionRef, groupConditionRefs, rootOptionConditionRefs, duplicationRef?[duplicationRef]:[]));
+        let ns = new Set([].concat(apConditionRef, groupConditionRefs, rootOptionConditionRefs, duplicationRef ? [duplicationRef] : []));
         return {
             all: Array.from(ns),
             autoFillConditions: Array.from(new Set(apConditionRef)),

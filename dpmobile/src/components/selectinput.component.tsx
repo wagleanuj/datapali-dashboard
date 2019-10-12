@@ -155,7 +155,7 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
         if (this.state.selected === index) return;
         this.setState({
             selected: index
-        }, _.debounce(this.handleSelectionChange.bind(this),20))
+        }, this.handleSelectionChange.bind(this))
     }
     render() {
         return <RadioGroup onChange={this.onSelectionChange.bind(this)} selectedIndex={this.state.selected} >

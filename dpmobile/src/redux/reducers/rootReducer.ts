@@ -7,16 +7,19 @@ import { AppState } from "../actions/types";
 import { availableFormsReducer } from "./availableFormsReducer";
 import { filledFormReducer } from "./filledFormReducer";
 import { userReducer } from "./userReducer";
+import { rootFormReducer } from "./rootFormReducers";
 
 export const rootReducer = combineReducers({
     filledForms: filledFormReducer,
     availableForms: availableFormsReducer,
     user: userReducer,
-    form: formReducer
+    form: formReducer,
+    rootForms: rootFormReducer,
 });
 
 export function rootReducer_(state: AppState = {
     availableForms: {},
+    rootForms: {},
     filledForms: {},
     user: {
         availableForms: [],

@@ -10,7 +10,9 @@ import { AutoCompleteItem } from "../components/forms.component";
 import { RadioInput } from "../components/selectinput.component";
 import { handleUpdateAnswer } from "../redux/actions/action";
 import { AppState } from "../redux/actions/types";
-import { getQuestionTitle, getQuestionType, getTransformedValidOptions } from "../redux/selectors/questionSelector";
+import { getNodeOfRootForm } from "../redux/selectors/nodeSelector";
+import { getQuestionTitle, getTransformedValidOptions } from "../redux/selectors/questionSelector";
+import { Helper } from "../redux/helper";
 
 type FormItemProps = {
     questionId: string;
@@ -57,7 +59,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
                 <View>
                     <Text>
-                        {`${path ? getReadablePath(path.slice(1)) : ''} : ${title} ${isRequired ? '*' : ''}`}
+                        {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                     </Text>
                     <FormInput
                         autoCompleteData={autoCompleteData}
@@ -110,7 +112,10 @@ interface FormInputProps {
 }
 class FormInput extends React.Component<FormInputProps, {}> {
     shouldComponentUpdate() {
-        return true;
+       if(!this.props.isDependent) {
+           return true;
+       }
+       return false;
     }
     render() {
         const { props } = this;
@@ -217,9 +222,13 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
 }
 
 const mapStateToProps = (state: AppState, props: FormItemProps) => {
-    const type = getQuestionType(state, props);
+    const all = getNodeOfRootForm(state, props);
+    const type = all.answerType;
+    const title = all.questionContent.content;
+    const deps = Helper.collectDependencies(all);
     return {
-        title: getQuestionTitle(state, props),
+        isDependent: deps.all.length>0,
+        title:title,
         type: type,
         options: type.name === ANSWER_TYPES.SELECT ? getTransformedValidOptions(state, props) : [],
 

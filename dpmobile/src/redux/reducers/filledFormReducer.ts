@@ -27,6 +27,7 @@ export function filledFormReducer(
             const { root, userId } = action.payload;
             if (!root) return state;
             let newForm: FilledForm = {
+                // answerSection: { id: '', content: [], name: '', path: [] },
                 answerSection: Helper.buildContent(root),
                 completedDate: undefined,
                 startedDate: new Date().getTime(),
@@ -92,13 +93,13 @@ export function filledFormReducer(
                 })
             })()
         case PREV_FORM_ITEM:
-                return (function () {
-                    const { formId } = action.payload;
-                    return produce(state, draft => {
-                        const form = draft[formId];
-                        form.currentIndex--
-                    })
-                })()
+            return (function () {
+                const { formId } = action.payload;
+                return produce(state, draft => {
+                    const form = draft[formId];
+                    form.currentIndex--
+                })
+            })()
         default:
             return state;
     }

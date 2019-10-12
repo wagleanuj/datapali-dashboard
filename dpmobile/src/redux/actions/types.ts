@@ -55,5 +55,6 @@ export interface AppState {
     user?: User;
     availableForms: AvailableFormsState;
     filledForms: FilledFormsState;
-    filled: FilledFormsState
+    filled: FilledFormsState;
+    rootForms: {[key: string]: any}
 }

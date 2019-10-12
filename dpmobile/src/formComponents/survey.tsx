@@ -8,7 +8,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
-import { SectionPageContainer } from "../components/reduxFormComponents/sectionPage.component";
+import { ConnectedWizard } from "../components/reduxFormComponents/wizard";
 import { Showcase } from "../components/showcase.component";
 import { Toolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
@@ -68,6 +68,7 @@ export class Survey_ extends React.Component<SurveyProps>{
 
     render() {
         const { form, root } = this.props;
+
         return (
             <View style={this.props.themedStyle.container}>
                 <Toolbar
@@ -80,10 +81,13 @@ export class Survey_ extends React.Component<SurveyProps>{
                     sectionOptions={[]}
                 />
                 <Showcase>
-                    <SectionPageContainer
+
+                    <ConnectedWizard
                         formId={form.id}
                         rootId={form.formId}
+
                     />
+
 
                 </Showcase>
             </View>
