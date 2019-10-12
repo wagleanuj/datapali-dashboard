@@ -10,7 +10,7 @@ import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
 import { FilledForm } from "../components/forms.component";
 import { ConnectedWizard } from "../components/reduxFormComponents/wizard";
 import { Showcase } from "../components/showcase.component";
-import { Toolbar } from "../components/toolbar";
+import { ConnectedToolbar } from "../components/toolbar";
 import { KEY_NAVIGATION_BACK } from "../navigation/constants";
 import { handleNext, handlePrev } from "../redux/actions/action";
 import { AppState, SurveyState } from "../redux/actions/types";
@@ -71,14 +71,12 @@ export class Survey_ extends React.Component<SurveyProps>{
 
         return (
             <View style={this.props.themedStyle.container}>
-                <Toolbar
-                    backButtonDisabled={this.props.currentIndex === 0}
-                    nextButtonDisabled={false}
+                <ConnectedToolbar
+                    formId={form.id}
+                    rootId={form.formId}
                     onBackButtonPress={this.handlePrev.bind(this)}
                     onNextButtonPress={this.handleNext.bind(this)}
                     jumpToSection={this.props.handleJump}
-                    selectedSectionPath={[]}
-                    sectionOptions={[]}
                 />
                 <Showcase>
 

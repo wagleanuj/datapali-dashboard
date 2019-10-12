@@ -1,9 +1,9 @@
 import { AnswerOptions, ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion } from "dpform";
 import React from "react";
 import { View } from "react-native";
-import { Radio, RadioGroup, Text } from "react-native-ui-kitten";
+import { FlatList } from "react-native-gesture-handler";
+import { ListItem, Radio, Text } from "react-native-ui-kitten";
 import { AnswerSection } from "../answer.store";
-import _ from "lodash";
 
 
 interface SelInputProps {
@@ -145,9 +145,6 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
         }
     }
 
-    renderOption(item: { text: string, id: string }) {
-        return <Radio style={{ paddingTop: 8,paddingBottom: 8, paddingLeft: 8 }} key={item.id} text={item.text} />
-    }
     handleSelectionChange() {
         if (this.props.onSelectionChange) this.props.onSelectionChange(this.props.options[this.state.selected]);
     }
@@ -157,10 +154,32 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
             selected: index
         }, this.handleSelectionChange.bind(this))
     }
+    renderAccessory = (style, index) => {
+        return (
+            <Radio
+                style={style}
+                checked={this.state.selected === index}
+                onChange={() => this.onSelectionChange(index)}
+            />
+        )
+    }
+    renderListItem = (item) => {
+        return <ListItem
+            title={item.item.text}
+            description={''}
+            onPress={() => this.onSelectionChange(item.index)}
+            accessory={style => this.renderAccessory(style, item.index)}
+        />
+    }
     render() {
-        return <RadioGroup onChange={this.onSelectionChange.bind(this)} selectedIndex={this.state.selected} >
-            {this.props.options.map(option => this.renderOption(option))}
-        </RadioGroup>
+        return (
+            <FlatList
+                keyExtractor={item => item.id}
+                data={this.props.options}
+                renderItem={this.renderListItem}
+            />
+        )
+
     }
 }
 

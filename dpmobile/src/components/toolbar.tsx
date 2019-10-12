@@ -2,11 +2,15 @@ import { getReadablePath, QAQuestion, QuestionSection } from "dpform";
 import React from "react";
 import { Picker, View } from "react-native";
 import { Button, Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { connect } from "react-redux";
+import { getFilledFormById } from "../redux/selectors/nodeSelector";
 
 type ToolbarProps = {
-    selectedSectionPath: number[];
-    jumpToSection: (path: number) => void;
-    sectionOptions: { data: QuestionSection | QAQuestion, path: number[] }[];
+    formId: string;
+    rootId: string;
+    sectionPickerData: { id: string, label: string }[];
+    sectionPickerSelected: string;
+    jumpToSection: (value: string) => void;
     onBackButtonPress: () => void;
     onNextButtonPress: () => void;
     backButtonDisabled: boolean;
@@ -38,19 +42,18 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
                     onPress={this.props.onBackButtonPress} />
                 <View style={this.props.themedStyle.selectContainer}>
                     <Picker
-                        selectedValue={this.props.selectedSectionPath}
+                        selectedValue={this.props.sectionPickerSelected}
                         style={this.props.themedStyle.select}
 
                         onValueChange={this.props.jumpToSection}>
-                        {this.props.sectionOptions.map(item => {
-                            if (item.data instanceof QuestionSection) {
-                                return <Picker.Item
-                                    value={item.path}
-                                    key={"opt-" + item.data.id}
-                                    label={`${getReadablePath(item.path)}: ${item.data.name}`} />
-                            }
-                            return null;
+                        {this.props.sectionPickerData.map((data, index) => {
+                            return <Picker.Item
+                                value={data.id}
+                                key={data.id}
+                                label={`${getReadablePath([0, index])}: ${data.label}`}
+                            />
                         })}
+
 
                     </Picker>
                 </View>
@@ -108,3 +111,22 @@ export const Toolbar = withStyles(ToolbarComponent, theme => ({
         height: 48
     },
 }))
+const mapStateToProps = (state, props) => {
+    const filledForm = getFilledFormById(state, props);
+    const roots = state.rootForms[filledForm.formId];
+    const selected = (roots[filledForm.formId]);
+    const children = selected.childNodes;
+    const data = children.map(it => ({ label: roots[it] && roots[it].name ? roots[it].name : 'no name', id: it }));
+    const selectedValue = children[filledForm.currentIndex];
+    return {
+        sectionPickerData: data,
+        sectionPickerSelected: selectedValue,
+    }
+}
+const mapDispatchToProps = (dispatch) => {
+    return {
+
+    }
+}
+
+export const ConnectedToolbar = connect(mapStateToProps, mapDispatchToProps)(Toolbar);

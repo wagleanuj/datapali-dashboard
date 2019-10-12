@@ -43,25 +43,13 @@ class SectionNode extends React.Component<SectionNodeProps, {}>{
         );
 
     }
-    // renderAccordionHeader = (item) => {
-    //     const { themedStyle } = this.props;
-    //     return <View style={themedStyle.accordionHeaderContainer}>
-    //         <Button
-    //             textStyle={themedStyle.headerText}
-    //             disabled appearance='ghost'
-    //         >
-    //             {`Add Record ${item + 1}`}
-    //         </Button>
-    //     </View>
-    // }
 
     decisiveRender() {
         if (this.props.duplicateTimes !== -1) {
-            let data = Array.from(new Array(2).keys()).map(item => ({ title: `Add Record ${item + 1}`, content: item }));
+            let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Add Record ${item + 1}`, content: item }));
             return (
                 <Accordion
                     expandedIconStyle={{ backgroundColor: 'black' }}
-                    // renderHeader={this.renderAccordionHeader}
                     dataArray={data}
                     renderContent={item => this.renderFlatList(item.content)}
                 />
@@ -75,9 +63,12 @@ class SectionNode extends React.Component<SectionNodeProps, {}>{
     render() {
         return (
             <View style={this.props.themedStyle.container}>
-                <Text>
-                    {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
-                </Text>
+                <View style={this.props.themedStyle.headingContainer}>
+                    <Text style={this.props.themedStyle.headingText}>
+                        {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
+                    </Text>
+                </View>
+
                 {this.decisiveRender()}
             </View>
         )
@@ -86,8 +77,18 @@ class SectionNode extends React.Component<SectionNodeProps, {}>{
 
 const SectionNodeStyled = withStyles(SectionNode, theme => ({
     container: {
-        paddingLeft: 16,
-        paddingRight: 16
+        paddingTop: 16,
+        paddingLeft: 4,
+        paddingRight: 4
+    },
+    headingContainer: {
+        flex: 0,
+        flexDirection: 'row',
+        justifyContent: 'center'
+    },
+    headingText: {
+        fontSize: 14,
+        fontWeight: 'bold',
     },
     accordionHeaderContainer: {
         paddingTop: 4,
@@ -95,7 +96,8 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
         borderTop: 1,
     },
     headerText: {
-        color: 'red'
+        color: 'red',
+        textAlign: 'center'
     }
 }));
 
