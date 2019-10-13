@@ -2,10 +2,11 @@ import { getReadablePath } from "dpform";
 import { Accordion } from 'native-base';
 import React from "react";
 import { FlatList, View } from "react-native";
-import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
+import { Text, ThemedComponentProps, ViewPager, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
-import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
-import { ConnectedFormNode } from "./formNode";
+import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getSectionNameFromId, getNodeTypeFromId } from "../../redux/selectors/nodeSelector";
+import { ConnectedQuestionNode } from "./questionNode";
+import { AppState } from "../../redux/actions/types";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -15,9 +16,12 @@ type SectionNodeProps = {
     path: number[];
     formId: string;
     rootId: string;
+    pagerMode: boolean;
 } & ThemedComponentProps;
-class SectionNode extends React.Component<SectionNodeProps, {}>{
-
+class SectionNode extends React.Component<SectionNodeProps, { selectedPage: number }>{
+    state = {
+        selectedPage: 0,
+    }
     renderChildNode(item, iteration) {
         const { rootId, formId, locationName, path } = this.props;
         const newPath = path.concat(iteration, item.index);
@@ -43,6 +47,14 @@ class SectionNode extends React.Component<SectionNodeProps, {}>{
         );
 
     }
+    shouldLoadComponent = (index: Number) => {
+        return index === this.state.selectedPage;
+    }
+    onPageChange = (index: number) => {
+        this.setState({
+            selectedPage: index
+        })
+    }
 
     decisiveRender() {
         if (this.props.duplicateTimes !== -1) {
@@ -56,6 +68,23 @@ class SectionNode extends React.Component<SectionNodeProps, {}>{
             );
 
         } else {
+            if (this.props.pagerMode) {
+                return (
+                    <ViewPager
+                        selectedIndex={this.state.selectedPage}
+                        shouldLoadComponent={this.shouldLoadComponent}
+                        onSelect={this.onPageChange}
+                    >
+                        {this.props.childNodes.map((child, index) => {
+                            return (
+                                <View key={child + index}>
+                                    {this.renderChildNode({ item: child, index: index }, 0)}
+                                </View>
+                            )
+                        })}
+                    </ViewPager>
+                )
+            }
             return this.renderFlatList(0);
         }
     }
@@ -116,3 +145,33 @@ const mapDispatchToProps = (dispatch) => {
 }
 
 export const ConnectedSectionNode = connect(mapStateToProps, mapDispatchToProps)(SectionNodeStyled);
+
+
+
+type FormNodeProps = {
+    pagerMode: boolean;
+    id: string;
+    formId: string;
+    rootId: string;
+    locationName: string;
+    path: number[];
+    type: string;
+}
+class FormNode extends React.Component<FormNodeProps, {}>{
+    render() {
+        const { props } = this;
+        return (
+            props.type === 'question' ?
+                <ConnectedQuestionNode {...props} questionId={props.id} />
+                : <ConnectedSectionNode  {...props} sectionId={props.id} />
+        )
+
+    }
+}
+const mapStateToFormNodeProps = (state: AppState, props) => {
+    return {
+        type: getNodeTypeFromId(state, props)
+    }
+}
+
+export const ConnectedFormNode = connect(mapStateToFormNodeProps, {})(FormNode);

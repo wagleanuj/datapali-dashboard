@@ -6,6 +6,7 @@ import { AppState } from "../../redux/actions/types"
 import { getNodeTypeFromId } from "../../redux/selectors/nodeSelector"
 
 type FormNodeProps = {
+    pagerMode: boolean;
     id: string;
     formId: string;
     rootId: string;
@@ -19,15 +20,15 @@ class FormNode extends React.Component<FormNodeProps, {}>{
         return (
             props.type === 'question' ?
                 <ConnectedQuestionNode {...props} questionId={props.id} />
-                : <ConnectedSectionNode {...props} sectionId={props.id} />
+                : <ConnectedSectionNode  {...props} sectionId={props.id} />
         )
 
     }
 }
-const mapStateToProps = (state: AppState, props) => {
+const mapStateToFormNodeProps = (state: AppState, props) => {
     return {
         type: getNodeTypeFromId(state, props)
     }
 }
 
-export const ConnectedFormNode = connect(mapStateToProps, {})(FormNode);
+export const ConnectedFormNode = connect(mapStateToFormNodeProps, {})(FormNode);

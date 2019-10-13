@@ -2,7 +2,7 @@ import React, { ReactNode } from "react";
 import { connect } from "react-redux";
 import { InjectedFormProps, reduxForm } from "redux-form";
 import { getFilledFormById } from "../../redux/selectors/questionSelector";
-import { ConnectedFormNode } from "./formNode";
+import { ConnectedFormNode } from "./sectionNode";
 
 export const WizardContext = React.createContext({
     currentIndex: 0,
@@ -57,9 +57,10 @@ type NewWizardProps = {
 } & InjectedFormProps;
 export class WizardPage extends React.Component<NewWizardProps, {}>{
     render() {
-        const { childNodes, currentIndex } = this.props;
+        const { childNodes, currentIndex, pagerMode } = this.props;
         return (
             <ConnectedFormNode
+                pagerMode
                 locationName={childNodes[currentIndex]}
                 path={[0, currentIndex]}
                 formId={this.props.formId}
