@@ -8,17 +8,18 @@ import { Action, Dispatch } from "redux";
 import { AppState } from "../../redux/actions/types";
 import { Helper } from "../../redux/helper";
 import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
-import { getTransformedValidOptions } from "../../redux/selectors/questionSelector";
+import { getTransformedValidOptions, getAutoCompleteDataForQuestion } from "../../redux/selectors/questionSelector";
 import { AutoComplete } from "../autocompleteinput.component";
 import { RadioInput } from "./radioInput.component";
 import { TouchableOpacity } from "react-native-gesture-handler";
 
-type AutoCompleteItem = {
+export interface AutoCompleteItem  {
     text: string;
     strength: number;
 }
 type FormItemProps = {
     questionId: string;
+    valueLocationName: string;
     formId: string;
     rootId: string;
     path: number[];
@@ -113,6 +114,28 @@ export const FormItemStyled = withStyles(FormItem_, theme => ({
         height: 400
     }
 }))
+const mapStateToProps = (state: AppState, props: FormItemProps) => {
+    const all = getNodeOfRootForm(state, props);
+    const type = all.answerType;
+    const title = all.questionContent.content;
+    const deps = Helper.collectDependencies(all);
+    return {
+        autoCompleteData: getAutoCompleteDataForQuestion(state, props),
+        isDependent: deps.all.length > 0,
+        dependencies: deps,
+        title: title,
+        type: type,
+        options: type.name === ANSWER_TYPES.SELECT ? getTransformedValidOptions(state, props) : [],
+
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
+    return {
+    }
+};
+
+export const ConnectedFormItem = connect(mapStateToProps, mapDispatchToProps)(FormItemStyled)
 
 interface FormInputProps {
     questionId: string;
@@ -213,27 +236,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
         }
     }
 }
-const mapStateToProps = (state: AppState, props: FormItemProps) => {
-    const all = getNodeOfRootForm(state, props);
-    const type = all.answerType;
-    const title = all.questionContent.content;
-    const deps = Helper.collectDependencies(all);
-    return {
-        isDependent: deps.all.length > 0,
-        dependencies: deps,
-        title: title,
-        type: type,
-        options: type.name === ANSWER_TYPES.SELECT ? getTransformedValidOptions(state, props) : [],
 
-    }
-}
-
-const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
-    return {
-    }
-};
-
-export const ConnectedFormItem = connect(mapStateToProps, mapDispatchToProps)(FormItemStyled)
 type SelectInputProps = {
     listKey?: string;
     isDependent: boolean;
@@ -255,7 +258,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     private get isNonIdealState() {
         return this.props.options.length === 0 && this.props.isDependent;
     }
-    shakeLockIcon() {
+    private shakeLockIcon() {
         if (this.lockIcon) this.lockIcon.startAnimation();
     }
     componentDidUpdate() {
@@ -272,7 +275,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
             {
                 this.isNonIdealState && <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
                     <TouchableOpacity onPress={this.shakeLockIcon.bind(this)}>
-                        <Icon fill={'red'} ref={r => this.lockIcon = r} width={30} height={30} name='lock' animation='pulse' />
+                        <Icon fill={'red'} ref={r => this.lockIcon = r} width={30} height={30} name='lock' animation='shake' />
                     </TouchableOpacity>
                     <Text status='danger' >All options are locked.</Text>
                 </View>

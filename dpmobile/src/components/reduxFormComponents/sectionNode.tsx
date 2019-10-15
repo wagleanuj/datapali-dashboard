@@ -1,16 +1,18 @@
 import { getReadablePath } from "dpform";
 import { Accordion } from 'native-base';
 import React from "react";
-import { FlatList, View } from "react-native";
+import { View } from "react-native";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import Swiper from "react-native-swiper";
 import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
 import { WizardContext } from "../../context/wizard";
 import { AppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
-import { ShowcaseItem } from "../showcaseitem.component";
+import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
-import { Showcase } from "../showcase.component";
+import { SafeAreaView } from "../safearea.component";
+import { FlatList } from "react-native-gesture-handler";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -27,18 +29,20 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         selectedPage: 0,
     }
     static contextType = WizardContext;
+
     renderChildNode(item, iteration) {
         const { rootId, formId, locationName, path } = this.props;
         const newPath = path.concat(iteration, item.index);
         const newLocation = locationName.concat(`[${iteration}].${item.item}`);
         return <ConnectedFormNode
-            key={newLocation}
+            key={'formnode' + newLocation}
             id={item.item}
             locationName={newLocation}
             path={newPath}
             formId={formId}
             rootId={rootId}
         />
+
     }
 
     renderFlatList(iteration: number = 0) {
@@ -53,9 +57,6 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                 keyExtractor={item => 'listitem' + item}
                 renderItem={item => this.renderChildNode(item, iteration)}
             />
-
-
-
         );
 
     }
@@ -67,14 +68,14 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
     get SwiperView() {
         return (
             <Swiper
-                // scrollEnabled={false}
+                scrollEnabled
                 key={'swiper-' + this.props.locationName}
                 autoplay={false}
                 loadMinimal
                 loadMinimalSize={10}
                 loop={false}
                 bounces
-                // height={500}
+                height={500}
                 pagingEnabled
                 automaticallyAdjustContentInsets
                 index={this.context.pagerModeIndices[this.props.sectionId]}
@@ -104,7 +105,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         if (this.props.duplicateTimes !== -1) {
             return this.AccordionView;
 
-        } else if (false && this.props.pagerMode) {
+        } else if ( this.props.pagerMode) {
             return this.SwiperView;
         }
         return this.renderFlatList(0);
@@ -112,18 +113,20 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     render() {
         return (
-            <Showcase>
+            <SafeAreaView key={'showcase' + this.props.locationName} style={this.props.themedStyle.container} >
+
                 <View style={this.props.themedStyle.headingContainer}>
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
                 </View>
-                <View>
+                <ScrollableAvoidKeyboard
+                    key={'section-content' + this.props.locationName}
+                >
                     {this.decisiveRender()}
+                </ScrollableAvoidKeyboard>
 
-                </View>
-
-            </Showcase>
+            </SafeAreaView>
 
         )
     }
@@ -131,8 +134,10 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
 const SectionNodeStyled = withStyles(SectionNode, theme => ({
     container: {
-        flex: 1,
+        flex: 0,
+        backgroundColor: theme['background-basic-color-1'],
         paddingTop: 16,
+        marginBottom: 32,
         paddingLeft: 4,
         paddingRight: 4
     },

@@ -1,7 +1,7 @@
 import React from "react";
-import { KeyboardType, View, TextInputProps } from "react-native";
+import { KeyboardType, View } from "react-native";
 import Autocomplete from "react-native-autocomplete-input";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
 import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 type TextContentType = | "none"
     | "URL"
@@ -39,7 +39,7 @@ type AutoCompleteProps = {
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
     error: string,
-} & ThemedComponentProps ;
+} & ThemedComponentProps;
 type AutoCompleteState = {
     menuVisible: boolean,
     selectedIndex: number,
@@ -81,7 +81,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         if (this.props.onChange) this.props.onChange(this.state.value);
     }
 
-    private onResultSelect(item) {
+    private onResultSelect({item}) {
         if (this.props.onChange) this.props.onChange(item.text);
         this.setState({
             hideResults: true,
@@ -94,11 +94,10 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         if (query === '' || !query) {
             return [];
         }
-
         let { data } = this.props;
         if (!data) data = this.data;
         const regex = new RegExp(`${query.trim()}`, 'i');
-        return data.filter(film => film.text.search(regex) >= 0);
+        return data.filter(item => item.text.search(regex) >= 0 && item.text !== query);
     }
 
     onValueChange(text: string) {
@@ -107,18 +106,26 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         }, this.handleChange.bind(this))
     }
 
-
+    private renderAutoCompleteItem(item) {
+        return <TouchableOpacity
+            style={this.props.themedStyle.itemStyle}
+            key={item.index}
+            onPress={this.onResultSelect.bind(this, item)}>
+            <Text
+                style={this.props.themedStyle.itemText}
+                key={'text' + item.item.text}
+            >
+                {item.item.text}
+            </Text>
+        </TouchableOpacity>
+    }
 
     public render(): React.ReactNode {
-        let foundResult = this.findItem(this.state.value);
+        let foundResult = this.findItem(this.props.value);
         return (
             <View style={this.props.themedStyle.container}>
-                <Autocomplete
-                    hideResults={this.state.hideResults}
-                    inputContainerStyle={this.props.themedStyle.inputContainerStyle}
-                    data={foundResult}
-                    keyExtractor={(item, index) => "item-" + index}
-                    renderTextInput={() => <View><Input 
+                <View>
+                    <Input
                         onChangeText={this.props.onChange}
                         textContentType={this.props.textContentType}
                         value={this.props.value}
@@ -127,26 +134,19 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                         keyboardType={this.props.keyboardType}
                         onBlur={this.onBlur.bind(this)}
                     />
-                        <Text style={this.props.themedStyle.errorText}>{this.props.error}</Text>
-                    </View>
-                    }
-                    listStyle={this.props.themedStyle.listStyle}
-                    containerStyle={this.props.themedStyle.autocompleteContainer}
+                </View>
+                <View style={{ height: 50, maxHeight: 100 }}>
 
-                    renderItem={({ item, i }) => (
-                        <TouchableOpacity
-                            style={this.props.themedStyle.itemStyle}
-                            key={i}
-                            onPress={this.onResultSelect.bind(this, item)}>
-                            <Text
-                                style={this.props.themedStyle.itemText}
-                                key={'text' + item.text}
-                            >
-                                {item.text}
-                            </Text>
-                        </TouchableOpacity>
-                    )}
-                />
+                    {<FlatList
+                        scrollEnabled
+                        style={this.props.themedStyle.autocompleteContainer}
+                        data={foundResult}
+                        keyExtractor={item => item.text}
+                        renderItem={this.renderAutoCompleteItem.bind(this)}
+                    />}
+                </View>
+
+
             </View>
         );
     }
@@ -154,12 +154,14 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
 export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
     container: {
-        flex: 1,
+        flex: 0,
+        flexDirection: 'column',
         paddingTop: 25,
         paddingBottom: 25,
     },
     autocompleteContainer: {
-        flex: 1,
+        backgroundColor: theme["color-primary-100"],
+        flex: 0,
         left: 0,
         position: 'absolute',
         right: 0,
@@ -182,6 +184,7 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
     },
     itemStyle: {
         flex: 0,
+        backgroundColor: 'white',
         justifyContent: "center",
         flexDirection: "column",
         height: 40,

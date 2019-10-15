@@ -22,16 +22,18 @@ class ScrollableAvoidKeyboardComponent extends React.Component<ScrollableAvoidKe
         contentContainerStyle={[themedStyle.contentContainer, contentContainerStyle]}
         enableOnAndroid={true}
         {...restProps}
-      />
+      >
+        {this.props.children}
+      </KeyboardAwareScrollView>
     );
   }
 }
 
 export const ScrollableAvoidKeyboard = withStyles(ScrollableAvoidKeyboardComponent, (theme: ThemeType) => ({
   container: {
-    flex: 1,
+    // flex: 1,
   },
   contentContainer: {
-    flexGrow: 1,
+    // flexGrow: 1,
   },
 }));

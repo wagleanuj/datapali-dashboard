@@ -6,7 +6,6 @@ import { WizardContext } from "../../context/wizard";
 import { getFilledFormById } from "../../redux/selectors/questionSelector";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
-import { Showcase } from "../showcase.component";
 
 type WizardProviderProps = {
     children: ReactNode,
@@ -121,6 +120,7 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
             >
                 <WizardContext.Consumer>
                     {value => {
+                        const { currentRootChildIndex } = value;
                         return <>
                             <ConnectedToolbar
                                 formId={formId}
@@ -128,7 +128,17 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                                 onBackButtonPress={value.handlePrev}
                                 onNextButtonPress={value.handleNext}
                             />
-                                {this.getPage(value.currentRootChildIndex)}
+
+                            <ConnectedFormNode
+                                key={'cnode' + childNodes[currentRootChildIndex]}
+                                pagerMode
+                                locationName={childNodes[currentRootChildIndex]}
+                                path={[0, currentRootChildIndex]}
+                                formId={this.props.formId}
+                                rootId={this.props.rootId}
+                                id={childNodes[currentRootChildIndex]}
+                            />
+
                         </>
                     }}
 

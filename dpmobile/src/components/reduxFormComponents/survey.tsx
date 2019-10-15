@@ -80,6 +80,7 @@ export class Survey_ extends React.Component<SurveyProps>{
 const SurveyForm_ = withStyles(Survey_, (theme: ThemeType) => ({
     container: {
         flex: 1,
+        flexDirection: 'column',
         paddingHorizontal: 16,
         paddingVertical: 16,
         backgroundColor: theme['background-basic-color-2'],

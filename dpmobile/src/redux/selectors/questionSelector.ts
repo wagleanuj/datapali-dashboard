@@ -4,6 +4,7 @@ import createCachedSelector from 're-reselect';
 import { AppState } from "react-native";
 import { getFormValues } from 'redux-form';
 import { createSelector } from 'reselect';
+import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyformitem';
 import { Helper } from "../helper";
 const $getRootForm = (state, props) => {
     return state.availableForms;
@@ -54,6 +55,17 @@ export const getDuplicatingSettingsValueForSection = createSelector([getDuplicat
         return parseInt(v.value[1]);
 
     });
+export const getAllFilledFormIdsOfRootForm = createCachedSelector([$getRootFormId, $getFilledForms], (rid, filledForms) => {
+    let bag = [];
+    Object.values(filledForms).forEach(item => {
+        if (item.formId === rid) {
+            bag.push(item.id);
+        }
+    })
+    return bag;
+})(
+    (state, props) => props.rootId
+);
 
 export const getFilledFormValues = createSelector([$getFilledFormId, $getState], (fid, state) => {
     return getFormValues(fid)(state);
@@ -167,6 +179,25 @@ export const getTransformedValidOptions = createSelector(getValidOptions, option
     return allOptions;
 });
 
+export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLocationName, $getState, getAllFilledFormIdsOfRootForm], (location, state, fids) => {
+    const values = [];
+    fids.forEach(f => {
+        values.push(getFormValues(f)(state))
+    });
+    let path = _.toPath(location);
+    let result: { [key: string]: AutoCompleteItem } = {};
+    values.forEach(v => {
+        let res = _.get(v, path);
+        if (res) {
+            if (!result[res]) result[res] = { text: res, strength: 1 }
+            else result[res].strength++;
+        }
+
+    });
+    return Object.values(result).sort((a, b) => b.strength - a.strength);
+})(
+    (state, props) => props.valueLocationName
+)
 
 
 
