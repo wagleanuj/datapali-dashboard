@@ -1,48 +1,74 @@
+import produce from "immer";
 import React, { ReactNode } from "react";
 import { connect } from "react-redux";
 import { InjectedFormProps, reduxForm } from "redux-form";
+import { WizardContext } from "../../context/wizard";
 import { getFilledFormById } from "../../redux/selectors/questionSelector";
+import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
-
-export const WizardContext = React.createContext({
-    currentIndex: 0,
-    childNodes: [],
-    jumpToStep: () => { },
-    nextStep: () => { },
-    prevStep: () => { }
-});
+import { Showcase } from "../showcase.component";
 
 type WizardProviderProps = {
     children: ReactNode,
     childNodes: string[]
 }
-export class WizardProvider extends React.Component<WizardProviderProps, {}>{
-    state = {
-        currentIndex: 0
+type WizardProviderState = {
+    pagerModeIndices: { [key: string]: number },
+    currentRootChildIndex: number,
+}
+export class WizardProvider extends React.Component<WizardProviderProps, WizardProviderState>{
+    constructor(props: WizardProviderProps) {
+        super(props);
+        this.state = {
+            currentRootChildIndex: 0,
+            pagerModeIndices: {},
+        }
     }
-    nextStep = () => {
 
+
+    updatePagerModeIndex = (childId: string, newIndex: number) => {
+        this.setState(prevState => {
+            return produce(prevState, draft => {
+                draft.pagerModeIndices[childId] = newIndex;
+            });
+        })
     }
-    prevStep = () => {
 
+    nextStep() {
+        this.setState(prevState => {
+            return {
+                currentRootChildIndex: prevState.currentRootChildIndex + 1,
+            }
+        })
     }
-    jumpToStep = () => {
 
+    prevStep() {
+        this.setState(prevState => {
+            return {
+                currentRootChildIndex: prevState.currentRootChildIndex - 1,
+            }
+        })
+    }
+
+    jumpToStep(i: number) {
+        this.setState({
+            currentRootChildIndex: i
+        })
     }
 
     render() {
-        const { jumpToStep, prevStep, nextStep } = this;
-        const { currentIndex } = this.state;
+        const { currentRootChildIndex, pagerModeIndices } = this.state;
         const { children, childNodes } = this.props;
         return (
             <WizardContext.Provider
                 value={{
                     childNodes: childNodes,
-                    currentIndex,
-                    jumpToStep,
-                    nextStep,
-                    prevStep
-
+                    pagerModeIndices: pagerModeIndices,
+                    currentRootChildIndex: currentRootChildIndex,
+                    handleJump: this.jumpToStep.bind(this),
+                    handleNext: this.nextStep.bind(this),
+                    handlePrev: this.prevStep.bind(this),
+                    updatePagerModeIndex: this.updatePagerModeIndex,
                 }}>
                 {children}
             </WizardContext.Provider>
@@ -53,20 +79,64 @@ type NewWizardProps = {
     formId: string;
     rootId: string;
     childNodes: string[];
-    currentIndex: number;
+    currentRootChildIndex: number;
+
 } & InjectedFormProps;
-export class WizardPage extends React.Component<NewWizardProps, {}>{
+
+type NewWizardState = {
+    pagerModeIndices: { [key: string]: number }
+}
+export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
+    static contextType = WizardContext;
+    sectionPages = new Map();
+    handlePrev() {
+        this.context.handleNext();
+    }
+    handleNext() {
+        this.context.handlePrev();
+    }
+    handleJump() {
+        this.context.handleJump();
+    }
+    getPage(currentRootChildIndex: number) {
+        const { childNodes, formId, rootId } = this.props;
+
+        return <ConnectedFormNode
+            key={'cnode' + childNodes[currentRootChildIndex]}
+            pagerMode
+            locationName={childNodes[currentRootChildIndex]}
+            path={[0, currentRootChildIndex]}
+            formId={this.props.formId}
+            rootId={this.props.rootId}
+            id={childNodes[currentRootChildIndex]}
+        />
+
+
+    }
     render() {
-        const { childNodes, currentIndex, pagerMode } = this.props;
+        const { childNodes, formId, rootId } = this.props;
         return (
-            <ConnectedFormNode
-                pagerMode
-                locationName={childNodes[currentIndex]}
-                path={[0, currentIndex]}
-                formId={this.props.formId}
-                rootId={this.props.rootId}
-                id={childNodes[currentIndex]}
-            />
+            <WizardProvider
+                childNodes={childNodes}
+            >
+                <WizardContext.Consumer>
+                    {value => {
+                        return <>
+                            <ConnectedToolbar
+                                formId={formId}
+                                rootId={rootId}
+                                onBackButtonPress={value.handlePrev}
+                                onNextButtonPress={value.handleNext}
+                            />
+                                {this.getPage(value.currentRootChildIndex)}
+                        </>
+                    }}
+
+                </WizardContext.Consumer>
+
+            </WizardProvider>
+
+
         )
     }
 };
@@ -81,7 +151,7 @@ const mapStateToProps = (state, props) => {
     const roots = state.rootForms[filledForm.formId];
     const selected = (roots[filledForm.formId]);
     return {
-        currentIndex: filledForm.currentIndex,
+        currentRootChildIndex: filledForm.currentIndex,
         form: props.formId,
         childNodes: selected.childNodes,
     }
@@ -89,7 +159,6 @@ const mapStateToProps = (state, props) => {
 
 const mapDispatchToProps = (dispatch) => {
     return {
-
     }
 }
 

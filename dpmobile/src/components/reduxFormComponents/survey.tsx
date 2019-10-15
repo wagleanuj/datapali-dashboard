@@ -6,17 +6,14 @@ import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
-import { ArrowIosBackFill, SaveIcon } from "../assets/icons";
+import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
+import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
+import { AppState, SurveyState } from "../../redux/actions/types";
+import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
+import { getRootFormById } from "../../redux/selectors/questionSelector";
+import { textStyle } from "../../themes/style";
 import { FilledForm } from "../components/forms.component";
-import { ConnectedWizard } from "../components/reduxFormComponents/wizard";
-import { Showcase } from "../components/showcase.component";
-import { ConnectedToolbar } from "../components/toolbar";
-import { KEY_NAVIGATION_BACK } from "../navigation/constants";
-import { handleNext, handlePrev } from "../redux/actions/action";
-import { AppState, SurveyState } from "../redux/actions/types";
-import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
-import { getRootFormById } from "../redux/selectors/questionSelector";
-import { textStyle } from "../themes/style";
+import { ConnectedWizard } from "./wizard";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
     handleNext: (formId: string) => void;
@@ -71,23 +68,11 @@ export class Survey_ extends React.Component<SurveyProps>{
 
         return (
             <View style={this.props.themedStyle.container}>
-                <ConnectedToolbar
+                <ConnectedWizard
                     formId={form.id}
                     rootId={form.formId}
-                    onBackButtonPress={this.handlePrev.bind(this)}
-                    onNextButtonPress={this.handleNext.bind(this)}
-                    jumpToSection={this.props.handleJump}
+
                 />
-                <Showcase>
-
-                    <ConnectedWizard
-                        formId={form.id}
-                        rootId={form.formId}
-
-                    />
-
-
-                </Showcase>
             </View>
         )
     }
@@ -120,9 +105,7 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
-    handleNext: (formId: string) => dispatch(handleNext(formId)),
-    handlePrev: (formId: string) => dispatch(handlePrev(formId)),
-    // handleJump: (i: number) => dispatch(handleJump(i))
+
 });
 export const Survey = connect(
     mapStateToProps,

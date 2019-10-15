@@ -52,53 +52,7 @@ export class Helper {
         if (rootOptions.find(item => item.appearingCondition.literals.length > 0)) return true;
         return false;
     }
-    static buildContent2(section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, skipDupe: boolean = false): IAnswerSection {
-        const prepareSection = (section: QuestionSection | RootSection, path: number[] = [], as: Map<string, Map<string, string>>, iteration: number = 0) => {
-            const dupe = Helper.getDuplicatingTimes(section, as);
-            const self: IAnswerSection = {
-                id: section.id,
-                content: [],
-                path: path,
-                name: section.name
-            }
-            if (skipDupe || dupe === -1) {
-                section.content.forEach((item, index) => {
-                    if (!self.content[iteration]) self.content[iteration] = [];
-
-                    if (item instanceof QAQuestion) {
-                        self.content[iteration].push({
-                            questionId: item.id,
-                            answer: undefined,
-                            path: path.concat(iteration, index)
-
-                        } as IAnswer)
-                    }
-                    else if (item instanceof QuestionSection) {
-                        self.content[iteration].push(prepareSection(item, path.concat(iteration, index), as))
-                    }
-                })
-
-            } else {
-                for (let i = 0; i < dupe; i++) {
-                    section.content.forEach((item, index) => {
-                        if (!self.content[i]) self.content[i] = [];
-                        if (item instanceof QAQuestion) {
-                            self.content[i].push({
-                                questionId: item.id,
-                                answer: undefined,
-                                path: path.concat(i, index)
-                            });
-                        }
-                        else if (item instanceof QuestionSection) {
-                            self.content[i].push(prepareSection(item, path.concat(i, index), as))
-                        }
-                    })
-                }
-            }
-            return self;
-        }
-        return prepareSection(section, path, as);
-    }
+   
     static makeDataForSection(section: QuestionSection, as: Map<string, Map<string, string>>) {
         const dupe = Helper.getDuplicatingTimes(section, as);
         let toReturn: any[] = []
@@ -119,7 +73,6 @@ export class Helper {
                 const ref = (item.duplicatingSettings.duplicateTimes.value);
 
                 const ans = Helper.getValueFromAnswerCache(as, ref);
-                console.log('answer of ', ref, ans)
                 return 2;
                 if (!ans) return 0;
                 return parseInt(ans);
@@ -190,21 +143,8 @@ export class Helper {
         }
         return res;
     }
-    static getItemInAnswerSection(section: IAnswerSection, iteration: number, index: number): any {
-        return section.content[iteration][index];
-    }
-    static getAnswerSectionItemFromPath(answerSection: IAnswerSection, path: number[]) {
-        if (!path || path.length % 2 !== 0) throw new Error("Should be even");
-        if (path.length >= 2) {
-            let item = Helper.getItemInAnswerSection(answerSection, path[0], path[1]);
-            if (item && item.hasOwnProperty('content') && path.slice(2).length >= 2) {
-                return Helper.getAnswerSectionItemFromPath(item, path.slice(2));
-            }
-            return item;
-        } else {
-            console.log("invalid path");
-        }
-    }
+  
+
     static getValueFromAnswerCache(cache: Map<string, Map<string, string>>, ref: string) {
         const m = cache.get(ref);
         if (!m) {
@@ -297,33 +237,7 @@ export class Helper {
     }
 
 
-    static buildContent(section: QuestionSection | RootSection, path: number[] = []): IAnswerSection {
-        const self: IAnswerSection = {
-            content: [],
-            id: section.id,
-            path: []
-        }
-        const prepare = (section: QuestionSection | RootSection, path: number[]): Array<IAnswer | IAnswerSection> => {
-            let placeholder: Array<IAnswer | IAnswerSection> = [];
-            section.content.forEach((item, index) => {
-                if (item instanceof QuestionSection) {
-                    placeholder.push(Helper.buildContent(item, path.concat(0, index)));
-                } else {
-                    const ans: IAnswer = {
-                        path: path.concat(0, index),
-                        answer: undefined,
-                        questionId: item.id
-                    }
-                    placeholder.push(ans);
-                }
-            });
-            return placeholder;
-        };
-        self.content = [prepare(section, path)];
-        self.path = path;
-        return self;
-
-    }
+  
     static collectDependencies(item: QuestionSection | QAQuestion) {
         let apConditionRef: string[] = [];
         let groupConditionRefs: string[] = [];
@@ -388,14 +302,3 @@ export class Helper {
 
 }
 
-export interface IAnswer {
-    path: number[]
-    questionId: string;
-    answer: string;
-}
-export interface IAnswerSection {
-    id: string;
-    path: number[];
-    name?: string;
-    content: Array<Array<IAnswer | IAnswerSection>>
-}

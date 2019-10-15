@@ -8,10 +8,10 @@ import { NavigationScreenProps } from "react-navigation"
 import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
 import { Action } from "redux"
-import { handleAddNewForm, handleJump, handleNext } from "../redux/actions/action"
-import { AppState, AvailableFormsState, FilledFormsState } from "../redux/actions/types"
-import { getFIlledFormsTransformedData } from "../redux/selectors/filledFormSelectors"
-import { textStyle } from "../themes/style"
+import { handleAddNewForm, handleJump, handleNext } from "../../redux/actions/action"
+import { AppState, AvailableFormsState, FilledFormsState } from "../../redux/actions/types"
+import { getFIlledFormsTransformedData } from "../../redux/selectors/filledFormSelectors"
+import { textStyle } from "../../themes/style"
 type FormItemType = {
     title: string,
     startedDate: string,

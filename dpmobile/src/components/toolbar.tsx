@@ -1,8 +1,9 @@
-import { getReadablePath, QAQuestion, QuestionSection } from "dpform";
+import { getReadablePath } from "dpform";
 import React from "react";
 import { Picker, View } from "react-native";
 import { Button, Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
+import { WizardContext } from "../context/wizard";
 import { getFilledFormById } from "../redux/selectors/nodeSelector";
 
 type ToolbarProps = {
@@ -23,7 +24,6 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
         super(props);
 
     }
-
     renderBackButton(style) {
         return <Icon {...style} name="arrow-back"></Icon>
     }
@@ -31,6 +31,7 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
         return <Icon  {...style} name="arrow-forward"></Icon>
 
     }
+    static contextType = WizardContext;
     render() {
         return (
             <Layout style={this.props.themedStyle.toolbarGroup}>
@@ -42,7 +43,7 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
                     onPress={this.props.onBackButtonPress} />
                 <View style={this.props.themedStyle.selectContainer}>
                     <Picker
-                        selectedValue={this.props.sectionPickerSelected}
+                        selectedValue={this.props.sectionPickerData[this.context.currentRootChildIndex].id}
                         style={this.props.themedStyle.select}
 
                         onValueChange={this.props.jumpToSection}>
@@ -117,10 +118,8 @@ const mapStateToProps = (state, props) => {
     const selected = (roots[filledForm.formId]);
     const children = selected.childNodes;
     const data = children.map(it => ({ label: roots[it] && roots[it].name ? roots[it].name : 'no name', id: it }));
-    const selectedValue = children[filledForm.currentIndex];
     return {
         sectionPickerData: data,
-        sectionPickerSelected: selectedValue,
     }
 }
 const mapDispatchToProps = (dispatch) => {

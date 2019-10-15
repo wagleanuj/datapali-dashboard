@@ -2,11 +2,15 @@ import { getReadablePath } from "dpform";
 import { Accordion } from 'native-base';
 import React from "react";
 import { FlatList, View } from "react-native";
-import { Text, ThemedComponentProps, ViewPager, withStyles } from 'react-native-ui-kitten';
+import Swiper from "react-native-swiper";
+import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
-import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getSectionNameFromId, getNodeTypeFromId } from "../../redux/selectors/nodeSelector";
-import { ConnectedQuestionNode } from "./questionNode";
+import { WizardContext } from "../../context/wizard";
 import { AppState } from "../../redux/actions/types";
+import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
+import { ShowcaseItem } from "../showcaseitem.component";
+import { ConnectedQuestionNode } from "./questionNode";
+import { Showcase } from "../showcase.component";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -22,11 +26,13 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
     state = {
         selectedPage: 0,
     }
+    static contextType = WizardContext;
     renderChildNode(item, iteration) {
         const { rootId, formId, locationName, path } = this.props;
         const newPath = path.concat(iteration, item.index);
         const newLocation = locationName.concat(`[${iteration}].${item.item}`);
         return <ConnectedFormNode
+            key={newLocation}
             id={item.item}
             locationName={newLocation}
             path={newPath}
@@ -38,74 +44,94 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
     renderFlatList(iteration: number = 0) {
         return (
             <FlatList
-                initialNumToRender={10}
-                initialScrollIndex={0}
+                key={'list' + this.props.locationName}
+                automaticallyAdjustContentInsets
+                scrollEnabled
+                // style={{flex: 1, height: 400}}
+                listKey={'lk' + this.props.locationName}
                 data={this.props.childNodes}
-                keyExtractor={item => item}
+                keyExtractor={item => 'listitem' + item}
                 renderItem={item => this.renderChildNode(item, iteration)}
             />
+
+
+
         );
 
     }
-    shouldLoadComponent = (index: Number) => {
-        return index === this.state.selectedPage;
-    }
+
     onPageChange = (index: number) => {
-        this.setState({
-            selectedPage: index
-        })
+        this.context.updatePagerModeIndex(this.props.sectionId, index);
+    }
+
+    get SwiperView() {
+        return (
+            <Swiper
+                // scrollEnabled={false}
+                key={'swiper-' + this.props.locationName}
+                autoplay={false}
+                loadMinimal
+                loadMinimalSize={10}
+                loop={false}
+                bounces
+                // height={500}
+                pagingEnabled
+                automaticallyAdjustContentInsets
+                index={this.context.pagerModeIndices[this.props.sectionId]}
+                onIndexChanged={this.onPageChange}
+            >
+                {this.props.childNodes.map((child, index) => {
+                    return (
+                        this.renderChildNode({ item: child, index: index }, 0)
+                    )
+                })}
+
+
+            </Swiper>
+        )
+    }
+    get AccordionView() {
+        let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Add Record ${item + 1}`, id: item }));
+        return (
+            <Accordion
+                dataArray={data}
+                renderContent={item => this.renderFlatList(item.id)}
+            />
+        );
     }
 
     decisiveRender() {
         if (this.props.duplicateTimes !== -1) {
-            let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Add Record ${item + 1}`, content: item }));
-            return (
-                <Accordion
-                    expandedIconStyle={{ backgroundColor: 'black' }}
-                    dataArray={data}
-                    renderContent={item => this.renderFlatList(item.content)}
-                />
-            );
+            return this.AccordionView;
 
-        } else {
-            if (this.props.pagerMode) {
-                return (
-                    <ViewPager
-                        selectedIndex={this.state.selectedPage}
-                        shouldLoadComponent={this.shouldLoadComponent}
-                        onSelect={this.onPageChange}
-                    >
-                        {this.props.childNodes.map((child, index) => {
-                            return (
-                                <View key={child + index}>
-                                    {this.renderChildNode({ item: child, index: index }, 0)}
-                                </View>
-                            )
-                        })}
-                    </ViewPager>
-                )
-            }
-            return this.renderFlatList(0);
+        } else if (false && this.props.pagerMode) {
+            return this.SwiperView;
         }
+        return this.renderFlatList(0);
     }
 
     render() {
         return (
-            <View style={this.props.themedStyle.container}>
+            <Showcase>
                 <View style={this.props.themedStyle.headingContainer}>
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
                 </View>
+                <View>
+                    {this.decisiveRender()}
 
-                {this.decisiveRender()}
-            </View>
+                </View>
+
+            </Showcase>
+
         )
     }
 }
 
 const SectionNodeStyled = withStyles(SectionNode, theme => ({
     container: {
+        flex: 1,
         paddingTop: 16,
         paddingLeft: 4,
         paddingRight: 4

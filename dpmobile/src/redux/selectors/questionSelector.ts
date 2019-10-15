@@ -168,18 +168,5 @@ export const getTransformedValidOptions = createSelector(getValidOptions, option
 });
 
 
-export const getAnswerSectionForFilledForm = createSelector([getFilledFormById],
-    (form) => form.answerSection);
-export const getAnswerAtPath = createSelector([getAnswerSectionForFilledForm, $getPathForQuestion],
-    (answerSection, path) => {
-        const val = Helper.getAnswerSectionItemFromPath(answerSection, path);
-        return val
-    });
-
-
-export const getAnswerValueAtPath = createSelector([getAnswerAtPath],
-    (answer) => {
-        return answer.answer
-    })
 
 

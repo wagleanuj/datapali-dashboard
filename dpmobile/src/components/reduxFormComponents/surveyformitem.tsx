@@ -1,19 +1,22 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { DatePickerAndroid, View } from "react-native";
+import { DatePickerAndroid, ScrollView, View } from "react-native";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
-import { AutoComplete } from "../components/autocompleteinput.component";
-import { AutoCompleteItem } from "../components/forms.component";
-import { RadioInput } from "../components/selectinput.component";
-import { handleUpdateAnswer } from "../redux/actions/action";
-import { AppState } from "../redux/actions/types";
-import { Helper } from "../redux/helper";
-import { getNodeOfRootForm } from "../redux/selectors/nodeSelector";
-import { getTransformedValidOptions } from "../redux/selectors/questionSelector";
+import { AppState } from "../../redux/actions/types";
+import { Helper } from "../../redux/helper";
+import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
+import { getTransformedValidOptions } from "../../redux/selectors/questionSelector";
+import { AutoComplete } from "../autocompleteinput.component";
+import { RadioInput } from "./radioInput.component";
+import { TouchableOpacity } from "react-native-gesture-handler";
 
+type AutoCompleteItem = {
+    text: string;
+    strength: number;
+}
 type FormItemProps = {
     questionId: string;
     formId: string;
@@ -21,6 +24,7 @@ type FormItemProps = {
     path: number[];
     value: string;
     options?: { id: string, text: string }[];
+    dependencies: any,
     type: IValueType;
     error: string;
     title: string;
@@ -30,6 +34,7 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
+    pagerMode: boolean;
     updateAnswer: (formId: string, path: number[], questionId: string, value: string) => void;
 } & ThemedComponentProps;
 
@@ -54,6 +59,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             onChange,
             value,
             type,
+            pagerMode,
         } = this.props;
         return (
             <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
@@ -61,16 +67,24 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                     <Text style={themedStyle.questionTitle}>
                         {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                     </Text>
-                    <FormInput
-                        autoCompleteData={autoCompleteData}
-                        autoFillValue={autoFillValue}
-                        error={error}
-                        onBlur={onBlur}
-                        onValueChange={onChange}
-                        options={options}
-                        value={value}
-                        type={type}
-                    />
+                    <ScrollView style={!!pagerMode && themedStyle.inputScrollView}>
+
+                        <FormInput
+                            isDependent={this.props.isDependent}
+                            dependencies={this.props.dependencies}
+                            autoCompleteData={autoCompleteData}
+                            autoFillValue={autoFillValue}
+                            error={error}
+                            onBlur={onBlur}
+                            onValueChange={onChange}
+                            options={options}
+                            value={value}
+                            type={type}
+                            questionId={this.props.questionId}
+                        />
+                    </ScrollView>
+
+
                 </View>
             </View>
         )
@@ -94,11 +108,15 @@ export const FormItemStyled = withStyles(FormItem_, theme => ({
         fontSize: 15,
         fontWeight: 'bold',
         paddingBottom: 20,
+    },
+    inputScrollView: {
+        height: 400
     }
 }))
 
 interface FormInputProps {
     questionId: string;
+    dependencies: any,
     isDependent: boolean;
     valueLocationName: string;
     type: IValueType;
@@ -112,12 +130,7 @@ interface FormInputProps {
 
 }
 class FormInput extends React.Component<FormInputProps, {}> {
-    shouldComponentUpdate() {
-        if (!this.props.isDependent) {
-            return true;
-        }
-        return false;
-    }
+
     render() {
         const { props } = this;
         const defaultValue = props.value || props.autoFillValue;
@@ -190,6 +203,9 @@ class FormInput extends React.Component<FormInputProps, {}> {
                 >{date.toDateString()}</Button>
             case ANSWER_TYPES.SELECT:
                 return <SelectInput
+                    listKey={this.props.questionId}
+                    isDependent={props.isDependent}
+                    dependencies={props.dependencies}
                     options={props.options}
                     onChange={props.onValueChange}
                     selectedId={defaultValue}
@@ -197,31 +213,6 @@ class FormInput extends React.Component<FormInputProps, {}> {
         }
     }
 }
-type SelectInputProps = {
-    options: { text: string, id: string }[];
-    selectedId: string;
-    onChange: (id: string) => void;
-}
-type SelectInputState = {
-}
-export class SelectInput extends React.Component<SelectInputProps, SelectInputState>{
-    constructor(props: SelectInputProps) {
-        super(props);
-    }
-    onChange(val: { text: string, id: string }) {
-        this.props.onChange(val.id);
-    }
-    render() {
-        return <View>
-            <RadioInput
-                defaultSelected={this.props.options.findIndex(i => i.id === this.props.selectedId)}
-                options={this.props.options}
-                onSelectionChange={this.onChange.bind(this)}
-            />
-        </View>
-    }
-}
-
 const mapStateToProps = (state: AppState, props: FormItemProps) => {
     const all = getNodeOfRootForm(state, props);
     const type = all.answerType;
@@ -229,6 +220,7 @@ const mapStateToProps = (state: AppState, props: FormItemProps) => {
     const deps = Helper.collectDependencies(all);
     return {
         isDependent: deps.all.length > 0,
+        dependencies: deps,
         title: title,
         type: type,
         options: type.name === ANSWER_TYPES.SELECT ? getTransformedValidOptions(state, props) : [],
@@ -238,8 +230,54 @@ const mapStateToProps = (state: AppState, props: FormItemProps) => {
 
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => {
     return {
-        updateAnswer: (formId: string, path: number[], questionId: string, value: string) => dispatch(handleUpdateAnswer(formId, path, questionId, value))
     }
 };
 
-export const FormItem = connect(mapStateToProps, mapDispatchToProps)(FormItemStyled)
+export const ConnectedFormItem = connect(mapStateToProps, mapDispatchToProps)(FormItemStyled)
+type SelectInputProps = {
+    listKey?: string;
+    isDependent: boolean;
+    dependencies: any;
+    options: { text: string, id: string }[];
+    selectedId: string;
+    onChange: (id: string) => void;
+}
+type SelectInputState = {
+}
+export class SelectInput extends React.Component<SelectInputProps, SelectInputState>{
+    lockIcon: Icon<{ ref: unknown; width: number; height: number; name: "lock"; animation: "shake"; }>;
+    constructor(props: SelectInputProps) {
+        super(props);
+    }
+    private onChange(val: { text: string, id: string }) {
+        this.props.onChange(val.id);
+    }
+    private get isNonIdealState() {
+        return this.props.options.length === 0 && this.props.isDependent;
+    }
+    shakeLockIcon() {
+        if (this.lockIcon) this.lockIcon.startAnimation();
+    }
+    componentDidUpdate() {
+        this.shakeLockIcon();
+    }
+    render() {
+        return <View>
+            {!this.isNonIdealState && <RadioInput
+                listKey={this.props.listKey}
+                defaultSelected={this.props.options.findIndex(i => i.id === this.props.selectedId)}
+                options={this.props.options}
+                onSelectionChange={this.onChange.bind(this)}
+            />}
+            {
+                this.isNonIdealState && <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
+                    <TouchableOpacity onPress={this.shakeLockIcon.bind(this)}>
+                        <Icon fill={'red'} ref={r => this.lockIcon = r} width={30} height={30} name='lock' animation='pulse' />
+                    </TouchableOpacity>
+                    <Text status='danger' >All options are locked.</Text>
+                </View>
+            }
+        </View>
+    }
+}
+

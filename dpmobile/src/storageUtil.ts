@@ -1,7 +1,6 @@
 import { RootSection } from "dpform";
 import _ from "lodash";
 import { AsyncStorage } from "react-native";
-import { AnswerSection } from "./answer.store";
 import { FilledForm } from "./components/forms.component";
 export class StorageUtil {
 
@@ -59,18 +58,13 @@ export class StorageUtil {
 
         }
         let ff: any = _.cloneDeep(filledForm);
-        ff.answerSection = AnswerSection.toJSON(filledForm.answerSection);
         multisetData[filledForm.id] = ff;
         return StorageUtil.multiSet(multisetData);
     }
 
     static getFilledForms(ids: string[], root?: RootSection) {
         return StorageUtil.multiGet(ids).then(async res => {
-            Object.keys(res).forEach(k => {
-                let item = res[k];
 
-                item.answerSection = AnswerSection.fromJSON(item.answerSection);
-            });
             return res;
 
         });

@@ -48,11 +48,9 @@ export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSect
         }
         else {
             let ref = times.value;
-            console.log(values);
             //get the value of the ref
             let locationToPath = _.toPath(location);
             const checkForValue = (values, path, find) => {
-                console.log('finding', find);
                 if (path.length === 0) return undefined;
                 if (path.length === 1) return _.get(values, [find]);
                 let newPath = path.slice(0);

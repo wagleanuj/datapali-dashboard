@@ -3,7 +3,7 @@ import { View } from "react-native";
 import { Button, Text } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Field, FormSection, InjectedFormProps, reduxForm } from 'redux-form';
-import { FormItem } from "../../formComponents/surveyformitem";
+import { ConnectedFormItem } from "./surveyformitem";
 import { getCurrentSectionData } from "../../redux/selectors/filledFormSelectors";
 type SectionPagedProps = {
     sectionId: string;
@@ -42,7 +42,7 @@ type SectionContentListProps = {
 }
 export class SectionContentList extends React.Component<SectionContentListProps, {}>{
     child = (props, item) => {
-        return <FormItem
+        return <ConnectedFormItem
             isDependent={item.dependency.all.length > 0}
             formId={this.props.parentProps.formId}
             path={item.path}

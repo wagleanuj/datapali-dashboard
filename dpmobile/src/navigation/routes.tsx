@@ -5,8 +5,8 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import { AuthLoading } from '../components/authloading.component';
 import { SignIn } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
-import { FilledFormsList } from '../formComponents/forms';
-import { Survey } from '../formComponents/survey';
+import { FilledFormsList } from '../components/reduxFormComponents/forms';
+import { Survey } from '../components/reduxFormComponents/survey';
 import { SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
 

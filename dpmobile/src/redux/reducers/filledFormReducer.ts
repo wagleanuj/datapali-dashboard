@@ -5,7 +5,6 @@ import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_F
 import { FilledFormsState } from "../actions/types";
 import { Helper } from "../helper";
 const FilledFormItem: FilledForm = {
-    answerSection: undefined,
     completedDate: undefined,
     currentIndex: undefined,
     filledBy: undefined,
@@ -27,8 +26,6 @@ export function filledFormReducer(
             const { root, userId } = action.payload;
             if (!root) return state;
             let newForm: FilledForm = {
-                // answerSection: { id: '', content: [], name: '', path: [] },
-                answerSection: Helper.buildContent(root),
                 completedDate: undefined,
                 startedDate: new Date().getTime(),
                 filledBy: userId,
@@ -44,21 +41,7 @@ export function filledFormReducer(
             return newState;
         case DELETE_FILLED_FORM:
             return state;
-        case UPDATE_FORM_ANSWER:
-            const ns = produce(state, draft => {
-                const { formId, path, questionId, value } = action.payload;
-                let itemFromPath = Helper.getAnswerSectionItemFromPath(draft[formId].answerSection, path);
-                if (questionId === itemFromPath.questionId) {
-                    itemFromPath.answer = value;
-                    if (!draft[formId].cache_) draft[formId].cache_ = new Map();
-                    let map = draft[formId].cache_;
-                    let ansMap = map.get(questionId);
-                    if (!ansMap) map.set(questionId, new Map());
-                    ansMap = map.get(questionId);
-                    ansMap.set(path.join('.'), value);
-                }
-            });
-            return ns;
+      
 
         case JUMP_TO:
             const { formId, index: newIndex } = action.payload

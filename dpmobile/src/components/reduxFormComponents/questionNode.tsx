@@ -2,7 +2,7 @@ import React from 'react';
 import { View } from 'react-native';
 import { connect } from "react-redux";
 import { Field } from "redux-form";
-import { FormItem } from "../../formComponents/surveyformitem";
+import { ConnectedFormItem } from './surveyformitem';
 
 type QuestionNodeProps = {
     path: number[];
@@ -16,7 +16,7 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
         const { locationName, formId, questionId, rootId, path } = this.props;
         const { input } = props;
         return (
-            <FormItem
+            <ConnectedFormItem
                 valueLocationName={locationName}
                 formId={formId}
                 questionId={questionId}

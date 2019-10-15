@@ -33,7 +33,6 @@ export function rootReducer_(state: AppState = {
 }, action: ActionTypes) {
     switch (action.type) {
         case ADD_FILLED_FORM:
-            console.log('adding shit')
             return produce(state, draft => {
                 draft.filledForms = filledFormReducer(draft.filledForms, action);
             })
