@@ -2,17 +2,15 @@ import { getReadablePath } from "dpform";
 import { Accordion } from 'native-base';
 import React from "react";
 import { View } from "react-native";
-import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+import { FlatList } from "react-native-gesture-handler";
 import Swiper from "react-native-swiper";
 import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
 import { WizardContext } from "../../context/wizard";
 import { AppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
-import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
-import { SafeAreaView } from "../safearea.component";
-import { FlatList } from "react-native-gesture-handler";
+import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -72,7 +70,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                 key={'swiper-' + this.props.locationName}
                 autoplay={false}
                 loadMinimal
-                loadMinimalSize={10}
+                loadMinimalSize={2}
                 loop={false}
                 bounces
                 height={500}
@@ -105,7 +103,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         if (this.props.duplicateTimes !== -1) {
             return this.AccordionView;
 
-        } else if ( this.props.pagerMode) {
+        } else if (this.props.pagerMode) {
             return this.SwiperView;
         }
         return this.renderFlatList(0);
@@ -113,20 +111,17 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     render() {
         return (
-            <SafeAreaView key={'showcase' + this.props.locationName} style={this.props.themedStyle.container} >
+            <View key={'showcase' + this.props.locationName} style={this.props.themedStyle.container} >
 
                 <View style={this.props.themedStyle.headingContainer}>
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
                 </View>
-                <ScrollableAvoidKeyboard
-                    key={'section-content' + this.props.locationName}
-                >
-                    {this.decisiveRender()}
-                </ScrollableAvoidKeyboard>
 
-            </SafeAreaView>
+                {this.decisiveRender()}
+
+            </View>
 
         )
     }

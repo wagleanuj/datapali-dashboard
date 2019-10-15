@@ -1,8 +1,8 @@
+import { Platform } from "@unimodules/core";
 import React from "react";
 import { KeyboardType, View } from "react-native";
-import Autocomplete from "react-native-autocomplete-input";
-import { TouchableOpacity, FlatList } from "react-native-gesture-handler";
-import { Input, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
+import { Input, Layout,Text, ListItem, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 type TextContentType = | "none"
     | "URL"
     | "addressCity"
@@ -41,7 +41,6 @@ type AutoCompleteProps = {
     error: string,
 } & ThemedComponentProps;
 type AutoCompleteState = {
-    menuVisible: boolean,
     selectedIndex: number,
     hideResults: boolean,
     value: string,
@@ -49,7 +48,6 @@ type AutoCompleteState = {
 
 export class AutoCompleteInputComponent extends React.Component<AutoCompleteProps, AutoCompleteState>{
     public state: AutoCompleteState = {
-        menuVisible: false,
         selectedIndex: null,
         hideResults: true,
         value: this.props.value || ""
@@ -58,10 +56,10 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
     private data = [
         { text: "Test String 1" },
-        { text: "Test String 1" },
-        { text: "Test String 1" },
-        { text: "Test String 1" },
-        { text: "Test String 1" },
+        { text: "Test String 2" },
+        { text: "Test String 3" },
+        { text: "Test String 4" },
+        { text: "Test String 5" },
 
     ];
     input: any;
@@ -81,7 +79,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         if (this.props.onChange) this.props.onChange(this.state.value);
     }
 
-    private onResultSelect({item}) {
+    private onResultSelect({ item }) {
         if (this.props.onChange) this.props.onChange(item.text);
         this.setState({
             hideResults: true,
@@ -96,6 +94,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         }
         let { data } = this.props;
         if (!data) data = this.data;
+        // return this.data;
         const regex = new RegExp(`${query.trim()}`, 'i');
         return data.filter(item => item.text.search(regex) >= 0 && item.text !== query);
     }
@@ -111,43 +110,46 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
             style={this.props.themedStyle.itemStyle}
             key={item.index}
             onPress={this.onResultSelect.bind(this, item)}>
-            <Text
-                style={this.props.themedStyle.itemText}
-                key={'text' + item.item.text}
-            >
-                {item.item.text}
-            </Text>
+                <Text style={this.props.themedStyle.itemText}>{item.item.text}</Text>
         </TouchableOpacity>
+    }
+    private renderSeparator() {
+        return (
+            <View style={this.props.themedStyle.separator}>
+            </View>
+        )
     }
 
     public render(): React.ReactNode {
         let foundResult = this.findItem(this.props.value);
         return (
-            <View style={this.props.themedStyle.container}>
-                <View>
-                    <Input
-                        onChangeText={this.props.onChange}
-                        textContentType={this.props.textContentType}
-                        value={this.props.value}
-                        ref={r => this.input = r}
-                        onFocus={this.onFocus.bind(this)}
-                        keyboardType={this.props.keyboardType}
-                        onBlur={this.onBlur.bind(this)}
-                    />
-                </View>
-                <View style={{ height: 50, maxHeight: 100 }}>
-
-                    {<FlatList
-                        scrollEnabled
-                        style={this.props.themedStyle.autocompleteContainer}
-                        data={foundResult}
-                        keyExtractor={item => item.text}
-                        renderItem={this.renderAutoCompleteItem.bind(this)}
-                    />}
-                </View>
+            <Layout style={this.props.themedStyle.container}>
 
 
-            </View>
+                <Input
+                    onChangeText={this.props.onChange}
+                    textContentType={this.props.textContentType}
+                    value={this.props.value}
+                    ref={r => this.input = r}
+                    onFocus={this.onFocus.bind(this)}
+                    keyboardType={this.props.keyboardType}
+                    onBlur={this.onBlur.bind(this)}
+                />
+                {foundResult.length > 0 && !this.state.hideResults && <FlatList
+                    scrollEnabled
+                    keyboardShouldPersistTaps='handled'
+                    style={this.props.themedStyle.listStyle}
+                    data={foundResult}
+                    ItemSeparatorComponent={this.renderSeparator.bind(this)}
+                    keyExtractor={item => item.text}
+                    renderItem={this.renderAutoCompleteItem.bind(this)}
+                />}
+
+
+
+
+
+            </Layout>
         );
     }
 }
@@ -156,18 +158,21 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
     container: {
         flex: 0,
         flexDirection: 'column',
-        paddingTop: 25,
-        paddingBottom: 25,
+        paddingTop: 4,
+        position: 'relative',
+        paddingBottom: 4,
     },
     autocompleteContainer: {
+        overflow: 'scroll',
         backgroundColor: theme["color-primary-100"],
-        flex: 0,
         left: 0,
+        flex: 1,
         position: 'absolute',
         right: 0,
-        top: 0,
-        zIndex: 1,
-
+        top: -2,
+        elevation: (Platform.OS === 'android') ? 50000 : 0,
+        zIndex: 7999991,
+        maxHeight: 400,
     },
     inputContainerStyle: {
         borderWidth: 0,
@@ -175,22 +180,35 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
 
     },
     listStyle: {
-        backgroundColor: theme["color-primary-100"]
+        maxHeight: 124,
+        backgroundColor: theme['color-primary-100'],
+        borderColor: theme['color-primary-default'],
+        borderWidth: 1,
+        paddingBottom: 2,
+        marginLeft: 2,
+        marginRight: 2,
+
     },
     itemText: {
         fontSize: 15,
         margin: 2,
-        color: "black"
+        color: theme['text-basic-color']
     },
     itemStyle: {
         flex: 0,
-        backgroundColor: 'white',
         justifyContent: "center",
         flexDirection: "column",
         height: 40,
+        borderColor: theme['color-primary-default'],
+        // borderWidth: 1,
     },
     errorText: {
         color: 'red'
+    },
+    separator: {
+        height: 1,
+        backgroundColor: 'gray',
+
     }
 
 }));

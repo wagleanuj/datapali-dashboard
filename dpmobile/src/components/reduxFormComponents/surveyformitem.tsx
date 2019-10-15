@@ -1,19 +1,19 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { DatePickerAndroid, ScrollView, View } from "react-native";
+import { DatePickerAndroid, View } from "react-native";
+import { TouchableOpacity } from "react-native-gesture-handler";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { AppState } from "../../redux/actions/types";
 import { Helper } from "../../redux/helper";
 import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
-import { getTransformedValidOptions, getAutoCompleteDataForQuestion } from "../../redux/selectors/questionSelector";
+import { getAutoCompleteDataForQuestion, getTransformedValidOptions } from "../../redux/selectors/questionSelector";
 import { AutoComplete } from "../autocompleteinput.component";
 import { RadioInput } from "./radioInput.component";
-import { TouchableOpacity } from "react-native-gesture-handler";
 
-export interface AutoCompleteItem  {
+export interface AutoCompleteItem {
     text: string;
     strength: number;
 }
@@ -63,30 +63,31 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             pagerMode,
         } = this.props;
         return (
-            <View style={themedStyle.container} key={'main-view' + this.props.questionId}>
-                <View>
-                    <Text style={themedStyle.questionTitle}>
-                        {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
-                    </Text>
-                    <ScrollView style={!!pagerMode && themedStyle.inputScrollView}>
+            <View key={'input-field-container' + this.props.questionId}
 
-                        <FormInput
-                            isDependent={this.props.isDependent}
-                            dependencies={this.props.dependencies}
-                            autoCompleteData={autoCompleteData}
-                            autoFillValue={autoFillValue}
-                            error={error}
-                            onBlur={onBlur}
-                            onValueChange={onChange}
-                            options={options}
-                            value={value}
-                            type={type}
-                            questionId={this.props.questionId}
-                        />
-                    </ScrollView>
+                style={themedStyle.container} key={'main-view' + this.props.questionId}>
+                <Text style={themedStyle.questionTitle}>
+                    {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
+                </Text>
+                <View >
 
+                    <FormInput
+                        key={'input-field' + this.props.questionId}
+                        isDependent={this.props.isDependent}
+                        dependencies={this.props.dependencies}
+                        autoCompleteData={autoCompleteData}
+                        autoFillValue={autoFillValue}
+                        error={error}
+                        onBlur={onBlur}
+                        onValueChange={onChange}
+                        options={options}
+                        value={value}
+                        type={type}
+                        questionId={this.props.questionId}
+                    />
 
                 </View>
+
             </View>
         )
     }
@@ -190,7 +191,9 @@ class FormInput extends React.Component<FormInputProps, {}> {
                     onChange={props.onValueChange}
                     error={props.error}
                     onBlur={props.onBlur}
-                />;
+                />
+
+
             case ANSWER_TYPES.GEOLOCATION:
                 let defaultLocation = (locationJSON: any) => {
                     return `Latitude: ${locationJSON.coords.latitude}\nLongitude: ${locationJSON.coords.longitude}`;
@@ -198,7 +201,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
                 let dl = defaultValue ? defaultLocation(JSON.parse(defaultValue)) : "";
                 return <Button
                     appearance='outline'
-                    icon={(style) => (<Icon {...style} name="calendar" />)}
+                    icon={(style) => (<Icon {...style} name="navigation" />)}
 
                     onPress={() => {
                         navigator.geolocation.getCurrentPosition(
