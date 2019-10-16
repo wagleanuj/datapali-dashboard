@@ -119,9 +119,11 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
             </View>
         )
     }
+    private get Suggestions(){
+        return this.findItem(this.props.value);
+    }
 
     public render(): React.ReactNode {
-        let foundResult = this.findItem(this.props.value);
         return (
             <Layout style={this.props.themedStyle.container}>
 
@@ -135,11 +137,11 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     keyboardType={this.props.keyboardType}
                     onBlur={this.onBlur.bind(this)}
                 />
-                {foundResult.length > 0 && !this.state.hideResults && <FlatList
+                {this.Suggestions.length > 0 && !this.state.hideResults && <FlatList
                     scrollEnabled
                     keyboardShouldPersistTaps='handled'
                     style={this.props.themedStyle.listStyle}
-                    data={foundResult}
+                    data={this.Suggestions}
                     ItemSeparatorComponent={this.renderSeparator.bind(this)}
                     keyExtractor={item => item.text}
                     renderItem={this.renderAutoCompleteItem.bind(this)}

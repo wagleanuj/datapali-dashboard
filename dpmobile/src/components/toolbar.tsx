@@ -4,7 +4,8 @@ import { Picker, View } from "react-native";
 import { Button, Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { WizardContext } from "../context/wizard";
-import { getFilledFormById } from "../redux/selectors/nodeSelector";
+import { AppState } from "../redux/actions/types";
+import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
 
 type ToolbarProps = {
     formId: string;
@@ -112,9 +113,10 @@ export const Toolbar = withStyles(ToolbarComponent, theme => ({
         height: 48
     },
 }))
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state: AppState, props) => {
     const filledForm = getFilledFormById(state, props);
-    const roots = state.rootForms[filledForm.formId];
+
+    const roots = state.rootForms.byId[filledForm.formId];
     const selected = (roots[filledForm.formId]);
     const children = selected.childNodes;
     const data = children.map(it => ({ label: roots[it] && roots[it].name ? roots[it].name : 'no name', id: it }));

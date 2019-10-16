@@ -68,11 +68,16 @@ export interface AvailableFormsState {
     [key: string]: RootSection
 }
 export interface FilledFormsState {
-    [key: string]: FilledForm
+    byId: {[key: string]: FilledForm},
+    ids: string[]
+}
+export interface RootFormsState {
+    byId: {[key: string]: any},
+    ids: string[]
 }
 export interface AppState {
     user?: User;
     availableForms: AvailableFormsState;
     filledForms: FilledFormsState;
-    rootForms: { [key: string]: any }
+    rootForms:RootFormsState
 }

@@ -42,11 +42,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     loadSurveyForm(id: string) {
         this.props.navigation.navigate("SurveyForm", {
             ffId: id,
-            // root: this.props.availableForms[Object.keys(this.props.availableForms)[0]]
-            // root: root,
-            // filledForm: filledform,
-            // user: this.state.user,
-            // getAutoCompleteDataForPath: this.getAutoCompleteDataForPath(filledform),
+            
         })
     }
     renderItem = (item: ListRenderItemInfo<FormItemType>) => {
@@ -156,8 +152,9 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 
 
 const mapStateToProps = (state: AppState, props: FilledFormProps) => {
+    console.log(state);
     return {
-        availableForms: state.rootForms,
+        availableForms: state.rootForms.byId,
         filledFormData: getFIlledFormsTransformedData(state, props),
         userId: state.user.id
     }

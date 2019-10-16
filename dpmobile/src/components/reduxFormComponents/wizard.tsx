@@ -1,16 +1,14 @@
 import produce from "immer";
 import React, { ReactNode } from "react";
-import { KeyboardAccessoryView, KeyboardAccessoryNavigation } from 'react-native-keyboard-accessory';
+import { View } from "react-native";
 import { connect } from "react-redux";
 import { InjectedFormProps, reduxForm } from "redux-form";
 import { WizardContext } from "../../context/wizard";
-import { getFilledFormById } from "../../redux/selectors/questionSelector";
-import { Showcase } from "../showcase.component";
+import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
-import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
-import { View } from "react-native";
-import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
+import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
+import { AppState } from "../../redux/actions/types";
 
 type WizardProviderProps = {
     children: ReactNode,
@@ -167,9 +165,9 @@ const WizardPageInjected = (reduxForm({
 })(WizardPage))
 
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state: AppState, props) => {
     const filledForm = getFilledFormById(state, props);
-    const roots = state.rootForms[filledForm.formId];
+    const roots = state.rootForms.byId[filledForm.formId];
     const selected = (roots[filledForm.formId]);
     return {
         currentRootChildIndex: filledForm.currentIndex,

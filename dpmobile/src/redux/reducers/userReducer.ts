@@ -5,12 +5,14 @@ const initialState: User = {
     availableForms: [],
     firstName: '',
     id: '',
-    lastName: ''
+    lastName: '',
+    token: '',
 }
 export function userReducer(state = initialState, action: UserActions) {
     switch (action.type) {
         case SET_USER:
-            return action.payload;
+            const payload = action.payload;
+            return { ...state, ...payload };
         default:
             return state;
     }

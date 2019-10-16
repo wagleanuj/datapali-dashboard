@@ -1,7 +1,9 @@
 import { RootFormActions, ADD_ROOT_FORM, REPLACE_ROOT_FORMS, DELETE_ROOT_FORM } from "../actions";
+import { RootFormsState } from "../actions/types";
 
-const initialState = {
-
+const initialState: RootFormsState = {
+    byId: {},
+    ids: []
 }
 export function rootFormsReducer(
     state = initialState,
@@ -13,7 +15,7 @@ export function rootFormsReducer(
             return state;
         case REPLACE_ROOT_FORMS:
             const payload = action.payload;
-            return payload;
+            return {...state, byId: payload, ids: Object.keys(payload)};
         case DELETE_ROOT_FORM:
             return state;
         default:

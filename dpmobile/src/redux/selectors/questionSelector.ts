@@ -1,29 +1,15 @@
-import { IDupeSettings, RootSection } from 'dpform';
 import _ from 'lodash';
 import createCachedSelector from 're-reselect';
-import { AppState } from "react-native";
 import { getFormValues } from 'redux-form';
 import { createSelector } from 'reselect';
 import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyformitem';
 import { Helper } from "../helper";
-const $getRootForm = (state, props) => {
-    return state.rootForms;
-}
-const $getRootFormId = (state: AppState, props) => {
-    return props.rootId;
-}
-const $getQuestionId = (state, props) => props.questionId;
-const $getFilledForms = (state, props) => state.filledForms;
-const $getFilledFormId = (state, props) => props.formId;
-const $getPathForQuestion = (state, props) => props.path;
-const $getProps = (state, props) => props;
-const $getState = (state, props) => state;
-const $getSectionId = (state, props) => props.sectionId;
-const $getValueLocationName = (state, props) => props.valueLocationName;
+import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
+
 
 export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
     (rootForms, rootId) => {
-        return rootForms[rootId]
+        return rootForms.byId[rootId]
     }
 );
 export const getRootFormQuestions = createSelector([getRootFormById],
@@ -35,29 +21,10 @@ export const getRootFormSectionById = createSelector([getRootFormSection, $getSe
 export const getDuplicatingSettingsForSection = createSelector([getRootFormSectionById],
     (section) => section.duplicatingSetings);
 
-export const getDuplicatingSettingsValueForSection = createSelector([getDuplicatingSettingsForSection, $getState, $getProps],
-    (dupe: IDupeSettings, state, props) => {
-        if (!dupe.isEnabled) return undefined;
-        if (dupe.duplicateTimes.type === 'number') {
-            return parseInt(dupe.duplicateTimes.value);
-        }
-        const ref = dupe.duplicateTimes.value;
-        if (!ref) return undefined;
-        let cache = getCacheForFilledForm(state, props);
-        const m = cache.get(ref);
-        if (!m) {
-            return undefined;
-        }
-        const v = m.entries().next();
-        if (!v) {
-            return undefined;
-        }
-        return parseInt(v.value[1]);
 
-    });
 export const getAllFilledFormIdsOfRootForm = createCachedSelector([$getRootFormId, $getFilledForms], (rid, filledForms) => {
     let bag = [];
-    Object.values(filledForms).forEach(item => {
+    Object.values(filledForms.byId).forEach(item => {
         if (item.formId === rid) {
             bag.push(item.id);
         }
@@ -77,7 +44,10 @@ export const getQuestionOptions = createSelector([getQuestionById], (question) =
 
 export const getSortedOptions = createSelector([getQuestionOptions],
     (options) => {
-        return options.SortedOptions;
+        return {
+            rootOptions: Object.values(options.optionsMap).filter(item => !item.groupName),
+            groups: Object.values(options.optionGroupMap),
+        }
     });
 
 export const getDependenciesOfOptions = createSelector([getSortedOptions], (options => {
@@ -128,47 +98,22 @@ export const getQuestionType = createSelector([getQuestionById],
 
 
 
-export const getFilledFormById = createSelector([$getFilledForms, $getFilledFormId],
-    (filledForms, id) => filledForms[id]);
-
-export const getCacheForFilledForm = createSelector([getFilledFormById], (filledform => filledform.cache_));
-// export const getDependencyValues = createSelector([getDependenciesOfOptions, getCacheForFilledForm], (dependencies, cache) => {
-//     const ret = {};
-//     dependencies.forEach(id => {
-//         const m = cache.get(id);
-//         if (!m) {
-//             ret[id] = undefined;
-//             return;
-//         }
-//         const v = m.entries().next();
-//         if (!v) {
-//             ret[id] = undefined;
-//         }
-//         ret[id] = v.value[1];
-//     });
-//     return ret;
-// });
 
 export const getValidOptions = createSelector([getSortedOptions, getValuesOfDependencies, getRootFormById],
     (options, vals, questions) => {
-        console.log(questions);
         const { groups, rootOptions } = options;
-        let g = groups.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions.questions));
-        let o = rootOptions.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions.questions));
+        let g = groups.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions));
+        let o = rootOptions.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions));
         return {
             groups: g,
             rootOptions: o
         }
     });
 
-export const getSectionPageData = createSelector([$getState, getFilledFormById], () => {
-    return {
 
-    }
-})
 export const getTransformedValidOptions = createSelector(getValidOptions, options => {
     const { groups, rootOptions } = options;
-    let allOptions: { id: string, text: string }[] = []
+    let allOptions: { id: string, text: string }[] = [];
     groups.forEach(item => {
         return item.members.forEach(option => {
             allOptions.push({ id: option.id, text: option.value });

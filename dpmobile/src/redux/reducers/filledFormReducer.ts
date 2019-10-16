@@ -1,8 +1,8 @@
 import { getRandomId } from "dpform";
 import produce from "immer";
-import { FilledForm } from "../../components/forms.component";
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER, UPDATE_FILLED_FORMS } from "../actions";
-import { FilledFormsState } from "../actions/types";
+import _ from "lodash";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FILLED_FORMS } from "../actions";
+import { FilledForm, FilledFormsState } from "../actions/types";
 import { Helper } from "../helper";
 const FilledFormItem: FilledForm = {
     completedDate: undefined,
@@ -15,7 +15,8 @@ const FilledFormItem: FilledForm = {
 }
 
 const initialState: FilledFormsState = {
-
+    byId: {},
+    ids: []
 }
 export function filledFormReducer(
     state = initialState,
@@ -35,13 +36,14 @@ export function filledFormReducer(
 
             };
             let newState = produce(state, draft => {
-                draft[newForm.id] = newForm;
+                draft.byId[newForm.id] = newForm;
+                draft.ids.push(newForm.id);
             })
             return newState;
 
         case UPDATE_FILLED_FORMS:
-            const payload = action.payload;
-            return payload;
+            const payload = _.cloneDeep(action.payload);
+            return { ...state, byId: payload, ids: Object.keys(payload) };
         case DELETE_FILLED_FORM:
             return state;
 

@@ -3,7 +3,7 @@ import { ActivityIndicator, StatusBar, View } from "react-native";
 import { ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
-import { getUserToken } from "../redux/selectors/authSelector";
+import { getUserToken, getUser } from "../redux/selectors/authSelector";
 type Props = NavigationScreenProps & ThemedComponentProps & {
     authToken: string;
 };

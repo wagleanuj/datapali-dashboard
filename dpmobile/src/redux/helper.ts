@@ -4,46 +4,9 @@ import { StorageUtil } from "../storageUtil";
 import { AnswerState, AppState, AvailableFormsState, FilledFormsState } from "./actions/types";
 
 
-export function init(section: QuestionSection | RootSection, path: number[], answers: Map<string, Map<string, string>>) {
-    const self: any = {
-        id: undefined,
-        content: undefined,
-        _type: section instanceof QuestionSection ? "section" : "root"
-    };
-
-    const prepare = (section: QuestionSection | RootSection, path: number[], iteration: number = 0) => {
-        let placeholder = [];
-        section.content.forEach((item, index) => {
-            if (item instanceof QuestionSection) {
-                placeholder.push(init(item, path.concat(0, index)));
-            } else if (item instanceof QAQuestion) {
-                placeholder.push({
-                    ...QAQuestion.toJSON(item),
-                    _type: "question",
-                    answer: undefined,
-                    path: path.concat(path.concat(0, index))
-                });
-            }
-        });
-        return placeholder;
-    }
-    self.id = section.id;
-    self.content = [];
-    self.path = path;
-    if (section instanceof QuestionSection) {
-        self.duplicatingSettings = section.duplicatingSettings
-        self.appearingCondition = section.appearingCondition;
-    }
-    self.content[0] = prepare(section, [0, 0]);
-    return { self };
-}
-
 export class Helper {
-    static generateForm(form) {
-
-    }
-
-    static checkIfQuestionHasCondition(question: QAQuestion) {
+ 
+    static checkIfQuestionHasCondition(question: QAQuestion|any) {
         if (question.appearingCondition.literals.length > 0) return true;
         let options = question.options && question.options.SortedOptions;
         let { groups, rootOptions } = options;
@@ -80,41 +43,17 @@ export class Helper {
         }
         return -1;
     }
-    static makePage(root: RootSection, index: number, as: Map<string, Map<string, string>>, container: any[]) {
-        const item = root.content[index];
-        const sectionContentCollector = (section: QuestionSection, path: number[]) => {
-            let con = [];
-            section.content.forEach((item, index) => {
-                if (item instanceof QuestionSection) {
-                    const times = Helper.getDuplicatingTimes(item, as);
-                    for (let i = 0; i < times; i++) {
-                        con.push(sectionContentCollector(item, path.concat(iteration, index)))
-                    }
+  
 
-                }
-            })
-        };
-        let flattened = [];
-        if (item instanceof QuestionSection) {
-            let times = Helper.getDuplicatingTimes(item, as);
-            if (times !== undefined) {
-
-            }
-
-        } else if (item instanceof QAQuestion) {
-
-        }
-    }
-
-    static makeTree(root: RootSection | QuestionSection, tree: any = {}) {
+    static makeTree(root: any, tree: any = {}) {
         tree[root.id] = { ...root, childNodes: [], _type: root instanceof QuestionSection ? 'section' : 'root' };
         tree[root.id].childNodes = [];
         for (let i = 0; i < tree[root.id].content.length; i++) {
             let item = tree[root.id].content[i];
-            if (item instanceof QuestionSection) {
+            if (item.hasOwnProperty('content')) {
                 Helper.makeTree(item, tree);
                 tree[root.id].childNodes.push(item.id);
-            } else if (item instanceof QAQuestion) {
+            } else{
                 tree[item.id] = { ...item, _type: 'question' }
                 tree[root.id].childNodes.push(item.id);
             }
@@ -181,7 +120,7 @@ export class Helper {
         }
         return value;
     }
-    static isLiteralValid = (item: ILiteral, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion }) => {
+    static isLiteralValid = (item: ILiteral, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion|any }) => {
         let result = true;
         const answer = answerStore[item.questionRef];
         const question = questionStore[item.questionRef]
@@ -210,7 +149,7 @@ export class Helper {
         return result;
     }
 
-    static evaluateCondition(condition: QACondition, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion }) {
+    static evaluateCondition(condition: QACondition, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion|any }) {
         let finalResult = true;
         let pendingOperator = null;
         if (!condition) return finalResult;
@@ -245,13 +184,14 @@ export class Helper {
         let autoFillConditionRefs: string[] = [];
         let duplicationRef: string = null;
         if (item instanceof QAQuestion || item._type === 'question') {
-            apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
+            apConditionRef = item.appearingCondition.literals.map(lit => lit.questionRef);
             item.autoAnswer.answeringConditions.forEach(ac => ac.condition.literals.forEach(item => autoFillConditionRefs.push(item.questionRef)));
-            let { groups, rootOptions } = item.options.SortedOptions;
-            groups.forEach(group => group.appearingCondition.Literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
-            rootOptions.forEach(opt => opt.appearingCondition.Literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
+            const rootOptions = Object.values(item.options.optionsMap).filter(item => !item.groupName);
+            const groups = Object.values(item.options.optionGroupMap);
+                     groups.forEach(group => group.appearingCondition.literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
+            rootOptions.forEach(opt => opt.appearingCondition.literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
         } else if (item instanceof QuestionSection || item._type === 'section') {
-            apConditionRef = item.appearingCondition.Literals.map(lit => lit.questionRef);
+            apConditionRef = item.appearingCondition.literals.map(lit => lit.questionRef);
             duplicationRef = item.duplicatingSettings.isEnabled && item.duplicatingSettings.duplicateTimes.type === 'questionRef' ? item.duplicatingSettings.duplicateTimes.value : null;
         }
         let ns = new Set([].concat(apConditionRef, groupConditionRefs, rootOptionConditionRefs, duplicationRef ? [duplicationRef] : []));
@@ -264,39 +204,6 @@ export class Helper {
         };
     }
 
-    static makeFormData(section: QuestionSection, path: number[] = [0, 0], valueLocationName?: string) {
-        if (!valueLocationName) valueLocationName = section.id;
-        let content = [];
-        let duplicateTimes = 1;
-        let dependency = Helper.collectDependencies(section);
-        for (let i = 0; i < duplicateTimes; i++) {
-            let sectionItem = {
-                title: section.name + (duplicateTimes > 1 ? " " + (i + 1) : ''),
-                id: section.id,
-                path: path.concat(i),
-                content: [],
-                dependency: dependency,
-            }
-            section.content.forEach((item, index) => {
-                if (item instanceof QuestionSection) {
-                    sectionItem.content.push(Helper.makeFormData(item, path.concat(i, index), valueLocationName.concat(`[${i}].${item.id}`)));
-                } else if (item instanceof QAQuestion) {
-                    sectionItem.content.push({
-                        id: item.id,
-                        title: item.questionContent.content,
-                        valueLocationName: valueLocationName.concat('[', i.toString(), ']', '.', item.id),
-                        path: path.concat(i, index),
-                        answerType: item.answerType,
-                        isRequired: item.isRequired,
-                        isDependent: Helper.checkIfQuestionHasCondition(item),
-                        dependency: Helper.collectDependencies(item)
-                    })
-                }
-            })
-            content.push(sectionItem);
-        }
-        return content;
-    }
 
 
 

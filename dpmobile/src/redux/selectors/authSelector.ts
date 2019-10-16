@@ -1,7 +1,7 @@
 import { createSelector } from "reselect";
-import { AppState, User } from "../actions/types";
-const $getState = (state: AppState, props) => state;
-const $getProps = (state, props) => props;
+import { User } from "../actions/types";
+import { $getState } from "./shared";
+
 
 export const getUser = createSelector([$getState], (state) => {
     return state.user;
