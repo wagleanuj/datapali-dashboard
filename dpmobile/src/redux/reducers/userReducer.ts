@@ -1,5 +1,5 @@
-import { UserActions } from "../actions";
-import { User } from "../../components/forms.component";
+import { SET_USER, UserActions } from "../actions";
+import { User } from "../actions/types";
 const initialState: User = {
     filledForms: [],
     availableForms: [],
@@ -9,6 +9,8 @@ const initialState: User = {
 }
 export function userReducer(state = initialState, action: UserActions) {
     switch (action.type) {
+        case SET_USER:
+            return action.payload;
         default:
             return state;
     }

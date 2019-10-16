@@ -7,7 +7,7 @@ import { createSelector } from 'reselect';
 import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyformitem';
 import { Helper } from "../helper";
 const $getRootForm = (state, props) => {
-    return state.availableForms;
+    return state.rootForms;
 }
 const $getRootFormId = (state: AppState, props) => {
     return props.rootId;
@@ -71,7 +71,7 @@ export const getFilledFormValues = createSelector([$getFilledFormId, $getState],
     return getFormValues(fid)(state);
 });
 export const getQuestionById = createSelector([getRootFormById, $getQuestionId],
-    (root: RootSection, questionId: string) => root.questions[questionId]);
+    (root: any, questionId: string) => root[questionId]);
 
 export const getQuestionOptions = createSelector([getQuestionById], (question) => question.options);
 
@@ -151,6 +151,7 @@ export const getCacheForFilledForm = createSelector([getFilledFormById], (filled
 
 export const getValidOptions = createSelector([getSortedOptions, getValuesOfDependencies, getRootFormById],
     (options, vals, questions) => {
+        console.log(questions);
         const { groups, rootOptions } = options;
         let g = groups.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions.questions));
         let o = rootOptions.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions.questions));

@@ -1,7 +1,7 @@
 import { getRandomId } from "dpform";
 import produce from "immer";
 import { FilledForm } from "../../components/forms.component";
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER } from "../actions";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER, UPDATE_FILLED_FORMS } from "../actions";
 import { FilledFormsState } from "../actions/types";
 import { Helper } from "../helper";
 const FilledFormItem: FilledForm = {
@@ -23,15 +23,14 @@ export function filledFormReducer(
 ) {
     switch (action.type) {
         case ADD_FILLED_FORM:
-            const { root, userId } = action.payload;
-            if (!root) return state;
+            const { rootId, userId } = action.payload;
+            if (!rootId) return state;
             let newForm: FilledForm = {
                 completedDate: undefined,
                 startedDate: new Date().getTime(),
                 filledBy: userId,
-                formId: root.id,
+                formId: rootId,
                 id: getRandomId("filledform-"),
-                cache_: new Map(),
                 currentIndex: 0,
 
             };
@@ -39,9 +38,13 @@ export function filledFormReducer(
                 draft[newForm.id] = newForm;
             })
             return newState;
+
+        case UPDATE_FILLED_FORMS:
+            const payload = action.payload;
+            return payload;
         case DELETE_FILLED_FORM:
             return state;
-      
+
 
         case JUMP_TO:
             const { formId, index: newIndex } = action.payload

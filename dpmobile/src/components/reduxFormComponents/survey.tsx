@@ -1,4 +1,3 @@
-import { RootSection } from "dpform";
 import React from "react";
 import { View } from "react-native";
 import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
@@ -10,7 +9,6 @@ import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
 import { AppState, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
-import { getRootFormById } from "../../redux/selectors/questionSelector";
 import { textStyle } from "../../themes/style";
 import { FilledForm } from "../components/forms.component";
 import { ConnectedWizard } from "./wizard";
@@ -19,7 +17,6 @@ type ComponentProps = {
     handleNext: (formId: string) => void;
     handleJump: (formId: string, index: number) => void;
     form: FilledForm;
-    root: RootSection;
 }
 type SurveyProps = SurveyState & NavigationScreenProps & ThemedComponentProps & ComponentProps;
 const routeName = "Sruvey Form";
@@ -64,7 +61,7 @@ export class Survey_ extends React.Component<SurveyProps>{
     }
 
     render() {
-        const { form, root } = this.props;
+        const { form } = this.props;
 
         return (
             <View style={this.props.themedStyle.container}>
@@ -100,7 +97,6 @@ const mapStateToProps = (state: AppState, props: SurveyProps) => {
     let selected = getFilledFormById(state, props, filledFormId);
     return {
         form: selected,
-        root: getRootFormById(state, props),
 
     }
 }

@@ -1,15 +1,46 @@
-import { request } from "dpform";
+import { ApolloConsumer } from "@apollo/react-hooks";
+import { ApolloClient } from "apollo-boost";
+import { RootSection } from "dpform";
+import gql from "graphql-tag";
 import React from "react";
 import { View, ViewProps } from "react-native";
 import { Button as Btn } from "react-native-paper";
 import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
-import { APP_CONFIG } from "../config";
-import { StorageUtil } from "../storageUtil";
+import { connect } from "react-redux";
+import { Action, Dispatch } from "redux";
+import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redux/actions/action";
+import { User } from "../redux/actions/types";
+import { Helper } from "../redux/helper";
 
-
+const LOGIN = gql`query Login($email: String!, $password: String!){
+    login(email: $email, password: $password){
+      token
+      user{
+          _id
+          firstName
+          lastName
+        availableForms{
+          name
+          id
+          content
+        }
+        filledForms{
+          id
+          startedDate
+          completedDate
+          formId
+          filledBy
+          answerStore
+        }
+      }
+    }
+  }`;
 interface ComponentProps {
     onLoginPress: (email: string, password: string) => void;
+    setUser: (user: User) => void;
+    setFilledForms: (ffs: any) => void;
+    setRootForms: (rr: any) => void;
 }
 
 export type SignInProps = ThemedComponentProps & ViewProps & ComponentProps & NavigationScreenProps;
@@ -24,79 +55,52 @@ interface State {
 class SignInComponent extends React.Component<SignInProps, State> {
 
     public state: State = {
-        email: undefined,
-        password: undefined,
+        email: 'surveyor@datapalitest.com',
+        password: 'admin',
         isLoggingIn: false,
         error: []
     };
 
-    private onLoginPress = () => {
-        const requestBody = {
-            query: `
-              query Login($email: String!, $password: String!){
-                  login(email: $email, password: $password){
-                    token
-                    user{
-                        _id
-                        firstName
-                        lastName
-                      availableForms{
-                        name
-                        id
-                        content
-                      }
-                      filledForms{
-                        id
-                        startedDate
-                        completedDate
-                        formId
-                        filledBy
-                        answerStore
-                      }
-                    }
-                  }
-                }`,
-            variables: {
-                email: this.state.email,
-                password: this.state.password
-            },
-        };
+    private onLoginPress = async (client: ApolloClient<object>) => {
+
         this.setState({
             isLoggingIn: true
         });
-        return request(APP_CONFIG.serverURL, "login", requestBody, "Could not login", undefined).then(result => {
-            let toStore = {
-                userID: result.user._id,
-                firstName: result.user.firstName,
-                lastName: result.user.lastName,
-                authToken: result.token,
-                surveyorCode: result.user._id,
-                availableForms: result.user.availableForms.map(item => item.id),
-                filledForms: result.user.filledForms.map(item => item.id)
+        const { data: { login }, errors, loading } = await client.query({
+            query: LOGIN,
+            variables: {
+                email: this.state.email.toLowerCase(),
+                password: this.state.password
             }
-
-            result.user.filledForms.forEach(item => {
-                toStore[item.id] = item;
-            });
-
-            result.user.availableForms.forEach(item => {
-                toStore[item.id] = item;
-            });
-
-            return StorageUtil.multiSet(toStore).then(() => {
-                this.props.navigation.navigate("Home");
-            }).catch(() => {
-                this.setState({
-                    error: [{ message: "Failed saving the form to local storage" }],
-                    isLoggingIn: false,
-                })
-            })
-        }).catch(() => {
-            this.setState({
-                isLoggingIn: false,
-                error: [{ message: "Incorrect email or password!" }]
-            })
         });
+        if (errors) return this.setState({
+            isLoggingIn: false,
+            error: [{ message: "Incorrect email or password!" }]
+        })
+        let user: User = {
+            id: login.user._id,
+            token: login.token,
+            availableForms: login.user.availableForms.map(item => item.id),
+            firstName: login.user.firstName,
+            lastName: login.user.lastName,
+            filledForms: login.user.filledForms.map(item => item.id)
+
+        }
+        let rootForms = {};
+        login.user.availableForms.forEach(v => {
+            v.content = JSON.parse(v.content);
+            let root = RootSection.fromJSON(v);
+
+            const tree = Helper.makeTree(root);
+            rootForms[v.id] = tree;
+        });
+        let filledForms = {};//TODO:: later
+        this.props.setRootForms(rootForms);
+        this.props.setUser(user);
+        this.props.setFilledForms(filledForms);
+        this.setState({
+            isLoggingIn: false,
+        }, () => this.props.navigation.navigate("Home"));
     }
 
     private onEmailInputTextChange = (email: string) => {
@@ -118,37 +122,45 @@ class SignInComponent extends React.Component<SignInProps, State> {
         const { themedStyle } = this.props;
 
         return (
-            <View style={themedStyle.container}>
-                <View style={themedStyle.header}>
-                    <Text>Sign in to your surveyor account</Text>
-                </View>
-                <Input
-                    textContentType={'emailAddress'}
-                    value={this.state.email}
-                    placeholder='Email'
-                    onChangeText={this.onEmailInputTextChange}
+            <ApolloConsumer>
+                {client => {
+                    return (
+                        <View style={themedStyle.container}>
+                            <View style={themedStyle.header}>
+                                <Text>Sign in to your surveyor account</Text>
+                            </View>
+                            <Input
+                                textContentType={'emailAddress'}
+                                value={this.state.email}
+                                placeholder='Email'
+                                onChangeText={this.onEmailInputTextChange}
 
-                />
-                <Input
-                    value={this.state.password}
-                    style={themedStyle.passwordInput}
-                    placeholder='Password'
-                    secureTextEntry={true}
-                    onChangeText={this.onPasswordInputTextChange}
-                />
-                <Btn
-                    loading={this.state.isLoggingIn}
-                    mode="contained"
-                    style={themedStyle.loginButton}
-                    disabled={!this.isValid(this.state)}
-                    onPress={this.onLoginPress}>
-                    Login
-            </Btn>
-                <View style={this.props.themedStyle.errorContainer}>
-                    {this.state.error.map((item, i) => <Text key={'error' + i} style={this.props.themedStyle.errorText}>{item.message}</Text>)}
-                </View>
+                            />
+                            <Input
+                                value={this.state.password}
+                                style={themedStyle.passwordInput}
+                                placeholder='Password'
+                                secureTextEntry={true}
+                                onChangeText={this.onPasswordInputTextChange}
+                            />
+                            <Btn
+                                loading={this.state.isLoggingIn}
+                                mode="contained"
+                                style={themedStyle.loginButton}
+                                disabled={!this.isValid(this.state)}
+                                onPress={() => this.onLoginPress(client)}>
+                                Login
+                             </Btn>
+                            <View style={this.props.themedStyle.errorContainer}>
+                                {this.state.error.map((item, i) => <Text key={'error' + i} style={this.props.themedStyle.errorText}>{item.message}</Text>)}
+                            </View>
 
-            </View>
+                        </View>
+                    )
+                }}
+
+            </ApolloConsumer>
+
         );
     }
 }
@@ -189,3 +201,17 @@ export const SignIn = withStyles(SignInComponent, (theme: ThemeType) => ({
         color: 'red'
     }
 }));
+const mapStateToProps = (state, props) => {
+    return {
+
+    }
+}
+
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+    return {
+        setRootForms: (forms: any) => dispatch(handleSetRootForms(forms)),
+        setFilledForms: (forms: any) => dispatch(handleSetFilledForms(forms)),
+        setUser: (user: User) => dispatch(handleSetUser(user)),
+    }
+}
+export const ConnectedLoginScreen = connect(mapStateToProps, mapDispatchToProps)(SignIn);

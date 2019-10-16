@@ -19,8 +19,8 @@ export const getFilledFormsState = createSelector([$getFilledForms],
 export const getCurrentIndex = createSelector([$getFilledForms, $getFormId],
     (filledForms, formId) => filledForms[formId].currentIndex);
 
-export const getCurrentSectionData = createSelector([getCurrentIndex, getRootFormById],(index,root)=>{
-    return Helper.makeFormData(root.content[index],[0, index]);
+export const getCurrentSectionData = createSelector([getCurrentIndex, getRootFormById], (index, root) => {
+    return Helper.makeFormData(root.content[index], [0, index]);
 })
 export const getPageContent = createSelector([getRootFormById, getCacheForFilledForm, getCurrentIndex], (rf, c, index, ) => {
     const result = Helper.buildContent2(rf, [], c);

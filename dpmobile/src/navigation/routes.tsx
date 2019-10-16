@@ -2,8 +2,8 @@ import { useScreens } from 'react-native-screens';
 import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { AuthLoading } from '../components/authloading.component';
-import { SignIn } from '../components/login.component';
+import { ConnectedAuthLoading } from '../components/authloading.component';
+import { SignIn, ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
 import { FilledFormsList } from '../components/reduxFormComponents/forms';
 import { Survey } from '../components/reduxFormComponents/survey';
@@ -32,8 +32,8 @@ const MenuNavigator: NavigationContainer = createBottomTabNavigator({
 
 
 const LoginNavigator: NavigationContainer = createStackNavigator({
-  AuthLoading: AuthLoading,
-  Login: SignIn,
+  AuthLoading: ConnectedAuthLoading,
+  Login: ConnectedLoginScreen,
 }, {
   headerMode: 'screen',
   defaultNavigationOptions: {

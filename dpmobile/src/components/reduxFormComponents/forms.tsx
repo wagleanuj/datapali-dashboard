@@ -1,4 +1,3 @@
-import { RootSection } from "dpform"
 import React, { Dispatch } from "react"
 import { ListRenderItemInfo, RefreshControl, View } from "react-native"
 import { FAB } from "react-native-paper"
@@ -20,7 +19,7 @@ type ComponentProps = {
     filledFormsData: { title: string, startedDate: number }[];
     availableForms: AvailableFormsState
     userId: string;
-    handleAddNewForm: (root: RootSection, userId: string) => void;
+    handleAddNewForm: (root: string, userId: string) => void;
 
 }
 type FilledFormProps = FilledFormsState & ThemedComponentProps & NavigationScreenProps & ComponentProps
@@ -43,7 +42,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     loadSurveyForm(id: string) {
         this.props.navigation.navigate("SurveyForm", {
             ffId: id,
-            root: this.props.availableForms[Object.keys(this.props.availableForms)[0]]
+            // root: this.props.availableForms[Object.keys(this.props.availableForms)[0]]
             // root: root,
             // filledForm: filledform,
             // user: this.state.user,
@@ -72,8 +71,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
 
     }
     handleAddNewForm() {
-
-        const firstForm = this.props.availableForms[Object.keys(this.props.availableForms)[0]]
+        const firstForm = Object.keys(this.props.availableForms)[0];
         this.props.handleAddNewForm(firstForm, this.props.userId)
     }
 
@@ -159,14 +157,14 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 
 const mapStateToProps = (state: AppState, props: FilledFormProps) => {
     return {
-        availableForms: state.availableForms,
+        availableForms: state.rootForms,
         filledFormData: getFIlledFormsTransformedData(state, props),
         userId: state.user.id
     }
 }
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
     handleRefresh: () => dispatch(handleNext()),
-    handleAddNewForm: (root: RootSection, userId: string) => dispatch(handleAddNewForm(root, userId)),
+    handleAddNewForm: (rootId: string, userId: string) => dispatch(handleAddNewForm(rootId, userId)),
     handleDeleteForm: (i: number) => dispatch(handleJump(i))
 });
 export const FilledFormsList = connect(mapStateToProps, mapDispatchToProps)(FilledFormStyled);

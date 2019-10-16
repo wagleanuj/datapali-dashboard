@@ -1,5 +1,6 @@
 import { RootSection } from "dpform";
-import { ADD_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER } from ".";
+import { ADD_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER, SET_USER, REPLACE_ROOT_FORMS, UPDATE_FILLED_FORMS } from ".";
+import { User, FilledForm } from "./types";
 
 export function handleNext(formId: string): FilledFormActions {
     return {
@@ -29,11 +30,11 @@ export function handleJump(formId: string, newSectionIndex: number): FilledFormA
     }
 }
 
-export function handleAddNewForm(root: RootSection, userId: string): FilledFormActions {
+export function handleAddNewForm(root: string, userId: string): FilledFormActions {
     return {
         type: ADD_FILLED_FORM,
         payload: {
-            root: root,
+            rootId: root,
             userId: userId
         }
     }
@@ -48,5 +49,26 @@ export function handleUpdateAnswer(formId: string, path: number[], questionId: s
             value: value
 
         }
+    }
+}
+
+export function handleSetUser(user: User) {
+    return {
+        type: SET_USER,
+        payload: user
+    }
+}
+
+export function handleSetRootForms(rootForms: {[key:string]:any}){
+    return {
+        type: REPLACE_ROOT_FORMS,
+        payload: rootForms
+    }
+}
+
+export function handleSetFilledForms(filled: {[key:string]:FilledForm}){
+    return {
+        type: UPDATE_FILLED_FORMS,
+        payload: filled
     }
 }

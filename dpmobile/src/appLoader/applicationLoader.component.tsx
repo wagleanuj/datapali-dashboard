@@ -77,11 +77,7 @@ export class ApplicationLoader extends React.Component<Props, State> {
     ]);
   }
   private async loadStore(): Promise<void> {
-    // const appstate = await Helper.generateAppState();
-    // const store = createStore(rootReducer, appstate);
-    // this.setState({
-    //   store: store
-    // })
+ 
   }
 
   private renderLoading = (): LoadingElement => {

@@ -1,5 +1,24 @@
 import { AnswerOptions, IAutoAnswer, IDupeSettings, QACondition, QAQuestion, RootSection } from "dpform";
-import { FilledForm, User } from "../../components/forms.component";
+
+export interface User {
+    firstName: string;
+    lastName: string;
+    id: string;
+    availableForms: string[],
+    filledForms: string[],
+    token?: string;
+}
+
+export interface FilledForm {
+    startedDate: number;
+    completedDate: number;
+    formId: string;
+    filledBy: string;
+    id: string;
+    history?: number[];
+    currentIndex?: number;
+    cache_?: Map<string, Map<string, string>>
+}
 
 export interface AnswerState {
     answers: Map<string, Map<string, string>>;
@@ -55,6 +74,5 @@ export interface AppState {
     user?: User;
     availableForms: AvailableFormsState;
     filledForms: FilledFormsState;
-    filled: FilledFormsState;
-    rootForms: {[key: string]: any}
+    rootForms: { [key: string]: any }
 }

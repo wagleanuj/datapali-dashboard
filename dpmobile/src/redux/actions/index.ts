@@ -1,4 +1,5 @@
 import { RootSection } from "dpform";
+import { User } from "./types";
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
 interface UpdateAnswer {
@@ -37,11 +38,18 @@ export const ADD_FILLED_FORM = 'add-filled-form';
 export interface AddFilledForm {
     type: typeof ADD_FILLED_FORM;
     payload: {
-        root: RootSection,
+        rootId: string,
         userId: string
     }
 }
 
+export const UPDATE_FILLED_FORMS = 'update-filled-form';
+export interface UpdateFilledForms {
+    type: typeof UPDATE_FILLED_FORMS,
+    payload: {
+        [key: string]: any
+    }
+}
 export const DELETE_FILLED_FORM = 'delete-filled-form';
 export interface DeleteFilledForm {
     type: typeof DELETE_FILLED_FORM;
@@ -85,48 +93,42 @@ export interface JumpTo {
         index: number;
     }
 }
-export type FilledFormActions = AddFilledForm | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo;
+export type FilledFormActions = AddFilledForm|UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo;
 
 //available forms action types
 
-export const ADD_AVAILABLE_FORM = 'add-available-form';
-export interface AddAvailableForm {
-    type: typeof ADD_AVAILABLE_FORM;
+export const ADD_ROOT_FORM = 'add-available-form';
+export interface AddRootForm {
+    type: typeof ADD_ROOT_FORM;
     payload: {
-        root: RootSection
+        root: any
     }
 }
 
-export const REPLACE_AVAILABLE_FORMS = 'replace-available-forms';
-export interface ReplaceAvailableForms {
-    type: typeof REPLACE_AVAILABLE_FORMS;
+export const REPLACE_ROOT_FORMS = 'replace-available-forms';
+export interface ReplaceRootForms {
+    type: typeof REPLACE_ROOT_FORMS;
     payload: {
-        roots: [RootSection]
+        roots: { [key: string]: any }
     }
 }
 
-export const DELETE_AVAILABLE_FORM = 'delete-available-form';
-export interface DeleteAvailableForm {
-    type: typeof DELETE_AVAILABLE_FORM;
+export const DELETE_ROOT_FORM = 'delete-available-form';
+export interface DeleteRootForms {
+    type: typeof DELETE_ROOT_FORM;
     payload: {
         ids: string[]
     }
 }
-export type AvailableFormActions = AddAvailableForm | ReplaceAvailableForms | DeleteAvailableForm;
+export type RootFormActions = AddRootForm | ReplaceRootForms | DeleteRootForms;
 
 
 //user actions
 export const SET_USER = 'set-user';
 export interface SetUser {
     type: typeof SET_USER;
-    payload: {
-        firstName: string;
-        lastName: string;
-        token: string;
-        availableForms?: string[];
-        filledForms?: string[];
-    }
+    payload: User
 }
 
 export type UserActions = SetUser;
-export type ActionTypes = UserActions | AvailableFormActions | FilledFormActions | SurveyActions;
+export type ActionTypes = UserActions | RootFormActions | FilledFormActions | SurveyActions;
