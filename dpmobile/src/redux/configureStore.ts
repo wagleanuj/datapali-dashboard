@@ -5,7 +5,8 @@ import {AsyncStorage} from 'react-native';
 
 export const persistConfig = {
     storage: AsyncStorage,
-    key: 'root'
+    key: 'root',
+    serialize: true,
 }
 
 const persistedReducer = persistReducer(persistConfig, rootReducer);

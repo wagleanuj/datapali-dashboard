@@ -50,7 +50,7 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
                         onValueChange={this.props.jumpToSection}>
                         {this.props.sectionPickerData.map((data, index) => {
                             return <Picker.Item
-                                value={data.id}
+                              s  value={data.id}
                                 key={data.id}
                                 label={`${getReadablePath([0, index])}: ${data.label}`}
                             />

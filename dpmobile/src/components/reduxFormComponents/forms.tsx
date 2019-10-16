@@ -152,7 +152,6 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 
 
 const mapStateToProps = (state: AppState, props: FilledFormProps) => {
-    console.log(state);
     return {
         availableForms: state.rootForms.byId,
         filledFormData: getFIlledFormsTransformedData(state, props),

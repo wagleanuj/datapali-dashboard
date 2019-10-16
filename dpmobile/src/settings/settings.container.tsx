@@ -1,6 +1,6 @@
 import { request } from 'dpform';
 import React from 'react';
-import AsyncStorage from '@react-native-community/async-storage';
+import { AsyncStorage } from 'react-native';
 import { TopNavigation } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
