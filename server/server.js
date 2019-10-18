@@ -79,7 +79,6 @@ mongoose
     auth: auth
   })
   .then(dbClient => {
-    initAdmin();
     //start listening at the server port
     httpServer.listen(process.env.SERVER_PORT, () => {
       console.log(`Listening at port ${process.env.SERVER_PORT}`);
@@ -90,67 +89,3 @@ mongoose
     throw err;
   });
 
-//function to initialize admin account and story levels
-async function initAdmin() {
-  let username = process.env.STORY_LEVEL_CREATOR;
-  let password = process.env.STORY_LEVEL_CREATOR_PASSWORD;
-  let email = process.env.STORY_LEVEL_CREATOR_EMAIL;
-  return User.findOne({ username: username })
-    .exec()
-    .then(user => {
-      if (!user) {
-        return new Promise((resolve, reject) => {
-          bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
-            if (err)
-              reject(
-                new ApolloError(
-                  "Failed to generate salt",
-                  AuthorizationErrorsCodes.BCRYPT_ERROR,
-                  {}
-                )
-              );
-            bcrypt.hash(password, salt, null, async (err, hash) => {
-              if (err)
-                reject(
-                  new ApolloError(
-                    "Failed to hash password",
-                    AuthorizationErrorsCodes.BCRYPT_ERROR,
-                    {}
-                  )
-                );
-              password = hash;
-              const newUser = new User({
-                email: email,
-                username: username,
-                password: password
-              });
-              const newControls = new Controls({ user: newUser._id });
-              //store the story levels
-              let levelIds = [];
-              for (let i = 0; i < storyLevels.length; i++) {
-                let level = new Level({
-                  name: "level" + (i + 1),
-                  creator: newUser._id,
-                  data: storyLevels[i].data
-                });
-                await level.save();
-                levelIds.push(level._id);
-              }
-              newUser.savedLevels = levelIds;
-              let result = await newUser.save();
-              let userControls = await newControls.save();
-              newUser.controls = newControls;
-              await newUser.save();
-              resolve({
-                ...result._doc,
-                controls: userControls,
-                _doc: result.id
-              });
-            });
-          });
-        });
-      } else {
-        return user._doc;
-      }
-    });
-}
