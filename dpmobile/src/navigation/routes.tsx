@@ -1,14 +1,15 @@
+import { Transition } from 'react-native-reanimated';
 import { useScreens } from 'react-native-screens';
-import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
+import { createAppContainer, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
-import { ConnectedAuthLoading } from '../components/authloading.component';
-import { SignIn, ConnectedLoginScreen } from '../components/login.component';
+import { ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
 import { FilledFormsList } from '../components/reduxFormComponents/forms';
 import { Survey } from '../components/reduxFormComponents/survey';
 import { SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
+import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
@@ -23,7 +24,7 @@ const SettingsNavigator: NavigationContainer = createStackNavigator({
   defaultNavigationOptions: MenuNavigationOptions,
 });
 
-const MenuNavigator: NavigationContainer = createBottomTabNavigator({
+const MenuNavigator = createBottomTabNavigator({
   ['Forms']: FormListNavigator,
   ['Settings']: SettingsNavigator,
 }, {
@@ -31,19 +32,11 @@ const MenuNavigator: NavigationContainer = createBottomTabNavigator({
 });
 
 
-const LoginNavigator: NavigationContainer = createStackNavigator({
-  AuthLoading: ConnectedAuthLoading,
-  Login: ConnectedLoginScreen,
-}, {
-  headerMode: 'screen',
-  defaultNavigationOptions: {
-    header: null,
-  },
-})
 
-const RootNavigator: NavigationContainer = createSwitchNavigator({
-  Home: { screen: MenuNavigator },
-  Auth: { screen: ConnectedLoginScreen },
+
+const RootNavigator: NavigationContainer = createAnimatedSwitchNavigator({
+  Home: MenuNavigator,
+  Auth: ConnectedLoginScreen,
 }, {
   initialRouteName: "Auth",
 })

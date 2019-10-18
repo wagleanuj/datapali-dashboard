@@ -35,7 +35,6 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
-    pagerMode: boolean;
     updateAnswer: (formId: string, path: number[], questionId: string, value: string) => void;
 } & ThemedComponentProps;
 
@@ -60,12 +59,11 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
             onChange,
             value,
             type,
-            pagerMode,
         } = this.props;
         return (
             <View key={'input-field-container' + this.props.questionId}
 
-                style={themedStyle.container} key={'main-view' + this.props.questionId}>
+                style={themedStyle.container} >
                 <Text style={themedStyle.questionTitle}>
                     {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                 </Text>
@@ -96,6 +94,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
 
 export const FormItemStyled = withStyles(FormItem_, theme => ({
     container: {
+        flex: 1,
         paddingBottom: 20,
         paddingLeft: 5,
         paddingRight: 5,

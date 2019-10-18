@@ -65,28 +65,37 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     get SwiperView() {
         return (
-            <Swiper
-                scrollEnabled
-                key={'swiper-' + this.props.locationName}
-                autoplay={false}
-                loadMinimal
-                loadMinimalSize={2}
-                loop={false}
-                bounces
-                height={500}
-                pagingEnabled
-                automaticallyAdjustContentInsets
-                index={this.context.pagerModeIndices[this.props.sectionId]}
-                onIndexChanged={this.onPageChange}
-            >
-                {this.props.childNodes.map((child, index) => {
-                    return (
-                        this.renderChildNode({ item: child, index: index }, 0)
-                    )
-                })}
+            <View style={{ flex: 5 }}>
+
+                <Swiper
+                    scrollEnabled
+                    key={'swiper-' + this.props.locationName}
+                    autoplay={false}
+                    loadMinimal
+                    loadMinimalSize={2}
+
+                    loop={false}
+                    bounces
+                    height={500}
+                    pagingEnabled
+                    automaticallyAdjustContentInsets
+                    index={this.context.pagerModeIndices[this.props.sectionId]}
+                    onIndexChanged={this.onPageChange}
+                >
+                    {this.props.childNodes.map((child, index) => {
+                        return (
+                            <View key={'swiper-child' + child} style={{ flex: 1 }}>
+                                {this.renderChildNode({ item: child, index: index }, 0)}
+
+                            </View>
+                        )
+                    })}
 
 
-            </Swiper>
+                </Swiper>
+            </View>
+
+
         )
     }
     get AccordionView() {
@@ -129,7 +138,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
 const SectionNodeStyled = withStyles(SectionNode, theme => ({
     container: {
-        flex: 0,
+        flex: 1,
         backgroundColor: theme['background-basic-color-1'],
         paddingTop: 16,
         marginBottom: 32,
@@ -137,7 +146,7 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
         paddingRight: 4
     },
     headingContainer: {
-        flex: 0,
+        flex: 1,
         flexDirection: 'row',
         justifyContent: 'center'
     },

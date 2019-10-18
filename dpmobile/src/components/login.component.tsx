@@ -5,14 +5,13 @@ import React from "react";
 import { View, ViewProps } from "react-native";
 import { Button as Btn } from "react-native-paper";
 import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
-import { NavigationScreenProps } from "react-navigation";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redux/actions/action";
 import { User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
 import { getUserToken } from "../redux/selectors/authSelector";
-
+import {NavigationScreenProps} from 'react-navigation'
 const LOGIN = gql`query Login($email: String!, $password: String!){
     login(email: $email, password: $password){
       token
