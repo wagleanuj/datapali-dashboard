@@ -43,9 +43,9 @@ const LoginNavigator: NavigationContainer = createStackNavigator({
 
 const RootNavigator: NavigationContainer = createSwitchNavigator({
   Home: { screen: MenuNavigator },
-  AuthLoading: { screen: LoginNavigator },
+  Auth: { screen: ConnectedLoginScreen },
 }, {
-  initialRouteName: "AuthLoading",
+  initialRouteName: "Auth",
 })
 
 

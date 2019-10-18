@@ -25,8 +25,7 @@ export class AuthLoadingScreen extends React.Component<Props, State> {
     render() {
         return (
             <View style={this.props.themedStyle.container}>
-                <ActivityIndicator />
-                <StatusBar barStyle="default" />
+              
             </View>
         );
     }

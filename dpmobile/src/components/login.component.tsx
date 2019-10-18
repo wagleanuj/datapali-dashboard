@@ -1,6 +1,5 @@
 import { ApolloConsumer } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-boost";
-import { RootSection } from "dpform";
 import gql from "graphql-tag";
 import React from "react";
 import { View, ViewProps } from "react-native";
@@ -12,6 +11,7 @@ import { Action, Dispatch } from "redux";
 import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redux/actions/action";
 import { User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
+import { getUserToken } from "../redux/selectors/authSelector";
 
 const LOGIN = gql`query Login($email: String!, $password: String!){
     login(email: $email, password: $password){
@@ -37,6 +37,7 @@ const LOGIN = gql`query Login($email: String!, $password: String!){
     }
   }`;
 interface ComponentProps {
+    authToken: string;
     onLoginPress: (email: string, password: string) => void;
     setUser: (user: User) => void;
     setFilledForms: (ffs: any) => void;
@@ -60,6 +61,17 @@ class SignInComponent extends React.Component<SignInProps, State> {
         isLoggingIn: false,
         error: []
     };
+    componentDidMount() {
+        if (this.props.authToken) {
+            this.props.navigation.navigate("Home");
+        }
+    }
+
+    componentDidUpdate() {
+        if (this.props.authToken) {
+            this.props.navigation.navigate("Home");
+        }
+    }
 
     private onLoginPress = async (client: ApolloClient<object>) => {
 
@@ -97,9 +109,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
         this.props.setRootForms(rootForms);
         this.props.setUser(user);
         this.props.setFilledForms(filledForms);
-        this.setState({
-            isLoggingIn: false,
-        }, () => this.props.navigation.navigate("Home"));
+
     }
 
     private onEmailInputTextChange = (email: string) => {
@@ -202,7 +212,7 @@ export const SignIn = withStyles(SignInComponent, (theme: ThemeType) => ({
 }));
 const mapStateToProps = (state, props) => {
     return {
-
+        authToken: getUserToken(state, props)
     }
 }
 
