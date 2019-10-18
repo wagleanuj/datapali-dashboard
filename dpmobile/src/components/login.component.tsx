@@ -61,6 +61,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
         isLoggingIn: false,
         error: []
     };
+
     componentDidMount() {
         if (this.props.authToken) {
             this.props.navigation.navigate("Home");
