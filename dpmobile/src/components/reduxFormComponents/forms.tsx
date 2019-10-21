@@ -1,8 +1,9 @@
 import React, { Dispatch } from "react"
 import { ListRenderItemInfo, RefreshControl, View } from "react-native"
-import { FAB } from "react-native-paper"
+import { FAB, TouchableRipple } from "react-native-paper"
+import ProgressBar from 'react-native-progress/Bar'
 import { SwipeListView } from "react-native-swipe-list-view"
-import { Button, Icon, ListItem, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from "react-native-ui-kitten"
+import { Button, Icon, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from "react-native-ui-kitten"
 import { NavigationScreenProps } from "react-navigation"
 import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
@@ -11,6 +12,7 @@ import { handleAddNewForm, handleJump, handleNext } from "../../redux/actions/ac
 import { AppState, AvailableFormsState, FilledFormsState } from "../../redux/actions/types"
 import { getFIlledFormsTransformedData } from "../../redux/selectors/filledFormSelectors"
 import { textStyle } from "../../themes/style"
+
 type FormItemType = {
     title: string,
     startedDate: string,
@@ -42,22 +44,22 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     loadSurveyForm(id: string) {
         this.props.navigation.navigate("SurveyForm", {
             ffId: id,
-            
+
         })
     }
     renderItem = (item: ListRenderItemInfo<FormItemType>) => {
-        return <ListItem
-            style={this.props.themedStyle.item}
-            onPress={this.loadSurveyForm.bind(this, item.item.title)}
-        >
-            <View key={"li-content" + item.item.title} style={{ flex: 1, flexDirection: 'row', justifyContent: "flex-start" }}>
-                <View style={{ flex: 1, flexDirection: "column" }}>
-                    <Text style={{ flex: 1 }} numberOfLines={1}>{item.item.title}</Text>
-                    <Text numberOfLines={1}>{new Date(item.item.startedDate).toLocaleDateString()}</Text>
-                </View>
-            </View>
 
-        </ListItem>
+        return <TouchableRipple onPress={() => this.loadSurveyForm(item.item.title)}
+        >
+            <FormListItemStyled
+                formName={item.formName}
+                createdDate={item.createdDate}
+                progress={item.progress}
+                responderName={item.responderName}
+
+            />
+
+        </TouchableRipple>
 
     }
     handleSend() {
@@ -80,10 +82,15 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
             <View style={this.props.themedStyle.container}>
 
                 <SwipeListView
+                    closeOnRowBeginSwipe
+                    closeOnRowOpen
+                    closeOnScroll
+                    useFlatList
                     refreshControl={<RefreshControl
                         refreshing={false}
                         onRefresh={this.refreshLoadedForms.bind(this)}
                     />}
+
                     keyExtractor={item => item.title}
                     data={this.props.filledFormData}
                     renderItem={this.renderItem}
@@ -101,6 +108,9 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
                                 icon={(style) => (<Icon {...style} name="trash-2" />)} />
                         </View>
                     )}
+                    swipeToOpenPercent={100}
+                    stopLeftSwipe={75 * 1.15}
+                    stopRightSwipe={-75 * 1.15}
                     leftOpenValue={75}
                     rightOpenValue={-75}
                 >
@@ -121,11 +131,8 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
         backgroundColor: theme['background-basic-color-2'],
     },
     item: {
-        marginVertical: 8,
-        marginHorizontal: 8,
         paddingHorizontal: 16,
         paddingVertical: 16,
-        borderRadius: 8,
         flexDirection: 'column',
         alignItems: 'flex-start',
     },
@@ -137,11 +144,8 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
         backgroundColor: theme['color-primary-active']
     },
     rowBack: {
-        marginVertical: 8,
-        marginHorizontal: 8,
         paddingHorizontal: 16,
         paddingVertical: 16,
-        borderRadius: 8,
         alignItems: 'center',
         flex: 1,
         flexDirection: 'row',
@@ -164,3 +168,86 @@ const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
     handleDeleteForm: (i: number) => dispatch(handleJump(i))
 });
 export const FilledFormsList = connect(mapStateToProps, mapDispatchToProps)(FilledFormStyled);
+
+type FormListItemProps = {
+    formName: string;
+    responderName: string;
+    progress: number;
+    createdDate: string;
+    onPress: () => void;
+} & ThemedComponentProps;
+
+class FormListItem_ extends React.Component<FormListItemProps, {}>{
+    render() {
+        const { formName, responderName, progress, createdDate } = this.props;
+        const { themedStyle } = this.props;
+        return (
+            <View
+                style={themedStyle.container}>
+                <View>
+                    <View style={themedStyle.responder}>
+                        <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Responder</Text>
+                        <Text category={'s1'} style={themedStyle.responderText}>{responderName}</Text>
+                    </View>
+                    <View style={themedStyle.validation}>
+
+                    </View>
+                </View>
+                <View style={themedStyle.info}>
+                    <View>
+                        <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Form</Text>
+                        <Text category={'s1'}>{formName}</Text>
+                    </View>
+                    <View>
+                        <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Creation Date</Text>
+                        <Text category={'s1'}>{createdDate}</Text>
+                    </View>
+                    <View style={{ display: "flex", flexDirection: "column" }}>
+                        <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Progress</Text>
+                        <View>
+                            <ProgressBar progress={0.5} />
+                        </View>
+                    </View>
+                </View>
+
+            </View>
+        )
+    }
+}
+const FormListItemStyled = withStyles(FormListItem_, theme => ({
+    container: {
+        padding: 10,
+        display: "flex",
+        flexDirection: "column",
+        backgroundColor: theme['background-basic-color-1'],
+        borderColor: theme['background-basic-color-2'],
+        borderWidth: 1,
+
+    },
+    validation: {
+
+    },
+    responder: {
+
+    },
+    headingTitle: {
+
+    },
+    responderText: {
+
+    },
+    info: {
+        display: 'flex',
+        flexDirection: 'row',
+        justifyContent: 'space-between'
+    },
+    formDetails: {
+
+    },
+    progressDetails: {
+
+    },
+    dateDetails: {
+
+    }
+}))
