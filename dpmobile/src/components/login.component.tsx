@@ -11,7 +11,8 @@ import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redu
 import { User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
 import { getUserToken } from "../redux/selectors/authSelector";
-import {NavigationScreenProps} from 'react-navigation'
+
+
 const LOGIN = gql`query Login($email: String!, $password: String!){
     login(email: $email, password: $password){
       token
@@ -62,7 +63,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
     };
 
     componentDidMount() {
-        if (this.props.authToken) {
+       if (this.props.authToken) {
             this.props.navigation.navigate("Home");
         }
     }

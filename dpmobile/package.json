@@ -18,6 +18,7 @@
     "@types/react-redux": "^7.1.4",
     "@types/redux-form": "^8.1.9",
     "@ui-kitten/eva-icons": "^4.2.0-beta.1",
+    "apollo-boost": "^0.4.4",
     "dpform": "file:../dpform",
     "expo": "^34.0.1",
     "formik": "^1.5.8",
