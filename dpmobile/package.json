@@ -8,6 +8,7 @@
     "eject": "expo eject"
   },
   "dependencies": {
+    "@apollo/react-hooks": "^3.1.3",
     "@eva-design/eva": "^1.1.0-beta.1",
     "@react-native-community/art": "^1.0.1",
     "@react-native-community/viewpager": "^2.0.0",
@@ -18,10 +19,14 @@
     "@types/react-redux": "^7.1.4",
     "@types/redux-form": "^8.1.9",
     "@ui-kitten/eva-icons": "^4.2.0-beta.1",
+    "@ui-kitten/moment": "^4.2.0",
     "apollo-boost": "^0.4.4",
+    "apollo-client": "^2.6.4",
     "dpform": "file:../dpform",
     "expo": "^34.0.1",
     "formik": "^1.5.8",
+    "graphql": "^14.5.8",
+    "graphql-tag": "^2.10.1",
     "immer": "^4.0.1",
     "jsonwebtoken": "^8.5.1",
     "native-base": "^2.13.8",
@@ -39,7 +44,7 @@
     "react-native-keyboard-aware-scroll-view": "^0.9.1",
     "react-native-nested-listview": "^0.7.2",
     "react-native-paper": "^2.16.0",
-    "react-native-progress": "^4.0.0",
+    "react-native-progress": "3.6.0",
     "react-native-reanimated": "^1.1.0",
     "react-native-snap-carousel": "^3.8.2",
     "react-native-svg": "^9.5.3",
@@ -53,6 +58,7 @@
     "react-navigation-tabs": "^2.5.3",
     "react-redux": "^7.0.0",
     "redux-form": "^8.2.6",
+    "redux-persist": "^6.0.0",
     "reselect": "^4.0.0"
   },
   "devDependencies": {

@@ -45,8 +45,11 @@ export function filledFormReducer(
             const payload = _.cloneDeep(action.payload);
             return { ...state, byId: payload, ids: Object.keys(payload) };
         case DELETE_FILLED_FORM:
-            return state;
-
+            return produce(state, draft => {
+                delete draft.byId[action.payload.formId];
+                const index = draft.ids.findIndex(item => item === action.payload.formId);
+                if (index > -1) draft.ids.splice(index, 1);
+            })
 
         case JUMP_TO:
             const { formId, index: newIndex } = action.payload
@@ -87,7 +90,8 @@ export function filledFormReducer(
                     const form = draft[formId];
                     form.currentIndex--
                 })
-            })()
+            })();
+     
         default:
             return state;
     }

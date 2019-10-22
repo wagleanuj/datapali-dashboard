@@ -1,6 +1,6 @@
 import { SET_USER, UserActions } from "../actions";
 import { User } from "../actions/types";
-const initialState: User = {
+export const initialState: User = {
     filledForms: [],
     availableForms: [],
     firstName: '',

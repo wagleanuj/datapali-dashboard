@@ -1,15 +1,13 @@
-import { Transition } from 'react-native-reanimated';
 import { useScreens } from 'react-native-screens';
-import { createAppContainer, NavigationContainer } from 'react-navigation';
+import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
 import { ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
 import { FilledFormsList } from '../components/reduxFormComponents/forms';
 import { Survey } from '../components/reduxFormComponents/survey';
-import { SettingsContainer } from '../settings/settings.container';
+import { SettingsContainer, ConnectedSettings } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
-import createAnimatedSwitchNavigator from 'react-navigation-animated-switch';
 
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
@@ -18,7 +16,7 @@ const FormListNavigator: NavigationContainer = createStackNavigator({
 }
 );
 const SettingsNavigator: NavigationContainer = createStackNavigator({
-  ["Settings"]: SettingsContainer,
+  ["Settings"]: ConnectedSettings,
 }, {
   headerMode: 'screen',
   defaultNavigationOptions: MenuNavigationOptions,
@@ -32,11 +30,9 @@ const MenuNavigator = createBottomTabNavigator({
 });
 
 
-
-
-const RootNavigator: NavigationContainer = createAnimatedSwitchNavigator({
-  Home: MenuNavigator,
-  Auth: ConnectedLoginScreen,
+const RootNavigator: NavigationContainer = createSwitchNavigator({
+  ['Home']: MenuNavigator,
+  ['Auth']: ConnectedLoginScreen,
 }, {
   initialRouteName: "Auth",
 })

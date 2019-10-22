@@ -1,20 +1,40 @@
-import { request } from 'dpform';
+import { ApolloConsumer } from '@apollo/react-hooks';
+import ApolloClient from 'apollo-boost';
+import gql from 'graphql-tag';
+import { Toast } from 'native-base';
 import React from 'react';
-import { AsyncStorage } from 'react-native';
 import { TopNavigation } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
+import { connect } from 'react-redux';
 import { APP_CONFIG } from '../config';
-import { StorageUtil } from '../storageUtil';
+import { handleLogout, handleSetRootForms } from '../redux/actions/action';
+import { persistor } from '../redux/configureStore';
+import { Helper } from '../redux/helper';
+import { getUserToken } from '../redux/selectors/authSelector';
 import { ThemeContext } from '../themes';
 import { Settings } from './settings.component';
+import { ToastAndroid } from 'react-native';
 
+const DOWNLOAD = gql`  query Forms{
+  forms{
+      id
+      name
+      content
+  }
+}`;
+type SettingsProps = {
+  handleLogout: () => void;
+  handleSetRootForms: (rf: any) => void;
+  authToken: string;
+
+} & NavigationScreenProps;
 interface State {
   darkModeEnabled: boolean;
   isLoadingAvailableForms: boolean;
 }
 const routeName = "Settings";
-export class SettingsContainer extends React.Component<NavigationScreenProps, State> {
+export class SettingsContainer extends React.Component<SettingsProps, State> {
   static navigationOptions = {
     header: (props) => {
 
@@ -33,49 +53,50 @@ export class SettingsContainer extends React.Component<NavigationScreenProps, St
   static contextType = ThemeContext;
 
 
-  private onDownloadFormsPress = async () => {
+  private onDownloadFormsPress = async (client: ApolloClient<object>) => {
+    const cl = new ApolloClient({
+      uri: APP_CONFIG.serverURL,
+      request: operation => {
+        operation.setContext({
+          headers: {
+            authorization: this.props.authToken,
+          },
+        });
+      },
+    });
     this.setState({
       isLoadingAvailableForms: true
     })
-    let authToken = await StorageUtil.getAuthToken().catch(err => {
-      this.setState({ isLoadingAvailableForms: false })
-    });
-    const requestBody = {
-      query: `
-        query Forms{
-            forms{
-                id
-                name
-                content
-            }
-          }`,
+    const { data: { forms }, errors, loading } = await cl.query({
+      query: DOWNLOAD,
       variables: {
 
-      },
-    };
-    let result = await request(APP_CONFIG.serverURL, "forms", requestBody, "Could not fetch available forms, try again", authToken).catch(err => {
-      this.setState({
-        isLoadingAvailableForms: false
-      })
+      }
     });
-    let toStore = { availableForms: [] };
-    result.forEach(item => {
-      toStore.availableForms.push(item.id);
-      toStore[item.id] = item;
-    })
-    await StorageUtil.multiSet(toStore).catch(err => {
-      this.setState({
-        isLoadingAvailableForms: false
-      })
-    });
+    if (errors) {
+      ToastAndroid.show("Could not download", 200);
+    } else {
+      let rootForms = {};
+      forms.forEach(v => {
+        if (typeof v.content === "string") v.content = JSON.parse(v.content);
+        const tree = Helper.makeTree(v);
+        rootForms[v.id] = tree;
+      });
+      this.props.handleSetRootForms(rootForms);
+      ToastAndroid.show(
+        "Survey Forms have been downloaded.", 3000
+      );
+    }
+
     this.setState({
       isLoadingAvailableForms: false,
     })
   };
 
   private async onLogoutPress() {
-    await AsyncStorage.clear();
-    this.props.navigation.navigate("AuthLoading");
+    this.props.handleLogout();
+    await persistor.purge();
+    this.props.navigation.navigate("Auth");
   };
 
 
@@ -90,13 +111,33 @@ export class SettingsContainer extends React.Component<NavigationScreenProps, St
 
   public render(): React.ReactNode {
     return (
-      <Settings
-        darkModeEnabled={this.state.darkModeEnabled}
-        onDownloadFormsPress={this.onDownloadFormsPress}
-        onLogoutPress={this.onLogoutPress.bind(this)}
-        onToggleDarkMode={this.onDarkModeToggle}
-        isLoadingAvailableForms={this.state.isLoadingAvailableForms}
-      />
+      <ApolloConsumer>
+        {client => {
+          return (
+            <Settings
+              darkModeEnabled={this.state.darkModeEnabled}
+              onDownloadFormsPress={() => this.onDownloadFormsPress(client)}
+              onLogoutPress={this.onLogoutPress.bind(this)}
+              onToggleDarkMode={this.onDarkModeToggle}
+              isLoadingAvailableForms={this.state.isLoadingAvailableForms}
+            />
+          )
+        }}
+      </ApolloConsumer>
+
     );
   }
 }
+const mapDispatchToProps = (dispatch) => {
+  return {
+    handleLogout: () => dispatch(handleLogout()),
+    handleSetRootForms: (rf: any) => dispatch(handleSetRootForms(rf))
+
+  }
+}
+const mapStateToProps = (state, props) => {
+  return {
+    authToken: getUserToken(state, props)
+  }
+}
+export const ConnectedSettings = connect(mapStateToProps, mapDispatchToProps)(SettingsContainer);

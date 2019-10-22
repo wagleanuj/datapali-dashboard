@@ -9,5 +9,5 @@ export const getFilledFormById = createSelector([$getFilledForms, $getFormId],
 
 export const getFIlledFormsTransformedData = createSelector([$getFilledForms],
     (filledForms) => {
-      return   Object.keys(filledForms.byId).map(item => ({ title: item, startedDate: filledForms.byId[item].startedDate }))
+      return   Object.keys(filledForms.byId).map(item => ({ formId: item, rootId: filledForms.byId[item].formId, startedDate: filledForms.byId[item].startedDate }))
     })

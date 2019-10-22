@@ -1,6 +1,6 @@
 import { createStore } from 'redux';
 import { persistReducer, persistStore } from 'redux-persist';
-import { rootReducer } from './reducers/rootReducer';
+import { rootReducers } from './reducers/rootReducer';
 import {AsyncStorage} from 'react-native';
 
 export const persistConfig = {
@@ -9,6 +9,6 @@ export const persistConfig = {
     serialize: true,
 }
 
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+const persistedReducer = persistReducer(persistConfig, rootReducers);
 export const store = createStore(persistedReducer);
 export const persistor = persistStore(store);

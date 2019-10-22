@@ -37,6 +37,7 @@ export class WizardProvider extends React.Component<WizardProviderProps, WizardP
     }
 
     nextStep() {
+        if (this.state.currentRootChildIndex >= this.props.childNodes.length - 1) return;
         this.setState(prevState => {
             return {
                 currentRootChildIndex: prevState.currentRootChildIndex + 1,
@@ -45,6 +46,7 @@ export class WizardProvider extends React.Component<WizardProviderProps, WizardP
     }
 
     prevStep() {
+        if (this.state.currentRootChildIndex <= 0) return;
         this.setState(prevState => {
             return {
                 currentRootChildIndex: prevState.currentRootChildIndex - 1,
@@ -123,19 +125,20 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                     {value => {
                         const { currentRootChildIndex } = value;
                         return <View style={{ flex: 1 }}>
-                            <View style={{flex: 1}}>
+                            <View >
                                 <ConnectedToolbar
                                     formId={formId}
                                     rootId={rootId}
+                                    nextButtonDisabled={value.currentRootChildIndex >= value.childNodes.length - 1}
+                                    backButtonDisabled={value.currentRootChildIndex <= 0}
                                     onBackButtonPress={value.handlePrev}
                                     onNextButtonPress={value.handleNext}
                                 />
                             </View>
-                            <View style={{flex: 5}}>
+                            <View style={{flex:1}} >
                                 <ScrollableAvoidKeyboard
                                     extraScrollHeight={100}
                                 >
-
                                     <ConnectedFormNode
                                         pagerMode
                                         locationName={childNodes[currentRootChildIndex]}

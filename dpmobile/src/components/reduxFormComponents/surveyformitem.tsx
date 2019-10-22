@@ -3,7 +3,7 @@ import _ from "lodash";
 import React from "react";
 import { DatePickerAndroid, View } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
-import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { Button, Icon, Text, ThemedComponentProps, withStyles, Layout } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { AppState } from "../../redux/actions/types";
@@ -267,13 +267,17 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
         this.shakeLockIcon();
     }
     render() {
-        return <View>
-            {!this.isNonIdealState && <RadioInput
-                listKey={this.props.listKey}
-                defaultSelected={this.props.options.findIndex(i => i.id === this.props.selectedId)}
-                options={this.props.options}
-                onSelectionChange={this.onChange.bind(this)}
-            />}
+        return <View style={{ flex: 1, height: "100%", width: "100%" }}>
+            {!this.isNonIdealState && <Layout>
+                <RadioInput
+                    listKey={this.props.listKey}
+                    defaultSelected={this.props.options.findIndex(i => i.id === this.props.selectedId)}
+                    options={this.props.options}
+                    onSelectionChange={this.onChange.bind(this)}
+                />
+            </Layout>
+
+            }
             {
                 this.isNonIdealState && <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
                     <TouchableOpacity onPress={this.shakeLockIcon.bind(this)}>

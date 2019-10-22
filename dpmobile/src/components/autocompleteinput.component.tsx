@@ -172,8 +172,6 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
         position: 'absolute',
         right: 0,
         top: -2,
-        elevation: (Platform.OS === 'android') ? 50000 : 0,
-        zIndex: 7999991,
         maxHeight: 400,
     },
     inputContainerStyle: {

@@ -54,7 +54,7 @@ export const DELETE_FILLED_FORM = 'delete-filled-form';
 export interface DeleteFilledForm {
     type: typeof DELETE_FILLED_FORM;
     payload: {
-        id: string
+        formId: string
     }
 }
 
@@ -93,7 +93,7 @@ export interface JumpTo {
         index: number;
     }
 }
-export type FilledFormActions = AddFilledForm|UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo;
+export type FilledFormActions = AddFilledForm | UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo;
 
 //available forms action types
 
@@ -132,3 +132,10 @@ export interface SetUser {
 
 export type UserActions = SetUser;
 export type ActionTypes = UserActions | RootFormActions | FilledFormActions | SurveyActions;
+
+//root actions
+export const LOGOUT = 'logout';
+export interface LogOut {
+    type: typeof LOGOUT;
+    payload: undefined;
+}

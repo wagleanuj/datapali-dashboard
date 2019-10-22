@@ -15,9 +15,10 @@ export function rootFormsReducer(
             return state;
         case REPLACE_ROOT_FORMS:
             const payload = action.payload;
-            return {...state, byId: payload, ids: Object.keys(payload)};
+            return { ...state, byId: payload, ids: Object.keys(payload) };
         case DELETE_ROOT_FORM:
             return state;
+      
         default:
             return state;
     }

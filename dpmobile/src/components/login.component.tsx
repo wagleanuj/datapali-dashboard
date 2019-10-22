@@ -63,7 +63,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
     };
 
     componentDidMount() {
-       if (this.props.authToken) {
+        if (this.props.authToken) {
             this.props.navigation.navigate("Home");
         }
     }
@@ -101,8 +101,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
         }
         let rootForms = {};
         login.user.availableForms.forEach(v => {
-            v.content = JSON.parse(v.content);
-
+            if (typeof v.content === "string") v.content = JSON.parse(v.content);
             const tree = Helper.makeTree(v);
             rootForms[v.id] = tree;
         });

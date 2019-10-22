@@ -7,10 +7,9 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
-import { AppState, SurveyState } from "../../redux/actions/types";
+import { AppState, SurveyState, FilledForm } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { textStyle } from "../../themes/style";
-import { FilledForm } from "../components/forms.component";
 import { ConnectedWizard } from "./wizard";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
@@ -79,7 +78,6 @@ const SurveyForm_ = withStyles(Survey_, (theme: ThemeType) => ({
         flex: 1,
         flexDirection: 'column',
         paddingHorizontal: 16,
-        paddingVertical: 16,
         backgroundColor: theme['background-basic-color-2'],
     },
     showcaseContainer: {

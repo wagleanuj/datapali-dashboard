@@ -1,6 +1,5 @@
-import { RootSection } from "dpform";
-import { ADD_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FORM_ANSWER, SET_USER, REPLACE_ROOT_FORMS, UPDATE_FILLED_FORMS } from ".";
-import { User, FilledForm } from "./types";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT } from ".";
+import { FilledForm, User } from "./types";
 
 export function handleNext(formId: string): FilledFormActions {
     return {
@@ -39,6 +38,15 @@ export function handleAddNewForm(root: string, userId: string): FilledFormAction
         }
     }
 }
+export function handleDeleteForm(formId: string): FilledFormActions {
+    return {
+        type: DELETE_FILLED_FORM,
+        payload: {
+            formId: formId
+        }
+    }
+}
+
 export function handleUpdateAnswer(formId: string, path: number[], questionId: string, value: string) {
     return {
         type: UPDATE_FORM_ANSWER,
@@ -59,16 +67,22 @@ export function handleSetUser(user: User) {
     }
 }
 
-export function handleSetRootForms(rootForms: {[key:string]:any}){
+export function handleSetRootForms(rootForms: { [key: string]: any }) {
     return {
         type: REPLACE_ROOT_FORMS,
         payload: rootForms
     }
 }
 
-export function handleSetFilledForms(filled: {[key:string]:FilledForm}){
+export function handleSetFilledForms(filled: { [key: string]: FilledForm }) {
     return {
         type: UPDATE_FILLED_FORMS,
         payload: filled
+    }
+}
+export function handleLogout() {
+    return {
+        type: LOGOUT,
+        payload: undefined
     }
 }

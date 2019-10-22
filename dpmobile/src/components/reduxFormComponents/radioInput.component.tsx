@@ -40,8 +40,7 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
     }
     renderListItem = (item) => {
         return <ListItem
-
-            title={item.item.text}
+            title={item.item.text||""}
             description={''}
             onPress={() => this.onSelectionChange(item.index)}
             accessory={style => this.renderAccessory(style, item.index)}

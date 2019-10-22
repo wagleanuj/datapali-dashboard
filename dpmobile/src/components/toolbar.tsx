@@ -105,7 +105,6 @@ export const Toolbar = withStyles(ToolbarComponent, theme => ({
         shadowOpacity: 0.30,
         shadowRadius: 4.65,
 
-        elevation: 8,
         height: 48
     },
     select: {

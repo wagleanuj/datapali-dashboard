@@ -77,7 +77,7 @@ export interface RootFormsState {
 }
 export interface AppState {
     user?: User;
-    availableForms: AvailableFormsState;
     filledForms: FilledFormsState;
-    rootForms:RootFormsState
+    rootForms:RootFormsState;
+    form: any;
 }
