@@ -10,7 +10,6 @@ import { WizardContext } from "../../context/wizard";
 import { AppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
 import { ConnectedQuestionNode } from "./questionNode";
-import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -46,6 +45,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
     renderFlatList(iteration: number = 0) {
         return (
             <FlatList
+                keyboardShouldPersistTaps="always"
                 key={'list' + this.props.locationName}
                 automaticallyAdjustContentInsets
                 scrollEnabled
@@ -73,7 +73,6 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     autoplay={false}
                     loadMinimal
                     loadMinimalSize={2}
-
                     loop={false}
                     bounces
                     height={500}
@@ -90,8 +89,6 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                             </View>
                         )
                     })}
-
-
                 </Swiper>
             </View>
 

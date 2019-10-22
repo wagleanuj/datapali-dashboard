@@ -2,7 +2,12 @@ import { Platform } from "@unimodules/core";
 import React from "react";
 import { KeyboardType, View } from "react-native";
 import { FlatList, TouchableOpacity } from "react-native-gesture-handler";
-import { Input, Layout,Text, ListItem, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { Input, Layout, Text, ListItem, ThemedComponentProps, withStyles, List, Icon, Button } from "react-native-ui-kitten";
+import * as Animatable from 'react-native-animatable';
+import { TouchableRipple } from "react-native-paper";
+import _ from "lodash";
+import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
+
 type TextContentType = | "none"
     | "URL"
     | "addressCity"
@@ -70,9 +75,10 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         if (this.props.onFocus) this.props.onFocus(e)
     }
     private onBlur(e) {
-        this.setState({
+       const debounced =  _.debounce(() => this.setState({
             hideResults: true,
-        })
+        }), 300);
+        debounced();
         if (this.props.onBlur) this.props.onBlur(e);
     }
     private handleChange() {
@@ -80,6 +86,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
     }
 
     private onResultSelect({ item }) {
+        console.log("selected");
         if (this.props.onChange) this.props.onChange(item.text);
         this.setState({
             hideResults: true,
@@ -106,12 +113,18 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
     }
 
     private renderAutoCompleteItem(item) {
-        return <TouchableOpacity
-            style={this.props.themedStyle.itemStyle}
-            key={item.index}
-            onPress={this.onResultSelect.bind(this, item)}>
-                <Text style={this.props.themedStyle.itemText}>{item.item.text}</Text>
-        </TouchableOpacity>
+        return (
+            <ListItem
+                onPress={this.onResultSelect.bind(this, item)}
+
+                style={this.props.themedStyle.itemStyle}
+                title={item.item.text}
+                icon={style => <Icon  {...style} width={20} height={20} name="clock" />}
+                accessory={style => <Button icon={style => <Icon {...style} name="diagonal-arrow-left-down" />} appearance="ghost"></Button>}
+            />
+        );
+
+
     }
     private renderSeparator() {
         return (
@@ -119,11 +132,13 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
             </View>
         )
     }
-    private get Suggestions(){
+    private get Suggestions() {
         return this.findItem(this.props.value);
     }
 
+
     public render(): React.ReactNode {
+        const suggestions = this.Suggestions;
         return (
             <View style={this.props.themedStyle.container}>
                 <Input
@@ -135,15 +150,22 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     keyboardType={this.props.keyboardType}
                     onBlur={this.onBlur.bind(this)}
                 />
-                {this.Suggestions.length > 0 && !this.state.hideResults && <FlatList
-                    scrollEnabled
-                    keyboardShouldPersistTaps='handled'
-                    style={this.props.themedStyle.listStyle}
-                    data={this.Suggestions}
-                    ItemSeparatorComponent={this.renderSeparator.bind(this)}
-                    keyExtractor={item => item.text}
-                    renderItem={this.renderAutoCompleteItem.bind(this)}
-                />}
+                {this.Suggestions.length > 0 &&
+                    !this.state.hideResults && <View style={{ flex: 1 }}>
+
+                        <KeyboardAwareFlatList
+                            scrollEnabled
+                            keyboardShouldPersistTaps='always'
+                            style={{ flex: 1 }}
+                            contentContainerStyle={this.props.themedStyle.listContentContainer}
+                            data={suggestions}
+                            ItemSeparatorComponent={this.renderSeparator.bind(this)}
+                            keyExtractor={item => item.text}
+                            renderItem={this.renderAutoCompleteItem.bind(this)}
+                        />
+                    </View>
+
+                }
 
             </View>
         );
@@ -157,23 +179,9 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
         paddingTop: 4,
         paddingBottom: 4,
     },
-    autocompleteContainer: {
-        overflow: 'scroll',
-        backgroundColor: theme["color-primary-100"],
-        left: 0,
-        flex: 1,
-        position: 'absolute',
-        right: 0,
-        top: -2,
-        maxHeight: 400,
-    },
-    inputContainerStyle: {
-        borderWidth: 0,
-        borderColor: "transparent",
-
-    },
-    listStyle: {
-        maxHeight: 124,
+    listContentContainer: {
+        flexGrow: 1,
+        // maxHeight: 124,
         backgroundColor: theme['color-primary-100'],
         borderColor: theme['color-primary-default'],
         borderWidth: 1,
@@ -188,11 +196,8 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
         color: theme['text-basic-color']
     },
     itemStyle: {
-        flex: 0,
-        justifyContent: "center",
-        flexDirection: "column",
-        height: 40,
-        borderColor: theme['color-primary-default'],
+        flex: 1,
+
         // borderWidth: 1,
     },
     errorText: {

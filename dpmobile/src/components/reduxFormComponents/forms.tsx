@@ -13,6 +13,7 @@ import { AppState, AvailableFormsState, FilledFormsState } from "../../redux/act
 import { getFIlledFormsTransformedData } from "../../redux/selectors/filledFormSelectors"
 import { getRootFormById } from "../../redux/selectors/questionSelector"
 import { textStyle } from "../../themes/style"
+import _ from "lodash"
 
 type FormItemType = {
     formId: string,
@@ -29,7 +30,8 @@ type ComponentProps = {
 }
 type FilledFormProps = FilledFormsState & ThemedComponentProps & NavigationScreenProps & ComponentProps
 const routeName = "Forms";
-export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
+export class FilledFormsComponent extends React.Component<FilledFormProps, { fabVisible: boolean }>{
+    private offset: number = 0;
     static navigationOptions = {
         header: (props) => {
 
@@ -42,6 +44,9 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
             />
         },
 
+    }
+    state = {
+        fabVisible: true
     }
 
     loadSurveyForm(id: string) {
@@ -57,8 +62,8 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
         >
             <FormListItem
                 isLastItem={item.index === this.props.filledFormsData.length - 1}
-                key={'fli-' + item.item.title}
-                formId={item.item.title}
+                key={'fli-' + item.item.formId}
+                formId={item.item.formId}
                 rootId={item.item.rootId}
                 createdDate={new Date(item.item.startedDate).toLocaleDateString()}
 
@@ -81,29 +86,60 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
     handleDeleteForm(id: string) {
         this.props.handleDeleteForm(id);
     }
+    onScroll(event) {
+        const currentOffset = event.nativeEvent.contentOffset.y;
+        const direction = currentOffset > this.offset ? 'down' : 'up';
+        this.offset = currentOffset;
+
+        if (direction === 'down' && this.state.fabVisible) {
+            this.setState({
+                fabVisible: false,
+            })
+        } else if (direction === 'up' && !this.state.fabVisible) {
+            this.setState({
+                fabVisible: true
+            })
+        }
+    }
+    onScrollBegin(event) {
+        if (this.state.fabVisible) {
+            this.setState({
+                fabVisible: false
+            })
+        }
+    }
+
+    onScrollEnd(event) {
+        if (!this.state.fabVisible) {
+            this.setState({
+                fabVisible: true,
+            })
+        }
+    }
 
     render() {
+        const { themedStyle } = this.props;
         return (
             <View style={this.props.themedStyle.container}>
-                <View style={{ flex: 1, width: '100%' }}>
+                <View style={themedStyle.swipeListWrapper}>
                     <SwipeListView
-                        style={{ flex: 1 }}
                         closeOnRowBeginSwipe
                         closeOnRowOpen
                         closeOnScroll
                         useFlatList
+                        onScrollBeginDrag={this.onScrollBegin.bind(this)}
+                        onMomentumScrollEnd={this.onScrollEnd.bind(this)}
                         refreshControl={<RefreshControl
                             refreshing={false}
                             onRefresh={this.refreshLoadedForms.bind(this)}
                         />}
+                        contentContainerStyle={themedStyle.swipeListContainer}
                         keyExtractor={item => item.formId}
                         data={this.props.filledFormsData}
                         renderItem={this.renderItem}
                         renderHiddenItem={(data, rowMap) => (
                             <View key={"hid" + data.item.formId}
-                                style={Object.assign({},
-                                    this.props.themedStyle.rowBack, data.index === this.props.filledFormsData.length - 1 ?
-                                    this.props.themedStyle.lastItem : {})}>
+                                style={this.props.themedStyle.rowBack}>
                                 <Button
                                     size="giant"
                                     appearance={'ghost'}
@@ -126,6 +162,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, {}>{
 
 
                 <FAB
+                    visible={this.state.fabVisible}
                     label={'Fill Form'}
                     onPress={this.handleAddNewForm.bind(this, undefined)}
                     style={this.props.themedStyle.fab}
@@ -141,6 +178,14 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
         backgroundColor: theme['background-basic-color-2'],
         alignItems: 'center'
     },
+    swipeListWrapper: {
+        width: '100%',
+        flex: 1,
+    },
+    swipeListContainer: {
+        flexGrow: 1,
+        paddingBottom: 60
+    },
 
     item: {
         paddingHorizontal: 16,
@@ -153,6 +198,7 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
         // margin: 16,
         // right: "50%",
         bottom: 0,
+        marginBottom: 4,
         backgroundColor: theme['color-primary-active'],
     },
     rowBack: {
@@ -164,9 +210,7 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
         justifyContent: 'space-between',
         paddingLeft: 15,
     },
-    lastItem: {
-        marginBottom: 60
-    }
+
 }));
 
 
@@ -200,7 +244,7 @@ class FormListItem_ extends React.Component<FormListItemProps, {}>{
         const { themedStyle } = this.props;
         return (
             <View
-                style={Object.assign({}, themedStyle.container, isLastItem ? themedStyle.lastItem : {})}>
+                style={themedStyle.container}>
                 <View>
                     <View style={themedStyle.responder}>
                         <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Responder</Text>
@@ -221,7 +265,7 @@ class FormListItem_ extends React.Component<FormListItemProps, {}>{
                     </View>
                     <View >
                         <Text category={'label'} appearance={'hint'} style={themedStyle.headingTitle}>Progress</Text>
-                        <View style={{marginTop: 10}}>
+                        <View style={{ marginTop: 10 }}>
                             <ProgressBar width={60} progress={0.5} />
                         </View>
                     </View>

@@ -1,14 +1,13 @@
 import produce from "immer";
 import React, { ReactNode } from "react";
-import { View } from "react-native";
 import { connect } from "react-redux";
 import { InjectedFormProps, reduxForm } from "redux-form";
 import { WizardContext } from "../../context/wizard";
+import { AppState } from "../../redux/actions/types";
+import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
-import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
-import { AppState } from "../../redux/actions/types";
 
 type WizardProviderProps = {
     children: ReactNode,
@@ -103,7 +102,7 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
         this.context.handleJump();
     }
     getPage(currentRootChildIndex: number) {
-        const { childNodes, formId, rootId } = this.props;
+        const { childNodes } = this.props;
 
         return <ConnectedFormNode
             key={'cnode' + childNodes[currentRootChildIndex]}

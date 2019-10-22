@@ -1,5 +1,4 @@
 import React from 'react';
-import { View } from 'react-native';
 import { connect } from "react-redux";
 import { Field } from "redux-form";
 import { ConnectedFormItem } from './surveyformitem';
