@@ -67,24 +67,21 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                 <Text style={themedStyle.questionTitle}>
                     {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                 </Text>
-                <View >
+                <FormInput
+                    key={'input-field' + this.props.questionId}
+                    isDependent={this.props.isDependent}
+                    dependencies={this.props.dependencies}
+                    autoCompleteData={autoCompleteData}
+                    autoFillValue={autoFillValue}
+                    error={error}
+                    onBlur={onBlur}
+                    onValueChange={onChange}
+                    options={options}
+                    value={value}
+                    type={type}
+                    questionId={this.props.questionId}
+                />
 
-                    <FormInput
-                        key={'input-field' + this.props.questionId}
-                        isDependent={this.props.isDependent}
-                        dependencies={this.props.dependencies}
-                        autoCompleteData={autoCompleteData}
-                        autoFillValue={autoFillValue}
-                        error={error}
-                        onBlur={onBlur}
-                        onValueChange={onChange}
-                        options={options}
-                        value={value}
-                        type={type}
-                        questionId={this.props.questionId}
-                    />
-
-                </View>
 
             </View>
         )

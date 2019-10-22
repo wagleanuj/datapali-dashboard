@@ -51,7 +51,7 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
             <FlatList
                 key={'radiolist-' + this.props.listKey}
                 listKey={'radiolist-' + this.props.listKey}
-                // style={{ maxHeight: 400 }}
+                contentContainerStyle={{flexGrow:1}}
                 keyExtractor={item => item.id}
                 data={this.props.options}
                 renderItem={this.renderListItem}

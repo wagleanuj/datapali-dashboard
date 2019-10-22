@@ -29,12 +29,10 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
     }
     render() {
         return (
-            <View>
-                <Field
-                    name={this.props.locationName}
-                    component={this.renderComponent}
-                />
-            </View>
+            <Field
+                name={this.props.locationName}
+                component={this.renderComponent}
+            />
 
         )
     }

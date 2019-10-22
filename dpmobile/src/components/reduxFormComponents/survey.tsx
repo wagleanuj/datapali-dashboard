@@ -67,7 +67,6 @@ export class Survey_ extends React.Component<SurveyProps>{
                 <ConnectedWizard
                     formId={form.id}
                     rootId={form.formId}
-
                 />
             </View>
         )

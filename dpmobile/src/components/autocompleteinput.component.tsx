@@ -125,9 +125,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
     public render(): React.ReactNode {
         return (
-            <Layout style={this.props.themedStyle.container}>
-
-
+            <View style={this.props.themedStyle.container}>
                 <Input
                     onChangeText={this.props.onChange}
                     textContentType={this.props.textContentType}
@@ -147,21 +145,16 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     renderItem={this.renderAutoCompleteItem.bind(this)}
                 />}
 
-
-
-
-
-            </Layout>
+            </View>
         );
     }
 }
 
 export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
     container: {
-        flex: 0,
+        flex: 1,
         flexDirection: 'column',
         paddingTop: 4,
-        position: 'relative',
         paddingBottom: 4,
     },
     autocompleteContainer: {

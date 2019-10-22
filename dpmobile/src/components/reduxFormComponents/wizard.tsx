@@ -124,35 +124,30 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                 <WizardContext.Consumer>
                     {value => {
                         const { currentRootChildIndex } = value;
-                        return <View style={{ flex: 1 }}>
-                            <View >
-                                <ConnectedToolbar
-                                    formId={formId}
-                                    rootId={rootId}
-                                    nextButtonDisabled={value.currentRootChildIndex >= value.childNodes.length - 1}
-                                    backButtonDisabled={value.currentRootChildIndex <= 0}
-                                    onBackButtonPress={value.handlePrev}
-                                    onNextButtonPress={value.handleNext}
+                        return <>
+                            <ConnectedToolbar
+                                formId={formId}
+                                rootId={rootId}
+                                nextButtonDisabled={value.currentRootChildIndex >= value.childNodes.length - 1}
+                                backButtonDisabled={value.currentRootChildIndex <= 0}
+                                onBackButtonPress={value.handlePrev}
+                                onNextButtonPress={value.handleNext}
+                            />
+                            <ScrollableAvoidKeyboard
+                                extraScrollHeight={100}
+                            >
+                                <ConnectedFormNode
+                                    pagerMode
+                                    locationName={childNodes[currentRootChildIndex]}
+                                    path={[0, currentRootChildIndex]}
+                                    formId={this.props.formId}
+                                    rootId={this.props.rootId}
+                                    id={childNodes[currentRootChildIndex]}
                                 />
-                            </View>
-                            <View style={{flex:1}} >
-                                <ScrollableAvoidKeyboard
-                                    extraScrollHeight={100}
-                                >
-                                    <ConnectedFormNode
-                                        pagerMode
-                                        locationName={childNodes[currentRootChildIndex]}
-                                        path={[0, currentRootChildIndex]}
-                                        formId={this.props.formId}
-                                        rootId={this.props.rootId}
-                                        id={childNodes[currentRootChildIndex]}
-                                    />
 
-                                </ScrollableAvoidKeyboard>
-                            </View>
+                            </ScrollableAvoidKeyboard>
 
-
-                        </View>
+                        </>
                     }}
 
                 </WizardContext.Consumer>
