@@ -31,7 +31,7 @@ class ScrollableAvoidKeyboardComponent extends React.Component<ScrollableAvoidKe
 
 export const ScrollableAvoidKeyboard = withStyles(ScrollableAvoidKeyboardComponent, (theme: ThemeType) => ({
   container: {
-    // flex: 1,
+    flex: 1,
   },
   contentContainer: {
     // flexGrow: 1,

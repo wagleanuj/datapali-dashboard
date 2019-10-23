@@ -61,7 +61,6 @@ export class Survey_ extends React.Component<SurveyProps>{
 
     render() {
         const { form } = this.props;
-
         return (
             <View style={this.props.themedStyle.container}>
                 <ConnectedWizard
@@ -69,6 +68,7 @@ export class Survey_ extends React.Component<SurveyProps>{
                     rootId={form.formId}
                 />
             </View>
+         
         )
     }
 }

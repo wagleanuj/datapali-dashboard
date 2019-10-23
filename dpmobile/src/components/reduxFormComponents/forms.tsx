@@ -1,5 +1,5 @@
 import React, { Dispatch } from "react"
-import { ListRenderItemInfo, RefreshControl, View } from "react-native"
+import { ListRenderItemInfo, RefreshControl, View, TouchableOpacity } from "react-native"
 import { FAB, TouchableRipple } from "react-native-paper"
 import ProgressBar from 'react-native-progress/Bar'
 import { SwipeListView } from "react-native-swipe-list-view"
@@ -61,7 +61,6 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, { fab
             onPress={() => this.loadSurveyForm(item.item.formId)}
         >
             <FormListItem
-                isLastItem={item.index === this.props.filledFormsData.length - 1}
                 key={'fli-' + item.item.formId}
                 formId={item.item.formId}
                 rootId={item.item.rootId}
@@ -235,12 +234,11 @@ type FormListItemProps = {
     progress: number;
     createdDate: string;
     onPress: () => void;
-    isLastItem: boolean;
 } & ThemedComponentProps;
 
 class FormListItem_ extends React.Component<FormListItemProps, {}>{
     render() {
-        const { formName, responderName, progress, createdDate, isLastItem } = this.props;
+        const { formName, responderName, progress, createdDate } = this.props;
         const { themedStyle } = this.props;
         return (
             <View

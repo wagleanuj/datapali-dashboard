@@ -1,7 +1,7 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { DatePickerAndroid, View } from "react-native";
+import { DatePickerAndroid, View, ScrollView } from "react-native";
 import { TouchableOpacity } from "react-native-gesture-handler";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
@@ -35,7 +35,6 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
-    updateAnswer: (formId: string, path: number[], questionId: string, value: string) => void;
 } & ThemedComponentProps;
 
 //replacement for question component
@@ -67,20 +66,23 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                 <Text style={themedStyle.questionTitle}>
                     {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                 </Text>
-                <FormInput
-                    key={'input-field' + this.props.questionId}
-                    isDependent={this.props.isDependent}
-                    dependencies={this.props.dependencies}
-                    autoCompleteData={autoCompleteData}
-                    autoFillValue={autoFillValue}
-                    error={error}
-                    onBlur={onBlur}
-                    onValueChange={onChange}
-                    options={options}
-                    value={value}
-                    type={type}
-                    questionId={this.props.questionId}
-                />
+                <ScrollView>
+
+                    <FormInput
+                        key={'input-field' + this.props.questionId}
+                        isDependent={this.props.isDependent}
+                        dependencies={this.props.dependencies}
+                        autoCompleteData={autoCompleteData}
+                        autoFillValue={autoFillValue}
+                        error={error}
+                        onBlur={onBlur}
+                        onValueChange={onChange}
+                        options={options}
+                        value={value}
+                        type={type}
+                        questionId={this.props.questionId}
+                    />
+                </ScrollView>
 
 
             </View>
@@ -91,7 +93,6 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
 
 export const FormItemStyled = withStyles(FormItem_, theme => ({
     container: {
-        flex: 1,
         paddingBottom: 20,
         paddingLeft: 5,
         paddingRight: 5,
@@ -117,6 +118,7 @@ const mapStateToProps = (state: AppState, props: FormItemProps) => {
     const title = all.questionContent.content;
     const deps = Helper.collectDependencies(all);
     return {
+        isRequired: all.isRequired,
         autoCompleteData: getAutoCompleteDataForQuestion(state, props),
         isDependent: deps.all.length > 0,
         dependencies: deps,
@@ -150,23 +152,23 @@ interface FormInputProps {
 
 }
 class FormInput extends React.Component<FormInputProps, {}> {
+    openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
+        try {
+            const { action, year, month, day } = await DatePickerAndroid.open({
+                date: defaultDate || new Date(),
+            });
+            if (action !== DatePickerAndroid.dismissedAction) {
+                // Selected year, month (0-11), day
+                if (onDateChange) onDateChange(new Date(year, month, day));
+            }
+        } catch ({ code, message }) {
+            console.warn('Cannot open date picker', message);
+        }
+    }
 
     render() {
         const { props } = this;
         const defaultValue = props.value || props.autoFillValue;
-        const openDatePicker = async (defaultDate: Date, onDateChange?: (date: Date) => void) => {
-            try {
-                const { action, year, month, day } = await DatePickerAndroid.open({
-                    date: defaultDate || new Date(),
-                });
-                if (action !== DatePickerAndroid.dismissedAction) {
-                    // Selected year, month (0-11), day
-                    if (onDateChange) onDateChange(new Date(year, month, day));
-                }
-            } catch ({ code, message }) {
-                console.warn('Cannot open date picker', message);
-            }
-        }
 
         switch (props.type.name) {
             case ANSWER_TYPES.NUMBER:
@@ -215,16 +217,21 @@ class FormInput extends React.Component<FormInputProps, {}> {
             case ANSWER_TYPES.DATE:
                 let defDate = new Date(defaultValue);
                 let date = defDate && !_.isNaN(defDate.getTime()) ? defDate : new Date();
-                return <Button
-                    appearance='outline'
-                    icon={(style) => (<Icon {...style} name="calendar" />)}
-                    onPress={() => openDatePicker(date, (date: Date) => {
-                        let stringified = date.toDateString();
-                        props.onValueChange(stringified);
-                    })}
-                >{date.toDateString()}</Button>
+                return <View>
+                    <Button
+                        appearance='outline'
+                        icon={(style) => (<Icon {...style} name="calendar" />)}
+                        onPress={() => this.openDatePicker(date, (date: Date) => {
+                            let stringified = date.toDateString();
+                            props.onValueChange(stringified);
+                        })}
+                    >{date.toDateString()}</Button>
+                    <Text style={{ color: 'red' }}>{this.props.error}</Text>
+                </View>
+
             case ANSWER_TYPES.SELECT:
                 return <SelectInput
+                    error={props.error}
                     listKey={this.props.questionId}
                     isDependent={props.isDependent}
                     dependencies={props.dependencies}
@@ -243,6 +250,7 @@ type SelectInputProps = {
     options: { text: string, id: string }[];
     selectedId: string;
     onChange: (id: string) => void;
+    error: string;
 }
 type SelectInputState = {
 }
@@ -265,7 +273,9 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     }
     render() {
         return <View>
+            {!!this.props.error && <Text style={{ color: 'red' }}>{this.props.error}</Text>}
             {!this.isNonIdealState &&
+
                 <RadioInput
                     listKey={this.props.listKey}
                     defaultSelected={this.props.options.findIndex(i => i.id === this.props.selectedId)}

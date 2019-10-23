@@ -40,7 +40,7 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
     }
     renderListItem = (item) => {
         return <ListItem
-            title={item.item.text||""}
+            title={item.item.text || ""}
             description={''}
             onPress={() => this.onSelectionChange(item.index)}
             accessory={style => this.renderAccessory(style, item.index)}
@@ -49,9 +49,11 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
     render() {
         return (
             <FlatList
+                scrollEnabled
                 key={'radiolist-' + this.props.listKey}
                 listKey={'radiolist-' + this.props.listKey}
-                contentContainerStyle={{flexGrow:1}}
+                style={{flex:1}}
+                contentContainerStyle={{flexGrow:1, marginBottom:20}}
                 keyExtractor={item => item.id}
                 data={this.props.options}
                 renderItem={this.renderListItem}

@@ -5,6 +5,7 @@ import { createSelector } from 'reselect';
 import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyformitem';
 import { Helper } from "../helper";
 import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
+import { required } from '../../validators';
 
 
 export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
@@ -145,5 +146,9 @@ export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLoc
     (state, props) => props.valueLocationName
 )
 
-
+export const getQuestionValidators = createSelector(getQuestionById,(question)=>{
+    const validators = [];
+    if(question.isRequired) validators.push(required);
+    return validators;
+})
 

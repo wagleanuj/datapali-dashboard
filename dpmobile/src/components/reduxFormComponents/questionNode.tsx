@@ -2,18 +2,21 @@ import React from 'react';
 import { connect } from "react-redux";
 import { Field } from "redux-form";
 import { ConnectedFormItem } from './surveyformitem';
+import { getQuestionValidators } from '../../redux/selectors/questionSelector';
 
+type validatorFunction = (value: string|undefined)=> string|undefined;
 type QuestionNodeProps = {
     path: number[];
     questionId: string;
     locationName: string;
     formId: string;
     rootId: string;
+    validators: validatorFunction[]
 }
 class QuestionNode extends React.Component<QuestionNodeProps, {}>{
     renderComponent = (props) => {
         const { locationName, formId, questionId, rootId, path } = this.props;
-        const { input } = props;
+        const { input, meta } = props;
         return (
             <ConnectedFormItem
                 valueLocationName={locationName}
@@ -23,6 +26,7 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
                 value={input.value}
                 onChange={input.onChange}
                 path={path}
+                error={meta.error}
             />
         )
     }
@@ -31,6 +35,7 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
             <Field
                 name={this.props.locationName}
                 component={this.renderComponent}
+                validate={this.props.validators}
             />
 
         )
@@ -39,7 +44,8 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
 
 const mapStateToProps = (state, props) => {
     return {
-
+        validators: [],
+        // validators: getQuestionValidators(state, props)
     }
 }
 

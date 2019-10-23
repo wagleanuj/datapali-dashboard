@@ -9,6 +9,7 @@ import { connect } from "react-redux";
 import { WizardContext } from "../../context/wizard";
 import { AppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
+import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
 type SectionNodeProps = {
     sectionId: string;
@@ -44,17 +45,24 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     renderFlatList(iteration: number = 0) {
         return (
-            <FlatList
-                keyboardShouldPersistTaps="always"
-                key={'list' + this.props.locationName}
-                automaticallyAdjustContentInsets
-                scrollEnabled
-                // style={{flex: 1, height: 400}}
-                listKey={'lk' + this.props.locationName}
-                data={this.props.childNodes}
-                keyExtractor={item => 'listitem' + item}
-                renderItem={item => this.renderChildNode(item, iteration)}
-            />
+            <ScrollableAvoidKeyboard
+                key={'avoid-view' + this.props.locationName}
+
+            >
+
+                <FlatList
+                    keyboardShouldPersistTaps="always"
+                    key={'list' + this.props.locationName}
+                    automaticallyAdjustContentInsets
+                    scrollEnabled
+                    // style={{flex: 1, height: 400}}
+                    listKey={'lk' + this.props.locationName}
+                    data={this.props.childNodes}
+                    keyExtractor={item => 'listitem' + item}
+                    renderItem={item => this.renderChildNode(item, iteration)}
+                />
+            </ScrollableAvoidKeyboard>
+
         );
 
     }
@@ -65,43 +73,40 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     get SwiperView() {
         return (
-            <View style={{ flex: 5 }}>
-
-                <Swiper
-                    scrollEnabled
-                    key={'swiper-' + this.props.locationName}
-                    autoplay={false}
-                    loadMinimal
-                    loadMinimalSize={2}
-                    loop={false}
-                    bounces
-                    height={500}
-                    pagingEnabled
-                    automaticallyAdjustContentInsets
-                    index={this.context.pagerModeIndices[this.props.sectionId]}
-                    onIndexChanged={this.onPageChange}
-                >
-                    {this.props.childNodes.map((child, index) => {
-                        return (
-                            <View key={'swiper-child' + child} style={{ flex: 1 }}>
-                                {this.renderChildNode({ item: child, index: index }, 0)}
-
-                            </View>
-                        )
-                    })}
-                </Swiper>
-            </View>
+            <Swiper
+                scrollEnabled
+                key={'swiper-' + this.props.locationName}
+                autoplay={false}
+                loadMinimal
+                loadMinimalSize={2}
+                loop={false}
+                bounces
+                pagingEnabled
+                automaticallyAdjustContentInsets
+                index={this.context.pagerModeIndices[this.props.sectionId]}
+                onIndexChanged={this.onPageChange}
+            >
+                {this.props.childNodes.map((child, index) => {
+                    return (
+                        <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
+                            {this.renderChildNode({ item: child, index: index }, 0)}
+                        </View>
+                    )
+                })}
+            </Swiper>
 
 
         )
     }
     get AccordionView() {
-        let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Add Record ${item + 1}`, id: item }));
+        let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Record ${item + 1}`, id: item }));
         return (
             <Accordion
+                style={{ marginBottom: 50 }}
                 dataArray={data}
                 renderContent={item => this.renderFlatList(item.id)}
             />
+
         );
     }
 
@@ -123,9 +128,11 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
-                </View>
+                </View> 
+                 <View style={{ flexGrow: 1 }}>
+                    {this.decisiveRender()}
 
-                {this.decisiveRender()}
+                </View>
 
             </View>
 
@@ -138,12 +145,11 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
         flex: 1,
         backgroundColor: theme['background-basic-color-1'],
         paddingTop: 16,
-        marginBottom: 32,
         paddingLeft: 4,
         paddingRight: 4
     },
     headingContainer: {
-        flex: 1,
+        display: 'flex',
         flexDirection: 'row',
         justifyContent: 'center'
     },
