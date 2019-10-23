@@ -62,12 +62,12 @@ export class Survey_ extends React.Component<SurveyProps>{
     render() {
         const { form } = this.props;
         return (
-            <View style={this.props.themedStyle.container}>
+            // <View style={this.props.themedStyle.container}>
                 <ConnectedWizard
                     formId={form.id}
                     rootId={form.formId}
                 />
-            </View>
+            // </View>
          
         )
     }

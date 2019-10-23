@@ -116,7 +116,6 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
     }
     render() {
         const { childNodes, formId, rootId } = this.props;
-        console.log(childNodes, formId, rootId);
         return (
             <WizardProvider
                 childNodes={childNodes}
