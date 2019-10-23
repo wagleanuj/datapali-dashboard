@@ -1,5 +1,4 @@
 import React from "react";
-import { View } from "react-native";
 import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
@@ -7,7 +6,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
-import { AppState, SurveyState, FilledForm } from "../../redux/actions/types";
+import { AppState, FilledForm, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { textStyle } from "../../themes/style";
 import { ConnectedWizard } from "./wizard";
@@ -18,7 +17,7 @@ type ComponentProps = {
     form: FilledForm;
 }
 type SurveyProps = SurveyState & NavigationScreenProps & ThemedComponentProps & ComponentProps;
-const routeName = "Sruvey Form";
+const routeName = "Survey Form";
 export class Survey_ extends React.Component<SurveyProps>{
     static navigationOptions = (props) => {
 
@@ -36,8 +35,6 @@ export class Survey_ extends React.Component<SurveyProps>{
         const renderRightControls = () => {
             const save = props.navigation.getParam("onSaveClick");
             const saveComponent = <TopNavigationAction onPress={save} icon={SaveIcon} />
-
-
             return [saveComponent];
         }
         return {
@@ -63,12 +60,12 @@ export class Survey_ extends React.Component<SurveyProps>{
         const { form } = this.props;
         return (
             // <View style={this.props.themedStyle.container}>
-                <ConnectedWizard
-                    formId={form.id}
-                    rootId={form.formId}
-                />
+            <ConnectedWizard
+                formId={form.id}
+                rootId={form.formId}
+            />
             // </View>
-         
+
         )
     }
 }

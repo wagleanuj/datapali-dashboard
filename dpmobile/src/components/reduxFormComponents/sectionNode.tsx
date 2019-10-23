@@ -11,6 +11,7 @@ import { AppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
 import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
+import { Pagination } from "react-native-snap-carousel";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -73,27 +74,33 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     get SwiperView() {
         return (
-            <Swiper
-                scrollEnabled
-                key={'swiper-' + this.props.locationName}
-                autoplay={false}
-                loadMinimal
-                loadMinimalSize={2}
-                loop={false}
-                bounces
-                pagingEnabled
-                automaticallyAdjustContentInsets
-                index={this.context.pagerModeIndices[this.props.sectionId]}
-                onIndexChanged={this.onPageChange}
-            >
-                {this.props.childNodes.map((child, index) => {
-                    return (
-                        <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
-                            {this.renderChildNode({ item: child, index: index }, 0)}
-                        </View>
-                    )
-                })}
-            </Swiper>
+            <>
+                <Swiper
+                    scrollEnabled
+                    key={'swiper-' + this.props.locationName}
+                    autoplay={false}
+                    loadMinimal
+                    loadMinimalSize={2}
+                    loop={false}
+                    bounces
+                    showsPagination={false}
+                    automaticallyAdjustContentInsets
+                    index={this.context.pagerModeIndices[this.props.sectionId]}
+                    onIndexChanged={this.onPageChange}
+                >
+                    {this.props.childNodes.map((child, index) => {
+                        return (
+                            <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
+                                {this.renderChildNode({ item: child, index: index }, 0)}
+                            </View>
+                        )
+                    })}
+                </Swiper>
+                <Pagination
+                    activeDotIndex={this.context.pagerModeIndices[this.props.sectionId] || 0}
+                    dotsLength={this.props.childNodes.length}
+                />
+            </>
 
 
         )
@@ -128,8 +135,8 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
-                </View> 
-                 <View style={{ flexGrow: 1 }}>
+                </View>
+                <View style={{ flexGrow: 1 }}>
                     {this.decisiveRender()}
 
                 </View>

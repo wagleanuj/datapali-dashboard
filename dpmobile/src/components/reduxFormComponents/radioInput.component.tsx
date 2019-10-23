@@ -9,31 +9,24 @@ type RadioInputProps = {
     options: { text: string, id: string }[];
     onSelectionChange: (value: { text: string, id: string }) => void;
 }
-type RadioInputState = {
-    selected: number,
-}
-export class RadioInput extends React.Component<RadioInputProps, RadioInputState>{
+
+export class RadioInput extends React.Component<RadioInputProps, {}>{
     constructor(props: RadioInputProps) {
         super(props);
-        this.state = {
-            selected: this.props.defaultSelected
-        }
+        
     }
 
-    handleSelectionChange() {
-        if (this.props.onSelectionChange) this.props.onSelectionChange(this.props.options[this.state.selected]);
-    }
+
     onSelectionChange(index: number) {
-        if (this.state.selected === index) return;
-        this.setState({
-            selected: index
-        }, this.handleSelectionChange.bind(this))
+        if (this.props.defaultSelected === index) return;
+        if(this.props.onSelectionChange) this.props.onSelectionChange(this.props.options[index])
+       
     }
     renderAccessory = (style, index) => {
         return (
             <Radio
                 style={style}
-                checked={this.state.selected === index}
+                checked={this.props.defaultSelected === index}
                 onChange={() => this.onSelectionChange(index)}
             />
         )
@@ -53,7 +46,7 @@ export class RadioInput extends React.Component<RadioInputProps, RadioInputState
                 key={'radiolist-' + this.props.listKey}
                 listKey={'radiolist-' + this.props.listKey}
                 style={{flex:1}}
-                contentContainerStyle={{flexGrow:1, marginBottom:20}}
+                contentContainerStyle={{flexGrow:1, marginBottom:10}}
                 keyExtractor={item => item.id}
                 data={this.props.options}
                 renderItem={this.renderListItem}

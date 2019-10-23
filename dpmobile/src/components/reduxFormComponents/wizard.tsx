@@ -8,6 +8,7 @@ import { AppState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
+import { getPagerModeStatus } from "../../redux/selectors/settingsSelector";
 
 type WizardProviderProps = {
     children: ReactNode,
@@ -83,6 +84,7 @@ type NewWizardProps = {
     rootId: string;
     childNodes: string[];
     currentRootChildIndex: number;
+    pagerModeEnabled: boolean;
 
 } & InjectedFormProps;
 
@@ -133,7 +135,7 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                                 onNextButtonPress={value.handleNext}
                             />
                             <ConnectedFormNode
-                                pagerMode
+                                pagerMode={this.props.pagerModeEnabled}
                                 locationName={childNodes[currentRootChildIndex]}
                                 path={[0, currentRootChildIndex]}
                                 formId={this.props.formId}
@@ -168,6 +170,7 @@ const mapStateToProps = (state: AppState, props) => {
         currentRootChildIndex: filledForm.currentIndex,
         form: props.formId,
         childNodes: selected.childNodes,
+        pagerModeEnabled: getPagerModeStatus(state, props)
     }
 };
 

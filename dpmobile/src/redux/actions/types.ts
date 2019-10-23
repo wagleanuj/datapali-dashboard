@@ -79,5 +79,9 @@ export interface AppState {
     user?: User;
     filledForms: FilledFormsState;
     rootForms:RootFormsState;
+    settings: SettingsState;
     form: any;
+}
+export interface SettingsState {
+    pagerModeEnabled: boolean;
 }

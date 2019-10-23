@@ -5,6 +5,7 @@ import { AppState } from "../actions/types";
 import { filledFormReducer } from "./filledFormReducer";
 import { rootFormsReducer } from "./rootFormReducer";
 import { userReducer } from "./userReducer";
+import { settingsReducer } from "./settingsReducer";
 
 const initialState: AppState = {
     rootForms: { byId: {}, ids: [] },
@@ -24,8 +25,10 @@ const combinedReducers = combineReducers({
     filledForms: filledFormReducer,
     user: userReducer,
     form: formReducer,
+    settings: settingsReducer,
     rootForms: rootFormsReducer,
 });
+
 export const rootReducers = (state, action) => {
     if (action.type === LOGOUT) {
         state  = initialState;

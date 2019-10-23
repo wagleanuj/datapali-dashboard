@@ -44,8 +44,7 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
 
 const mapStateToProps = (state, props) => {
     return {
-        validators: [],
-        // validators: getQuestionValidators(state, props)
+        validators: getQuestionValidators(state, props)
     }
 }
 

@@ -53,8 +53,6 @@ export default class App extends React.Component<AppProps, AppState> {
         // store: store
       })
     }
-
-
   }
 
   private onSwitchTheme = (theme: ThemeKey) => {
@@ -62,6 +60,7 @@ export default class App extends React.Component<AppProps, AppState> {
       this.setState({ theme });
     });
   };
+
   onNavigationStateChange(prevState, newState) {
   }
 
@@ -99,3 +98,4 @@ export default class App extends React.Component<AppProps, AppState> {
     );
   }
 }
+

@@ -45,6 +45,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
     updateAnswer(value: string) {
         this.props.updateAnswer(this.props.formId, this.props.path, this.props.questionId, value);
     }
+    
     render() {
         const { themedStyle,
             path,
@@ -165,6 +166,9 @@ class FormInput extends React.Component<FormInputProps, {}> {
             console.warn('Cannot open date picker', message);
         }
     }
+    componentDidUpdate() {
+
+    }
 
     render() {
         const { props } = this;
@@ -268,9 +272,24 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     private shakeLockIcon() {
         if (this.lockIcon) this.lockIcon.startAnimation();
     }
+    private checkAndReset() {
+        const index = this.props.options.findIndex(i => i.id === this.props.selectedId);
+        if (index === -1 && !!this.props.selectedId) {
+            this.props.onChange("");
+        }
+    }
+
     componentDidUpdate() {
         this.shakeLockIcon();
+        this.checkAndReset();
     }
+
+    shouldComponentUpdate(nextProps:SelectInputProps){
+        if(nextProps.selectedId!== this.props.selectedId) return true;
+        return this.props.isDependent;
+        
+    }
+
     render() {
         return <View>
             {!!this.props.error && <Text style={{ color: 'red' }}>{this.props.error}</Text>}

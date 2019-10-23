@@ -8,13 +8,14 @@ import { NavigationScreenProps } from 'react-navigation';
 import { Header } from 'react-navigation-stack';
 import { connect } from 'react-redux';
 import { APP_CONFIG } from '../config';
-import { handleLogout, handleSetRootForms } from '../redux/actions/action';
+import { handleLogout, handleSetRootForms, handleTogglePagerMode } from '../redux/actions/action';
 import { persistor } from '../redux/configureStore';
 import { Helper } from '../redux/helper';
 import { getUserToken } from '../redux/selectors/authSelector';
 import { ThemeContext } from '../themes';
 import { Settings } from './settings.component';
 import { ToastAndroid } from 'react-native';
+import { getPagerModeStatus } from '../redux/selectors/settingsSelector';
 
 const DOWNLOAD = gql`  query Forms{
   forms{
@@ -24,7 +25,9 @@ const DOWNLOAD = gql`  query Forms{
   }
 }`;
 type SettingsProps = {
+  pagerModeEnabled: boolean;
   handleLogout: () => void;
+  handleTogglePagerMode: () => void;
   handleSetRootForms: (rf: any) => void;
   authToken: string;
 
@@ -108,13 +111,17 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
       darkModeEnabled: darkModeEnabled
     })
   };
-
+  private onPagerModeToggle = () => {
+    this.props.handleTogglePagerMode();
+  }
   public render(): React.ReactNode {
     return (
       <ApolloConsumer>
         {client => {
           return (
             <Settings
+              pagerModeEnabled={this.props.pagerModeEnabled}
+              onTogglePagerMode={this.onPagerModeToggle}
               darkModeEnabled={this.state.darkModeEnabled}
               onDownloadFormsPress={() => this.onDownloadFormsPress(client)}
               onLogoutPress={this.onLogoutPress.bind(this)}
@@ -131,12 +138,13 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
 const mapDispatchToProps = (dispatch) => {
   return {
     handleLogout: () => dispatch(handleLogout()),
-    handleSetRootForms: (rf: any) => dispatch(handleSetRootForms(rf))
-
+    handleSetRootForms: (rf: any) => dispatch(handleSetRootForms(rf)),
+    handleTogglePagerMode: () => dispatch(handleTogglePagerMode())
   }
 }
 const mapStateToProps = (state, props) => {
   return {
+    pagerModeEnabled: getPagerModeStatus(state, props),
     authToken: getUserToken(state, props)
   }
 }

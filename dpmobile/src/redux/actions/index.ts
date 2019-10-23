@@ -139,3 +139,19 @@ export interface LogOut {
     type: typeof LOGOUT;
     payload: undefined;
 }
+
+//settings actions 
+export const SET_THEME = 'set-theme';
+export interface SetTheme {
+    type: typeof SET_THEME;
+    payload: {
+        themeName: string;
+    }
+}
+
+export const TOGGLE_PAGER_MODE = 'toggle-pager-mode';
+export interface TogglePagerMode {
+    type: typeof TOGGLE_PAGER_MODE;
+    payload: undefined;
+}
+export type SettingActions = SetTheme| TogglePagerMode

@@ -136,6 +136,7 @@ export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLoc
     values.forEach(v => {
         let res = _.get(v, path);
         if (res) {
+            res = res.trim();
             if (!result[res]) result[res] = { text: res, strength: 1 }
             else result[res].strength++;
         }

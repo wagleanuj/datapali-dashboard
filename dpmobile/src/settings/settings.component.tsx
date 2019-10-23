@@ -6,6 +6,8 @@ import { textStyle } from '../themes/style';
 
 interface ComponentProps {
   darkModeEnabled: boolean;
+  pagerModeEnabled: boolean;
+  onTogglePagerMode: () => void;
   onDownloadFormsPress: () => void;
   onLogoutPress: () => void;
   onToggleDarkMode: (value: boolean) => void;
@@ -24,17 +26,18 @@ class SettingsComponent extends React.Component<SettingsProps> {
     this.props.onLogoutPress();
   };
 
-  private onSoundEnabledPress = () => {
-    const { darkModeEnabled } = this.props;
-    this.onToggleDarkMode(!darkModeEnabled);
-  };
+
 
   private onToggleDarkMode = (value: boolean) => {
     this.props.onToggleDarkMode(value);
   };
 
+  private onTogglePagerMode = () => {
+    this.props.onTogglePagerMode();
+  }
+
   public render(): React.ReactNode {
-    const { themedStyle, darkModeEnabled: soundEnabled } = this.props;
+    const { themedStyle, darkModeEnabled, pagerModeEnabled } = this.props;
 
     return (
       <View style={themedStyle.container}>
@@ -51,15 +54,29 @@ class SettingsComponent extends React.Component<SettingsProps> {
 
         <Section
           style={[themedStyle.section, themedStyle.soundEnabledSection]}
-          onPress={this.onSoundEnabledPress}>
+        >
           <Text
             style={themedStyle.sectionText}
             category='s2'>
             Dark Mode
           </Text>
           <Toggle
-            checked={soundEnabled}
+            checked={darkModeEnabled}
             onChange={this.onToggleDarkMode}
+          />
+        </Section>
+
+        <Section
+          style={[themedStyle.section, themedStyle.soundEnabledSection]}
+        >
+          <Text
+            style={themedStyle.sectionText}
+            category='s2'>
+            Pager Mode
+          </Text>
+          <Toggle
+            checked={pagerModeEnabled}
+            onChange={this.onTogglePagerMode}
           />
         </Section>
 
@@ -122,3 +139,4 @@ export const Settings = withStyles(SettingsComponent, (theme: ThemeType) => ({
   },
   sectionText: textStyle.subtitle,
 }));
+

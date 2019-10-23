@@ -87,8 +87,11 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         this.setState({
             hideResults: true,
             value: item.text,
-        }, this.handleChange.bind(this));
-        this.input.focus();
+        }, () => {
+            this.handleChange();
+            this.input.focus();
+        });
+
 
     }
     findItem(query: string) {
@@ -139,7 +142,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
 
     public render(): React.ReactNode {
         const suggestions = this.Suggestions;
-        const {themedStyle} = this.props;
+        const { themedStyle } = this.props;
         return (
             <View style={themedStyle.container}>
                 <Input
@@ -151,7 +154,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     keyboardType={this.props.keyboardType}
                     onBlur={this.onBlur.bind(this)}
                 />
-                <Text style={themedStyle.errorText}>{this.props.error}</Text>
+                {!!this.props.error && <Text style={themedStyle.errorText}>{this.props.error}</Text>}
                 {this.Suggestions.length > 0 &&
                     !this.state.hideResults &&
 
@@ -183,7 +186,7 @@ export const AutoComplete = withStyles(AutoCompleteInputComponent, theme => ({
     listContentContainer: {
         flexGrow: 1,
         minHeight: 40,
-        maxHeight: 126,
+        // maxHeight: 126,
         backgroundColor: theme['color-primary-100'],
         borderColor: theme['color-primary-default'],
         borderWidth: 1,

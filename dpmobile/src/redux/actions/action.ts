@@ -1,4 +1,4 @@
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT } from ".";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT, TOGGLE_PAGER_MODE, SET_THEME } from ".";
 import { FilledForm, User } from "./types";
 
 export function handleNext(formId: string): FilledFormActions {
@@ -84,5 +84,21 @@ export function handleLogout() {
     return {
         type: LOGOUT,
         payload: undefined
+    }
+}
+
+export function handleTogglePagerMode(){
+    return {
+        type: TOGGLE_PAGER_MODE,
+        payload: undefined
+    }
+}
+
+export function handleSetTheme(themeName:string){
+    return {
+        type: SET_THEME,
+        payload: {
+            themeName: themeName
+        }
     }
 }
