@@ -1,8 +1,10 @@
 import React from 'react';
 import { connect } from "react-redux";
-import { Field } from "redux-form";
+import { Field, WrappedFieldProps } from "redux-form";
 import { getQuestionValidators } from '../../redux/selectors/questionSelector';
 import { ConnectedFormItem } from './surveyformitem';
+import { DAppState } from '../../redux/actions/types';
+import { Dispatch, Action } from 'redux';
 
 type validatorFunction = (value: string | undefined) => string | undefined;
 type QuestionNodeProps = {
@@ -14,7 +16,7 @@ type QuestionNodeProps = {
     validators: validatorFunction[]
 }
 class QuestionNode extends React.Component<QuestionNodeProps, {}>{
-    renderComponent = (props) => {
+    renderComponent = (props:WrappedFieldProps) => {
         const { locationName, formId, questionId, rootId, path } = this.props;
         const { input, meta } = props;
         console.log(meta);
@@ -43,13 +45,13 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
     }
 }
 
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state:DAppState, props:QuestionNodeProps) => {
     return {
         validators: getQuestionValidators(state, props)
     }
 }
 
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch:Dispatch<Action>) => {
     return {
 
     }
