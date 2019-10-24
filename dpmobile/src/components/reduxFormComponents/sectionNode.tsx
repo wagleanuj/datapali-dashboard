@@ -3,15 +3,15 @@ import { Accordion } from 'native-base';
 import React from "react";
 import { View } from "react-native";
 import { FlatList } from "react-native-gesture-handler";
+import { Pagination } from "react-native-snap-carousel";
 import Swiper from "react-native-swiper";
 import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
 import { WizardContext } from "../../context/wizard";
-import { AppState } from "../../redux/actions/types";
+import { DAppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId } from "../../redux/selectors/nodeSelector";
 import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
-import { Pagination } from "react-native-snap-carousel";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -28,10 +28,11 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         selectedPage: 0,
     }
     static contextType = WizardContext;
+    swiperRef: T;
 
-    renderChildNode(item, iteration) {
+    renderChildNode(item, iteration:number, hideIteration: boolean) {
         const { rootId, formId, locationName, path } = this.props;
-        const newPath = path.concat(iteration, item.index);
+        const newPath = hideIteration? path.concat(item.index):  path.concat(iteration, item.index);
         const newLocation = locationName.concat(`[${iteration}].${item.item}`);
         return <ConnectedFormNode
             key={'formnode' + newLocation}
@@ -44,23 +45,21 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     }
 
-    renderFlatList(iteration: number = 0) {
+    renderFlatList(iteration: number = 0, hideIteration: boolean = true) {
         return (
             <ScrollableAvoidKeyboard
                 key={'avoid-view' + this.props.locationName}
 
             >
-
                 <FlatList
                     keyboardShouldPersistTaps="always"
                     key={'list' + this.props.locationName}
                     automaticallyAdjustContentInsets
                     scrollEnabled
-                    // style={{flex: 1, height: 400}}
                     listKey={'lk' + this.props.locationName}
                     data={this.props.childNodes}
                     keyExtractor={item => 'listitem' + item}
-                    renderItem={item => this.renderChildNode(item, iteration)}
+                    renderItem={item => this.renderChildNode(item, iteration, hideIteration)}
                 />
             </ScrollableAvoidKeyboard>
 
@@ -91,7 +90,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     {this.props.childNodes.map((child, index) => {
                         return (
                             <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
-                                {this.renderChildNode({ item: child, index: index }, 0)}
+                                {this.renderChildNode({ item: child, index: index }, 0,true)}
                             </View>
                         )
                     })}
@@ -111,7 +110,9 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
             <Accordion
                 style={{ marginBottom: 50 }}
                 dataArray={data}
-                renderContent={item => this.renderFlatList(item.id)}
+                renderContent={item => {
+                    return this.renderFlatList(item.id, false)
+                }}
             />
 
         );
@@ -124,7 +125,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         } else if (this.props.pagerMode) {
             return this.SwiperView;
         }
-        return this.renderFlatList(0);
+        return this.renderFlatList(0, true); 
     }
 
     render() {
@@ -213,7 +214,7 @@ class FormNode extends React.Component<FormNodeProps, {}>{
 
     }
 }
-const mapStateToFormNodeProps = (state: AppState, props) => {
+const mapStateToFormNodeProps = (state: DAppState, props) => {
     return {
         type: getNodeTypeFromId(state, props)
     }

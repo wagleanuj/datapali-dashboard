@@ -1,10 +1,10 @@
 import React from 'react';
 import { connect } from "react-redux";
 import { Field } from "redux-form";
-import { ConnectedFormItem } from './surveyformitem';
 import { getQuestionValidators } from '../../redux/selectors/questionSelector';
+import { ConnectedFormItem } from './surveyformitem';
 
-type validatorFunction = (value: string|undefined)=> string|undefined;
+type validatorFunction = (value: string | undefined) => string | undefined;
 type QuestionNodeProps = {
     path: number[];
     questionId: string;
@@ -17,6 +17,7 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
     renderComponent = (props) => {
         const { locationName, formId, questionId, rootId, path } = this.props;
         const { input, meta } = props;
+        console.log(meta);
         return (
             <ConnectedFormItem
                 valueLocationName={locationName}

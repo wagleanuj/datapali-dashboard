@@ -1,7 +1,7 @@
 import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection } from "dpform";
 import _ from "lodash";
 import { StorageUtil } from "../storageUtil";
-import { AnswerState, AppState, AvailableFormsState, FilledFormsState } from "./actions/types";
+import { AnswerState, DAppState, AvailableFormsState, FilledFormsState } from "./actions/types";
 
 
 export class Helper {
@@ -61,13 +61,13 @@ export class Helper {
         delete tree[root.id].content;
         return tree;
     }
-    static async generateAppState(): Promise<AppState> {
+    static async generateAppState(): Promise<DAppState> {
         const user = await StorageUtil.getUserInfo();
         const rootForms = await StorageUtil.getForms(user.availableForms);
         const filledForms: FilledFormsState = await StorageUtil.getFilledForms(user.filledForms);
         const token = await StorageUtil.getAuthToken();
         const availableForms: AvailableFormsState = rootForms;
-        const res: AppState = {
+        const res: DAppState = {
             availableForms: availableForms,
             rootForms: _.mapValues(availableForms, v => Helper.makeTree(v)),
             filledForms: filledForms || {},

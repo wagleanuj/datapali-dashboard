@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
-import { AppState, FilledForm, SurveyState } from "../../redux/actions/types";
+import { DAppState, FilledForm, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { textStyle } from "../../themes/style";
 import { ConnectedWizard } from "./wizard";
@@ -75,7 +75,7 @@ const SurveyForm_ = withStyles(Survey_, (theme: ThemeType) => ({
 
 
 }));
-const mapStateToProps = (state: AppState, props: SurveyProps) => {
+const mapStateToProps = (state: DAppState, props: SurveyProps) => {
     const filledFormId = props.navigation.getParam('ffId');
     let selected = getFilledFormById(state, props, filledFormId);
     return {

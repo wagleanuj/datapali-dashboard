@@ -1,13 +1,13 @@
 import { combineReducers } from "redux";
 import { reducer as formReducer } from 'redux-form';
 import { LOGOUT } from "../actions";
-import { AppState } from "../actions/types";
+import { DAppState } from "../actions/types";
 import { filledFormReducer } from "./filledFormReducer";
 import { rootFormsReducer } from "./rootFormReducer";
 import { userReducer } from "./userReducer";
 import { settingsReducer } from "./settingsReducer";
 
-const initialState: AppState = {
+const initialState: DAppState = {
     rootForms: { byId: {}, ids: [] },
     user: {
         filledForms: [],

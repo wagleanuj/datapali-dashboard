@@ -1,12 +1,11 @@
 import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import _ from "lodash";
 import React from "react";
-import { DatePickerAndroid, View, ScrollView } from "react-native";
-import { TouchableOpacity } from "react-native-gesture-handler";
+import { DatePickerAndroid, ScrollView, View } from "react-native";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
-import { AppState } from "../../redux/actions/types";
+import { DAppState } from "../../redux/actions/types";
 import { Helper } from "../../redux/helper";
 import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
 import { getAutoCompleteDataForQuestion, getTransformedValidOptions } from "../../redux/selectors/questionSelector";
@@ -45,7 +44,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
     updateAnswer(value: string) {
         this.props.updateAnswer(this.props.formId, this.props.path, this.props.questionId, value);
     }
-    
+
     render() {
         const { themedStyle,
             path,
@@ -113,7 +112,7 @@ export const FormItemStyled = withStyles(FormItem_, theme => ({
         height: 400
     }
 }))
-const mapStateToProps = (state: AppState, props: FormItemProps) => {
+const mapStateToProps = (state: DAppState, props: FormItemProps) => {
     const all = getNodeOfRootForm(state, props);
     const type = all.answerType;
     const title = all.questionContent.content;
@@ -267,9 +266,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     private get isNonIdealState() {
         return this.props.options.length === 0 && this.props.isDependent;
     }
-    private shakeLockIcon() {
-        if (this.lockIcon) this.lockIcon.startAnimation();
-    }
+
     private checkAndReset() {
         const index = this.props.options.findIndex(i => i.id === this.props.selectedId);
         if (index === -1 && !!this.props.selectedId) {
@@ -278,14 +275,13 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     }
 
     componentDidUpdate() {
-        this.shakeLockIcon();
         this.checkAndReset();
     }
 
-    shouldComponentUpdate(nextProps:SelectInputProps){
-        if(nextProps.selectedId!== this.props.selectedId) return true;
+    shouldComponentUpdate(nextProps: SelectInputProps) {
+        if (nextProps.selectedId !== this.props.selectedId) return true;
         return this.props.isDependent;
-        
+
     }
 
     render() {
@@ -303,10 +299,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
             }
             {
                 this.isNonIdealState && <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
-                    <TouchableOpacity onPress={this.shakeLockIcon.bind(this)}>
-                        <Icon fill={'red'} ref={r => this.lockIcon = r} width={30} height={30} name='lock' animation='shake' />
-                    </TouchableOpacity>
-                    <Text status='danger' >All options are locked.</Text>
+                    <Text category="s1" status='danger' >All options are locked!</Text>
                 </View>
             }
         </View>

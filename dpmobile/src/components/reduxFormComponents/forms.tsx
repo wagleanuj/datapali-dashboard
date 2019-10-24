@@ -9,7 +9,7 @@ import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
 import { Action } from "redux"
 import { handleAddNewForm, handleDeleteForm } from "../../redux/actions/action"
-import { AppState, AvailableFormsState, FilledFormsState } from "../../redux/actions/types"
+import { DAppState, AvailableFormsState, FilledFormsState } from "../../redux/actions/types"
 import { getFIlledFormsTransformedData } from "../../redux/selectors/filledFormSelectors"
 import { getRootFormById } from "../../redux/selectors/questionSelector"
 import { textStyle } from "../../themes/style"
@@ -213,7 +213,7 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 }));
 
 
-const mapStateToProps = (state: AppState, props: FilledFormProps) => {
+const mapStateToProps = (state: DAppState, props: FilledFormProps) => {
     return {
         availableForms: state.rootForms.byId,
         filledFormsData: getFIlledFormsTransformedData(state, props),

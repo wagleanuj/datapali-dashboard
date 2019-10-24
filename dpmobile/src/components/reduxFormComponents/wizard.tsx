@@ -4,7 +4,7 @@ import { View } from "react-native";
 import { connect } from "react-redux";
 import { InjectedFormProps, reduxForm } from "redux-form";
 import { WizardContext } from "../../context/wizard";
-import { AppState } from "../../redux/actions/types";
+import { DAppState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
@@ -163,7 +163,7 @@ const WizardPageInjected = (reduxForm({
 })(WizardPage))
 
 
-const mapStateToProps = (state: AppState, props) => {
+const mapStateToProps = (state: DAppState, props) => {
     const filledForm = getFilledFormById(state, props);
     const roots = state.rootForms.byId[filledForm.formId];
     const selected = (roots[filledForm.formId]);

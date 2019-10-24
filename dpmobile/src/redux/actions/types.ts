@@ -75,7 +75,7 @@ export interface RootFormsState {
     byId: {[key: string]: any},
     ids: string[]
 }
-export interface AppState {
+export interface DAppState {
     user?: User;
     filledForms: FilledFormsState;
     rootForms:RootFormsState;
