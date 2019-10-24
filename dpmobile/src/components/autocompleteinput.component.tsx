@@ -5,39 +5,10 @@ import { TouchableOpacity } from "react-native-gesture-handler";
 import { KeyboardAwareFlatList } from "react-native-keyboard-aware-scroll-view";
 import { Button, Icon, Input, ListItem, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 
-type TextContentType = | "none"
-    | "URL"
-    | "addressCity"
-    | "addressCityAndState"
-    | "addressState"
-    | "countryName"
-    | "creditCardNumber"
-    | "emailAddress"
-    | "familyName"
-    | "fullStreetAddress"
-    | "givenName"
-    | "jobTitle"
-    | "location"
-    | "middleName"
-    | "name"
-    | "namePrefix"
-    | "nameSuffix"
-    | "nickname"
-    | "organizationName"
-    | "postalCode"
-    | "streetAddressLine1"
-    | "streetAddressLine2"
-    | "sublocality"
-    | "telephoneNumber"
-    | "username"
-    | "password"
-    | "newPassword"
-    | "oneTimeCode";
 type AutoCompleteProps = {
     onChange: (text: string) => void,
     data: { text: string }[],
     value: string,
-    textContentType?: TextContentType,
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
     error: string,
@@ -147,7 +118,6 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
             <View style={themedStyle.container}>
                 <Input
                     onChangeText={this.props.onChange}
-                    textContentType={this.props.textContentType}
                     value={this.props.value}
                     ref={r => this.input = r}
                     onFocus={this.onFocus.bind(this)}

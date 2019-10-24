@@ -178,7 +178,6 @@ class FormInput extends React.Component<FormInputProps, {}> {
             case ANSWER_TYPES.NUMBER:
                 return <AutoComplete
                     keyboardType={'numeric'}
-                    textContentType={'telephoneNumber'}
                     value={defaultValue}
                     data={props.autoCompleteData}
                     onChange={props.onValueChange}
@@ -187,7 +186,6 @@ class FormInput extends React.Component<FormInputProps, {}> {
                 />
             case ANSWER_TYPES.STRING:
                 return <AutoComplete
-                    textContentType={'name'}
                     value={defaultValue}
                     data={props.autoCompleteData}
                     onChange={props.onValueChange}

@@ -1,5 +1,5 @@
 import React from "react";
-import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
+import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles, Icon } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
@@ -23,20 +23,10 @@ export class Survey_ extends React.Component<SurveyProps>{
 
         const renderLeftIcon = () => {
             return <TopNavigationAction onPress={() => {
-                const save = props.navigation.getParam("onSaveClick");
-                if (save) save().then(res => {
-                    props.navigation.goBack(KEY_NAVIGATION_BACK)
-
-                })
-                else props.navigation.goBack(KEY_NAVIGATION_BACK)
-
-            }} icon={ArrowIosBackFill} />
+                props.navigation.goBack(KEY_NAVIGATION_BACK)
+            }} icon={(style)=><Icon {...style} name="arrow-left"/>} />
         }
-        const renderRightControls = () => {
-            const save = props.navigation.getParam("onSaveClick");
-            const saveComponent = <TopNavigationAction onPress={save} icon={SaveIcon} />
-            return [saveComponent];
-        }
+
         return {
             header: props => <TopNavigation
                 style={{ height: Header.HEIGHT }}
@@ -45,7 +35,6 @@ export class Survey_ extends React.Component<SurveyProps>{
                 subtitle={routeName}
                 subtitleStyle={textStyle.caption1}
                 leftControl={renderLeftIcon()}
-                rightControls={renderRightControls()}
             />
         }
     }

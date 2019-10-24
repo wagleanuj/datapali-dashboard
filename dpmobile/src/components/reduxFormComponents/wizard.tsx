@@ -9,6 +9,7 @@ import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
 import { getPagerModeStatus } from "../../redux/selectors/settingsSelector";
+import { Appbar } from "react-native-paper";
 
 type WizardProviderProps = {
     children: ReactNode,
