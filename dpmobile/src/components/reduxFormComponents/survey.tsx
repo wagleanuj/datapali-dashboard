@@ -1,10 +1,9 @@
 import React from "react";
-import { ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles, Icon } from "react-native-ui-kitten";
+import { Icon, ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
-import { ArrowIosBackFill, SaveIcon } from "../../assets/icons";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
 import { DAppState, FilledForm, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
@@ -24,7 +23,7 @@ export class Survey_ extends React.Component<SurveyProps>{
         const renderLeftIcon = () => {
             return <TopNavigationAction onPress={() => {
                 props.navigation.goBack(KEY_NAVIGATION_BACK)
-            }} icon={(style)=><Icon {...style} name="arrow-left"/>} />
+            }} icon={(style) => <Icon {...style} name="arrow-back" />} />
         }
 
         return {

@@ -189,8 +189,8 @@ export class Helper {
             item.autoAnswer.answeringConditions.forEach(ac => ac.condition.literals.forEach(item => autoFillConditionRefs.push(item.questionRef)));
             const rootOptions = Object.values(item.options.optionsMap).filter(item => !item.groupName);
             const groups = Object.values(item.options.optionGroupMap);
-            groups.forEach(group => group.appearingCondition.literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
-            rootOptions.forEach(opt => opt.appearingCondition.literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
+            groups.forEach(group => group.appearingCondition && group.appearingCondition.literals.forEach(lit => groupConditionRefs.push(lit.questionRef)));
+            rootOptions.forEach(opt => opt.appearingCondition && opt.appearingCondition.literals.forEach(lit => rootOptionConditionRefs.push(lit.questionRef)));
         } else if (item instanceof QuestionSection || item._type === 'section') {
             const hasAppearingCondition = item && item.appearingCondition && item.appearingCondition.literals;
             apConditionRef = hasAppearingCondition ? item.appearingCondition.literals.map(lit => lit.questionRef) : undefined;

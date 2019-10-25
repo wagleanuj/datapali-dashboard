@@ -55,10 +55,10 @@ export const getDependenciesOfOptions = createSelector([getSortedOptions], (opti
     const { groups, rootOptions } = options;
     let dependencies: string[] = [];
     groups.forEach(item => {
-        dependencies = dependencies.concat(item.appearingCondition.literals.map(item => item.questionRef));
+        dependencies = dependencies.concat(item.appearingCondition ? item.appearingCondition.literals.map(item => item.questionRef) : []);
     });
     rootOptions.forEach(item => {
-        dependencies = dependencies.concat(item.appearingCondition.literals.map(item => item.questionRef));
+        dependencies = dependencies.concat(item.appearingCondition ? item.appearingCondition.literals.map(item => item.questionRef) : []);
     });
 
     return Array.from(new Set(dependencies));
@@ -147,9 +147,9 @@ export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLoc
     (state, props) => props.valueLocationName
 )
 
-export const getQuestionValidators = createSelector(getQuestionById,(question)=>{
+export const getQuestionValidators = createSelector(getQuestionById, (question) => {
     const validators = [];
-    if(question.isRequired) validators.push(required);
+    if (question.isRequired) validators.push(required);
     return validators;
 })
 

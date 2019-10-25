@@ -26,10 +26,10 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
 
     }
     renderBackButton(style) {
-        return <Icon {...style} name="arrow-back"></Icon>
+        return <Icon {...style} name="arrow-left"></Icon>
     }
     renderNextButton(style) {
-        return <Icon  {...style} name="arrow-forward"></Icon>
+        return <Icon  {...style} name="arrow-right"></Icon>
 
     }
     static contextType = WizardContext;

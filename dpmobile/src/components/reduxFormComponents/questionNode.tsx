@@ -13,13 +13,13 @@ type QuestionNodeProps = {
     locationName: string;
     formId: string;
     rootId: string;
-    validators: validatorFunction[]
+    validators: validatorFunction[];
+    onSubmit: ()=>void;
 }
 class QuestionNode extends React.Component<QuestionNodeProps, {}>{
     renderComponent = (props:WrappedFieldProps) => {
-        const { locationName, formId, questionId, rootId, path } = this.props;
+        const { locationName, formId, questionId, rootId, path, onSubmit } = this.props;
         const { input, meta } = props;
-        console.log(meta);
         return (
             <ConnectedFormItem
                 valueLocationName={locationName}
@@ -30,12 +30,14 @@ class QuestionNode extends React.Component<QuestionNodeProps, {}>{
                 onChange={input.onChange}
                 path={path}
                 error={meta.error}
+                onSubmit={onSubmit}
             />
         )
     }
     render() {
         return (
             <Field
+            
                 name={this.props.locationName}
                 component={this.renderComponent}
                 validate={this.props.validators}

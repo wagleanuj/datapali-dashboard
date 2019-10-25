@@ -34,15 +34,13 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
+    onSubmit: ()=>void;
 } & ThemedComponentProps;
 
 //replacement for question component
 class FormItem_ extends React.Component<FormItemProps, {}> {
     constructor(props: FormItemProps) {
         super(props);
-    }
-    updateAnswer(value: string) {
-        this.props.updateAnswer(this.props.formId, this.props.path, this.props.questionId, value);
     }
 
     render() {
@@ -81,6 +79,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                         value={value}
                         type={type}
                         questionId={this.props.questionId}
+                        onSubmit={this.props.onSubmit}
                     />
                 </ScrollView>
 
@@ -149,6 +148,7 @@ interface FormInputProps {
     autoFillValue?: string;
     error: string;
     onBlur: (value: string) => void;
+    onSubmit: ()=>void;
 
 }
 class FormInput extends React.Component<FormInputProps, {}> {
@@ -182,6 +182,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
                     onChange={props.onValueChange}
                     onBlur={props.onBlur}
                     error={props.error}
+                    onSubmit={props.onSubmit}
                 />
             case ANSWER_TYPES.STRING:
                 return <AutoComplete
@@ -190,6 +191,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
                     onChange={props.onValueChange}
                     error={props.error}
                     onBlur={props.onBlur}
+                    onSubmit={props.onSubmit}
                 />
 
 

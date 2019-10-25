@@ -28,11 +28,11 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
         selectedPage: 0,
     }
     static contextType = WizardContext;
-    swiperRef: T;
+    swiper: Swiper;
 
-    renderChildNode(item, iteration:number, hideIteration: boolean) {
+    renderChildNode(item, iteration: number, hideIteration: boolean) {
         const { rootId, formId, locationName, path } = this.props;
-        const newPath = hideIteration? path.concat(item.index):  path.concat(iteration, item.index);
+        const newPath = hideIteration ? path.concat(item.index) : path.concat(iteration, item.index);
         const newLocation = locationName.concat(`[${iteration}].${item.item}`);
         return <ConnectedFormNode
             key={'formnode' + newLocation}
@@ -41,8 +41,13 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
             path={newPath}
             formId={formId}
             rootId={rootId}
+            onSubmit={this.onSubmit}
         />
 
+    }
+    onSubmit = () => {
+        console.log("pager mode", this.props.pagerMode);
+        this.swiper.scrollBy(1);
     }
 
     renderFlatList(iteration: number = 0, hideIteration: boolean = true) {
@@ -69,12 +74,14 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
 
     onPageChange = (index: number) => {
         this.context.updatePagerModeIndex(this.props.sectionId, index);
+
     }
 
-    get SwiperView() {
+    getSwiperView(height?: number) {
         return (
             <>
                 <Swiper
+                    ref={r => this.swiper = r}
                     scrollEnabled
                     key={'swiper-' + this.props.locationName}
                     autoplay={false}
@@ -82,6 +89,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     loadMinimalSize={2}
                     loop={false}
                     bounces
+                    height={height}
                     showsPagination={false}
                     automaticallyAdjustContentInsets
                     index={this.context.pagerModeIndices[this.props.sectionId]}
@@ -90,7 +98,7 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                     {this.props.childNodes.map((child, index) => {
                         return (
                             <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
-                                {this.renderChildNode({ item: child, index: index }, 0,true)}
+                                {this.renderChildNode({ item: child, index: index }, 0, true)}
                             </View>
                         )
                     })}
@@ -111,11 +119,26 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                 style={{ marginBottom: 50 }}
                 dataArray={data}
                 renderContent={item => {
-                    return this.renderFlatList(item.id, false)
+                        return this.renderFlatList(item.id, false)
                 }}
             />
 
         );
+    }
+    get SwiperView_() {
+        return <SwiperView
+            setRef={r => this.swiper = r}
+            childNodes={this.props.childNodes}
+            onIndexChange={this.onPageChange}
+            index={this.context.pagerModeIndices[this.props.sectionId]}
+            renderItem={(child, index) => {
+                return (
+                    <View key={'swiper-child' + child} style={{ flexGrow: 1 }}>
+                        {this.renderChildNode({ item: child, index: index }, 0, true)}
+                    </View>
+                );
+            }}
+        />
     }
 
     decisiveRender() {
@@ -123,9 +146,9 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
             return this.AccordionView;
 
         } else if (this.props.pagerMode) {
-            return this.SwiperView;
+            return this.SwiperView_;
         }
-        return this.renderFlatList(0, true); 
+        return this.renderFlatList(0, true);
     }
 
     render() {
@@ -139,7 +162,6 @@ class SectionNode extends React.Component<SectionNodeProps, { selectedPage: numb
                 </View>
                 <View style={{ flexGrow: 1 }}>
                     {this.decisiveRender()}
-
                 </View>
 
             </View>
@@ -202,13 +224,14 @@ type FormNodeProps = {
     locationName: string;
     path: number[];
     type: string;
+    onSubmit: () => void;
 }
 class FormNode extends React.Component<FormNodeProps, {}>{
     render() {
         const { props } = this;
         return (
             props.type === 'question' ?
-                <ConnectedQuestionNode {...props} questionId={props.id} />
+                <ConnectedQuestionNode  {...props} questionId={props.id} />
                 : <ConnectedSectionNode  {...props} sectionId={props.id} />
         )
 
@@ -221,3 +244,42 @@ const mapStateToFormNodeProps = (state: DAppState, props) => {
 }
 
 export const ConnectedFormNode = connect(mapStateToFormNodeProps, {})(FormNode);
+
+type SwiperViewProps = {
+    renderItem: (child: string, index: number) => {};
+    childNodes: string[];
+    onIndexChange: (index: number) => void;
+    index: number;
+    setRef: (r: Swiper) => void;
+
+}
+class SwiperView extends React.Component<SwiperViewProps, {}>{
+    render() {
+        return (
+            <>
+                <Swiper
+                    ref={this.props.setRef}
+                    scrollEnabled
+                    autoplay={false}
+                    loadMinimal
+                    loadMinimalSize={2}
+                    loop={false}
+                    bounces
+                    showsPagination={false}
+                    index={this.props.index}
+                    onIndexChanged={this.props.onIndexChange}
+                >
+                    {this.props.childNodes.map((child, index) => {
+                        return (
+                            this.props.renderItem(child, index)
+                        )
+                    })}
+                </Swiper>
+                <Pagination
+                    activeDotIndex={this.props.index||0}
+                    dotsLength={this.props.childNodes.length}
+                />
+            </>
+        );
+    }
+}

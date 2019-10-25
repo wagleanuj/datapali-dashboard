@@ -11,7 +11,8 @@ type AutoCompleteProps = {
     value: string,
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
-    error: string,
+    error: string;
+    onSubmit: ()=>void;
 } & ThemedComponentProps;
 type AutoCompleteState = {
     selectedIndex: number,
@@ -123,6 +124,7 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
                     onFocus={this.onFocus.bind(this)}
                     keyboardType={this.props.keyboardType}
                     onBlur={this.onBlur.bind(this)}
+                    onSubmitEditing={this.props.onSubmit}
                 />
                 {!!this.props.error && <Text style={themedStyle.errorText}>{this.props.error}</Text>}
                 {this.Suggestions.length > 0 &&
