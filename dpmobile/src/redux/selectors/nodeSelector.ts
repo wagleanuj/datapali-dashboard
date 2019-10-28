@@ -4,7 +4,9 @@ import { createSelector } from "reselect";
 import { FilledForm } from "../actions/types";
 import { getFilledFormById } from "./filledFormSelectors";
 import { getFilledFormValues } from "./questionSelector";
-import { $getNodeId, $getRootForm, $getValueLocationName } from "./shared";
+import { $getNodeId, $getRootForm, $getValueLocationName, $getRootFormId } from "./shared";
+import { Helper } from "../helper";
+import { APP_CONFIG } from "../../config";
 
 
 export const getRootFormOfFilledForm = createSelector([getFilledFormById, $getRootForm], (filledForm: FilledForm, rootForms) => {
@@ -30,7 +32,7 @@ export const getDupeSettingsForSectionNode = createSelector([getNodeOfRootForm],
     return node.duplicatingSettings;
 });
 
-export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSectionNode, $getValueLocationName, getFilledFormValues], (settings: IDupeSettings, location: string, values) => {
+export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSectionNode, $getValueLocationName, getFilledFormValues], (settings: IDupeSettings, location: string, values: any) => {
     if (!settings.isEnabled) return -1;
     else {
         let times = settings.duplicateTimes;
@@ -40,20 +42,7 @@ export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSect
         }
         else {
             let ref = times.value;
-            //get the value of the ref
-            // let locationToPath = _.toPath(location);
-            // const checkForValue = (values, path, find) => {
-            //     if (path.length === 0) return undefined;
-            //     if (path.length === 1) return _.get(values, [find]);
-            //     let newPath = path.slice(0);
-            //     newPath.splice(path.length - 1, 1, find);
-            //     let val = _.get(values, newPath);
-            //     if (val) {
-            //         return val;
-            //     }
-            //     newPath.splice(newPath.length - 1, 1);
-            //     return checkForValue(values, newPath, find);
-            // }
+
             let value = findValue(values, ref);
             if (value) {
                 return parseInt(value)
@@ -64,6 +53,17 @@ export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSect
         }
     }
 })
+export const getValidQuestionsNumber = createSelector([getRootFormOfFilledForm, getFilledFormValues,$getRootFormId], (root, values, rid) => {
+    const count = {}
+    checkSection(root[rid], values, root, "", count, true);
+    return count;
+});
+
+
+export const getResponderName = createSelector([getRootFormOfFilledForm, getFilledFormValues], (root, values)=>{
+    return _.get(values, APP_CONFIG.responderValueLocation);
+})
+
 
 function findValue(values, ref) {
     if (!values) return undefined;
@@ -81,4 +81,31 @@ function findValue(values, ref) {
         }
     }
     return undefined;
+}
+
+function checkSection(section, values, root, sectionLocation, counts: any = {}, isRoot:boolean=false) {
+    const appears = section.appearingCondition ? Helper.evaluateCondition(section.appearingCondition, values, root) : true;
+    if (!counts[section.id]) counts[section.id] = { filled: 0, required: 0, unfilled: [] }
+    if (appears) {
+        const dupe = Helper.getDupeTimes(section.duplicatingSettings, values);
+        const dupeTimes = dupe === -1 ? 1 : dupe;
+        for (let i = 0; i < dupeTimes; i++) {
+            section.childNodes.forEach((item, index) => {
+                let location = isRoot? [item]:_.toPath(sectionLocation).concat(i.toString(), item);
+                if (root[item]._type === "question") {
+                    const isRequired = !!root[item].isRequired;
+                    if (isRequired) {
+                        let isFilled = !!_.get(values, location);
+                        if (isFilled) counts[section.id].filled++;
+                        else{
+                            counts[section.id].unfilled.push(location);
+                        }
+                        counts[section.id].required++;
+                    }
+                } else {
+                    checkSection(root[item], values, root, location, counts)
+                }
+            })
+        }
+    }
 }

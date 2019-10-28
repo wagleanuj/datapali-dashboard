@@ -11,4 +11,4 @@ export const $getState = (state: DAppState, props) => state;
 export const $getSectionId = (state, props) => props.sectionId;
 export const $getValueLocationName = (state, props) => props.valueLocationName;
 export const $getFormId = (state: DAppState, props: any, formId: string): string => props.formId || formId;
-export const $getNodeId = (state: DAppState, props: any) => props.id|| props.sectionId|| props.questionId;
+export const $getNodeId = (state: DAppState, props: any, id: string) => id|| props.id|| props.sectionId|| props.questionId;

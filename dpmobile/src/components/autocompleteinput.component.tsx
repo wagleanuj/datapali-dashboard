@@ -12,7 +12,8 @@ type AutoCompleteProps = {
     keyboardType?: KeyboardType,
     onBlur: (value: string) => void,
     error: string;
-    onSubmit: ()=>void;
+    onSubmit: () => void;
+    setInputRef: (r) => void;
 } & ThemedComponentProps;
 type AutoCompleteState = {
     selectedIndex: number,
@@ -110,7 +111,10 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
     private get Suggestions() {
         return this.findItem(this.props.value);
     }
-
+    setInputRef=(r)=> {
+        this.input = r;
+        if (this.props.setInputRef) this.props.setInputRef(r);
+    }
 
     public render(): React.ReactNode {
         const suggestions = this.Suggestions;
@@ -118,9 +122,9 @@ export class AutoCompleteInputComponent extends React.Component<AutoCompleteProp
         return (
             <View style={themedStyle.container}>
                 <Input
+                    ref={this.setInputRef}
                     onChangeText={this.props.onChange}
                     value={this.props.value}
-                    ref={r => this.input = r}
                     onFocus={this.onFocus.bind(this)}
                     keyboardType={this.props.keyboardType}
                     onBlur={this.onBlur.bind(this)}

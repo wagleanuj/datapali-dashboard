@@ -11,6 +11,7 @@ import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
 import { getAutoCompleteDataForQuestion, getTransformedValidOptions } from "../../redux/selectors/questionSelector";
 import { AutoComplete } from "../autocompleteinput.component";
 import { RadioInput } from "./radioInput.component";
+import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 
 export interface AutoCompleteItem {
     text: string;
@@ -34,7 +35,8 @@ type FormItemProps = {
     isRequired: boolean;
     autoCompleteData?: AutoCompleteItem[]
     autoFillValue?: string;
-    onSubmit: ()=>void;
+    onSubmit: () => void;
+    setInputRef: (r) => void;
 } & ThemedComponentProps;
 
 //replacement for question component
@@ -64,9 +66,11 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                 <Text style={themedStyle.questionTitle}>
                     {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                 </Text>
-                <ScrollView>
-
+                <ScrollView
+                    // contentContainerStyle={{paddingBottom: 50}}
+                >
                     <FormInput
+                        setInputRef={this.props.setInputRef}
                         key={'input-field' + this.props.questionId}
                         isDependent={this.props.isDependent}
                         dependencies={this.props.dependencies}
@@ -92,6 +96,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
 
 export const FormItemStyled = withStyles(FormItem_, theme => ({
     container: {
+        flex:1,
         paddingBottom: 20,
         paddingLeft: 5,
         paddingRight: 5,
@@ -148,7 +153,8 @@ interface FormInputProps {
     autoFillValue?: string;
     error: string;
     onBlur: (value: string) => void;
-    onSubmit: ()=>void;
+    onSubmit: () => void;
+    setInputRef: (r) => void;
 
 }
 class FormInput extends React.Component<FormInputProps, {}> {
@@ -172,10 +178,10 @@ class FormInput extends React.Component<FormInputProps, {}> {
     render() {
         const { props } = this;
         const defaultValue = props.value || props.autoFillValue;
-
         switch (props.type.name) {
             case ANSWER_TYPES.NUMBER:
                 return <AutoComplete
+                    setInputRef={this.props.setInputRef}
                     keyboardType={'numeric'}
                     value={defaultValue}
                     data={props.autoCompleteData}
@@ -186,6 +192,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
                 />
             case ANSWER_TYPES.STRING:
                 return <AutoComplete
+                    setInputRef={this.props.setInputRef}
                     value={defaultValue}
                     data={props.autoCompleteData}
                     onChange={props.onValueChange}
@@ -241,6 +248,7 @@ class FormInput extends React.Component<FormInputProps, {}> {
                     options={props.options}
                     onChange={props.onValueChange}
                     selectedId={defaultValue}
+                    onSubmit={this.props.onSubmit}
                 />
         }
     }
@@ -254,6 +262,7 @@ type SelectInputProps = {
     selectedId: string;
     onChange: (id: string) => void;
     error: string;
+    onSubmit: ()=>void;
 }
 type SelectInputState = {
 }
@@ -264,6 +273,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     }
     private onChange(val: { text: string, id: string }) {
         this.props.onChange(val.id);
+        if(this.props.onSubmit) this.props.onSubmit();
     }
     private get isNonIdealState() {
         return this.props.options.length === 0 && this.props.isDependent;

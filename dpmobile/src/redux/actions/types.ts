@@ -85,3 +85,16 @@ export interface DAppState {
 export interface SettingsState {
     pagerModeEnabled: boolean;
 }
+
+export interface ISection{
+
+}
+export interface IQuestion{
+
+}
+export interface IAnswerOptions{
+
+}
+export interface ICondition{
+    
+}

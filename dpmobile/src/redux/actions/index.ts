@@ -54,7 +54,7 @@ export const DELETE_FILLED_FORM = 'delete-filled-form';
 export interface DeleteFilledForm {
     type: typeof DELETE_FILLED_FORM;
     payload: {
-        formId: string
+        formIds: string[]
     }
 }
 

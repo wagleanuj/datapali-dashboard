@@ -10,13 +10,15 @@ import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
 import { getPagerModeStatus } from "../../redux/selectors/settingsSelector";
 import { Appbar } from "react-native-paper";
+import _ from "lodash";
+import { getValidQuestionsNumber } from "../../redux/selectors/nodeSelector";
 
 type WizardProviderProps = {
     children: ReactNode,
     childNodes: string[]
 }
 type WizardProviderState = {
-    pagerModeIndices: { [key: string]: number },
+    pagerModeIndices: { [key: string]: number[] },
     currentRootChildIndex: number,
 }
 export class WizardProvider extends React.Component<WizardProviderProps, WizardProviderState>{
@@ -27,12 +29,14 @@ export class WizardProvider extends React.Component<WizardProviderProps, WizardP
             pagerModeIndices: {},
         }
     }
+    itemRefs: any;
+    currentlyEditing: any;
 
-
-    updatePagerModeIndex = (childId: string, newIndex: number) => {
+    updatePagerModeIndex = (childId: string, newIndex: number, iteration: number = 0) => {
         this.setState(prevState => {
             return produce(prevState, draft => {
-                draft.pagerModeIndices[childId] = newIndex;
+                if (!draft.pagerModeIndices[childId]) draft.pagerModeIndices[childId] = [];
+                draft.pagerModeIndices[childId][iteration] = newIndex;
             });
         })
     }
@@ -61,6 +65,30 @@ export class WizardProvider extends React.Component<WizardProviderProps, WizardP
         })
     }
 
+    setRefs(ref, valueLocation) {
+        if (!this.itemRefs) this.itemRefs = {};
+        _.set(this.itemRefs, valueLocation, ref);
+    }
+    getRef(valueLocation) {
+        return _.get(this.itemRefs, valueLocation);
+    }
+
+    handleSubmitOrSwipe(nextLocation: any) {
+        if (this.currentlyEditing) {
+            const currentRef = this.getRef(this.currentlyEditing);
+            if (currentRef) currentRef.blur();
+        }
+        const nextRef = this.getRef(nextLocation);
+        if (nextRef && nextRef.focus) {
+            nextRef.focus();
+            this.currentlyEditing = nextLocation;
+        } else {
+            this.currentlyEditing = undefined;
+        }
+
+    }
+
+
     render() {
         const { currentRootChildIndex, pagerModeIndices } = this.state;
         const { children, childNodes } = this.props;
@@ -74,6 +102,10 @@ export class WizardProvider extends React.Component<WizardProviderProps, WizardP
                     handleNext: this.nextStep.bind(this),
                     handlePrev: this.prevStep.bind(this),
                     updatePagerModeIndex: this.updatePagerModeIndex,
+                    itemRefs: this.itemRefs,
+                    setRefs: this.setRefs.bind(this),
+                    getRef: this.getRef.bind(this),
+                    handleSubmitOrSwipe: this.handleSubmitOrSwipe.bind(this),
                 }}>
                 {children}
             </WizardContext.Provider>
@@ -86,6 +118,7 @@ type NewWizardProps = {
     childNodes: string[];
     currentRootChildIndex: number;
     pagerModeEnabled: boolean;
+    itemRefs: any;
 
 } & InjectedFormProps;
 
@@ -110,6 +143,7 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
         return <ConnectedFormNode
             key={'cnode' + childNodes[currentRootChildIndex]}
             pagerMode
+            isAlone
             locationName={childNodes[currentRootChildIndex]}
             path={[0, currentRootChildIndex]}
             formId={this.props.formId}
@@ -117,6 +151,7 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
             id={childNodes[currentRootChildIndex]}
         />
     }
+
     render() {
         const { childNodes, formId, rootId } = this.props;
         return (
@@ -135,7 +170,9 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                                 onBackButtonPress={value.handlePrev}
                                 onNextButtonPress={value.handleNext}
                             />
+
                             <ConnectedFormNode
+                                isAlone
                                 pagerMode={this.props.pagerModeEnabled}
                                 locationName={childNodes[currentRootChildIndex]}
                                 path={[0, currentRootChildIndex]}
@@ -143,7 +180,6 @@ export class WizardPage extends React.Component<NewWizardProps, NewWizardState>{
                                 rootId={this.props.rootId}
                                 id={childNodes[currentRootChildIndex]}
                             />
-
 
 
                         </View>
@@ -168,6 +204,7 @@ const mapStateToProps = (state: DAppState, props) => {
     const roots = state.rootForms.byId[filledForm.formId];
     const selected = (roots[filledForm.formId]);
     return {
+        counts: getValidQuestionsNumber(state, props),
         currentRootChildIndex: filledForm.currentIndex,
         form: props.formId,
         childNodes: selected.childNodes,

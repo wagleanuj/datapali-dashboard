@@ -3,6 +3,7 @@ import { StyleType, TopNavigationActionProps, TopNavigationAction, TopNavigation
 import { ImageProps, SafeAreaView } from "react-native";
 
 import React from "react";
+import { Appbar } from "react-native-paper";
 export interface ComponentProps {
     backIcon?: BackIconProp;
     onBackPress?: () => void;
@@ -35,20 +36,15 @@ class TopNavigationBarComponent extends React.Component<TopNavigationBarProps> {
         const leftControlElement: BackButtonElement | null = backIcon ? this.renderBackButton(backIcon) : null;
 
         return (
-            <SafeAreaView style={themedStyle.safeArea}>
-                <TopNavigation
-                    alignment='center'
-                    title={title}
-                    subtitle = {subtitle}
-                    leftControl={leftControlElement}
-                />
-            </SafeAreaView>
+            <Appbar style={this.props.themedStyle.appbar}>
+                <Appbar.BackAction></Appbar.BackAction>
+            </Appbar>
         );
     }
 }
 
 export const TopNavigationBar = withStyles(TopNavigationBarComponent, (theme: ThemeType) => ({
-    safeArea: {
+    appbar: {
         backgroundColor: theme['background-basic-color-1'],
     },
 }));

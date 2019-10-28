@@ -15,7 +15,7 @@ export class Helper {
         if (rootOptions.find(item => item.appearingCondition.literals.length > 0)) return true;
         return false;
     }
-
+    
     static makeDataForSection(section: QuestionSection, as: Map<string, Map<string, string>>) {
         const dupe = Helper.getDuplicatingTimes(section, as);
         let toReturn: any[] = []
@@ -84,27 +84,9 @@ export class Helper {
     }
 
 
-    static getValueFromAnswerCache(cache: Map<string, Map<string, string>>, ref: string) {
-        const m = cache.get(ref);
-        if (!m) {
-            return undefined;
-        }
-        const v = m.entries().next();
-        if (!v) {
-            return undefined;
-        }
-    }
+   
 
-    static getAnswerById(store: AnswerState, id: string, path?: number[]): { path: number[], value: string }[] {
-        const m = store.answers.get(id);
-        if (!m) return [];
-        if (path) return [{ path: path, value: m.get(path.join(".")) }];
-        let returnv = [];
-        m.forEach((value, key) => {
-            returnv.push({ path: key.split('.').map(i => parseInt(i)), value: value });
-        });
-        return returnv;
-    }
+
     static transformValueToType(type: IValueType, value: string) {
         switch (type.name) {
             case ANSWER_TYPES.BOOLEAN:
@@ -175,8 +157,45 @@ export class Helper {
         return finalResult;
     }
 
-
-
+   static findValue(values, ref) {
+        if (!values) return undefined;
+        let keys = Object.keys(values);
+        for (let i = 0; i < keys.length; i++) {
+            let key = keys[i];
+            let curr = values[key];
+            if (Array.isArray(curr)) {
+                let val = Helper.findValue(curr[curr.length - 1], ref);
+                if (val) return val;
+            } else {
+                if (key === ref) {
+                    return curr;
+                }
+            }
+        }
+        return undefined;
+    }
+    static getDupeTimes(settings, values){
+        if(!settings) return -1;
+        if (!settings.isEnabled) return -1;
+        else {
+            let times = settings.duplicateTimes;
+    
+            if (times.type === 'number') {
+                return parseInt(times.value);
+            }
+            else {
+                let ref = times.value;
+    
+                let value = Helper.findValue(values, ref);
+                if (value) {
+                    return parseInt(value)
+                } else {
+                    return 0;
+                }
+    
+            }
+        }
+    }
     static collectDependencies(item: QuestionSection | QAQuestion) {
         let apConditionRef: string[] = [];
         let groupConditionRefs: string[] = [];

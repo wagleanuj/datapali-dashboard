@@ -46,7 +46,7 @@ export class RadioInput extends React.Component<RadioInputProps, {}>{
                 key={'radiolist-' + this.props.listKey}
                 listKey={'radiolist-' + this.props.listKey}
                 style={{flex:1}}
-                contentContainerStyle={{flexGrow:1, marginBottom:10}}
+                contentContainerStyle={{flexGrow:1}}
                 keyExtractor={item => item.id}
                 data={this.props.options}
                 renderItem={this.renderListItem}

@@ -1,11 +1,12 @@
 import { getReadablePath } from "dpform";
 import React from "react";
 import { Picker, View } from "react-native";
-import { Button, Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import {  Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { WizardContext } from "../context/wizard";
 import { DAppState } from "../redux/actions/types";
 import { getFilledFormById } from "../redux/selectors/filledFormSelectors";
+import { Appbar, Button } from "react-native-paper";
 
 type ToolbarProps = {
     formId: string;
@@ -25,23 +26,16 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
         super(props);
 
     }
-    renderBackButton(style) {
-        return <Icon {...style} name="arrow-left"></Icon>
-    }
-    renderNextButton(style) {
-        return <Icon  {...style} name="arrow-right"></Icon>
 
-    }
     static contextType = WizardContext;
     render() {
         return (
-            <Layout style={this.props.themedStyle.toolbarGroup}>
+            <Appbar style={this.props.themedStyle.toolbarGroup}>
                 <Button
                     disabled={this.props.backButtonDisabled}
                     style={this.props.themedStyle.toolbarButton}
-                    appearance="ghost"
-                    icon={this.renderBackButton.bind(this)}
-                    onPress={this.props.onBackButtonPress} />
+                    onPress={this.props.onBackButtonPress} >Prev</Button>
+                    {/* <Appbar.Action icon="calendar"></Appbar.Action> */}
                 <View style={this.props.themedStyle.selectContainer}>
                     <Picker
                         selectedValue={this.props.sectionPickerData[this.context.currentRootChildIndex].id}
@@ -59,14 +53,28 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
 
                     </Picker>
                 </View>
+                
                 <Button
                     disabled={this.props.nextButtonDisabled}
                     style={this.props.themedStyle.toolbarButton}
-                    appearance="ghost"
-                    icon={this.renderNextButton.bind(this)}
                     onPress={this.props.onNextButtonPress}
-                />
-            </Layout>
+                >Next</Button>
+            </Appbar>
+            // <Layout style={this.props.themedStyle.toolbarGroup}>
+            //     <Button
+            //         disabled={this.props.backButtonDisabled}
+            //         style={this.props.themedStyle.toolbarButton}
+            //         appearance="ghost"
+
+            //         onPress={this.props.onBackButtonPress} >Prev</Button>
+
+            //     <Button
+            //         disabled={this.props.nextButtonDisabled}
+            //         style={this.props.themedStyle.toolbarButton}
+            //         appearance="ghost"
+            //         onPress={this.props.onNextButtonPress}
+            //     >Next</Button>
+            // </Layout>
         )
     }
 }
@@ -81,8 +89,8 @@ export const Toolbar = withStyles(ToolbarComponent, theme => ({
         alignItems: "center",
         justifyContent: 'space-between',
         height: 48,
-        // backgroundColor: theme['color-primary-100'],
-        borderWidth: 1,
+        backgroundColor: theme['background-basic-color-2'],
+        // borderWidth: 1,
 
     },
     toolbarButton: {

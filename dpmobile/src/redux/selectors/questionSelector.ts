@@ -6,6 +6,7 @@ import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyfor
 import { Helper } from "../helper";
 import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
 import { required } from '../../validators';
+import { getNodeOfRootForm, getRootFormOfFilledForm } from './nodeSelector';
 
 
 export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
@@ -103,8 +104,8 @@ export const getQuestionType = createSelector([getQuestionById],
 export const getValidOptions = createSelector([getSortedOptions, getValuesOfDependencies, getRootFormById],
     (options, vals, questions) => {
         const { groups, rootOptions } = options;
-        let g = groups.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions));
-        let o = rootOptions.filter(item => Helper.evaluateCondition(item.appearingCondition, vals, questions));
+        let g = groups.filter((item: any) => Helper.evaluateCondition(item.appearingCondition, vals, questions));
+        let o = rootOptions.filter((item: any) => Helper.evaluateCondition(item.appearingCondition, vals, questions));
         return {
             groups: g,
             rootOptions: o

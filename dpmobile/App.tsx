@@ -4,7 +4,7 @@ import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import ApolloClient from 'apollo-boost';
 import React from 'react';
 import { AsyncStorage, View } from 'react-native';
-import { ApplicationProvider, IconRegistry, Text } from 'react-native-ui-kitten';
+import { ApplicationProvider, IconRegistry, Text, Modal, Layout, Button } from 'react-native-ui-kitten';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
 import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
@@ -13,6 +13,8 @@ import { APP_CONFIG } from './src/config';
 import { Router } from './src/navigation/routes';
 import { persistor, store } from './src/redux/configureStore';
 import { ThemeContext, ThemeContextType, ThemeKey, themes, ThemeStore } from './src/themes';
+import { Provider as Paper } from 'react-native-paper';
+
 const client = new ApolloClient({
   uri: APP_CONFIG.serverURL
 });
@@ -75,21 +77,27 @@ export default class App extends React.Component<AppProps, AppState> {
 
         <ApplicationLoader assets={{ fonts: fonts, images: [] }}>
           <ThemeContext.Provider value={contextValue}>
+
             <ApplicationProvider
               mapping={mapping}
               theme={themes[this.state.theme]}>
+
               <IconRegistry icons={EvaIconsPack} />
               <DynamicStatusBar currentTheme={this.state.theme} />
-              <PersistGate onBeforeLift={() => {
-                console.log('gate lift');
-              }}
-                loading={<View><Text>Loading..</Text></View>} persistor={persistor}>
-                <ApolloProvider client={client}>
-                  <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
-                </ApolloProvider>
-              </PersistGate>
+
+                <PersistGate onBeforeLift={() => {
+                  console.log('gate lift');
+                }}
+                  loading={<View><Text>Loading..</Text></View>} persistor={persistor}>
+                  <ApolloProvider client={client}>
+
+                    <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
+
+                  </ApolloProvider>
+                </PersistGate>
 
             </ApplicationProvider>
+
           </ThemeContext.Provider>
         </ApplicationLoader>
       </Provider>

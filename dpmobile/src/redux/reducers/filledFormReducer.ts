@@ -46,9 +46,13 @@ export function filledFormReducer(
             return { ...state, byId: payload, ids: Object.keys(payload) };
         case DELETE_FILLED_FORM:
             return produce(state, draft => {
-                delete draft.byId[action.payload.formId];
-                const index = draft.ids.findIndex(item => item === action.payload.formId);
-                if (index > -1) draft.ids.splice(index, 1);
+                const { formIds } = action.payload;
+                formIds.forEach(id => {
+                    delete draft.byId[id];
+                    const index = draft.ids.findIndex(item => item === id);
+                    if (index > -1) draft.ids.splice(index, 1);
+                })
+
             })
 
         case JUMP_TO:
@@ -91,7 +95,7 @@ export function filledFormReducer(
                     form.currentIndex--
                 })
             })();
-     
+
         default:
             return state;
     }

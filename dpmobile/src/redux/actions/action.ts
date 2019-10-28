@@ -38,11 +38,11 @@ export function handleAddNewForm(root: string, userId: string): FilledFormAction
         }
     }
 }
-export function handleDeleteForm(formId: string): FilledFormActions {
+export function handleDeleteForms(formIds: string[]): FilledFormActions {
     return {
         type: DELETE_FILLED_FORM,
         payload: {
-            formId: formId
+            formIds: formIds
         }
     }
 }
