@@ -4,7 +4,7 @@ import { createSelector } from "reselect";
 import { FilledForm } from "../actions/types";
 import { getFilledFormById } from "./filledFormSelectors";
 import { getFilledFormValues } from "./questionSelector";
-import { $getNodeId, $getRootForm, $getValueLocationName, $getRootFormId } from "./shared";
+import { $getNodeId, $getRootForm, $getValueLocationName, $getRootFormId, $getFilledForms, $getState } from "./shared";
 import { Helper } from "../helper";
 import { APP_CONFIG } from "../../config";
 
@@ -64,6 +64,19 @@ export const getResponderName = createSelector([getRootFormOfFilledForm, getFill
     return _.get(values, APP_CONFIG.responderValueLocation);
 })
 
+export const getFilledFormsTransformedData = createSelector([$getFilledForms, $getState],
+    (filledForms, state) => {
+      return Object.keys(filledForms.byId).map(item => {
+        const rootId = filledForms.byId[item].formId;
+        return {
+          formId: item,
+          rootId: rootId,
+          startedDate: filledForms.byId[item].startedDate,
+          count: getValidQuestionsNumber(state, { formId: item, rootId: rootId })
+        }
+      })
+    })
+  
 
 function findValue(values, ref) {
     if (!values) return undefined;

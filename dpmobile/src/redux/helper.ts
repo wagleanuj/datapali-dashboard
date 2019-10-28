@@ -174,6 +174,16 @@ export class Helper {
         }
         return undefined;
     }
+    static getProgress(counts){
+        let filled = 0;
+        let required = 0;
+        Object.keys(counts).forEach((key) => {
+            const c = counts[key];
+            filled += c.filled;
+            required += c.required;
+        })
+        return filled / required;
+    }
     static getDupeTimes(settings, values){
         if(!settings) return -1;
         if (!settings.isEnabled) return -1;

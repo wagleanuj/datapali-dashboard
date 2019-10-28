@@ -1,13 +1,10 @@
 import { createSelector } from 'reselect';
-import { $getFilledForms, $getFormId } from './shared';
+import { $getFilledForms, $getFormId, $getState } from './shared';
+import { getValidQuestionsNumber } from './nodeSelector';
 
 
 
 export const getFilledFormById = createSelector([$getFilledForms, $getFormId],
-    (filledForms, formId) => filledForms.byId[formId]);
+  (filledForms, formId) => filledForms.byId[formId]);
 
 
-export const getFIlledFormsTransformedData = createSelector([$getFilledForms],
-    (filledForms) => {
-      return   Object.keys(filledForms.byId).map(item => ({ formId: item, rootId: filledForms.byId[item].formId, startedDate: filledForms.byId[item].startedDate }))
-    })

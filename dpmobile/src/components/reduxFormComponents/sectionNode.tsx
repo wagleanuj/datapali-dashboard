@@ -114,6 +114,7 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
             <ScrollableTabView
                 initialPage={0}
                 locked
+                tabBarUnderlineStyle={this.props.themedStyle.tabUnderlineStyle}
                 tabBarTextStyle={this.props.themedStyle.tabBarTextStyle}
                 renderTabBar={() => <ScrollableTabBar />}
             >
@@ -225,6 +226,13 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
     },
     tabStyle: {
         backgroundColor: 'red'
+    },
+    tab:{
+        backgroundColor:theme['background-basic-color-1']
+    },
+    tabUnderlineStyle:{
+        backgroundColor: theme['color-primary-default']
+
     }
 }));
 

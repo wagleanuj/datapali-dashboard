@@ -1,4 +1,6 @@
 import { DAppState } from "../actions/types";
+import { createSelector } from "reselect";
+import { getValidQuestionsNumber } from "./nodeSelector";
 
 export const $getRootForm = (state: DAppState, props) => state.rootForms;
 export const $getRootFormId = (state: DAppState, props) => props.rootId;
@@ -12,3 +14,4 @@ export const $getSectionId = (state, props) => props.sectionId;
 export const $getValueLocationName = (state, props) => props.valueLocationName;
 export const $getFormId = (state: DAppState, props: any, formId: string): string => props.formId || formId;
 export const $getNodeId = (state: DAppState, props: any, id: string) => id|| props.id|| props.sectionId|| props.questionId;
+
