@@ -20,7 +20,6 @@ const { Controls } = require("./models/controls");
 const { Level } = require("./models/Level");
 const {FormFile} = require("./models/form");
 
-const { storyLevels } = require("./storyLevels/index");
 const SALT_WORK_FACTOR = 10;
 const bcrypt = require("bcrypt-nodejs");
 

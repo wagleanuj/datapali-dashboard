@@ -1,12 +1,13 @@
 import { IDupeSettings } from "dpform";
 import _ from "lodash";
+import { getFormValues } from "redux-form";
 import { createSelector } from "reselect";
+import { APP_CONFIG } from "../../config";
 import { FilledForm } from "../actions/types";
+import { Helper } from "../helper";
 import { getFilledFormById } from "./filledFormSelectors";
 import { getFilledFormValues } from "./questionSelector";
-import { $getNodeId, $getRootForm, $getValueLocationName, $getRootFormId, $getFilledForms, $getState } from "./shared";
-import { Helper } from "../helper";
-import { APP_CONFIG } from "../../config";
+import { $getFilledForms, $getNodeId, $getRootForm, $getRootFormId, $getState, $getValueLocationName } from "./shared";
 
 
 export const getRootFormOfFilledForm = createSelector([getFilledFormById, $getRootForm], (filledForm: FilledForm, rootForms) => {
@@ -53,31 +54,32 @@ export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSect
         }
     }
 })
-export const getValidQuestionsNumber = createSelector([getRootFormOfFilledForm, getFilledFormValues,$getRootFormId], (root, values, rid) => {
+export const getValidQuestionsNumber = createSelector([getRootFormOfFilledForm, getFilledFormValues, $getRootFormId], (root, values, rid) => {
     const count = {}
     checkSection(root[rid], values, root, "", count, true);
     return count;
 });
 
 
-export const getResponderName = createSelector([getRootFormOfFilledForm, getFilledFormValues], (root, values)=>{
+export const getResponderName = createSelector([getRootFormOfFilledForm, getFilledFormValues], (root, values) => {
     return _.get(values, APP_CONFIG.responderValueLocation);
 })
 
 export const getFilledFormsTransformedData = createSelector([$getFilledForms, $getState],
     (filledForms, state) => {
-      return Object.keys(filledForms.byId).map(item => {
-        const rootId = filledForms.byId[item].formId;
-        return {
-          formId: item,
-          rootId: rootId,
-          startedDate: filledForms.byId[item].startedDate,
-          count: getValidQuestionsNumber(state, { formId: item, rootId: rootId }),
-          submitted: filledForms.byId[item].submitted
-        }
-      })
+        return Object.keys(filledForms.byId).map(item => {
+            const rootId = filledForms.byId[item].formId;
+            return {
+                formId: item,
+                rootId: rootId,
+                startedDate: filledForms.byId[item].startedDate,
+                count: getValidQuestionsNumber(state, { formId: item, rootId: rootId }),
+                submitted: filledForms.byId[item].submitted,
+                values: getFormValues(item)(state),
+            }
+        })
     })
-  
+
 
 function findValue(values, ref) {
     if (!values) return undefined;
@@ -97,7 +99,7 @@ function findValue(values, ref) {
     return undefined;
 }
 
-function checkSection(section, values, root, sectionLocation, counts: any = {}, isRoot:boolean=false) {
+function checkSection(section, values, root, sectionLocation, counts: any = {}, isRoot: boolean = false) {
     const appears = section.appearingCondition ? Helper.evaluateCondition(section.appearingCondition, values, root) : true;
     if (!counts[section.id]) counts[section.id] = { filled: 0, required: 0, unfilled: [], dupe: -1 }
     if (appears) {
@@ -106,13 +108,13 @@ function checkSection(section, values, root, sectionLocation, counts: any = {}, 
         counts[section.id].dupe = dupe;
         for (let i = 0; i < dupeTimes; i++) {
             section.childNodes.forEach((item, index) => {
-                let location = isRoot? [item]:_.toPath(sectionLocation).concat(i.toString(), item);
+                let location = isRoot ? [item] : _.toPath(sectionLocation).concat(i.toString(), item);
                 if (root[item]._type === "question") {
                     const isRequired = !!root[item].isRequired;
                     if (isRequired) {
                         let isFilled = !!_.get(values, location);
                         if (isFilled) counts[section.id].filled++;
-                        else{
+                        else {
                             counts[section.id].unfilled.push(location);
                         }
                         counts[section.id].required++;

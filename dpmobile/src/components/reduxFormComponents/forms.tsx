@@ -1,3 +1,4 @@
+import ApolloClient, { gql } from "apollo-boost"
 import _ from "lodash"
 import React, { Dispatch } from "react"
 import { ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from "react-native"
@@ -11,14 +12,22 @@ import { NavigationScreenProps } from "react-navigation"
 import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
 import { Action } from "redux"
+import { APP_CONFIG } from "../../config"
 import { handleAddNewForm, handleDeleteForms, handleMarkFormAsSubmitted } from "../../redux/actions/action"
 import { AvailableFormsState, DAppState, FilledFormsState } from "../../redux/actions/types"
 import { Helper } from "../../redux/helper"
+import { getUserToken } from "../../redux/selectors/authSelector"
 import { getFilledFormsTransformedData, getResponderName, getValidQuestionsNumber } from "../../redux/selectors/nodeSelector"
 import { getRootFormById } from "../../redux/selectors/questionSelector"
 import { textStyle } from "../../themes/style"
 import { AppbarStyled } from "../Appbar.component"
-
+const SUBMIT = gql`
+mutation SaveForm($filledForm: FilledFormInput!){
+    saveFilledForm(filledForm: $filledForm){
+        completedDate
+    }
+}
+`
 type FormItemType = {
     formId: string,
     startedDate: string,
@@ -214,9 +223,11 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             })
         }
     }
-    onSubmitHandler() {
+    async onSubmitHandler() {
         if (this.state.currentView === ViewModes.COMPLETED) {
             //submit logic
+            const sel = this.state.selectedItems[this.state.currentView].map(item => this.props.filledFormsData.find(i => i.formId === item));
+            await Promise.all(sel.map(s => this.submit(s)));
             this.props.handleMarkAsSubmitted(this.state.selectedItems[this.state.currentView]);
             this.setState(prevState => {
                 const sel = _.clone(prevState.selectedItems);
@@ -225,12 +236,37 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     selectedItems: sel
                 }
 
-            },()=>{
+            }, () => {
                 this.props.navigation.setParams({
                     selectedItems: this.state.selectedItems
                 })
             })
         }
+    }
+    async submit(form: any) {
+        const cl = new ApolloClient({
+            uri: APP_CONFIG.localServerURL,
+            request: operation => {
+                operation.setContext({
+                    headers: {
+                        authorization: this.props.authToken,
+                    },
+                });
+            },
+        });
+        const { data, errors, loading } = await cl.mutate({
+            mutation: SUBMIT,
+            variables: {
+                filledForm: {
+                    id: form.formId,
+                    formId: form.rootId,
+                    completedDate: new Date().getTime().toString(),
+                    startedDate: form.startedDate.toString(),
+                    answerStore: JSON.stringify(form.values),
+                }
+            }
+        });
+
     }
 
     onScrollEnd(event) {
@@ -421,10 +457,13 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
 
 
 const mapStateToProps = (state: DAppState, props: FilledFormProps) => {
+    const filledFormsData = getFilledFormsTransformedData(state, props);
+
     return {
         availableForms: state.rootForms.byId,
-        filledFormsData: getFilledFormsTransformedData(state, props),
-        userId: state.user.id
+        filledFormsData: filledFormsData,
+        userId: state.user.id,
+        authToken: getUserToken(state, props),
     }
 }
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({

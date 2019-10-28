@@ -23,8 +23,8 @@ const typeDefs =
 
     type FilledForm {
         id: ID!
-        startedDate: Int!
-        completedDate: Int!
+        startedDate: String!
+        completedDate: String!
         formId: String!
         filledBy: String!
         answerStore: String!
@@ -32,8 +32,8 @@ const typeDefs =
 
     input FilledFormInput{
         id: ID!
-        startedDate: Int!
-        completedDate:Int
+        startedDate: String!
+        completedDate:String
         formId: String!
         answerStore: String!
     }

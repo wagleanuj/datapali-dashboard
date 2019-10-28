@@ -7,8 +7,9 @@ import { Button as Btn } from "react-native-paper";
 import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
+import { initialize } from "redux-form";
 import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redux/actions/action";
-import { User } from "../redux/actions/types";
+import { FilledForm, User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
 import { getUserToken } from "../redux/selectors/authSelector";
 
@@ -42,6 +43,7 @@ interface ComponentProps {
     setUser: (user: User) => void;
     setFilledForms: (ffs: any) => void;
     setRootForms: (rr: any) => void;
+    initializeForm: (formId: string, values: any) => void;
 }
 
 export type SignInProps = ThemedComponentProps & ViewProps & ComponentProps & NavigationScreenProps;
@@ -106,6 +108,18 @@ class SignInComponent extends React.Component<SignInProps, State> {
             rootForms[v.id] = tree;
         });
         let filledForms = {};//TODO:: later
+        login.user.filledForms.forEach(v => {
+            if (typeof v.answerStore === 'string') v.content = JSON.parse(v.answerStore);
+            filledForms[v.id] = {
+                completedDate: parseInt(v.completedDate),
+                filledBy: v.filledBy,
+                formId: v.formId,
+                id: v.id,
+                startedDate: parseInt(v.startedDate),
+                submitted: true,
+            } as FilledForm;
+            this.props.initializeForm(v.id, v.answerStore);
+        })
         this.props.setRootForms(rootForms);
         this.props.setUser(user);
         this.props.setFilledForms(filledForms);
@@ -221,6 +235,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
         setRootForms: (forms: any) => dispatch(handleSetRootForms(forms)),
         setFilledForms: (forms: any) => dispatch(handleSetFilledForms(forms)),
         setUser: (user: User) => dispatch(handleSetUser(user)),
+        initializeForm: (formId: string, formValues: any) => dispatch(initialize(formId, formValues))
     }
 }
 export const ConnectedLoginScreen = connect(mapStateToProps, mapDispatchToProps)(SignIn);
