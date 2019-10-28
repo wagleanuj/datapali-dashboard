@@ -1,4 +1,4 @@
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT, TOGGLE_PAGER_MODE, SET_THEME } from ".";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT, TOGGLE_PAGER_MODE, SET_THEME, MARK_AS_SUBMITTED } from ".";
 import { FilledForm, User } from "./types";
 
 export function handleNext(formId: string): FilledFormActions {
@@ -46,7 +46,14 @@ export function handleDeleteForms(formIds: string[]): FilledFormActions {
         }
     }
 }
-
+export function handleMarkFormAsSubmitted(formIds: string[]): FilledFormActions {
+    return {
+        type: MARK_AS_SUBMITTED,
+        payload: {
+            formIds: formIds
+        }
+    }
+}
 export function handleUpdateAnswer(formId: string, path: number[], questionId: string, value: string) {
     return {
         type: UPDATE_FORM_ANSWER,

@@ -1,17 +1,15 @@
 import { getRandomId } from "dpform";
 import produce from "immer";
 import _ from "lodash";
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, UPDATE_FILLED_FORMS } from "../actions";
+import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, MARK_AS_SUBMITTED, UPDATE_FILLED_FORMS } from "../actions";
 import { FilledForm, FilledFormsState } from "../actions/types";
-import { Helper } from "../helper";
 const FilledFormItem: FilledForm = {
     completedDate: undefined,
-    currentIndex: undefined,
     filledBy: undefined,
     formId: undefined,
-    history: undefined,
     id: undefined,
-    startedDate: undefined
+    startedDate: undefined,
+    submitted: false,
 }
 
 const initialState: FilledFormsState = {
@@ -32,7 +30,6 @@ export function filledFormReducer(
                 filledBy: userId,
                 formId: rootId,
                 id: getRandomId("filledform-"),
-                currentIndex: 0,
 
             };
             let newState = produce(state, draft => {
@@ -55,46 +52,15 @@ export function filledFormReducer(
 
             })
 
-        case JUMP_TO:
-            const { formId, index: newIndex } = action.payload
-            let newHistory = state[formId].history.slice(0);
-            let currentIndex = state[formId].currentIndex;
-            const nextSection = state[formId].content[newIndex];
-            if (!nextSection) return state;
-            const isValid = Helper.evaluateCondition(nextSection.appearingCondition, state.answerStore, state.questionStore);
-            if (!isValid) return state;
-            if (newIndex > currentIndex) {
-                newHistory.push(currentIndex);
-                for (let i = newHistory[newHistory.length - 1] + 1; i < newIndex; i++) {
-                    newHistory.push(i);
-                }
-            } else if (newIndex < currentIndex) {
-                newHistory = [];
-                for (let i = 0; i < newIndex; i++) {
-                    newHistory.push(i);
-                }
-            }
-            return {
-                ...state,
-                history: newHistory,
-                currentSectionIndex: newIndex
-            }
-        case NEXT_FORM_ITEM:
-            return (function () {
-                const { formId } = action.payload;
-                return produce(state, draft => {
-                    const form = draft[formId];
-                    form.currentIndex++
+
+        case MARK_AS_SUBMITTED:
+            return produce(state, draft => {
+                const { formIds } = action.payload;
+                formIds.forEach(id => {
+                    draft.byId[id].submitted = true;
+
                 })
-            })()
-        case PREV_FORM_ITEM:
-            return (function () {
-                const { formId } = action.payload;
-                return produce(state, draft => {
-                    const form = draft[formId];
-                    form.currentIndex--
-                })
-            })();
+            })
 
         default:
             return state;

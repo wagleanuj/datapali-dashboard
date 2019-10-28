@@ -1,12 +1,12 @@
-import { ThemedComponentProps, Button } from "react-native-ui-kitten";
 import { Component } from "react";
+import { Button, ThemedComponentProps } from "react-native-ui-kitten";
 
 type ValidationPageProps = {
 
-}& ThemedComponentProps;
+} & ThemedComponentProps;
 
 class ValidationPage extends Component<ValidationPageProps, {}>{
-    render(){
+    render() {
         return (
             <Button></Button>
         )

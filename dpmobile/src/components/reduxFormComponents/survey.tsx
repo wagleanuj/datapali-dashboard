@@ -17,13 +17,24 @@ type ComponentProps = {
 }
 type SurveyProps = SurveyState & NavigationScreenProps & ThemedComponentProps & ComponentProps;
 const routeName = "Survey Form";
-export class Survey_ extends React.Component<SurveyProps>{
+export class Survey_ extends React.Component<SurveyProps, { validationResultVisible: boolean }>{
+    state = {
+        validationResultVisible: false,
+    }
     static navigationOptions = (props) => {
 
         const renderLeftIcon = () => {
             return <TopNavigationAction onPress={() => {
                 props.navigation.goBack(KEY_NAVIGATION_BACK)
             }} icon={(style) => <Icon {...style} name="arrow-back" />} />
+        }
+        const renderRightControls = () => {
+            return [
+                <TopNavigationAction
+                    onPress={props.navigation.getParam("submitHandler")}
+                    icon={(style) => <Icon {...style} name="paper-plane" />}
+                />
+            ]
         }
 
         return {
@@ -34,9 +45,22 @@ export class Survey_ extends React.Component<SurveyProps>{
                 subtitle={routeName}
                 subtitleStyle={textStyle.caption1}
                 leftControl={renderLeftIcon()}
+                rightControls={renderRightControls()}
             />
         }
     }
+    componentDidMount() {
+        this.props.navigation.setParams({
+            submitHandler: this.onSubmitPress.bind(this)
+        })
+    }
+    onSubmitPress() {
+        this.props.navigation.navigate("SubmitView", {
+            formId: this.props.form.id,
+            rootId: this.props.form.formId,
+        })
+    }
+
     handleNext() {
         this.props.handleNext(this.props.form.id)
     }
@@ -47,12 +71,15 @@ export class Survey_ extends React.Component<SurveyProps>{
     render() {
         const { form } = this.props;
         return (
-            // <View style={this.props.themedStyle.container}>
-            <ConnectedWizard
-                formId={form.id}
-                rootId={form.formId}
-            />
-            // </View>
+            <>
+
+                <ConnectedWizard
+                    formId={form.id}
+                    rootId={form.formId}
+                />
+
+
+            </>
 
         )
     }

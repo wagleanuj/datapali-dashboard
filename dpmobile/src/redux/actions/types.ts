@@ -15,9 +15,7 @@ export interface FilledForm {
     formId: string;
     filledBy: string;
     id: string;
-    history?: number[];
-    currentIndex?: number;
-    cache_?: Map<string, Map<string, string>>
+    submitted?: boolean;
 }
 
 export interface AnswerState {

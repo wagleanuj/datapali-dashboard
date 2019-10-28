@@ -1,26 +1,24 @@
-import { getReadablePath, getRandomId } from "dpform";
-import { Accordion } from 'native-base';
-import React, { ReactNode, ReactElement } from "react";
-import { View, ScrollView } from "react-native";
+import { getReadablePath } from "dpform";
+import _ from "lodash";
+import React from "react";
+import { View } from "react-native";
+import Dots from 'react-native-dots-pagination';
 import { FlatList } from "react-native-gesture-handler";
-import { Pagination } from "react-native-snap-carousel";
+import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
 import Swiper from "react-native-swiper";
-import { Text, ThemedComponentProps, withStyles, TabView, Tab, Button, Modal } from 'react-native-ui-kitten';
+import { Text, ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
 import { WizardContext } from "../../context/wizard";
 import { DAppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId, getValidQuestionsNumber } from "../../redux/selectors/nodeSelector";
 import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
-import ScrollableTabView, { ScrollableTabBar } from "react-native-scrollable-tab-view";
-import Dots from 'react-native-dots-pagination';
 
 
 type CurrentEdit = {
     iteration: number;
     item: string;
 }
-import _ from "lodash";
 type SectionNodeProps = {
     sectionId: string;
     duplicateTimes: number;
@@ -56,7 +54,7 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
         const newPath = hideIteration ? path.concat(item.index) : path.concat(iteration, item.index);
         const newLocation = locationName.concat(`[${iteration}].${item.item}`);
         return <ConnectedFormNode
-            setInputRef={(r) => this.setRefs(newLocation,r )}
+            setInputRef={(r) => this.setRefs(newLocation, r)}
             key={'formnode' + newLocation}
             id={item.item}
             locationName={newLocation}
@@ -67,10 +65,10 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
         />
 
     }
-    onSubmit = (currIndex: number, iteration:number=0) => {
-        if (this.swiper && this.props.childNodes[currIndex+1]) this.swiper.scrollBy(1);
-        if (this.flatlist && this.props.childNodes[currIndex+1]) {
-            const location =_.toPath(this.props.locationName).concat(iteration.toString(), this.props.childNodes[currIndex+1]);
+    onSubmit = (currIndex: number, iteration: number = 0) => {
+        if (this.swiper && this.props.childNodes[currIndex + 1]) this.swiper.scrollBy(1);
+        if (this.flatlist && this.props.childNodes[currIndex + 1]) {
+            const location = _.toPath(this.props.locationName).concat(iteration.toString(), this.props.childNodes[currIndex + 1]);
             this.moveFocusTo(location);
         }
     }
@@ -97,19 +95,19 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
         );
 
     }
-    moveFocusTo(location:any[]){
+    moveFocusTo(location: any[]) {
         this.context.handleSubmitOrSwipe(location);
     }
 
     onPageChange = (index: number, iteration: number = 0) => {
-        const nextLocation =_.toPath(this.props.locationName).concat(iteration.toString(), this.props.childNodes[index]);
+        const nextLocation = _.toPath(this.props.locationName).concat(iteration.toString(), this.props.childNodes[index]);
         this.moveFocusTo(nextLocation);
         this.context.updatePagerModeIndex(this.props.sectionId, index, iteration);
     }
 
     get TabbedView() {
         let data = Array.from(new Array(this.props.duplicateTimes).keys()).map(item => ({ title: `Record ${item + 1}`, id: item }));
-        const {pagerModeIndices} = this.context;
+        const { pagerModeIndices } = this.context;
         return (
             <ScrollableTabView
                 initialPage={0}
@@ -180,7 +178,7 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
         return (
             <View key={'showcase' + this.props.locationName} style={this.props.themedStyle.container} >
 
-               {!this.props.isAlone && <View style={this.props.themedStyle.headingContainer}>
+                {!this.props.isAlone && <View style={this.props.themedStyle.headingContainer}>
                     <Text style={this.props.themedStyle.headingText}>
                         {`${getReadablePath(this.props.path)} : ${this.props.displayTitle}`}
                     </Text>
@@ -227,10 +225,10 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
     tabStyle: {
         backgroundColor: 'red'
     },
-    tab:{
-        backgroundColor:theme['background-basic-color-1']
+    tab: {
+        backgroundColor: theme['background-basic-color-1']
     },
-    tabUnderlineStyle:{
+    tabUnderlineStyle: {
         backgroundColor: theme['color-primary-default']
 
     }

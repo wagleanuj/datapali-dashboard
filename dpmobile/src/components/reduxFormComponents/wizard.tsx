@@ -1,4 +1,5 @@
 import produce from "immer";
+import _ from "lodash";
 import React, { ReactNode } from "react";
 import { View } from "react-native";
 import { connect } from "react-redux";
@@ -6,12 +7,10 @@ import { InjectedFormProps, reduxForm } from "redux-form";
 import { WizardContext } from "../../context/wizard";
 import { DAppState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
+import { getValidQuestionsNumber } from "../../redux/selectors/nodeSelector";
+import { getPagerModeStatus } from "../../redux/selectors/settingsSelector";
 import { ConnectedToolbar } from "../toolbar";
 import { ConnectedFormNode } from "./sectionNode";
-import { getPagerModeStatus } from "../../redux/selectors/settingsSelector";
-import { Appbar } from "react-native-paper";
-import _ from "lodash";
-import { getValidQuestionsNumber } from "../../redux/selectors/nodeSelector";
 
 type WizardProviderProps = {
     children: ReactNode,

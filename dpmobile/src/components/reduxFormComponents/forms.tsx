@@ -1,24 +1,23 @@
+import _ from "lodash"
 import React, { Dispatch } from "react"
-import { ListRenderItemInfo, RefreshControl, View, TouchableOpacity } from "react-native"
-import { FAB, TouchableRipple, Avatar, Appbar, Button as PaperButton } from "react-native-paper"
+import { ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from "react-native"
+import { FlatList } from "react-native-gesture-handler"
+import Modal from "react-native-modal"
+import { Appbar, Avatar, Button as PaperButton, FAB, TouchableRipple } from "react-native-paper"
 import ProgressBar from 'react-native-progress/Bar'
-import { SwipeListView } from "react-native-swipe-list-view"
-import { Button, Icon, Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles, ButtonGroup } from "react-native-ui-kitten"
+import ScrollableTabView from "react-native-scrollable-tab-view"
+import { Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from "react-native-ui-kitten"
 import { NavigationScreenProps } from "react-navigation"
 import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
 import { Action } from "redux"
-import { handleAddNewForm, handleDeleteForms } from "../../redux/actions/action"
-import { DAppState, AvailableFormsState, FilledFormsState } from "../../redux/actions/types"
+import { handleAddNewForm, handleDeleteForms, handleMarkFormAsSubmitted } from "../../redux/actions/action"
+import { AvailableFormsState, DAppState, FilledFormsState } from "../../redux/actions/types"
+import { Helper } from "../../redux/helper"
+import { getFilledFormsTransformedData, getResponderName, getValidQuestionsNumber } from "../../redux/selectors/nodeSelector"
 import { getRootFormById } from "../../redux/selectors/questionSelector"
 import { textStyle } from "../../themes/style"
-import _ from "lodash"
-import { getValidQuestionsNumber, getResponderName, getFilledFormsTransformedData } from "../../redux/selectors/nodeSelector"
 import { AppbarStyled } from "../Appbar.component"
-import Modal from "react-native-modal";
-import ScrollableTabView from "react-native-scrollable-tab-view"
-import { Helper } from "../../redux/helper"
-import { FlatList } from "react-native-gesture-handler"
 
 type FormItemType = {
     formId: string,
@@ -38,6 +37,7 @@ type ComponentProps = {
     userId: string;
     handleAddNewForm: (root: string, userId: string) => void;
     handleDeleteForms: (formId: string[]) => void;
+    handleMarkAsSubmitted: (formIds: string[]) => void;
 
 }
 type FilledFormProps = FilledFormsState & ThemedComponentProps & NavigationScreenProps & ComponentProps
@@ -55,6 +55,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
         const selectedItems = navigation.getParam("selectedItems");
         const onDeleteHandler = navigation.getParam("onDeletePressed");
         const onCloseHandler = navigation.getParam("onClosePressed");
+        const onSubmitHandler = navigation.getParam("onSubmitPressed");
         const currentView = navigation.getParam("currentView");
         const currentSelection = selectedItems && selectedItems[currentView];
         return {
@@ -64,6 +65,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     <AppbarStyled>
                         <Appbar.Action icon="close" onPress={onCloseHandler} />
                         <Appbar.Content title={currentSelection.length + " Selected"} />
+                        {currentView === ViewModes.COMPLETED && <Appbar.Action icon="send" onPress={() => onSubmitHandler()} />}
                         <Appbar.Action icon="delete" onPress={() => onDeleteHandler()} />
                     </AppbarStyled>
                     :
@@ -114,6 +116,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                 onDeletePressed: this.openDeleteModal.bind(this),
                 onClosePressed: this.deselectAll.bind(this),
                 currentView: this.state.currentView,
+                onSubmitPressed: this.onSubmitHandler.bind(this),
             })
         });
     }
@@ -211,6 +214,24 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             })
         }
     }
+    onSubmitHandler() {
+        if (this.state.currentView === ViewModes.COMPLETED) {
+            //submit logic
+            this.props.handleMarkAsSubmitted(this.state.selectedItems[this.state.currentView]);
+            this.setState(prevState => {
+                const sel = _.clone(prevState.selectedItems);
+                sel[prevState.currentView] = [];
+                return {
+                    selectedItems: sel
+                }
+
+            },()=>{
+                this.props.navigation.setParams({
+                    selectedItems: this.state.selectedItems
+                })
+            })
+        }
+    }
 
     onScrollEnd(event) {
         if (!this.state.fabVisible) {
@@ -268,12 +289,12 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             </>
         )
     }
-    onTabChange(index: number){
+    onTabChange(index: number) {
         const values = Object.keys(ViewModes);
         const newView = ViewModes[values[index]];
         this.setState({
             currentView: newView
-        }, ()=>{
+        }, () => {
             this.props.navigation.setParams({
                 currentView: newView,
             })
@@ -313,17 +334,16 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                         tabBarTextStyle={themedStyle.tabBarTextStyle}
                         tabBarActiveTextColor={this.props.theme['color-primary-default']}
                         tabBarUnderlineStyle={themedStyle.tabBarUnderlineStyle}
-                        locked
-                        onChangeTab={({i})=>this.onTabChange(i)}
+                        onChangeTab={({ i }) => this.onTabChange(i)}
                     >
                         <View tabStyle={themedStyle.tab} style={{ flex: 1, alignItems: 'center', borderWidth: 0 }} tabLabel="In Progress">
-                            {this.getView('inprogress')}
+                            {this.getView(ViewModes.IN_PROGRESS)}
                         </View>
                         <View style={this.props.themedStyle.container} tabLabel="Completed">
-                            {this.getView('completed')}
+                            {this.getView(ViewModes.COMPLETED)}
                         </View>
                         <View style={this.props.themedStyle.container} tabLabel="Submitted">
-                            {this.getView('submitted')}
+                            {this.getView(ViewModes.SUBMITTED)}
                         </View>
 
                     </ScrollableTabView>
@@ -410,7 +430,8 @@ const mapStateToProps = (state: DAppState, props: FilledFormProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<Action<any>>) => ({
     // handleRefresh: () => dispatch(handleNext()),
     handleAddNewForm: (rootId: string, userId: string) => dispatch(handleAddNewForm(rootId, userId)),
-    handleDeleteForms: (formIds: string[]) => dispatch(handleDeleteForms(formIds))
+    handleDeleteForms: (formIds: string[]) => dispatch(handleDeleteForms(formIds)),
+    handleMarkAsSubmitted: (formIds: string[]) => dispatch(handleMarkFormAsSubmitted(formIds))
 });
 export const FilledFormsList = connect(mapStateToProps, mapDispatchToProps)(FilledFormStyled);
 
@@ -560,7 +581,7 @@ const mapStateToFormItemProps = (state, props) => {
     const counts = getValidQuestionsNumber(state, props);
     return {
         counts: counts,
-        formName: rootForm.name || "Main Form",
+        formName: rootForm[props.rootId].name || "Main Form",
         responderName: getResponderName(state, props),
     }
 }

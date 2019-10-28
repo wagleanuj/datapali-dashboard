@@ -72,7 +72,8 @@ export const getFilledFormsTransformedData = createSelector([$getFilledForms, $g
           formId: item,
           rootId: rootId,
           startedDate: filledForms.byId[item].startedDate,
-          count: getValidQuestionsNumber(state, { formId: item, rootId: rootId })
+          count: getValidQuestionsNumber(state, { formId: item, rootId: rootId }),
+          submitted: filledForms.byId[item].submitted
         }
       })
     })
@@ -98,10 +99,11 @@ function findValue(values, ref) {
 
 function checkSection(section, values, root, sectionLocation, counts: any = {}, isRoot:boolean=false) {
     const appears = section.appearingCondition ? Helper.evaluateCondition(section.appearingCondition, values, root) : true;
-    if (!counts[section.id]) counts[section.id] = { filled: 0, required: 0, unfilled: [] }
+    if (!counts[section.id]) counts[section.id] = { filled: 0, required: 0, unfilled: [], dupe: -1 }
     if (appears) {
         const dupe = Helper.getDupeTimes(section.duplicatingSettings, values);
         const dupeTimes = dupe === -1 ? 1 : dupe;
+        counts[section.id].dupe = dupe;
         for (let i = 0; i < dupeTimes; i++) {
             section.childNodes.forEach((item, index) => {
                 let location = isRoot? [item]:_.toPath(sectionLocation).concat(i.toString(), item);

@@ -57,6 +57,13 @@ export interface DeleteFilledForm {
         formIds: string[]
     }
 }
+export const MARK_AS_SUBMITTED = 'mark-as-submitted';
+export interface MarkFormAsSubmitted {
+    type: typeof MARK_AS_SUBMITTED;
+    payload: {
+        formIds: string[]
+    }
+}
 
 export const UPDATE_FORM_ANSWER = 'update-form-answer';
 export interface UpdateFormAnswer {
@@ -93,7 +100,7 @@ export interface JumpTo {
         index: number;
     }
 }
-export type FilledFormActions = AddFilledForm | UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo;
+export type FilledFormActions = AddFilledForm | UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo|MarkFormAsSubmitted;
 
 //available forms action types
 
