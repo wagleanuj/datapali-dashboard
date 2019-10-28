@@ -18,12 +18,19 @@ import { AppbarStyled } from "../Appbar.component"
 import Modal from "react-native-modal";
 import ScrollableTabView from "react-native-scrollable-tab-view"
 import { Helper } from "../../redux/helper"
+import { FlatList } from "react-native-gesture-handler"
 
 type FormItemType = {
     formId: string,
     startedDate: string,
     rootId: string,
     count: any,
+}
+enum ViewModes {
+    IN_PROGRESS = 'inprogress',
+    COMPLETED = "completed",
+    SUBMITTED = "submitted"
+
 }
 type ComponentProps = {
     filledFormsData: FormItemType[];
@@ -36,9 +43,10 @@ type ComponentProps = {
 type FilledFormProps = FilledFormsState & ThemedComponentProps & NavigationScreenProps & ComponentProps
 type FilledFormState = {
     fabVisible: boolean;
-    selectedItems: string[];
+    selectedItems: { [key: string]: string[] };
     deleteModalVisible: boolean;
     toDelete: string[];
+    currentView: ViewModes;
 }
 const routeName = "Forms";
 export class FilledFormsComponent extends React.Component<FilledFormProps, FilledFormState>{
@@ -47,14 +55,18 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
         const selectedItems = navigation.getParam("selectedItems");
         const onDeleteHandler = navigation.getParam("onDeletePressed");
         const onCloseHandler = navigation.getParam("onClosePressed");
+        const currentView = navigation.getParam("currentView");
+        const currentSelection = selectedItems && selectedItems[currentView];
         return {
             header: () => {
 
-                return selectedItems && selectedItems.length > 0 ? <AppbarStyled>
-                    <Appbar.Action icon="close" onPress={onCloseHandler} />
-                    <Appbar.Content title={selectedItems.length + " Selected"} />
-                    <Appbar.Action icon="delete" onPress={() => onDeleteHandler(selectedItems)} />
-                </AppbarStyled> :
+                return currentSelection && currentSelection.length > 0 ?
+                    <AppbarStyled>
+                        <Appbar.Action icon="close" onPress={onCloseHandler} />
+                        <Appbar.Content title={currentSelection.length + " Selected"} />
+                        <Appbar.Action icon="delete" onPress={() => onDeleteHandler()} />
+                    </AppbarStyled>
+                    :
                     <TopNavigation
                         style={{ height: Header.HEIGHT }}
                         alignment='center'
@@ -70,9 +82,10 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
     }
     state = {
         fabVisible: true,
-        selectedItems: [],
+        selectedItems: {},
         deleteModalVisible: false,
-        toDelete: []
+        toDelete: [],
+        currentView: ViewModes.IN_PROGRESS
     }
 
     loadSurveyForm(id: string) {
@@ -83,13 +96,14 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
     }
     toggleItemSelection(id: string) {
         this.setState(prevState => {
-            let cloned = prevState.selectedItems.slice();
-            let foundIndex = cloned.findIndex(item => item === id);
+            const cloned = _.clone(prevState.selectedItems);
+            if (!cloned[this.state.currentView]) cloned[this.state.currentView] = [];
+            let foundIndex = cloned[this.state.currentView].findIndex(item => item === id);
             if (foundIndex > -1) {
-                cloned.splice(foundIndex, 1);
+                cloned[this.state.currentView].splice(foundIndex, 1);
             }
             else {
-                cloned.push(id);
+                cloned[this.state.currentView].push(id);
             }
             return {
                 selectedItems: cloned
@@ -98,30 +112,35 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             this.props.navigation.setParams({
                 selectedItems: this.state.selectedItems,
                 onDeletePressed: this.openDeleteModal.bind(this),
-                onClosePressed: this.deselectAll.bind(this)
+                onClosePressed: this.deselectAll.bind(this),
+                currentView: this.state.currentView,
             })
         });
     }
 
     deselectAll() {
-        this.setState({
-            selectedItems: []
+        this.setState(prevState => {
+            const sel = _.clone(prevState.selectedItems);
+            sel[this.state.currentView] = [];
+            return {
+                selectedItems: sel
+            }
         }, () => {
             this.props.navigation.setParams({
                 selectedItems: this.state.selectedItems,
-
+                currentView: this.state.currentView,
             })
         })
 
     }
-    renderItem = (item: ListRenderItemInfo<FormItemType>) => {
-
+    renderItem = (item: ListRenderItemInfo<FormItemType>, viewName: ViewModes) => {
+        const selected = this.state.selectedItems[viewName] && this.state.selectedItems[viewName].includes(item.item.formId);
         return <TouchableRipple key={'li-' + item.item.formId}
             onPress={() => this.loadSurveyForm(item.item.formId)}
             onLongPress={() => { }}
         >
             <FormListItem
-                selected={this.state.selectedItems.includes(item.item.formId)}
+                selected={selected}
                 key={'fli-' + item.item.formId}
                 formId={item.item.formId}
                 rootId={item.item.rootId}
@@ -150,19 +169,23 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
     openDeleteModal(ids: string[]) {
         this.setState({
             deleteModalVisible: true,
-            toDelete: ids,
         })
     }
 
     confirmDeletion() {
-        this.handleDeleteForms(this.state.toDelete);
-        this.setState({
-            selectedItems: [],
-            toDelete: [],
-            deleteModalVisible: false,
+        this.handleDeleteForms(this.state.selectedItems[this.state.currentView]);
+        this.setState(prevState => {
+            const sel = _.clone(prevState.selectedItems);
+            sel[prevState.currentView] = [];
+            return {
+                selectedItems: sel,
+                toDelete: [],
+                deleteModalVisible: false,
+            }
+
         }, () => {
             this.props.navigation.setParams({
-                selectedItems: []
+                selectedItems: this.state.selectedItems
             })
         });
     }
@@ -203,30 +226,26 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             }
         )
     }
-    getFilteredData(viewName: 'inprogress' | 'completed' | 'submitted') {
+    getFilteredData(viewName: ViewModes) {
         switch (viewName) {
-            case 'inprogress':
+            case ViewModes.IN_PROGRESS:
                 return this.props.filledFormsData.filter(item => Helper.getProgress(item.count) !== 1);
-            case 'completed':
+            case ViewModes.COMPLETED:
                 return this.props.filledFormsData.filter(item => Helper.getProgress(item.count) === 1);
-            case 'submitted':
+            case ViewModes.SUBMITTED:
                 return this.props.filledFormsData.filter(item => item.submitted);
 
 
         }
     }
 
-    getView(viewName: 'inprogress' | 'completed' | 'submitted') {
+    getView(viewName: ViewModes) {
         const { themedStyle } = this.props;
         const data = this.getFilteredData(viewName);
         return (
             <>
                 <View style={themedStyle.swipeListWrapper}>
-                    <SwipeListView
-                        closeOnRowBeginSwipe
-                        closeOnRowOpen
-                        closeOnScroll
-                        useFlatList
+                    <FlatList
                         onScrollBeginDrag={this.onScrollBegin.bind(this)}
                         onMomentumScrollEnd={this.onScrollEnd.bind(this)}
                         refreshControl={<RefreshControl
@@ -236,28 +255,9 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                         contentContainerStyle={themedStyle.swipeListContainer}
                         keyExtractor={item => item.formId}
                         data={data}
-                        renderItem={this.renderItem}
-                        renderHiddenItem={(data, rowMap) => (
-                            <View key={"hid" + data.item.formId}
-                                style={this.props.themedStyle.rowBack}>
-                                <Button
-                                    size="giant"
-                                    appearance={'ghost'}
-                                    onPress={this.handleSend.bind(this, data.item.formId)}
-                                    icon={(style) => (<Icon {...style} name="paper-plane" />)} />
-                                <Button
-                                    size="giant"
-                                    appearance={'ghost'}
-                                    onPress={() => this.openDeleteModal([data.item.formId])}
-                                    icon={(style) => (<Icon {...style} name="trash-2" />)} />
-                            </View>
-                        )}
-                        stopLeftSwipe={75 * 1.15}
-                        stopRightSwipe={-75 * 1.15}
-                        leftOpenValue={75}
-                        rightOpenValue={-75}
+                        renderItem={(item) => this.renderItem(item, viewName)}
                     >
-                    </SwipeListView>
+                    </FlatList>
                 </View>
                 {viewName === "inprogress" && <FAB
                     visible={this.state.fabVisible}
@@ -268,6 +268,17 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             </>
         )
     }
+    onTabChange(index: number){
+        const values = Object.keys(ViewModes);
+        const newView = ViewModes[values[index]];
+        this.setState({
+            currentView: newView
+        }, ()=>{
+            this.props.navigation.setParams({
+                currentView: newView,
+            })
+        })
+    }
 
     render() {
         const { themedStyle } = this.props;
@@ -277,8 +288,19 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     <View style={themedStyle.deleteModal}>
                         <Text category="s1">Are you sure you want to delete the selected forms?</Text>
                         <View style={themedStyle.deleteModalControls}>
-                            <PaperButton icon="close" onPress={this.dismissDeleteModal.bind(this)} >No</PaperButton>
-                            <PaperButton icon="check" onPress={this.confirmDeletion.bind(this)} style={themedStyle.deleteModalCancelButton}>Yes</PaperButton>
+                            <PaperButton
+                                color={'#3366FF'}
+                                icon="close"
+                                onPress={this.dismissDeleteModal.bind(this)} >
+                                No
+                                    </PaperButton>
+                            <PaperButton
+                                color={'#3366FF'}
+                                icon="check"
+                                onPress={this.confirmDeletion.bind(this)}
+                                style={themedStyle.deleteModalCancelButton}>
+                                Yes
+                                    </PaperButton>
 
                         </View>
                     </View>
@@ -287,13 +309,14 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
 
                     <ScrollableTabView
                         style={{ borderWidth: 0, borderColor: '#00000000' }}
-                        
+
                         tabBarTextStyle={themedStyle.tabBarTextStyle}
                         tabBarActiveTextColor={this.props.theme['color-primary-default']}
                         tabBarUnderlineStyle={themedStyle.tabBarUnderlineStyle}
                         locked
+                        onChangeTab={({i})=>this.onTabChange(i)}
                     >
-                        <View tabStyle={themedStyle.tab} style={{ flex: 1, alignItems: 'center', borderWidth:0 }} tabLabel="In Progress">
+                        <View tabStyle={themedStyle.tab} style={{ flex: 1, alignItems: 'center', borderWidth: 0 }} tabLabel="In Progress">
                             {this.getView('inprogress')}
                         </View>
                         <View style={this.props.themedStyle.container} tabLabel="Completed">

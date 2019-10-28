@@ -1,7 +1,7 @@
 import { getReadablePath } from "dpform";
 import React from "react";
 import { Picker, View } from "react-native";
-import {  Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
+import { Icon, Layout, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { WizardContext } from "../context/wizard";
 import { DAppState } from "../redux/actions/types";
@@ -32,10 +32,11 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
         return (
             <Appbar style={this.props.themedStyle.toolbarGroup}>
                 <Button
+                    color={'#3366FF'}
                     disabled={this.props.backButtonDisabled}
                     style={this.props.themedStyle.toolbarButton}
                     onPress={this.props.onBackButtonPress} >Prev</Button>
-                    {/* <Appbar.Action icon="calendar"></Appbar.Action> */}
+                {/* <Appbar.Action icon="calendar"></Appbar.Action> */}
                 <View style={this.props.themedStyle.selectContainer}>
                     <Picker
                         selectedValue={this.props.sectionPickerData[this.context.currentRootChildIndex].id}
@@ -53,8 +54,9 @@ class ToolbarComponent extends React.Component<ToolbarProps, {}>{
 
                     </Picker>
                 </View>
-                
+
                 <Button
+                    color={'#3366FF'}
                     disabled={this.props.nextButtonDisabled}
                     style={this.props.themedStyle.toolbarButton}
                     onPress={this.props.onNextButtonPress}
@@ -95,7 +97,7 @@ export const Toolbar = withStyles(ToolbarComponent, theme => ({
     },
     toolbarButton: {
         borderWidth: 0,
-        // backgroundColor: theme['color-primary-100'],
+        tint: theme['color-primary-default']
         // height: 48,
     },
     selectContainer: {
