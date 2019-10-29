@@ -1,7 +1,7 @@
 import ApolloClient, { gql } from "apollo-boost"
 import _ from "lodash"
 import React, { Dispatch } from "react"
-import { ListRenderItemInfo, RefreshControl, TouchableOpacity, View } from "react-native"
+import { ListRenderItemInfo, TouchableOpacity, View } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import Modal from "react-native-modal"
 import { Appbar, Avatar, Button as PaperButton, FAB, TouchableRipple } from "react-native-paper"
@@ -17,8 +17,7 @@ import { handleAddNewForm, handleDeleteForms, handleMarkFormAsSubmitted } from "
 import { AvailableFormsState, DAppState, FilledFormsState } from "../../redux/actions/types"
 import { Helper } from "../../redux/helper"
 import { getUserToken } from "../../redux/selectors/authSelector"
-import { getFilledFormsTransformedData, getResponderName, getValidQuestionsNumber } from "../../redux/selectors/nodeSelector"
-import { getRootFormById } from "../../redux/selectors/questionSelector"
+import { getFilledFormsTransformedData } from "../../redux/selectors/nodeSelector"
 import { textStyle } from "../../themes/style"
 import { AppbarStyled } from "../Appbar.component"
 const SUBMIT = gql`
@@ -30,9 +29,13 @@ mutation SaveForm($filledForm: FilledFormInput!){
 `
 type FormItemType = {
     formId: string,
-    startedDate: string,
     rootId: string,
+    startedDate: string,
     count: any,
+    submitted?:boolean,
+    responderName:string,
+    formName: string,
+    values: any,
 }
 enum ViewModes {
     IN_PROGRESS = 'inprogress',
@@ -152,6 +155,9 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             onLongPress={() => { }}
         >
             <FormListItem
+                responderName={item.item.responderName}
+                formName={item.item.formName}
+                counts={item.item.count}
                 selected={selected}
                 key={'fli-' + item.item.formId}
                 formId={item.item.formId}
@@ -288,7 +294,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
             case ViewModes.IN_PROGRESS:
                 return this.props.filledFormsData.filter(item => Helper.getProgress(item.count) !== 1);
             case ViewModes.COMPLETED:
-                return this.props.filledFormsData.filter(item => Helper.getProgress(item.count) === 1);
+                return this.props.filledFormsData.filter(item => Helper.getProgress(item.count) === 1 && !item.submitted);
             case ViewModes.SUBMITTED:
                 return this.props.filledFormsData.filter(item => item.submitted);
 
@@ -305,10 +311,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     <FlatList
                         onScrollBeginDrag={this.onScrollBegin.bind(this)}
                         onMomentumScrollEnd={this.onScrollEnd.bind(this)}
-                        refreshControl={<RefreshControl
-                            refreshing={false}
-                            onRefresh={this.refreshLoadedForms.bind(this)}
-                        />}
+
                         contentContainerStyle={themedStyle.swipeListContainer}
                         keyExtractor={item => item.formId}
                         data={data}
@@ -317,6 +320,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     </FlatList>
                 </View>
                 {viewName === "inprogress" && <FAB
+
                     visible={this.state.fabVisible}
                     label={'Fill Form'}
                     onPress={this.handleAddNewForm.bind(this, undefined)}
@@ -497,6 +501,9 @@ class FormListItem_ extends React.Component<FormListItemProps, {}>{
         const splitted = responderName.split(" ");
         return splitted.map(item => item.substring(0, 1)).join("");
     }
+    shouldComponentUpdate(nextProps){
+        return nextProps.selected!== this.props.selected;
+    }
 
     getColorForName(responderName: string): string {
         if (!responderName) return undefined;
@@ -570,7 +577,7 @@ class FormListItem_ extends React.Component<FormListItemProps, {}>{
         )
     }
 }
-const FormListItemStyled = withStyles(FormListItem_, theme => ({
+const FormListItem = withStyles(FormListItem_, theme => ({
     container: {
         flex: 1,
         flexDirection: 'row',
@@ -615,13 +622,4 @@ const FormListItemStyled = withStyles(FormListItem_, theme => ({
 
     }
 }))
-const mapStateToFormItemProps = (state, props) => {
-    const rootForm = getRootFormById(state, props);
-    const counts = getValidQuestionsNumber(state, props);
-    return {
-        counts: counts,
-        formName: rootForm[props.rootId].name || "Main Form",
-        responderName: getResponderName(state, props),
-    }
-}
-const FormListItem = connect(mapStateToFormItemProps, {})(FormListItemStyled);
+

@@ -2,6 +2,7 @@ import { ANSWER_TYPES, getReadablePath, IValueType } from "dpform";
 import _ from "lodash";
 import React from "react";
 import { DatePickerAndroid, ScrollView, View } from "react-native";
+import { Avatar } from "react-native-paper";
 import { Button, Icon, Text, ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
@@ -11,7 +12,6 @@ import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
 import { getAutoCompleteDataForQuestion, getTransformedValidOptions } from "../../redux/selectors/questionSelector";
 import { AutoComplete } from "../autocompleteinput.component";
 import { RadioInput } from "./radioInput.component";
-import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 
 export interface AutoCompleteItem {
     text: string;
@@ -67,7 +67,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
                     {`${path ? getReadablePath(path.slice(0)) : ''} : ${title} ${isRequired ? '*' : ''}`}
                 </Text>
                 <ScrollView
-                    // contentContainerStyle={{paddingBottom: 50}}
+                // contentContainerStyle={{paddingBottom: 50}}
                 >
                     <FormInput
                         setInputRef={this.props.setInputRef}
@@ -96,7 +96,7 @@ class FormItem_ extends React.Component<FormItemProps, {}> {
 
 export const FormItemStyled = withStyles(FormItem_, theme => ({
     container: {
-        flex:1,
+        flex: 1,
         paddingBottom: 20,
         paddingLeft: 5,
         paddingRight: 5,
@@ -262,7 +262,7 @@ type SelectInputProps = {
     selectedId: string;
     onChange: (id: string) => void;
     error: string;
-    onSubmit: ()=>void;
+    onSubmit: () => void;
 }
 type SelectInputState = {
 }
@@ -273,7 +273,7 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
     }
     private onChange(val: { text: string, id: string }) {
         this.props.onChange(val.id);
-        if(this.props.onSubmit) this.props.onSubmit();
+        if (this.props.onSubmit) this.props.onSubmit();
     }
     private get isNonIdealState() {
         return this.props.options.length === 0 && this.props.isDependent;
@@ -311,6 +311,8 @@ export class SelectInput extends React.Component<SelectInputProps, SelectInputSt
             }
             {
                 this.isNonIdealState && <View style={{ flex: 1, flexDirection: 'column', alignItems: 'center' }}>
+                    <Avatar.Icon icon="lock" size={ 50} />
+
                     <Text category="s1" status='danger' >All options are locked!</Text>
                 </View>
             }

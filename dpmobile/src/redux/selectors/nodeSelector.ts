@@ -65,17 +65,21 @@ export const getResponderName = createSelector([getRootFormOfFilledForm, getFill
     return _.get(values, APP_CONFIG.responderValueLocation);
 })
 
-export const getFilledFormsTransformedData = createSelector([$getFilledForms, $getState],
-    (filledForms, state) => {
+export const getFilledFormsTransformedData = createSelector([$getFilledForms, $getState, $getRootForm],
+    (filledForms, state, rootForms) => {
         return Object.keys(filledForms.byId).map(item => {
             const rootId = filledForms.byId[item].formId;
+            const values = getFormValues(item)(state);
+            const formName = rootForms.byId[rootId].name;
             return {
                 formId: item,
                 rootId: rootId,
                 startedDate: filledForms.byId[item].startedDate,
                 count: getValidQuestionsNumber(state, { formId: item, rootId: rootId }),
                 submitted: filledForms.byId[item].submitted,
-                values: getFormValues(item)(state),
+                values: values,
+                formName: formName || "Main Form",
+                responderName: _.get(values, APP_CONFIG.responderValueLocation),
             }
         })
     })

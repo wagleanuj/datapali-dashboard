@@ -107,9 +107,9 @@ class SignInComponent extends React.Component<SignInProps, State> {
             const tree = Helper.makeTree(v);
             rootForms[v.id] = tree;
         });
-        let filledForms = {};//TODO:: later
+        let filledForms = {};
         login.user.filledForms.forEach(v => {
-            if (typeof v.answerStore === 'string') v.content = JSON.parse(v.answerStore);
+            if (typeof v.answerStore === 'string') v.answerStore = JSON.parse(v.answerStore);
             filledForms[v.id] = {
                 completedDate: parseInt(v.completedDate),
                 filledBy: v.filledBy,

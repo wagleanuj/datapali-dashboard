@@ -36,7 +36,7 @@ const resolvers = {
                                 accountType: user.accountType,
                             }, process.env.JWT_SECRET, {
                             });
-
+                            console.log(user._doc.filledForms);
                             resolve({ user: user._doc, token: token });
                         } else {
                             reject(new AuthenticationError("Incorrect password"));

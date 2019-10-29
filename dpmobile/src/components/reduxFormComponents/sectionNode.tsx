@@ -13,6 +13,7 @@ import { DAppState } from "../../redux/actions/types";
 import { getChildrenOfSectionFromId, getDupeTimesForSectionNode, getNodeTypeFromId, getSectionNameFromId, getValidQuestionsNumber } from "../../redux/selectors/nodeSelector";
 import { ScrollableAvoidKeyboard } from "../scrollableAvoidKeyboard";
 import { ConnectedQuestionNode } from "./questionNode";
+import { Avatar } from "react-native-paper";
 
 
 type CurrentEdit = {
@@ -164,10 +165,18 @@ class SectionNode extends React.Component<SectionNodeProps, { current: CurrentEd
         />
     }
 
+    get NotRequiredSectionPage() {
+        return (
+            <View style={this.props.themedStyle.notRequiredSectionPage}>
+                <Avatar.Icon icon="lock-open" size={this.props.isAlone ? 100 : 50} />
+                <Text status="success">Not Required to Fill.</Text>
+            </View>
+        )
+    }
+
     decisiveRender() {
         if (this.props.duplicateTimes !== -1) {
-            return this.TabbedView;
-
+            return this.props.duplicateTimes === 0 ? this.NotRequiredSectionPage : this.TabbedView;
         } else if (this.props.pagerMode) {
             return this.SwiperView_;
         }
@@ -231,6 +240,12 @@ const SectionNodeStyled = withStyles(SectionNode, theme => ({
     tabUnderlineStyle: {
         backgroundColor: theme['color-primary-default']
 
+    },
+    notRequiredSectionPage: {
+        flex: 1,
+        justifyContent: 'center',
+        flexDirection: 'column',
+        alignItems: 'center'
     }
 }));
 

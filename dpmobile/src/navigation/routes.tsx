@@ -6,15 +6,14 @@ import { ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
 import { FilledFormsList } from '../components/reduxFormComponents/forms';
 import { Survey } from '../components/reduxFormComponents/survey';
-import { SettingsContainer, ConnectedSettings } from '../settings/settings.container';
+import { ConnectedSettings, SettingsContainer } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
-import { SubmitPageContainer } from '../components/reduxFormComponents/submitPage';
 
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
   ["FormView"]: FilledFormsList,
   ["SurveyForm"]: Survey,
-  ['SubmitView']: SubmitPageContainer,
+  ['SubmitView']: SettingsContainer,
 }
 );
 const SettingsNavigator: NavigationContainer = createStackNavigator({

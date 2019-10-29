@@ -27,12 +27,14 @@ const resolvers = {
       let foundForm = await FilledForm.findOne({ id: filledForm.id }).exec();
       let result = null;
       if (foundForm) {
+        console.log('found one');
         foundForm.answerStore = filledForm.answerStore;
         foundForm.filledBy = context._id;
         if (filledForm.completedDate)
           foundForm.completedDate = parseInt(filledForm.completedDate);
         result = await foundForm.save();
       } else {
+        console.log('making');
         let referredForm = await FormFile.findOne({
           id: filledForm.formId
         }).exec();
@@ -40,12 +42,11 @@ const resolvers = {
         let ff = new FilledForm({
           ...filledForm,
           filledBy: context._id,
-          formId: referredForm.id,
           answerStore: filledForm.answerStore
         });
 
         result = await ff.save();
-        context.filledForms.push(result.id);
+        context.filledForms.push(result._id);
         await context.save();
       }
       return {
