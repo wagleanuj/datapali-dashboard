@@ -1,15 +1,11 @@
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 import { AppLoading, SplashScreen } from 'expo';
 import { Asset } from 'expo-asset';
 import * as Font from 'expo-font';
 import React from 'react';
 import { ImageRequireSource } from 'react-native';
-import { LoadingAnimationComponent } from './loadingAnimation.component';
-import { Provider } from 'react-redux';
-import { createStore } from 'redux';
-import { Helper } from '../redux/helper';
-import { rootReducer } from '../redux/reducers/rootReducer';
 import { IconRegistry } from 'react-native-ui-kitten';
-import { EvaIconsPack } from '@ui-kitten/eva-icons';
+import { LoadingAnimationComponent } from './loadingAnimation.component';
 
 export interface Assets {
   images: ImageRequireSource[];

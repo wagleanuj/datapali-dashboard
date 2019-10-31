@@ -1,7 +1,7 @@
 import { toPath } from 'lodash';
 import React from 'react';
 import { FlatList, View } from 'react-native';
-import { Avatar, Button } from 'react-native-paper';
+import { Avatar, Button, Appbar } from 'react-native-paper';
 import { Icon, ListItem, Text, ThemedComponentProps, TopNavigation, TopNavigationAction, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from 'react-navigation-stack';
@@ -12,14 +12,29 @@ import { Helper } from '../../redux/helper';
 import { getValidQuestionsNumber } from '../../redux/selectors/nodeSelector';
 import { getRootFormById } from '../../redux/selectors/questionSelector';
 import { textStyle } from '../../themes/style';
+import { AppbarStyled } from '../Appbar.component';
 
 type SubmitPageComponentProps = {
     formId: string;
     rootId: string;
     counts: any;
-} & ThemedComponentProps;
+} & ThemedComponentProps & NavigationScreenProps;
 class SubmitPageComponent extends React.Component<SubmitPageComponentProps, {}>{
-
+    static navigationOptions = (props) => {
+        const goBack = () => props.navigation.goBack(KEY_NAVIGATION_BACK);
+        return {
+            header: props =>
+                <AppbarStyled>
+                    <Appbar.BackAction color={'#3366FF'} onPress={goBack}></Appbar.BackAction>
+                    <Appbar.Content
+                        subtitle={"Submit Form"}
+                        title={"Datapali"}
+                        titleStyle={{ textAlign: "center", fontSize: 16 }}
+                        subtitleStyle={{ textAlign: "center", }}
+                    />
+                </AppbarStyled>
+        }
+    }
     get Progress() {
         return Helper.getProgress(this.props.counts);
     }
@@ -154,10 +169,13 @@ const SubmitPageStyled = withStyles(SubmitPageComponent, theme => ({
 }));
 
 const mapStateToProps = (state: DAppState, props: SubmitPageComponentProps) => {
-
+    const rootId = props.navigation.getParam("rootId");
+    const formId = props.navigation.getParam("formId");
     return {
-        counts: getValidQuestionsNumber(state, props),
-        root: getRootFormById(state, props),
+        counts: getValidQuestionsNumber(state, { rootId, formId }),
+        root: getRootFormById(state, { rootId, formId }),
+        rootId: rootId,
+        formId: formId,
     }
 }
 export const ConnectedSubmitPage = connect(mapStateToProps, {})(SubmitPageStyled)

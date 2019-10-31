@@ -1,16 +1,14 @@
 import React from "react";
-import { Icon, ThemedComponentProps, ThemeType, TopNavigation, TopNavigationAction, withStyles } from "react-native-ui-kitten";
+import { Appbar } from "react-native-paper";
+import { ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
 import { NavigationScreenProps } from "react-navigation";
-import { Header } from "react-navigation-stack";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { KEY_NAVIGATION_BACK } from "../../navigation/constants";
 import { DAppState, FilledForm, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
-import { textStyle } from "../../themes/style";
-import { ConnectedWizard } from "./wizard";
-import { Appbar } from "react-native-paper";
 import { AppbarStyled } from "../Appbar.component";
+import { ConnectedWizard } from "./wizard";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
     handleNext: (formId: string) => void;
@@ -25,9 +23,9 @@ export class Survey_ extends React.Component<SurveyProps, { validationResultVisi
     }
     static navigationOptions = (props) => {
 
-        
+
         const goBack = () => props.navigation.goBack(KEY_NAVIGATION_BACK);
-        const submit = () => props.navigation.getParam("submitHandler");
+        const submit = props.navigation.getParam("submitHandler");
         return {
             header: props =>
                 <AppbarStyled>
@@ -35,10 +33,10 @@ export class Survey_ extends React.Component<SurveyProps, { validationResultVisi
                     <Appbar.Content
                         subtitle={routeName}
                         title={"Datapali"}
-                        titleStyle={{ textAlign: "center", fontSize:16 }}
+                        titleStyle={{ textAlign: "center", fontSize: 16 }}
                         subtitleStyle={{ textAlign: "center", }}
                     />
-                    <Appbar.Action color={'#3366FF'} icon={'send'} onPress={submit} />
+                    <Appbar.Action color={'#3366FF'} icon={'send'} onPress={() => submit()} />
                 </AppbarStyled>
         }
     }

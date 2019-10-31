@@ -5,15 +5,16 @@ import { createBottomTabNavigator } from "react-navigation-tabs";
 import { ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
 import { FilledFormsList } from '../components/reduxFormComponents/forms';
+import { ConnectedSubmitPage } from '../components/reduxFormComponents/submitPage';
 import { Survey } from '../components/reduxFormComponents/survey';
-import { ConnectedSettings, SettingsContainer } from '../settings/settings.container';
+import { ConnectedSettings } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
 
 
 const FormListNavigator: NavigationContainer = createStackNavigator({
   ["FormView"]: FilledFormsList,
   ["SurveyForm"]: Survey,
-  ['SubmitView']: SettingsContainer,
+  ['SubmitView']: ConnectedSubmitPage,
 }
 );
 const SettingsNavigator: NavigationContainer = createStackNavigator({

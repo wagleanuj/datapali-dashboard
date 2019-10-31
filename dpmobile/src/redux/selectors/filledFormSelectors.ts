@@ -1,6 +1,5 @@
 import { createSelector } from 'reselect';
-import { $getFilledForms, $getFormId, $getState } from './shared';
-import { getValidQuestionsNumber } from './nodeSelector';
+import { $getFilledForms, $getFormId } from './shared';
 
 
 
