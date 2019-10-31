@@ -1,4 +1,4 @@
-import { combineReducers } from "redux";
+import { combineReducers, Action } from "redux";
 import { reducer as formReducer } from 'redux-form';
 import { LOGOUT } from "../actions";
 import { DAppState } from "../actions/types";
@@ -21,7 +21,7 @@ const initialState: DAppState = {
     form: {}
 
 }
-const combinedReducers = combineReducers({
+const combinedReducers = combineReducers<DAppState>({
     filledForms: filledFormReducer,
     user: userReducer,
     form: formReducer,
@@ -29,9 +29,9 @@ const combinedReducers = combineReducers({
     rootForms: rootFormsReducer,
 });
 
-export const rootReducers = (state, action) => {
+export const rootReducers = (state: DAppState, action: Action) => {
     if (action.type === LOGOUT) {
-        state  = initialState;
+        state = initialState;
     }
     return combinedReducers(state, action);
 }

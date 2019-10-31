@@ -1,6 +1,6 @@
-import { ThemedComponentProps, withStyles } from "react-native-ui-kitten";
-import { AppbarProps, Appbar } from "react-native-paper";
 import React from "react";
+import { Appbar, AppbarProps } from "react-native-paper";
+import { ThemedComponentProps, withStyles } from "react-native-ui-kitten";
 
 type AppbarProps_ = {
 
@@ -16,6 +16,6 @@ class Appbar_ extends React.Component<AppbarProps_, {}>{
 }
 export const AppbarStyled = withStyles(Appbar_, theme=>({
     appbar: {
-        backgroundColor: theme['background-basic-color-2']
+        backgroundColor: theme['background-basic-color-1']
     }
 }))

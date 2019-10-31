@@ -1,4 +1,5 @@
 import { AnswerOptions, IAutoAnswer, IDupeSettings, QACondition, QAQuestion, RootSection } from "dpform";
+import { ThemeKey } from "../../themes";
 
 export interface User {
     firstName: string;
@@ -82,6 +83,7 @@ export interface DAppState {
 }
 export interface SettingsState {
     pagerModeEnabled: boolean;
+    theme: ThemeKey;
 }
 
 export interface ISection{

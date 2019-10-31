@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import { ThemeKey } from '.';
 
 export interface ThemeContextType {
@@ -12,3 +12,9 @@ const initialValue: ThemeContextType = {
 };
 
 export const ThemeContext: React.Context<ThemeContextType> = React.createContext(initialValue);
+
+class ThemeContextProvider_ extends Component<>{
+
+} (props: ThemeContextType)=>{
+  
+}

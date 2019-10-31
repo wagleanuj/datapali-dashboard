@@ -1,5 +1,6 @@
 import { RootSection } from "dpform";
 import { User } from "./types";
+import { ThemeKey } from "../../themes";
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
 interface UpdateAnswer {
@@ -152,7 +153,7 @@ export const SET_THEME = 'set-theme';
 export interface SetTheme {
     type: typeof SET_THEME;
     payload: {
-        themeName: string;
+        themeName: ThemeKey;
     }
 }
 

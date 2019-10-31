@@ -9,6 +9,8 @@ import { DAppState, FilledForm, SurveyState } from "../../redux/actions/types";
 import { getFilledFormById } from "../../redux/selectors/filledFormSelectors";
 import { textStyle } from "../../themes/style";
 import { ConnectedWizard } from "./wizard";
+import { Appbar } from "react-native-paper";
+import { AppbarStyled } from "../Appbar.component";
 type ComponentProps = {
     handlePrev: (formId: string) => void;
     handleNext: (formId: string) => void;
@@ -23,30 +25,21 @@ export class Survey_ extends React.Component<SurveyProps, { validationResultVisi
     }
     static navigationOptions = (props) => {
 
-        const renderLeftIcon = () => {
-            return <TopNavigationAction onPress={() => {
-                props.navigation.goBack(KEY_NAVIGATION_BACK)
-            }} icon={(style) => <Icon {...style} name="arrow-back" />} />
-        }
-        const renderRightControls = () => {
-            return [
-                <TopNavigationAction
-                    onPress={props.navigation.getParam("submitHandler")}
-                    icon={(style) => <Icon {...style} name="paper-plane" />}
-                />
-            ]
-        }
-
+        
+        const goBack = () => props.navigation.goBack(KEY_NAVIGATION_BACK);
+        const submit = () => props.navigation.getParam("submitHandler");
         return {
-            header: props => <TopNavigation
-                style={{ height: Header.HEIGHT }}
-                alignment='center'
-                title={"Datapali"}
-                subtitle={routeName}
-                subtitleStyle={textStyle.caption1}
-                leftControl={renderLeftIcon()}
-                rightControls={renderRightControls()}
-            />
+            header: props =>
+                <AppbarStyled>
+                    <Appbar.BackAction color={'#3366FF'} onPress={goBack}></Appbar.BackAction>
+                    <Appbar.Content
+                        subtitle={routeName}
+                        title={"Datapali"}
+                        titleStyle={{ textAlign: "center", fontSize:16 }}
+                        subtitleStyle={{ textAlign: "center", }}
+                    />
+                    <Appbar.Action color={'#3366FF'} icon={'send'} onPress={submit} />
+                </AppbarStyled>
         }
     }
     componentDidMount() {

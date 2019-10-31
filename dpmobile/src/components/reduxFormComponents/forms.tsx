@@ -4,12 +4,11 @@ import React, { Dispatch } from "react"
 import { ListRenderItemInfo, TouchableOpacity, View } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import Modal from "react-native-modal"
-import { Appbar, Avatar, Button as PaperButton, FAB, TouchableRipple } from "react-native-paper"
+import { Appbar, Avatar, Button as PaperButton, FAB, Surface, TouchableRipple } from "react-native-paper"
 import ProgressBar from 'react-native-progress/Bar'
-import ScrollableTabView from "react-native-scrollable-tab-view"
-import { Text, ThemedComponentProps, ThemeType, TopNavigation, withStyles } from "react-native-ui-kitten"
+import ScrollableTabView, { DefaultTabBar } from "react-native-scrollable-tab-view"
+import { Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten"
 import { NavigationScreenProps } from "react-navigation"
-import { Header } from "react-navigation-stack"
 import { connect } from "react-redux"
 import { Action } from "redux"
 import { APP_CONFIG } from "../../config"
@@ -18,7 +17,6 @@ import { AvailableFormsState, DAppState, FilledFormsState } from "../../redux/ac
 import { Helper } from "../../redux/helper"
 import { getUserToken } from "../../redux/selectors/authSelector"
 import { getFilledFormsTransformedData } from "../../redux/selectors/nodeSelector"
-import { textStyle } from "../../themes/style"
 import { AppbarStyled } from "../Appbar.component"
 const SUBMIT = gql`
 mutation SaveForm($filledForm: FilledFormInput!){
@@ -32,10 +30,11 @@ type FormItemType = {
     rootId: string,
     startedDate: string,
     count: any,
-    submitted?:boolean,
-    responderName:string,
+    submitted?: boolean,
+    responderName: string,
     formName: string,
     values: any,
+
 }
 enum ViewModes {
     IN_PROGRESS = 'inprogress',
@@ -50,6 +49,7 @@ type ComponentProps = {
     handleAddNewForm: (root: string, userId: string) => void;
     handleDeleteForms: (formId: string[]) => void;
     handleMarkAsSubmitted: (formIds: string[]) => void;
+    authToken: string;
 
 }
 type FilledFormProps = FilledFormsState & ThemedComponentProps & NavigationScreenProps & ComponentProps
@@ -81,13 +81,14 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                         <Appbar.Action icon="delete" onPress={() => onDeleteHandler()} />
                     </AppbarStyled>
                     :
-                    <TopNavigation
-                        style={{ height: Header.HEIGHT }}
-                        alignment='center'
-                        title={"Datapali"}
-                        subtitle={routeName}
-                        subtitleStyle={textStyle.caption1}
-                    />
+                    <AppbarStyled>
+                        <Appbar.Content
+                            subtitle={routeName}
+                            title={"Datapali"}
+                            titleStyle={{ textAlign: "center", fontSize: 16 }}
+                            subtitleStyle={{ textAlign: "center", }}
+                        />
+                    </AppbarStyled>
 
             },
         }
@@ -370,7 +371,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
 
                     <ScrollableTabView
                         style={{ borderWidth: 0, borderColor: '#00000000' }}
-
+            
                         tabBarTextStyle={themedStyle.tabBarTextStyle}
                         tabBarActiveTextColor={this.props.theme['color-primary-default']}
                         tabBarUnderlineStyle={themedStyle.tabBarUnderlineStyle}
@@ -501,8 +502,8 @@ class FormListItem_ extends React.Component<FormListItemProps, {}>{
         const splitted = responderName.split(" ");
         return splitted.map(item => item.substring(0, 1)).join("");
     }
-    shouldComponentUpdate(nextProps){
-        return nextProps.selected!== this.props.selected;
+    shouldComponentUpdate(nextProps) {
+        return !_.isEqual(this.props.theme, nextProps.theme) || nextProps.selected !== this.props.selected;
     }
 
     getColorForName(responderName: string): string {

@@ -1,21 +1,22 @@
 import { ApolloConsumer } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import gql from 'graphql-tag';
-import { Toast } from 'native-base';
 import React from 'react';
-import { TopNavigation } from 'react-native-ui-kitten';
+import { ToastAndroid } from 'react-native';
+import { Appbar } from 'react-native-paper';
 import { NavigationScreenProps } from 'react-navigation';
-import { Header } from 'react-navigation-stack';
 import { connect } from 'react-redux';
+import { AppbarStyled } from '../components/Appbar.component';
 import { APP_CONFIG } from '../config';
-import { handleLogout, handleSetRootForms, handleTogglePagerMode } from '../redux/actions/action';
+import { handleLogout, handleSetRootForms, handleTogglePagerMode, handleSetTheme } from '../redux/actions/action';
 import { persistor } from '../redux/configureStore';
 import { Helper } from '../redux/helper';
 import { getUserToken } from '../redux/selectors/authSelector';
-import { ThemeContext } from '../themes';
+import { getPagerModeStatus, getCurrentTheme } from '../redux/selectors/settingsSelector';
+import { ThemeContext, ThemeKey } from '../themes';
 import { Settings } from './settings.component';
-import { ToastAndroid } from 'react-native';
-import { getPagerModeStatus } from '../redux/selectors/settingsSelector';
+import { Dispatch, Action } from 'redux';
+import { DAppState } from '../redux/actions/types';
 
 const DOWNLOAD = gql`  query Forms{
   forms{
@@ -30,10 +31,11 @@ type SettingsProps = {
   handleTogglePagerMode: () => void;
   handleSetRootForms: (rf: any) => void;
   authToken: string;
+  currentTheme: ThemeKey;
+  handleSetTheme: (theme: ThemeKey) => void;
 
 } & NavigationScreenProps;
 interface State {
-  darkModeEnabled: boolean;
   isLoadingAvailableForms: boolean;
 }
 const routeName = "Settings";
@@ -41,16 +43,18 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
   static navigationOptions = {
     header: (props) => {
 
-      return <TopNavigation
-        style={{ height: Header.HEIGHT }}
-        alignment='center'
-        title={routeName}
-      />
+      return <AppbarStyled>
+        <Appbar.Content
+          subtitle={routeName}
+          title={"Datapali"}
+          titleStyle={{ textAlign: "center", fontSize: 16 }}
+          subtitleStyle={{ textAlign: "center", }}
+        />
+      </AppbarStyled>
     },
 
   }
   public state: State = {
-    darkModeEnabled: this.context.currentTheme === "Eva Dark",
     isLoadingAvailableForms: false,
   };
   static contextType = ThemeContext;
@@ -105,11 +109,8 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
 
   private onDarkModeToggle = (darkModeEnabled: boolean) => {
     const newTheme = darkModeEnabled ? "Eva Dark" : "Eva Light";
-
-    this.context.toggleTheme(newTheme);
-    this.setState({
-      darkModeEnabled: darkModeEnabled
-    })
+    this.props.handleSetTheme(newTheme);
+    
   };
   private onPagerModeToggle = () => {
     this.props.handleTogglePagerMode();
@@ -122,7 +123,7 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
             <Settings
               pagerModeEnabled={this.props.pagerModeEnabled}
               onTogglePagerMode={this.onPagerModeToggle}
-              darkModeEnabled={this.state.darkModeEnabled}
+              darkModeEnabled={this.props.currentTheme === "Eva Dark"}
               onDownloadFormsPress={() => this.onDownloadFormsPress(client)}
               onLogoutPress={this.onLogoutPress.bind(this)}
               onToggleDarkMode={this.onDarkModeToggle}
@@ -135,17 +136,19 @@ export class SettingsContainer extends React.Component<SettingsProps, State> {
     );
   }
 }
-const mapDispatchToProps = (dispatch) => {
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
   return {
     handleLogout: () => dispatch(handleLogout()),
     handleSetRootForms: (rf: any) => dispatch(handleSetRootForms(rf)),
-    handleTogglePagerMode: () => dispatch(handleTogglePagerMode())
+    handleTogglePagerMode: () => dispatch(handleTogglePagerMode()),
+    handleSetTheme: (theme: ThemeKey) => dispatch(handleSetTheme(theme)),
   }
 }
-const mapStateToProps = (state, props) => {
+const mapStateToProps = (state: DAppState, props: SettingsProps) => {
   return {
     pagerModeEnabled: getPagerModeStatus(state, props),
-    authToken: getUserToken(state, props)
+    authToken: getUserToken(state, props),
+    currentTheme: getCurrentTheme(state, props),
   }
 }
 export const ConnectedSettings = connect(mapStateToProps, mapDispatchToProps)(SettingsContainer);

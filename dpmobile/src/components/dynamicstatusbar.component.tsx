@@ -10,6 +10,9 @@ import {
 import Constants from 'expo-constants';
 import { ThemedComponentProps, withStyles, ThemeType } from 'react-native-ui-kitten';
 import { ThemeKey } from '../themes';
+import { connect } from 'react-redux';
+import { DAppState } from '../redux/actions/types';
+import { getCurrentTheme } from '../redux/selectors/settingsSelector';
 
 interface ComponentProps {
   currentTheme: ThemeKey;
@@ -44,7 +47,7 @@ class DynamicStatusBarComponent extends React.Component<DynamicStatusBarProps> {
   }
 }
 
-export const DynamicStatusBar = withStyles(DynamicStatusBarComponent, (theme: ThemeType) => ({
+const DynamicStatusBar_ = withStyles(DynamicStatusBarComponent, (theme: ThemeType) => ({
   container: {
     backgroundColor: theme['background-basic-color-1'],
     height: Platform.select({
@@ -53,3 +56,5 @@ export const DynamicStatusBar = withStyles(DynamicStatusBarComponent, (theme: Th
     }),
   },
 }));
+
+export const DynamicStatusBar = connect((state: DAppState, props: DynamicStatusBarProps) => ({ currentTheme: getCurrentTheme(state, props) }))(DynamicStatusBar_);

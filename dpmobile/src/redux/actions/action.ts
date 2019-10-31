@@ -1,5 +1,6 @@
 import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT, TOGGLE_PAGER_MODE, SET_THEME, MARK_AS_SUBMITTED } from ".";
 import { FilledForm, User } from "./types";
+import { ThemeKey } from "../../themes";
 
 export function handleNext(formId: string): FilledFormActions {
     return {
@@ -101,7 +102,7 @@ export function handleTogglePagerMode(){
     }
 }
 
-export function handleSetTheme(themeName:string){
+export function handleSetTheme(themeName:ThemeKey){
     return {
         type: SET_THEME,
         payload: {

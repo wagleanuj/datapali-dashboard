@@ -8,6 +8,8 @@ import { Provider } from 'react-redux';
 import { createStore } from 'redux';
 import { Helper } from '../redux/helper';
 import { rootReducer } from '../redux/reducers/rootReducer';
+import { IconRegistry } from 'react-native-ui-kitten';
+import { EvaIconsPack } from '@ui-kitten/eva-icons';
 
 export interface Assets {
   images: ImageRequireSource[];
@@ -77,7 +79,7 @@ export class ApplicationLoader extends React.Component<Props, State> {
     ]);
   }
   private async loadStore(): Promise<void> {
- 
+
   }
 
   private renderLoading = (): LoadingElement => {
@@ -90,11 +92,22 @@ export class ApplicationLoader extends React.Component<Props, State> {
       />
     );
   };
+  public getChildren() {
+    return (
+      <>
+        <IconRegistry icons={EvaIconsPack} />
+        {this.props.children}
+
+      </>
+    )
+  }
 
   public render(): React.ReactNode {
     return (
       <React.Fragment>
-        {this.state.loaded ? this.props.children : this.renderLoading()}
+        {this.state.loaded ?
+
+          this.getChildren() : this.renderLoading()}
         <LoadingAnimationComponent isLoaded={this.state.loaded} />
       </React.Fragment>
     );
