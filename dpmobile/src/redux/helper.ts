@@ -1,7 +1,4 @@
-import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection, RootSection } from "dpform";
-import _ from "lodash";
-import { StorageUtil } from "../storageUtil";
-import { AnswerState, DAppState, AvailableFormsState, FilledFormsState } from "./actions/types";
+import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection } from "dpform";
 
 
 export class Helper {
@@ -15,35 +12,8 @@ export class Helper {
         if (rootOptions.find(item => item.appearingCondition.literals.length > 0)) return true;
         return false;
     }
-    
-    static makeDataForSection(section: QuestionSection, as: Map<string, Map<string, string>>) {
-        const dupe = Helper.getDuplicatingTimes(section, as);
-        let toReturn: any[] = []
-        if (dupe === -1) {
-            //collect normally
-        }
-        else if (dupe > 0) {
 
-        }
-        return toReturn;
-    }
-    static getDuplicatingTimes(item: QuestionSection | RootSection, as: Map<string, Map<string, string>>) {
-        if (item instanceof RootSection) return -1;
-        if (item.duplicatingSettings.isEnabled) {
-            if (item.duplicatingSettings.duplicateTimes.type === 'number') {
-                return parseInt(item.duplicatingSettings.duplicateTimes.value);
-            } else {
-                const ref = (item.duplicatingSettings.duplicateTimes.value);
-
-                const ans = Helper.getValueFromAnswerCache(as, ref);
-                return 2;
-                if (!ans) return 0;
-                return parseInt(ans);
-            }
-        }
-        return -1;
-    }
-
+ 
 
     static makeTree(root: any, tree: any = {}) {
         tree[root.id] = { ...root, childNodes: [], _type: root instanceof QuestionSection ? 'section' : 'root' };
@@ -61,31 +31,6 @@ export class Helper {
         delete tree[root.id].content;
         return tree;
     }
-    static async generateAppState(): Promise<DAppState> {
-        const user = await StorageUtil.getUserInfo();
-        const rootForms = await StorageUtil.getForms(user.availableForms);
-        const filledForms: FilledFormsState = await StorageUtil.getFilledForms(user.filledForms);
-        const token = await StorageUtil.getAuthToken();
-        const availableForms: AvailableFormsState = rootForms;
-        const res: DAppState = {
-            availableForms: availableForms,
-            rootForms: _.mapValues(availableForms, v => Helper.makeTree(v)),
-            filledForms: filledForms || {},
-            user: {
-                availableForms: user.availableForms,
-                filledForms: user.filledForms,
-                firstName: user.firstName,
-                id: user.userID,
-                lastName: user.lastName,
-                token: token,
-            }
-        }
-        return res;
-    }
-
-
-   
-
 
     static transformValueToType(type: IValueType, value: string) {
         switch (type.name) {
@@ -102,6 +47,7 @@ export class Helper {
         }
         return value;
     }
+
     static isLiteralValid = (item: ILiteral, answerStore: { [key: string]: string }, questionStore: { [key: string]: QAQuestion | any }) => {
         let result = true;
         const answer = answerStore[item.questionRef];
@@ -157,7 +103,7 @@ export class Helper {
         return finalResult;
     }
 
-   static findValue(values, ref) {
+    static findValue(values, ref) {
         if (!values) return undefined;
         let keys = Object.keys(values);
         for (let i = 0; i < keys.length; i++) {
@@ -174,7 +120,7 @@ export class Helper {
         }
         return undefined;
     }
-    static getProgress(counts){
+    static getProgress(counts) {
         let filled = 0;
         let required = 0;
         Object.keys(counts).forEach((key) => {
@@ -184,25 +130,25 @@ export class Helper {
         })
         return filled / required;
     }
-    static getDupeTimes(settings, values){
-        if(!settings) return -1;
+    static getDupeTimes(settings, values) {
+        if (!settings) return -1;
         if (!settings.isEnabled) return -1;
         else {
             let times = settings.duplicateTimes;
-    
+
             if (times.type === 'number') {
                 return parseInt(times.value);
             }
             else {
                 let ref = times.value;
-    
+
                 let value = Helper.findValue(values, ref);
                 if (value) {
                     return parseInt(value)
                 } else {
                     return 0;
                 }
-    
+
             }
         }
     }

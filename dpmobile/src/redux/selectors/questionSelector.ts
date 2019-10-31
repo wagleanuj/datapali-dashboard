@@ -2,7 +2,7 @@ import _ from 'lodash';
 import createCachedSelector from 're-reselect';
 import { getFormValues } from 'redux-form';
 import { createSelector } from 'reselect';
-import { AutoCompleteItem } from '../../components/reduxFormComponents/surveyformitem';
+import { AutoCompleteItem } from '../../components/form/surveyformitem';
 import { Helper } from "../helper";
 import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
 import { required } from '../../validators';

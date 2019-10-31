@@ -5,7 +5,7 @@ import React from 'react';
 import { AsyncStorage } from 'react-native';
 import { Provider } from 'react-redux';
 import { PersistGate } from 'redux-persist/es/integration/react';
-import { ApplicationLoader } from './src/appLoader/applicationLoader.component';
+import { ApplicationLoader } from './src/components/appLoader/applicationLoader.component';
 import { ConnectedApplicationProvider } from './src/components/application.provider';
 import { DynamicStatusBar } from './src/components/dynamicstatusbar.component';
 import { APP_CONFIG } from './src/config';

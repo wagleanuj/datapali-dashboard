@@ -2,11 +2,11 @@ import { useScreens } from 'react-native-screens';
 import { createAppContainer, createSwitchNavigator, NavigationContainer } from 'react-navigation';
 import { createStackNavigator } from "react-navigation-stack";
 import { createBottomTabNavigator } from "react-navigation-tabs";
+import { FilledFormsList } from '../components/form/forms';
+import { ConnectedSubmitPage } from '../components/form/submitPage';
+import { Survey } from '../components/form/survey';
 import { ConnectedLoginScreen } from '../components/login.component';
 import { MenuContainer } from '../components/menu.container';
-import { FilledFormsList } from '../components/reduxFormComponents/forms';
-import { ConnectedSubmitPage } from '../components/reduxFormComponents/submitPage';
-import { Survey } from '../components/reduxFormComponents/survey';
 import { ConnectedSettings } from '../settings/settings.container';
 import { MenuNavigationOptions } from './options';
 

@@ -1,20 +1,11 @@
 import React from 'react';
-import { Alert } from 'react-native';
-import {
-  NavigationParams,
-  NavigationScreenProps,
-} from 'react-navigation';
-
-import { TopNavigationBar } from './components/topNavigationBar.component';
-import {
-  getCurrentRouteState,
-  isRootRoute,
-  NavigationRouteState,
-  getCurrentRouteIndex,
-} from './util';
-import { KEY_NAVIGATION_BACK } from './constants';
 import { Icon } from 'react-native-ui-kitten';
+import { NavigationParams, NavigationScreenProps } from 'react-navigation';
 import { MenuContainer } from '../components/menu.container';
+import { TopNavigationBar } from './components/topNavigationBar.component';
+import { KEY_NAVIGATION_BACK } from './constants';
+import { getCurrentRouteIndex, getCurrentRouteState } from './util';
+
 
 export type TopNavigationElement = React.ReactElement<any>;
 export type BottomNavigationElement = React.ReactElement<any>;
@@ -59,10 +50,3 @@ export const MenuNavigationOptions: NavigationParams = {
   ...MenuTopNavigationParams,
   ...MenuBottomNavigationParams,
 };
-
-export const SocialNavigationOptions: NavigationParams = MenuTopNavigationParams;
-
-export const ArticlesNavigationOptions: NavigationParams = MenuTopNavigationParams;
-
-export const DashboardNavigationOptions: NavigationParams = MenuTopNavigationParams;
-

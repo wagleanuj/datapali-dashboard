@@ -1,6 +1,6 @@
 import React from 'react';
 import { Animated, Easing, StyleSheet } from 'react-native';
-import { splash } from './../assets/images';
+import { splash } from '../../assets/images';
 
 interface Props {
   isLoaded: boolean;

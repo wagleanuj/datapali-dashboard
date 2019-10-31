@@ -10,7 +10,7 @@ import { DAppState } from "../../redux/actions/types";
 import { Helper } from "../../redux/helper";
 import { getNodeOfRootForm } from "../../redux/selectors/nodeSelector";
 import { getAutoCompleteDataForQuestion, getTransformedValidOptions } from "../../redux/selectors/questionSelector";
-import { AutoComplete } from "../autocompleteinput.component";
+import { AutoComplete } from "./autocompleteinput.component";
 import { RadioInput } from "./radioInput.component";
 
 export interface AutoCompleteItem {
