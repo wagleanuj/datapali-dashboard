@@ -252,7 +252,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
     }
     async submit(form: any) {
         const cl = new ApolloClient({
-            uri: APP_CONFIG.localServerURL,
+            uri: APP_CONFIG.serverURL,
             request: operation => {
                 operation.setContext({
                     headers: {

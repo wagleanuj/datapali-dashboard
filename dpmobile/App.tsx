@@ -11,10 +11,10 @@ import { DynamicStatusBar } from './src/components/dynamicstatusbar.component';
 import { APP_CONFIG } from './src/config';
 import { Router } from './src/navigation/routes';
 import { persistor, store } from './src/redux/configureStore';
-import { ThemeKey, themes, ThemeStore } from './src/themes';
+import { ThemeKey, themes } from './src/themes';
 
 const client = new ApolloClient({
-  uri: APP_CONFIG.localServerURL
+  uri: APP_CONFIG.serverURL
 });
 const fonts: { [key: string]: number } = {
   'opensans-semibold': require('./src/assets/fonts/opensans-semibold.ttf'),
@@ -73,7 +73,7 @@ export default class App extends React.Component<AppProps, AppState> {
           <ConnectedApplicationProvider
             mapping={mapping}
             theme={themes[this.state.theme]}>
-            <DynamicStatusBar/>
+            <DynamicStatusBar />
             <PersistGate loading={null} persistor={persistor}>
               <ApolloProvider client={client}>
                 <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
