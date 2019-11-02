@@ -1,10 +1,10 @@
 import ApolloClient, { gql } from "apollo-boost"
 import _ from "lodash"
 import React, { Dispatch } from "react"
-import { ListRenderItemInfo, TouchableOpacity, View } from "react-native"
+import { ListRenderItemInfo, TouchableOpacity, View, ToastAndroid } from "react-native"
 import { FlatList } from "react-native-gesture-handler"
 import Modal from "react-native-modal"
-import { Appbar, Avatar, Button as PaperButton, FAB, TouchableRipple } from "react-native-paper"
+import { Appbar, Avatar, Button as PaperButton, FAB, TouchableRipple, Snackbar } from "react-native-paper"
 import ProgressBar from 'react-native-progress/Bar'
 import ScrollableTabView from "react-native-scrollable-tab-view"
 import { Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten"
@@ -234,20 +234,25 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
         if (this.state.currentView === ViewModes.COMPLETED) {
             //submit logic
             const sel = this.state.selectedItems[this.state.currentView].map(item => this.props.filledFormsData.find(i => i.formId === item));
-            await Promise.all(sel.map(s => this.submit(s)));
-            this.props.handleMarkAsSubmitted(this.state.selectedItems[this.state.currentView]);
-            this.setState(prevState => {
-                const sel = _.clone(prevState.selectedItems);
-                sel[prevState.currentView] = [];
-                return {
-                    selectedItems: sel
-                }
+             Promise.all(sel.map(s => this.submit(s))).then(res => {
+                this.props.handleMarkAsSubmitted(this.state.selectedItems[this.state.currentView]);
+                this.setState(prevState => {
+                    const sel = _.clone(prevState.selectedItems);
+                    sel[prevState.currentView] = [];
+                    return {
+                        selectedItems: sel
+                    }
 
-            }, () => {
-                this.props.navigation.setParams({
-                    selectedItems: this.state.selectedItems
+                }, () => {
+                    this.props.navigation.setParams({
+                        selectedItems: this.state.selectedItems
+                    })
                 })
-            })
+            }).catch(err => {
+               ToastAndroid.show("Could not submit", 200);
+            }
+            );
+
         }
     }
     async submit(form: any) {
@@ -312,7 +317,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
                     <FlatList
                         onScrollBeginDrag={this.onScrollBegin.bind(this)}
                         onMomentumScrollEnd={this.onScrollEnd.bind(this)}
-
+                        // ItemSeparatorComponent={()=><View style={themedStyle.separator}></View>}
                         contentContainerStyle={themedStyle.swipeListContainer}
                         keyExtractor={item => item.formId}
                         data={data}
@@ -371,7 +376,7 @@ export class FilledFormsComponent extends React.Component<FilledFormProps, Fille
 
                     <ScrollableTabView
                         style={{ borderWidth: 0, borderColor: '#00000000' }}
-            
+
                         tabBarTextStyle={themedStyle.tabBarTextStyle}
                         tabBarActiveTextColor={this.props.theme['color-primary-default']}
                         tabBarUnderlineStyle={themedStyle.tabBarUnderlineStyle}
@@ -457,6 +462,11 @@ export const FilledFormStyled = withStyles(FilledFormsComponent, (theme: ThemeTy
     },
     tab: {
         backgroundColor: theme['background-basic-color-1'],
+    },
+    separator:{
+        height:1,
+        backgroundColor:theme['text-basic-color'],
+        opacity: 0.5,
     }
 }));
 

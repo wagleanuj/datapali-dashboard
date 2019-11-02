@@ -1,23 +1,41 @@
+import ApolloClient from 'apollo-boost';
+import gql from 'graphql-tag';
 import { toPath } from 'lodash';
 import React from 'react';
-import { FlatList, View } from 'react-native';
-import { Avatar, Button, Appbar } from 'react-native-paper';
+import { FlatList, ToastAndroid, View } from 'react-native';
+import { Appbar, Avatar, Button } from 'react-native-paper';
 import { Icon, ListItem, Text, ThemedComponentProps, TopNavigation, TopNavigationAction, withStyles } from 'react-native-ui-kitten';
 import { NavigationScreenProps } from "react-navigation";
 import { Header } from 'react-navigation-stack';
 import { connect } from 'react-redux';
+import { Action, Dispatch } from 'redux';
+import { APP_CONFIG } from '../../config';
 import { KEY_NAVIGATION_BACK } from '../../navigation/constants';
+import { handleMarkFormAsSubmitted } from '../../redux/actions/action';
 import { DAppState } from '../../redux/actions/types';
 import { Helper } from '../../redux/helper';
+import { getUserToken } from '../../redux/selectors/authSelector';
+import { getFilledFormById } from '../../redux/selectors/filledFormSelectors';
 import { getValidQuestionsNumber } from '../../redux/selectors/nodeSelector';
-import { getRootFormById } from '../../redux/selectors/questionSelector';
+import { getFilledFormValues, getRootFormById } from '../../redux/selectors/questionSelector';
 import { textStyle } from '../../themes/style';
 import { AppbarStyled } from '../Appbar.component';
-
+const SUBMIT = gql`
+mutation SaveForm($filledForm: FilledFormInput!){
+    saveFilledForm(filledForm: $filledForm){
+        completedDate
+    }
+}
+`
 type SubmitPageComponentProps = {
     formId: string;
     rootId: string;
     counts: any;
+    startedDate: number;
+    values: any;
+    authToken: string;
+    markFormAsSubmitted: (formIds:string[])=>void;
+
 } & ThemedComponentProps & NavigationScreenProps;
 class SubmitPageComponent extends React.Component<SubmitPageComponentProps, {}>{
     static navigationOptions = (props) => {
@@ -126,12 +144,38 @@ class SubmitPageComponent extends React.Component<SubmitPageComponentProps, {}>{
         return this.ValidationFailedResult;
     }
 
-    onSubmitNowClick() {
+    async onSubmitNowClick() {
 
+        const cl = new ApolloClient({
+            uri: APP_CONFIG.serverURL,
+            request: operation => {
+                operation.setContext({
+                    headers: {
+                        authorization: this.props.authToken,
+                    },
+                });
+            },
+        });
+        const { data, errors, loading } = await cl.mutate({
+            mutation: SUBMIT,
+            variables: {
+                filledForm: {
+                    id: this.props.formId,
+                    formId: this.props.rootId,
+                    completedDate: new Date().getTime().toString(),
+                    startedDate: this.props.startedDate.toString(),
+                    answerStore: JSON.stringify(this.props.values),
+                }
+            }
+        });
+        if (errors) ToastAndroid.show("Could not submit the form", 200);
+        ToastAndroid.show("Successfully submitted!", 200);
+        this.props.handleMarkAsSubmitted([this.props.formId]);
+        this.props.navigation.navigate("FormView");
     }
 
     onSubmitLaterClick() {
-
+        this.props.navigation.navigate("FormView");
     }
     render() {
         const { themedStyle } = this.props;
@@ -171,14 +215,23 @@ const SubmitPageStyled = withStyles(SubmitPageComponent, theme => ({
 const mapStateToProps = (state: DAppState, props: SubmitPageComponentProps) => {
     const rootId = props.navigation.getParam("rootId");
     const formId = props.navigation.getParam("formId");
+    const form = getFilledFormById(state, { rootId, formId });
     return {
         counts: getValidQuestionsNumber(state, { rootId, formId }),
         root: getRootFormById(state, { rootId, formId }),
+        values: getFilledFormValues(state, { rootId, formId }),
+        startedDate: form.startedDate,
         rootId: rootId,
         formId: formId,
+        authToken: getUserToken(state, props),
     }
 }
-export const ConnectedSubmitPage = connect(mapStateToProps, {})(SubmitPageStyled)
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+    return {
+        handleMarkAsSubmitted: (formIds: string[]) => dispatch(handleMarkFormAsSubmitted(formIds))
+    }
+}
+export const ConnectedSubmitPage = connect(mapStateToProps, mapDispatchToProps)(SubmitPageStyled)
 
 
 type SubmitPageContainerProps = {
