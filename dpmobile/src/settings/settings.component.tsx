@@ -1,6 +1,7 @@
 import React from 'react';
 import { TouchableOpacity, TouchableOpacityProps, View } from 'react-native';
-import { Button, Icon, Spinner, Text, ThemedComponentProps, ThemeType, Toggle, withStyles } from 'react-native-ui-kitten';
+import { IconButton, Button } from 'react-native-paper';
+import { Spinner, Text, ThemedComponentProps, ThemeType, Toggle, withStyles } from 'react-native-ui-kitten';
 import { textStyle } from '../themes/style';
 
 
@@ -84,8 +85,9 @@ class SettingsComponent extends React.Component<SettingsProps> {
           style={[themedStyle.section, themedStyle.notificationSection]}
         >
           <Button
+            mode='contained'
             onPress={this.onLogoutPress}
-            icon={(style) => (<Icon {...style} name="log-out" />)}
+            icon={"power"}
           >
             Logout
           </Button>
