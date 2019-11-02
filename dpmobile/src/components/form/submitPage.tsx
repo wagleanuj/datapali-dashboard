@@ -43,7 +43,7 @@ class SubmitPageComponent extends React.Component<SubmitPageComponentProps, {}>{
         return {
             header: props =>
                 <AppbarStyled>
-                    <Appbar.BackAction color={'#3366FF'} onPress={goBack}></Appbar.BackAction>
+                    <Appbar.BackAction  onPress={goBack}></Appbar.BackAction>
                     <Appbar.Content
                         subtitle={"Submit Form"}
                         title={"Datapali"}

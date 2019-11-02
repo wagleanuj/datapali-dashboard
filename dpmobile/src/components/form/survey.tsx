@@ -29,14 +29,14 @@ export class Survey_ extends React.Component<SurveyProps, { validationResultVisi
         return {
             header: props =>
                 <AppbarStyled>
-                    <Appbar.BackAction color={'#3366FF'} onPress={goBack}></Appbar.BackAction>
+                    <Appbar.BackAction onPress={goBack}></Appbar.BackAction>
                     <Appbar.Content
                         subtitle={routeName}
                         title={"Datapali"}
                         titleStyle={{ textAlign: "center", fontSize: 16 }}
                         subtitleStyle={{ textAlign: "center", }}
                     />
-                    <Appbar.Action color={'#3366FF'} icon={'send'} onPress={() => submit()} />
+                    <Appbar.Action  icon={'send'} onPress={() => submit()} />
                 </AppbarStyled>
         }
     }
