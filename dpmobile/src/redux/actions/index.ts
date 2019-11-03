@@ -1,6 +1,5 @@
-import { RootSection } from "dpform";
-import { User } from "./types";
 import { ThemeKey } from "../../themes";
+import { User } from "./types";
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
 interface UpdateAnswer {
