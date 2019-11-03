@@ -1,7 +1,7 @@
 import { ApolloConsumer } from '@apollo/react-hooks';
 import { Button, Card, FormGroup, InputGroup, Intent, Tooltip } from '@blueprintjs/core';
 import React from "react";
-import { Field, InjectedFormProps } from 'redux-form';
+import { Field, InjectedFormProps, WrappedFieldProps } from 'redux-form';
 
 
 type Value = {
@@ -9,7 +9,7 @@ type Value = {
     password: string;
 }
 type Props = {
-    onSubmit?: (values: Value) => void;
+    customSubmit?: (values:Value)=>void;
 };
 
 type LoginState = {
@@ -35,9 +35,9 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
     }
 
     handleSubmit = (e:any) => {
-        const { handleSubmit, onSubmit } = this.props;
-        console.log(onSubmit);
-        if (onSubmit) handleSubmit(onSubmit)();
+        const { handleSubmit, customSubmit } = this.props;
+        if (customSubmit) handleSubmit(customSubmit)();
+        e.preventDefault();
     }
 
     get LockButton() {
@@ -61,25 +61,27 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
             hasError: false,
         })
     }
-    renderEmailInput = () => {
+    renderEmailInput = (props: WrappedFieldProps) => {
         return (
             <InputGroup
                 tabIndex={1}
                 large
-                intent={Intent.DANGER}
                 placeholder="Email address"
                 leftIcon={'user'}
+                {...props.input}
             />
         )
     }
-    renderPasswordInput = () => {
+    renderPasswordInput = (props:WrappedFieldProps) => {
         return (
             <InputGroup
                 tabIndex={2}
                 large
                 placeholder="Password"
+                type={this.state.showPassword ? "text" : "password"}
                 rightElement={this.LockButton}
                 leftIcon={"lock"}
+                {...props.input}
             />
         )
     }
@@ -91,7 +93,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                     return (
                         <Card>
                             <h5>Login</h5>
-                            <form onSubmit={this.props.onSubmit? this.props.handleSubmit(this.props.onSubmit):()=>{}}>
+                            <form onSubmit={this.handleSubmit}>
                                 <FormGroup>
                                     <Field
                                         name="email"

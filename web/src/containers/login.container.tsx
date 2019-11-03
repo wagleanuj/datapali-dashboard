@@ -43,8 +43,7 @@ const mapStateToProps = (state: IAppState, props: LoginProps) => {
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 
     return {
-        onSubmit: async (values: { email: string, password: string }) => {
-            console.log(values);
+        customSubmit: async (values: { email: string, password: string }) => {
             const { loading, data: { login }, errors } = await client.query<any, { email: string, password: string }>({
                 query: LOGIN,
                 variables: {
@@ -86,7 +85,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
             dispatch(handleSetUser(user));
             dispatch(handleSetRootForms(rootForms));
             dispatch(handleSetFilledForms(filledForms));
-            console.log(login);
         }
     }
 }
@@ -97,10 +95,10 @@ type Value = {
     password: string;
 }
 type Props = {
-    onSubmit?: (values: Value) => void;
+    customSubmit?:(values:Value)=>Promise<void>;
 };
 
-export const ConnectedLoginForm = connect<IMapStateProps, IMapDispatchToProps, LoginProps, IAppState>(mapStateToProps, mapDispatchToProps)(LoginComponent)
+export const ConnectedLoginForm = connect<IMapStateProps, IMapDispatchToProps>(null, mapDispatchToProps)(LoginComponent)
 
 export const LoginForm = reduxForm<Value, Props>({
     form: "login"
