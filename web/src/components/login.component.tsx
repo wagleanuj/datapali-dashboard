@@ -9,7 +9,7 @@ type Value = {
     password: string;
 }
 type Props = {
-    customSubmit?: (values:Value)=>void;
+    customSubmit?: (values: Value) => void;
 };
 
 type LoginState = {
@@ -34,7 +34,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
         })
     }
 
-    handleSubmit = (e:any) => {
+    handleSubmit = (e: any) => {
         const { handleSubmit, customSubmit } = this.props;
         if (customSubmit) handleSubmit(customSubmit)();
         e.preventDefault();
@@ -65,6 +65,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
         return (
             <InputGroup
                 tabIndex={1}
+                intent={this.props.error ? Intent.DANGER : Intent.NONE}
                 large
                 placeholder="Email address"
                 leftIcon={'user'}
@@ -72,9 +73,11 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
             />
         )
     }
-    renderPasswordInput = (props:WrappedFieldProps) => {
+
+    renderPasswordInput = (props: WrappedFieldProps) => {
         return (
             <InputGroup
+                intent={this.props.error ? Intent.DANGER : Intent.NONE}
                 tabIndex={2}
                 large
                 placeholder="Password"
@@ -109,6 +112,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                                         component={this.renderPasswordInput}
                                     />
                                 </FormGroup>
+                                {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
                                 <FormGroup>
                                     <Button
                                         tabIndex={3}
@@ -117,9 +121,9 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                                         fill
                                     >
                                         Login
-                         </Button>
+                                    </Button>
                                 </FormGroup>
-                                {this.state.hasError && <span className={'error'}>Incorrect email or password</span>}
+
                             </form>
 
                         </Card>

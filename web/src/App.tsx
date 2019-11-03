@@ -1,12 +1,12 @@
 import { ApolloProvider } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import React from 'react';
-import './App.css';
-import { CONFIG } from './config';
-import { ConnectedLoginForm, LoginForm } from './containers/login.container';
-import { EAppTheme } from './types';
 import { Provider } from 'react-redux';
+import './App.css';
+import { LoginPage } from './components/loginPage.component';
+import { CONFIG } from './config';
 import { store } from './reducers/rootReducer';
+import { EAppTheme } from './types';
 
 export const client = new ApolloClient({
   uri: CONFIG.serverURL
@@ -44,11 +44,11 @@ class App extends React.Component<Props, State>{
     return (
       <Provider store={store}>
         <ApolloProvider client={client}>
-          <div className={`App ${this.Theme}`}>
-            <LoginForm />
+          <div className={`main-wrapper ${this.Theme}`}>
+            <LoginPage/>
           </div>
         </ApolloProvider>
-      </Provider>
+      </Provider >
 
     );
   }
