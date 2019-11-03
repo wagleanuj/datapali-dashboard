@@ -1,0 +1,5 @@
+overwrite: true
+schema: "http://142.93.151.160:5000/graphql"
+generates:
+  src/types.ts:
+    - typescript
