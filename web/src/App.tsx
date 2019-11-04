@@ -3,7 +3,7 @@ import ApolloClient from 'apollo-boost';
 import React from 'react';
 import { Provider } from 'react-redux';
 import './App.css';
-import { LoginPage } from './components/loginPage.component';
+import { DashboardComponent } from './components/dashboard.component';
 import { CONFIG } from './config';
 import { store } from './reducers/rootReducer';
 import { EAppTheme } from './types';
@@ -45,7 +45,7 @@ class App extends React.Component<Props, State>{
       <Provider store={store}>
         <ApolloProvider client={client}>
           <div className={`main-wrapper ${this.Theme}`}>
-            <LoginPage/>
+            <DashboardComponent/>
           </div>
         </ApolloProvider>
       </Provider >

@@ -1,5 +1,5 @@
+import { ADD_ROOT_FORM, DELETE_ROOT_FORM, REPLACE_ROOT_FORMS, RootFormActions } from "../actions";
 import { IAvailableFormsState } from "../types";
-import { RootFormActions, ADD_ROOT_FORM, REPLACE_ROOT_FORMS, DELETE_ROOT_FORM } from "../actions";
 
 const initialState: IAvailableFormsState = {
     byId: {},

@@ -7,8 +7,41 @@
   color: #C23030;
 
 }
+.dashboard-wrapper{
+  display:flex;
+  flex-direction: column;
+}
+.dashboard{
+  display: flex;
+  flex-direction: row;
+  justify-content: flex-start;
+  background: #1e1e2f;
+  margin-top: 50px;
+  height: calc(100vh - 50px);
+}
+.sidebar-wrapper{
+  width: 270px;
+  background-color: #212120;
+  box-shadow: 0 10px 30px -12px rgba(0, 0, 0, 0.42), 0 4px 25px 0px rgba(0, 0, 0, 0.12), 0 8px 10px -5px rgba(0, 0, 0, 0.2)
+
+}
+.content-wrapper{
+  width: 100%;
+}
+
+.frc{
+  display: flex;
+  flex-direction: row;
+  justify-content: center;
+  align-items: center;
+}
+
 .main-wrapper{
   position: relative;
   top: 0;
   height: 100vh;
+}
+.nav-menu{
+  margin-bottom: 5px;
+  margin-left: 34px;
 }

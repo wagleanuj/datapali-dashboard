@@ -2,7 +2,7 @@ import { ApolloConsumer } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
 import React from "react";
-import { View, ViewProps } from "react-native";
+import { Image, View, ViewProps } from "react-native";
 import { Button as Btn } from "react-native-paper";
 import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
@@ -12,6 +12,7 @@ import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redu
 import { FilledForm, User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
 import { getUserToken } from "../redux/selectors/authSelector";
+import { ImageIconFill, LogoIcon } from "../assets/icons";
 
 
 const LOGIN = gql`query Login($email: String!, $password: String!){
@@ -149,6 +150,10 @@ class SignInComponent extends React.Component<SignInProps, State> {
                 {client => {
                     return (
                         <View style={themedStyle.container}>
+                            <View style={{flex:0, flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+                                <LogoIcon />
+
+                            </View>
                             <View style={themedStyle.header}>
                                 <Text>Sign in to your surveyor account</Text>
                             </View>
