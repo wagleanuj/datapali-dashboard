@@ -1,7 +1,7 @@
-import { Classes, Icon, IconName, Intent } from '@blueprintjs/core';
+import { Classes, Icon, IconName } from '@blueprintjs/core';
 import classNames from 'classnames';
 import React, { Component, ReactNode } from 'react';
-
+import { NavLink, useRouteMatch } from 'react-router-dom';
 type SidebarItemProps = {
     children?: ReactNode;
     title: string;
@@ -9,12 +9,13 @@ type SidebarItemProps = {
     onClick: () => void;
     iconName: IconName;
     isSelected: boolean;
+    routeKey: string;
 }
-export default class SidebarItem extends Component<SidebarItemProps, {}> {
+export  class SidebarItem extends Component<SidebarItemProps, {}> {
     render() {
-        const { title, className, children, onClick } = this.props;
+        const { title, className, children, onClick, routeKey } = this.props;
         return (
-            <a style={{ lineHeight: '40px' }} onClick={onClick} className={classNames({
+            <NavLink to={routeKey} style={{ lineHeight: '40px' }} onClick={onClick} className={classNames({
                 [Classes.ACTIVE]: this.props.isSelected,
             }, Classes.MENU_ITEM, Classes.LARGE, className)}  >
                 <div className={'frc'}>
@@ -22,6 +23,6 @@ export default class SidebarItem extends Component<SidebarItemProps, {}> {
                     <span style={{ marginLeft: 7 }} className={Classes.TEXT_LARGE}>{title}</span>
                 </div>
 
-            </a>)
+            </NavLink>)
     }
 }

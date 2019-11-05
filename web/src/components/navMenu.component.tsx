@@ -1,25 +1,27 @@
 import { Classes, Collapse, IconName } from "@blueprintjs/core";
 import classNames from "classnames";
-import React from "react";
-import SidebarItem from "./navMenuItem.component";
+import React, { Component, ReactNode } from "react";
+import { SidebarItem } from "./navMenuItem.component";
 export type ISidebarItemNode = {
     title: string;
     routeKey: string;
     icon: IconName;
     children: ISidebarItemNode[];
+    component?: ReactNode;
 }
 
 type SidebarProps = {
     activeRouteKey: string;
     items: ISidebarItemNode[];
     onItemClick: (routeKey: string) => void;
+    currentRouteKey?: string; //used for nesting
 }
 type SidebarState = {
 
 }
 
 
-export class SidebarMenu extends React.Component<SidebarProps, SidebarState>{
+export class SidebarMenu extends Component<SidebarProps, SidebarState>{
     checkIfSectionHasRouteKey(section: ISidebarItemNode, key: string) {
         if (section.routeKey === key) return true;
         for (let i = 0; i < section.children.length; i++) {
@@ -33,6 +35,7 @@ export class SidebarMenu extends React.Component<SidebarProps, SidebarState>{
     render() {
         const menu = this.props.items.map(section => {
             const item = <SidebarItem
+                routeKey={(this.props.currentRouteKey || "") + section.routeKey}
                 title={section.title}
                 iconName={section.icon}
                 className={classNames({
@@ -50,6 +53,7 @@ export class SidebarMenu extends React.Component<SidebarProps, SidebarState>{
 
                             <SidebarMenu
                                 {...this.props}
+                                currentRouteKey={this.props.currentRouteKey || "" + section.routeKey}
                                 items={section.children}
                             />
                         </Collapse>
@@ -61,6 +65,8 @@ export class SidebarMenu extends React.Component<SidebarProps, SidebarState>{
             <ul className={classNames("nav-menu", Classes.LIST_UNSTYLED)}>
                 {menu}
             </ul>
+
+
         )
     }
 }

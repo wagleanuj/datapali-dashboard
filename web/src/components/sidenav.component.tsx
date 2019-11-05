@@ -1,36 +1,16 @@
 
 
-import { Divider } from '@blueprintjs/core'
-import React, { Component } from 'react'
-import { ISidebarItemNode, SidebarMenu } from './navMenu.component'
+import { Divider } from '@blueprintjs/core';
+import React, { Component } from 'react';
 import Logo from "../assets/images/icon.png";
-const tabs: ISidebarItemNode[] = [
-    {
-        title: "Forms",
-        routeKey: "forms",
-        icon: "form",
-        children:[]
-    },
-    {
-        title: "Surveyors",
-        routeKey: "surveyors",
-        icon: "person",
-        children: []
-
-    },
-    {
-        title: "Statistics",
-        routeKey: "statistics",
-        icon: "grouped-bar-chart",
-        children: []
-    }
-]
+import { tabs } from '../routes';
+import { SidebarMenu } from './navMenu.component';
 
 type SideNavProps = {
 
 }
 
-export default class SideNav extends Component<SideNavProps, { selectedRoute: string }> {
+export class SideNav extends Component<SideNavProps, { selectedRoute: string }> {
     state = {
         selectedRoute: ""
     }
