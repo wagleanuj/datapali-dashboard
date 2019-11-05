@@ -55,11 +55,6 @@ export default class App extends React.Component<AppProps, AppState> {
     }
   }
 
-  private onSwitchTheme = (theme: ThemeKey) => {
-    ThemeStore.setTheme(theme).then(() => {
-      this.setState({ theme });
-    });
-  };
 
   onNavigationStateChange(prevState, newState) {
   }
@@ -74,7 +69,10 @@ export default class App extends React.Component<AppProps, AppState> {
             mapping={mapping}
             theme={themes[this.state.theme]}>
             <DynamicStatusBar />
-            <PersistGate loading={null} persistor={persistor}>
+            <PersistGate onBeforeLift={()=>{
+              console.log(JSON.stringify(store.getState()));
+
+            }} loading={null} persistor={persistor}>
               <ApolloProvider client={client}>
                 <Router onNavigationStateChange={this.onNavigationStateChange.bind(this)} />
               </ApolloProvider>
