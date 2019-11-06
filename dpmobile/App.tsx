@@ -70,7 +70,6 @@ export default class App extends React.Component<AppProps, AppState> {
             theme={themes[this.state.theme]}>
             <DynamicStatusBar />
             <PersistGate onBeforeLift={()=>{
-              console.log(JSON.stringify(store.getState()));
 
             }} loading={null} persistor={persistor}>
               <ApolloProvider client={client}>
