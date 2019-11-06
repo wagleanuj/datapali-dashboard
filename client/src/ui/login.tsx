@@ -32,7 +32,7 @@ export class Login extends React.Component<LoginProps, LoginState>{
                 password: password
             }
         }
-        return request(CONFIG.PROD_SERVER, "login", requestBody, "Could not login", "").then(res => {
+        return request(CONFIG.LOCAL_SERVER, "login", requestBody, "Could not login", "").then(res => {
             console.log(res);
             if (this.props.onLoggedIn) this.props.onLoggedIn(res.token);
         })

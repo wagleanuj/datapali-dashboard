@@ -69,13 +69,13 @@ server.applyMiddleware({ app, bodyParserConfig: { limit: "100mb" } });
 const httpServer = createServer(app); //http server is made to handle the websocket interface  to the subscriptions
 server.installSubscriptionHandlers(httpServer);
 const auth = process.env.DB_PASS
-  ? { user: process.env.DB_USER, password: process.env.DB_PASS }
+  ? { user: process.env.DB_USER, pass: process.env.DB_PASS }
   : null;
 //connect to the database
 mongoose
-  .connect(`${process.env.DB_HOST}/${process.env.DB_NAME}`, {
+  .connect(process.env.DB_HOST, {
+    useUnifiedTopology:true,
     useNewUrlParser: true,
-    auth: auth
   })
   .then(dbClient => {
     //start listening at the server port
