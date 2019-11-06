@@ -8,8 +8,10 @@ import { DashboardComponent } from './components/dashboard.component';
 import { CONFIG } from './config';
 import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
-import { store } from './reducers/rootReducer';
 import { EAppTheme } from './types';
+import { store, persistor } from './configureStore';
+//@ts-ignore
+import { PersistGate } from 'redux-persist/integration/react'
 
 export const client = new ApolloClient({
   uri: CONFIG.serverURL
@@ -48,6 +50,8 @@ class App extends React.Component<Props, State>{
       <Router>
 
         <Provider store={store}>
+          <PersistGate loading={null} persistor={persistor}>
+
           <ApolloProvider client={client}>
             <div className={`main-wrapper ${this.Theme}`}>
               <Switch>
@@ -60,6 +64,8 @@ class App extends React.Component<Props, State>{
               </Switch>
             </div>
           </ApolloProvider>
+          </PersistGate>
+
         </Provider >
       </Router>
 

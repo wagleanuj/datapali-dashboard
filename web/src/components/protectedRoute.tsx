@@ -6,6 +6,7 @@ export type ProtectedRouteProps = {
 } & RouteProps;
 
 export class ProtectedRoute extends Route<ProtectedRouteProps>{
+    
     render() {
         console.log(this.props.authToken);
         
