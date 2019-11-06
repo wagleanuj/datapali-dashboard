@@ -1,6 +1,7 @@
-import { Button, Card, EditableText, Elevation } from '@blueprintjs/core';
+import { Alignment, Button, ButtonGroup, Card, Classes, EditableText, Elevation } from '@blueprintjs/core';
+import classNames from 'classnames';
 import React, { Component } from 'react';
-import { AutoSizer, CellMeasurer, CellMeasurerCache, List, ListRowProps } from 'react-virtualized';
+import { CellMeasurerCache } from 'react-virtualized';
 
 const cache = new CellMeasurerCache({
     defaultWidth: 100,
@@ -26,18 +27,14 @@ export class Forms extends Component<FormsProps, {}> {
             {
                 id: "adsasd",
                 title: "Form 1",
-                createdDate: 123123123,
+                createdDate: new Date().getTime(),
                 createdBy: "Anuj Wagle",
                 sharedTo: ["who", "who"]
 
             }
         ]
     }
-    componentDidMount() {
-        window.addEventListener("resize", () => {
-            this.height = window.innerHeight;
-        })
-    }
+
     renderRow(index: number) {
         const data = this.props.data[index];
         return (
@@ -45,7 +42,8 @@ export class Forms extends Component<FormsProps, {}> {
             <FormItem
                 key={data.id}
                 {...data}
-                onClick={(id) => console.log(id)}
+                onClick={() => console.log(data.id)}
+                onDeleteClick={() => console.log(data.id)}
                 onTitleChange={(newTitle) => console.log(newTitle)}
             />
 
@@ -54,10 +52,8 @@ export class Forms extends Component<FormsProps, {}> {
     render() {
         return (
             <div style={{ display: 'flex' }}>
-
                 <div style={{ flex: '1 1 auto' }}>
-                    {this.props.data.map((item,index)=> this.renderRow(index))}
-                   
+                    {this.props.data.map((item, index) => this.renderRow(index))}
                 </div>
             </div>
 
@@ -66,16 +62,29 @@ export class Forms extends Component<FormsProps, {}> {
 }
 type FormItemProps = {
     onTitleChange: (newTitle: string) => void;
-    onClick: (id: string) => void;
+    onClick: () => void;
+    onDeleteClick: () => void;
     style?: object;
 } & IFormItem
 function FormItem(props: FormItemProps) {
     return (
-        <Card style={props.style} onClick={() => props.onClick(props.id)} elevation={Elevation.FOUR} interactive>
-            <h1>
-                <EditableText value={props.title} />
-            </h1>
-            <Button>This is shit</Button>
+        <Card style={props.style} onClick={() => props.onClick()} elevation={Elevation.FOUR} interactive>
+            <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
+                <div>
+
+                    <h4>
+                        <EditableText value={props.title} />
+                    </h4>
+                    <p className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>{props.createdBy}</p>
+                    <p className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>{new Date(props.createdDate).toDateString()}</p>
+
+                </div>
+
+                <ButtonGroup large alignText={Alignment.RIGHT}>
+                    <Button onClick={props.onDeleteClick} icon="trash"></Button>
+                </ButtonGroup>
+            </div>
+
 
         </Card>
     )

@@ -93,8 +93,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
                         _error: "Incorrect email or password"
                     });
                 });
-
-
         }
     }
 }
@@ -112,5 +110,5 @@ export const ConnectedLoginForm = connect<IMapStateProps, IMapDispatchToProps>(n
 
 export const LoginForm = reduxForm<Value, Props>({
     form: "login",
-    onChange: (values, dispatch, props)=>dispatch(clearSubmitErrors('login'))
+    onChange: (values, dispatch, props) => dispatch(clearSubmitErrors('login'))
 })(ConnectedLoginForm)

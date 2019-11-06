@@ -94,7 +94,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
             <ApolloConsumer>
                 {client => {
                     return (
-                        <Card>
+                        <Card className="login-form">
                             <h5>Login</h5>
                             <form onSubmit={this.handleSubmit}>
                                 <FormGroup>
