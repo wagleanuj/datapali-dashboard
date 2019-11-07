@@ -1,4 +1,4 @@
-import { Alignment, Button, ButtonGroup, Card, Classes, EditableText, Elevation } from '@blueprintjs/core';
+import { Alignment, Button, ButtonGroup, Card, Classes, EditableText, Elevation, NonIdealState } from '@blueprintjs/core';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import { CellMeasurerCache } from 'react-virtualized';
@@ -43,17 +43,29 @@ export class Forms extends Component<FormsProps, {}> {
                 key={data.id}
                 {...data}
                 onClick={() => console.log(data.id)}
-                onDeleteClick={() => console.log(data.id)}
+                onDeleteClick={() => console.log("delete", data.id)}
                 onTitleChange={(newTitle) => console.log(newTitle)}
             />
 
         )
     }
+    nonIdealState() {
+        return (
+            <NonIdealState
+                icon={"folder-open"}
+                title="No Forms Found"
+                description={"Create a form to populate this area"}
+                action={<Button>Create Form</Button>}
+            />
+        )
+    }
+
     render() {
+        const children = this.props.data && this.props.data.length > 0 ? this.props.data.map((item, index) => this.renderRow(index)) : this.nonIdealState();
         return (
             <div style={{ display: 'flex' }}>
                 <div style={{ flex: '1 1 auto' }}>
-                    {this.props.data.map((item, index) => this.renderRow(index))}
+                    {children}
                 </div>
             </div>
 

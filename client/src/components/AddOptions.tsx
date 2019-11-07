@@ -1,15 +1,15 @@
-import { AnswerOptions, Constants, QAQuestion, IValueType, ILiteral, QACondition, IOption, IOptionGroup, IConstant, getRandomId, ANSWER_TYPES } from "dpform";
-import React from "react";
+import { Button, ButtonGroup, Divider, H5 } from "@blueprintjs/core";
+import { AnswerOptions, ANSWER_TYPES, Constants, getRandomId, IConstant, ILiteral, IOption, IOptionGroup, IValueType, QACondition, QAQuestion } from "dpform";
 import _ from "lodash";
-import { CreateConditionModal } from "./CreateConditionModal";
-import { Table } from "reactstrap";
-import { H5, Divider, Button, ButtonGroup } from "@blueprintjs/core";
+import React from "react";
 import Select from "react-select/";
-import { customStyles } from "./DPFormItem";
+import Creatable from "react-select/creatable";
+import { Table } from "reactstrap";
+import { destroyModal, openModal } from "../utils";
 import { AnswerTypeInput } from "./AnswerType";
+import { CreateConditionModal } from "./CreateConditionModal";
+import { customStyles } from "./DPFormItem";
 import { ValInput } from "./ValInput";
-import Creatable from "react-select/creatable"
-import { openModal, destroyModal } from "../utils"
 
 interface QAAddOptionsState {
     options: AnswerOptions,
@@ -31,7 +31,7 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
     constructor(props: QAAddOptionsProps) {
         super(props);
         this.state = {
-            options: this.props.options || []
+            options: this.props.options || new AnswerOptions()
         }
     }
     makeConstant() {

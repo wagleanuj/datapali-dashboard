@@ -1,9 +1,10 @@
+import { SurveyForm } from "datapali-dashboard/dist/components/index";
 import React from "react";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Surveyors } from "./components/surveyors.component";
-
+import { RootSection } from "dpform";
 export const tabs: ISidebarItemNode[] = [
     {
         title: "Forms",
@@ -27,6 +28,13 @@ export const tabs: ISidebarItemNode[] = [
         routeKey: "/statistics",
         icon: "grouped-bar-chart",
         component: <Statistics />,
+        children: []
+    },
+    {
+        title: "Roots",
+        routeKey: "/roots",
+        icon: "grouped-bar-chart",
+        component: <SurveyForm onSave={() => { }} onChange={() => { }} token="" root={new RootSection()}/>,
         children: []
     },
 

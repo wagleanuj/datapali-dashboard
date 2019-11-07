@@ -2,6 +2,8 @@
   "name": "datapali-dashboard",
   "version": "0.1.0",
   "private": true,
+  "main": "./dist/components/index.js",
+  "types": "./dist/components/index.d.ts",
   "dependencies": {
     "@blueprintjs/core": "^3.18.0",
     "@blueprintjs/datetime": "^3.9.2",
@@ -66,5 +68,9 @@
       "last 1 safari version"
     ]
   },
-  "devDependencies": {}
+  "devDependencies": {},
+  "peerDependencies": {
+    "react": "^16.9.0",
+    "@blueprintjs/core": "^3.18.0"
+  }
 }

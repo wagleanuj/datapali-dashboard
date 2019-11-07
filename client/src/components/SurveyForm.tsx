@@ -5,11 +5,11 @@ import { Constants, IDupeSettings, ILiteral, QAQuestion, QORS, QuestionSection, 
 import _ from "lodash";
 import React from "react";
 import { Row } from "reactstrap";
+import { CONFIG } from "../APPCONFIG";
 import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 import { Toolbar } from "./Toolbar";
-import { CONFIG } from "../APPCONFIG";
 
 
 
@@ -19,14 +19,16 @@ interface SurveyFormState {
     activeSectionPath: number[]
     selectedNodes: string[],
     expandedNodes: string[],
-    root: RootSection,
+    root?: RootSection,
     constants: Constants,
 
 }
 interface SurveyFormProps {
-    root: RootSection,
-    onChange: (root: RootSection) => void,
-    token: string,
+    root: RootSection;
+    onChange: (root: RootSection) => void;
+    token: string;
+    onSave: (root: RootSection)=>void;
+
 
 }
 
@@ -40,14 +42,13 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         this.state = {
             selectedNodes: [],
             expandedNodes: [this.props.root.id],
-            root: this.props.root,
+            root: this.props.root|| new RootSection(),
             activeSection: this.props.root,
             activeSectionPath: [0],
             constants: new Constants(),
         }
     }
     componentDidMount() {
-        this.loadForm();
     }
 
     loadForm() {
@@ -182,22 +183,23 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
         }
     }
     private handleSave() {
-        let file = RootSection.toJSON(this.state.root);
-        file.content = JSON.stringify(file.content);
-        if (!file.name) file.name = "Main Form";
-        let requestBody = {
-            query: `
-            mutation SaveForm($saveFile: FormFileInput!){
-                saveForm(form: $saveFile){
-                  id
-                }
-              }`,
-            variables: {
-                saveFile: file
-            }
-        }
-        let token = this.props.token;
-        return request(CONFIG.PROD_SERVER, "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
+        // let file = RootSection.toJSON(this.state.root);
+        // file.content = JSON.stringify(file.content);
+        // if (!file.name) file.name = "Main Form";
+        // let requestBody = {
+        //     query: `
+        //     mutation SaveForm($saveFile: FormFileInput!){
+        //         saveForm(form: $saveFile){
+        //           id
+        //         }
+        //       }`,
+        //     variables: {
+        //         saveFile: file
+        //     }
+        // }
+        // let token = this.props.token;
+        // return request(CONFIG.PROD_SERVER, "saveForm", requestBody, "Could not save the  file", token).then(re => console.log(re));
+        if(this.props.onSave) this.props.onSave(this.state.root);
     }
 
 

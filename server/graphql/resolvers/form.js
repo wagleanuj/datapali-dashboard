@@ -24,7 +24,6 @@ const resolvers = {
                 return formFiles;
             })
         }
-
     },
     Mutation: {
         makeFormAvailableFor: async (parent, { formId, surveyorEmail }, context, info) => {
@@ -79,7 +78,10 @@ const resolvers = {
                         formfile.content = form.content;
                         formfile.name = form.name;
                         let result = await formfile.save();
-                        console.log(context.createdForms);
+                        if(!context.createdForms.includes(formfile._id)){
+                            context.createdForms.push(formfile);
+                            await context.save()
+                        }
                         return { ...result._doc, content: JSON.stringify(JSON.parse(formfile.content)) };
                     }
                 })
