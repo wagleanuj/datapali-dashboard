@@ -1,15 +1,13 @@
-//@ts-ignore
-import { persistReducer, persistStore } from 'redux-persist;';
-import { rootReducer } from './reducers/rootReducer';
-//@ts-ignore
-import storageSession from 'redux-persist/lib/storage/session';
 import { createStore } from 'redux';
+import { persistReducer, persistStore } from 'redux-persist';
+import storage from 'redux-persist/lib/storage';
+import { rootReducers } from './reducers/rootReducer';
 
 const persistConfig = {
     key: "root",
-    storage: storageSession
+    storage: storage
 }
-
-const persistedReducer = persistReducer(persistConfig, rootReducer);
+//@ts-ignore
+const persistedReducer = persistReducer(persistConfig, rootReducers);
 export const store = createStore(persistedReducer);
 export const persistor = persistStore(store);

@@ -4,7 +4,7 @@ import { Action, Dispatch } from "redux";
 import { clearSubmitErrors, reduxForm, SubmissionError } from "redux-form";
 import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../actions/actions";
 import { client } from "../App";
-import { LoginComponent, LoginProps } from "../components/login.component";
+import { LoginComponent, LoginProps, LoginOwnProps } from "../components/login.component";
 import { IAppState, IFilledForm, IUser } from "../types";
 const LOGIN = gql`
 query Login($email: String!, $password: String!){
@@ -36,13 +36,14 @@ query Login($email: String!, $password: String!){
 
 const mapStateToProps = (state: IAppState, props: LoginProps) => {
     return {
-
+        authToken: state.user.token 
     }
 }
 
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
 
     return {
+        
         customSubmit: async (values: { email: string, password: string }) => {
             return client.query<any, { email: string, password: string }>({
                 query: LOGIN,
@@ -63,7 +64,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
                         lastName: login.user.lastName,
                         filledForms: login.user.filledForms.map((item: any) => item.id),
                         accountType: login.user.accountType,
-
+                        createdForms: login.user.createdForms?login.user.createdForms.map((item:any)=> item.id):[],
                     }
                     let rootForms: any = {};
                     login.user.availableForms.forEach((v: any) => {
@@ -96,19 +97,15 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
         }
     }
 }
-type IMapStateProps = ReturnType<typeof mapStateToProps>;
-type IMapDispatchToProps = ReturnType<typeof mapDispatchToProps>;
+
 type Value = {
     email: string;
     password: string;
 }
-type Props = {
-    customSubmit?: (values: Value) => Promise<void>;
-};
 
-export const ConnectedLoginForm = connect<IMapStateProps, IMapDispatchToProps>(null, mapDispatchToProps)(LoginComponent)
+export const ConnectedLoginForm = connect(mapStateToProps, mapDispatchToProps)(LoginComponent)
 
-export const LoginForm = reduxForm<Value, Props>({
+export const LoginForm = reduxForm<Value, LoginOwnProps>({
     form: "login",
     onChange: (values, dispatch, props) => dispatch(clearSubmitErrors('login'))
 })(ConnectedLoginForm)

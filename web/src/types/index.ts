@@ -1,8 +1,9 @@
 
 export interface IAppState {
     user: IUser;
-    availableForms: IAvailableFormsState;
+    createdForms: ICreatedFormsState;
     filledForms: IFilledFormsState;
+    
     form:any;
 }
 export interface IUser {
@@ -13,13 +14,14 @@ export interface IUser {
     filledForms: string[];
     id: string;
     token: string;
+    createdForms: string[]
 }
 
 export enum EUserType {
     SURVEYOR = 'surveyor',
     ADMIN = 'admin'
 }
-export interface IAvailableFormsState {
+export interface ICreatedFormsState {
     byId: { [key: string]: IRootForm },
     ids: string[]
 }
@@ -38,6 +40,7 @@ export interface IFilledForm {
     id: string;
     submitted?: boolean;
 }
+
 
 export enum EAppTheme {
     DARK = 'dark',

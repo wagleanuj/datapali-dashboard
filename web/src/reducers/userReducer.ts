@@ -1,16 +1,17 @@
 import { IUser, EUserType } from "../types";
 import { UserActions, SET_USER } from "../actions";
 
-export const initialState: IUser = {
+export const initialUserState: IUser = {
     filledForms: [],
     availableForms: [],
     firstName: '',
     id: '',
     lastName: '',
     token: '',
-    accountType: EUserType.SURVEYOR
+    accountType: EUserType.SURVEYOR,
+    createdForms:[]
 }
-export function userReducer(state = initialState, action: UserActions) {
+export function userReducer(state = initialUserState, action: UserActions) {
     switch (action.type) {
         case SET_USER:
             const payload = action.payload;

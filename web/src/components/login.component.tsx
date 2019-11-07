@@ -1,4 +1,3 @@
-import { ApolloConsumer } from '@apollo/react-hooks';
 import { Button, Card, FormGroup, InputGroup, Intent, Tooltip } from '@blueprintjs/core';
 import React from "react";
 import { Field, InjectedFormProps, WrappedFieldProps } from 'redux-form';
@@ -8,8 +7,10 @@ type Value = {
     email: string;
     password: string;
 }
-type Props = {
-    customSubmit?: (values: Value) => void;
+export type LoginOwnProps = {
+    customSubmit?: (values: Value) => Promise<void>;
+    onLoggedIn?: () => void;
+    authToken?: string;
 };
 
 type LoginState = {
@@ -17,7 +18,7 @@ type LoginState = {
     hasError: boolean;
 
 }
-export type LoginProps = InjectedFormProps<Value, Props> & Props;
+export type LoginProps = InjectedFormProps<Value, LoginOwnProps> & LoginOwnProps;
 
 export class LoginComponent extends React.Component<LoginProps, LoginState>{
     state = {
@@ -25,8 +26,14 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
         hasError: false,
 
     }
+    componentDidMount() {
+        if (!!this.props.authToken) {
+            if (this.props.onLoggedIn) this.props.onLoggedIn();
+        }
+    }
 
-    handleLockClick = () => {
+
+    togglePasswordHide = () => {
         this.setState(prevState => {
             return {
                 showPassword: !prevState.showPassword
@@ -36,11 +43,13 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
 
     handleSubmit = (e: any) => {
         const { handleSubmit, customSubmit } = this.props;
-        if (customSubmit) handleSubmit(customSubmit)();
+        if (customSubmit) handleSubmit(customSubmit)().then(() => {
+            if (this.props.onLoggedIn) this.props.onLoggedIn();
+        });
         e.preventDefault();
     }
 
-    get LockButton() {
+    renderPasswordHideButton() {
         return (
             <Tooltip
                 content={`${this.state.showPassword ? "Hide" : "Show"} Password`}>
@@ -49,7 +58,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                     intent={Intent.WARNING}
                     minimal
                     tabIndex={99}
-                    onClick={this.handleLockClick}
+                    onClick={this.togglePasswordHide}
                 />
             </Tooltip>
         )
@@ -82,7 +91,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                 large
                 placeholder="Password"
                 type={this.state.showPassword ? "text" : "password"}
-                rightElement={this.LockButton}
+                rightElement={this.renderPasswordHideButton()}
                 leftIcon={"lock"}
                 {...props.input}
             />
@@ -91,46 +100,39 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
 
     render() {
         return (
-            <ApolloConsumer>
-                {client => {
-                    return (
-                        <Card className="login-form">
-                            <h5>Login</h5>
-                            <form onSubmit={this.handleSubmit}>
-                                <FormGroup>
-                                    <Field
-                                        name="email"
-                                        type="text"
-                                        component={this.renderEmailInput}
-                                    />
+            <Card className="login-form">
+                <h5>Login</h5>
+                <form onSubmit={this.handleSubmit}>
+                    <FormGroup>
+                        <Field
+                            name="email"
+                            type="text"
+                            component={this.renderEmailInput}
+                        />
 
-                                </FormGroup>
-                                <FormGroup>
-                                    <Field
-                                        name="password"
-                                        type="password"
-                                        component={this.renderPasswordInput}
-                                    />
-                                </FormGroup>
-                                {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
-                                <FormGroup>
-                                    <Button
-                                        tabIndex={3}
-                                        type="submit"
-                                        large
-                                        fill
-                                    >
-                                        Login
+                    </FormGroup>
+                    <FormGroup>
+                        <Field
+                            name="password"
+                            type="password"
+                            component={this.renderPasswordInput}
+                        />
+                    </FormGroup>
+                    {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
+                    <FormGroup>
+                        <Button
+                            tabIndex={3}
+                            type="submit"
+                            large
+                            fill
+                        >
+                            Login
                                     </Button>
-                                </FormGroup>
+                    </FormGroup>
 
-                            </form>
+                </form>
 
-                        </Card>
-                    )
-                }}
-            </ApolloConsumer>
-
+            </Card>
         )
     }
 }

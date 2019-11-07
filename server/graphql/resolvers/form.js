@@ -69,6 +69,8 @@ const resolvers = {
                             name: form.name,
                             id: form.id
                         })
+                        context.createdForms.push(rootFile);
+                        await context.save();
                         let result = await rootFile.save();
                         return { ...result._doc, content: JSON.stringify(JSON.parse(formfile.content)) }
                     }
@@ -77,6 +79,7 @@ const resolvers = {
                         formfile.content = form.content;
                         formfile.name = form.name;
                         let result = await formfile.save();
+                        console.log(context.createdForms);
                         return { ...result._doc, content: JSON.stringify(JSON.parse(formfile.content)) };
                     }
                 })

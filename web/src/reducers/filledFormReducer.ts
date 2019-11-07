@@ -2,12 +2,12 @@ import { FilledFormActions } from "../actions";
 import { IFilledForm, IFilledFormsState } from "../types";
 
 
-const initialState: IFilledFormsState = {
+export const initialFilledFormsState: IFilledFormsState = {
    byId: {},
    ids:[]
 }
 
-export function filledFormReducer(state = initialState, action: FilledFormActions) {
+export function filledFormReducer(state = initialFilledFormsState, action: FilledFormActions) {
     switch (action.type) {
         default:
             return state;

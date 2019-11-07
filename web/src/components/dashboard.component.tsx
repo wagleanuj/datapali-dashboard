@@ -1,9 +1,12 @@
-import { Alignment, Button, Navbar } from "@blueprintjs/core"
-import React, { ReactNode } from "react"
-import { SideNav } from "./sidenav.component"
-import { BrowserRouter as Router, Switch, Route } from 'react-router-dom';
-import { ISidebarItemNode } from "./navMenu.component"
+import { Alignment, Button, Navbar } from "@blueprintjs/core";
+import React, { ReactNode } from "react";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 import { tabs } from "../routes";
+import { ISidebarItemNode } from "./navMenu.component";
+import { SideNav } from "./sidenav.component";
+import { NavBar } from "./navBar.component";
+import { persistor } from "../configureStore";
+import { ConnectedNavBar } from "../containers/navBar.container";
 
 
 type DashboardProps = {
@@ -18,14 +21,7 @@ export class DashboardComponent extends React.Component<DashboardProps, Dashboar
             <Router>
 
                 <div className="dashboard-wrapper">
-                    <Navbar fixedToTop>
-                        <Navbar.Group align={Alignment.LEFT}>
-                            <Navbar.Heading>Blueprint</Navbar.Heading>
-                            <Navbar.Divider />
-                            <Button className="bp3-minimal" icon="home" text="Home" />
-                            <Button className="bp3-minimal" icon="document" text="Files" />
-                        </Navbar.Group>
-                    </Navbar>
+                   <ConnectedNavBar/>
                     <div className="dashboard">
 
                         <div className="sidebar-wrapper">
