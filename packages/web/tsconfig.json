@@ -1,0 +1,20 @@
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "allowJs": true,
+    "resolveJsonModule": true,
+    "noEmit": true,
+    "isolatedModules": true
+  },
+  "include": [
+    "src"
+  ],
+  "references": [
+    {
+      "path": "../formbuilder"
+    },
+    {
+      "path": "../dpform"
+    }
+  ]
+}
