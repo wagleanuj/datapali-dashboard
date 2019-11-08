@@ -18,7 +18,7 @@
     "noFallthroughCasesInSwitch": true,
     "moduleResolution": "node",
     "allowSyntheticDefaultImports": true,
-    "esModuleInterop": true,
+    //"esModuleInterop": true,
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
@@ -32,6 +32,8 @@
   },
   "references": [
     { "path": "packages/web" },
+        { "path": "packages/mobile"},
+
     { "path": "packages/formbuilder" },
     { "path": "packages/dpform" },
 

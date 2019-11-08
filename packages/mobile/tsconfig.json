@@ -1,4 +1,5 @@
 {
+  "extends": "../../tsconfig.json",
   "compilerOptions": {
     "allowSyntheticDefaultImports": true,
     "jsx": "react-native",
@@ -7,8 +8,15 @@
     "noEmit": true,
     "skipLibCheck": true,
     "resolveJsonModule": true,
-    "noUnusedLocals": false
+    "noUnusedLocals": false,
     "noUnusedParameters": false,
-    "target": "es6"
+    "target": "es6",
+    "isolatedModules": true,
+    "references": [
+  
+      {
+        "path": "../dpform"
+      }
+    ]
   }
 }
