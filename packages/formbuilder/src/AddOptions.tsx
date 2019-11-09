@@ -1,14 +1,13 @@
-import { Button, ButtonGroup, Divider, H5 } from "@blueprintjs/core";
+import { Button, ButtonGroup, Divider, H5, HTMLTable, InputGroup, TextArea } from "@blueprintjs/core";
 import { AnswerOptions, ANSWER_TYPES, Constants, getRandomId, IConstant, ILiteral, IOption, IOptionGroup, IValueType, QACondition, QAQuestion } from "@datapali/dpform";
 import _ from "lodash";
 import React from "react";
 import Select from "react-select/";
 import Creatable from "react-select/creatable";
-import { Table } from "reactstrap";
-import { destroyModal, openModal } from "./utils";
 import { AnswerTypeInput } from "./AnswerType";
 import { CreateConditionModal } from "./CreateConditionModal";
 import { customStyles } from "./DPFormItem";
+import { destroyModal, openModal } from "./utils";
 import { ValInput } from "./ValInput";
 
 interface QAAddOptionsState {
@@ -26,8 +25,8 @@ enum OPTION_OR_GROUP {
     GROUP = 2
 }
 export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOptionsState>{
-    constantNameInputRef: HTMLInputElement | null = null;
-    makeFromTextInputRef: HTMLTextAreaElement | null = null;
+    constantNameInputRef: InputGroup | null = null;
+    makeFromTextInputRef: TextArea | null = null;
     constructor(props: QAAddOptionsProps) {
         super(props);
         this.state = {
@@ -227,10 +226,10 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
                 <Select styles={customStyles} options={constantsOptions} onChange={this.handleImportFromConstant.bind(this)}></Select>
                 <Divider />
                 <H5>Export To Constant</H5>
-                <input type="text" ref={r => this.constantNameInputRef = r} /><Button onClick={this.makeConstant.bind(this)}>Export</Button>
+                <InputGroup placeholder="Constant name"  ref={r => this.constantNameInputRef = r} /><Button onClick={this.makeConstant.bind(this)}>Export</Button>
                 <Divider />
                 <H5>Make From Text</H5>
-                <textarea ref={r => this.makeFromTextInputRef = r}></textarea>
+                <TextArea ref={r => this.makeFromTextInputRef = r}></TextArea>
                 <Button onClick={this.makeOptionsFromText.bind(this)}>Make From Text</Button>
                 <QAOptionSection
                     defaultType={this.props.defaultOptionType}
@@ -327,7 +326,7 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
 
     render() {
         return (
-            <Table>
+            <HTMLTable>
                 <thead>
                     <tr>
                         <th></th>
@@ -363,7 +362,7 @@ export class QAOptionSection extends React.Component<QAAoptionSectionProps, QAAd
                         <td></td>
                     </tr>
                 </tbody>
-            </Table>
+            </HTMLTable>
         )
     }
 }
@@ -403,7 +402,7 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
     render() {
         return (
 
-            <Table>
+            <HTMLTable>
                 <thead>
                     <tr>
                         <th></th>
@@ -420,7 +419,7 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
                         let selected = options.filter(item => memberids.includes(item.value))
                         return <tr key={item.id}>
                             <td></td>
-                            <td><input key={item.id} type="text" className="form-control" defaultValue={item.name} onChange={e => {
+                            <td><InputGroup key={item.id} type="text" className="form-control" defaultValue={item.name} onChange={e => {
                                 if (this.props.handleGroupNameChange) this.props.handleGroupNameChange(item.name, e.target.value);
                             }} /></td>
                             <td><Select styles={customStyles}
@@ -443,8 +442,6 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
 
                         </tr>
 
-
-
                     })}
                     <tr>
                         <td><Button style={{ width: 20 }} icon="add" onClick={() => {
@@ -457,7 +454,7 @@ export class QAAddGroupSection extends React.Component<QAAoptionGroupSectionProp
 
                     </tr>
                 </tbody>
-            </Table>
+            </HTMLTable>
         )
     }
 }

@@ -1,14 +1,12 @@
-import React from "react";
-import { faPlusSquare, faWindowClose, faArrowUp } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
-import Select from 'react-select';
-import { Button, Table, Card, CardHeader, CardBody, Row } from "reactstrap";
-import { ValueType } from "react-select/src/types";
-import { getRandomId } from "./utils/getRandomId";
-import { customStyles, ISelectOption, getOperatorForType } from "./DPFormItem";
+import { Button, Card, HTMLTable } from "@blueprintjs/core";
+import { IAnswerOption, IContent, ILiteral, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QAType } from "@datapali/dpform";
 import _ from "lodash";
+import React from "react";
+import Select from 'react-select';
+import { ValueType } from "react-select/src/types";
+import { customStyles, getOperatorForType, ISelectOption } from "./DPFormItem";
+import { getRandomId } from "./utils/getRandomId";
 import { ValInput } from "./ValInput";
-import { ILiteral, QAQuestion, QACondition, QAComparisonOperator, IContent, QAType, QAFollowingOperator, IAnswerOption } from "@datapali/dpform";
 
 enum TableFieldType {
     QuestionRef = 1,
@@ -165,61 +163,54 @@ export class CreateCondition extends React.Component<CreateConditionProps, Creat
         });
     }
     render() {
-        return (<Card>
-            <CardHeader>{`${this.props.condition ? "Edit" : "Add"} Condtion`}</CardHeader>
-            <CardBody>
-                <Row>
-                    <Table>
-                        <thead>
-                            <tr>
-                                <th key="th-first">{``}</th>
-                                {this.columns.map((item, key) => {
-                                    return <th key={key}>{item.text}</th>;
-                                })}
-                                <th key="th-last">{``}</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            {this.state.literals.map((item: ILiteral, key: number) => {
-                                let questions_ = this.props.definedQuestions ? Object.values(this.props.definedQuestions).map((item: QAQuestion) => ({ value: item.id, label: item.questionContent.content })) : [];
-                                let questionselect = <Select key={`literalq-${key}-${item.literalId}`} styles={customStyles} options={questions_} value={questions_.find((r: { value: string, label: string }) => r.value === item.questionRef)} onChange={(selecteOption: ValueType<IAnswerOption>) => this.handleDataChange(key, TableFieldType.QuestionRef, selecteOption)} />;
-                                let selectedQuestionType = item.questionRef && this.props.definedQuestions && this.props.definedQuestions[item.questionRef] ? this.props.definedQuestions[item.questionRef].answerType : undefined;
-                                let comparisionOPOptions_: ISelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }));
-                                let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
-                                let question_: QAQuestion | null = this.getQuestion(item.questionRef);
-                                let qAnswerType = question_ ? question_.answerType : undefined;
-                                let qOptions = question_ && question_.options ? question_.options : undefined;
-                                let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={item.comparisonValue && item.comparisonValue.content} type={qAnswerType} />;
-                                let followingOperatorOptions_: ISelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
-                                let followingOperatorSelect = <Select key={`literalfo-${key}-${item.literalId}`} styles={customStyles} options={followingOperatorOptions_} value={followingOperatorOptions_.find(r => r.value === item.followingOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.FollowingOperator)} />;
-                                return <tr key={"tr_" + key}>
-                                    <td><Button type="button" size="sm" onClick={() => this.moveLiteralUp(key)}><FontAwesomeIcon icon={faArrowUp} /></Button></td>
-                                    <td>l<sub>{key}</sub></td>
-                                    <td className="questionRef">{questionselect}</td>
-                                    <td className="comparisonOperator">{comparisonOpSelect}</td>
-                                    <td className="comparisonValue">{comparisonValueSelect}</td>
-                                    <td className="followingOperator">{followingOperatorSelect}</td>
-                                    <td><Button size="sm" onClick={() => { this.removeLiteral(key); }}> <FontAwesomeIcon icon={faWindowClose} /></Button></td>
-                                </tr>;
-                            })}
-                            <tr>
-                                <td><Button size="sm" onClick={() => this.addLiteral()} type="button">
-                                    <FontAwesomeIcon icon={faPlusSquare} />
-                                </Button></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
-                                <td></td>
+        return (<>
+            <HTMLTable>
+                <thead>
+                    <tr>
+                        <th key="th-first">{``}</th>
+                        {this.columns.map((item, key) => {
+                            return <th key={key}>{item.text}</th>;
+                        })}
+                        <th key="th-last">{``}</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {this.state.literals.map((item: ILiteral, key: number) => {
+                        let questions_ = this.props.definedQuestions ? Object.values(this.props.definedQuestions).map((item: QAQuestion) => ({ value: item.id, label: item.questionContent.content })) : [];
+                        let questionselect = <Select key={`literalq-${key}-${item.literalId}`} styles={customStyles} options={questions_} value={questions_.find((r: { value: string, label: string }) => r.value === item.questionRef)} onChange={(selecteOption: ValueType<IAnswerOption>) => this.handleDataChange(key, TableFieldType.QuestionRef, selecteOption)} />;
+                        let selectedQuestionType = item.questionRef && this.props.definedQuestions && this.props.definedQuestions[item.questionRef] ? this.props.definedQuestions[item.questionRef].answerType : undefined;
+                        let comparisionOPOptions_: ISelectOption[] = getOperatorForType(selectedQuestionType).map((val, index) => ({ value: val, label: val }));
+                        let comparisonOpSelect = <Select key={`literalo-${key}-${item.literalId}`} styles={customStyles} options={comparisionOPOptions_} value={comparisionOPOptions_.find((op, index) => op.value === item.comparisonOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonOperator)} />;
+                        let question_: QAQuestion | null = this.getQuestion(item.questionRef);
+                        let qAnswerType = question_ ? question_.answerType : undefined;
+                        let qOptions = question_ && question_.options ? question_.options : undefined;
+                        let comparisonValueSelect = <ValInput options={qOptions} key={`literalv-${key}-${item.literalId}`} onChange={this.handleDataChange.bind(this, key, TableFieldType.ComparisonValue)} defaultValue={item.comparisonValue && item.comparisonValue.content} type={qAnswerType} />;
+                        let followingOperatorOptions_: ISelectOption[] = Object.keys(QAFollowingOperator).map((key) => ({ label: key, value: key === "AND" ? QAFollowingOperator.AND : key === "OR" ? QAFollowingOperator.OR : "" }));
+                        let followingOperatorSelect = <Select key={`literalfo-${key}-${item.literalId}`} styles={customStyles} options={followingOperatorOptions_} value={followingOperatorOptions_.find(r => r.value === item.followingOperator)} onChange={this.handleDataChange.bind(this, key, TableFieldType.FollowingOperator)} />;
+                        return <tr key={"tr_" + key}>
+                            <td><Button icon="arrow-up" onClick={() => this.moveLiteralUp(key)} /></td>
+                            <td>l<sub>{key}</sub></td>
+                            <td className="questionRef">{questionselect}</td>
+                            <td className="comparisonOperator">{comparisonOpSelect}</td>
+                            <td className="comparisonValue">{comparisonValueSelect}</td>
+                            <td className="followingOperator">{followingOperatorSelect}</td>
+                            <td><Button icon="cross" onClick={() => { this.removeLiteral(key); }} /></td>
+                        </tr>;
+                    })}
+                    <tr>
+                        <td><Button onClick={() => this.addLiteral()} icon="plus" /></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
 
-                            </tr>
+                    </tr>
 
-                        </tbody>
-                    </Table>
-                </Row>
+                </tbody>
+            </HTMLTable>
 
-            </CardBody>
-        </Card>);
+        </>);
     }
 }

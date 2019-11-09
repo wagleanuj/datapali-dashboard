@@ -7,6 +7,15 @@
   "author": "anujwagle@gmail.com",
   "license": "MIT",
   "private": true,
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build:dpform": "cd packages/dpform && tsc && cd ../../ ",
+    "build:formbuilder": "cd packages/formbuilder && tsc && cd ../../",
+    "install:dpform":"cd packages/dpform && npm i && cd ../../",
+    "install:formbuilder":"cd packages/formbuilder && npm i && cd ../../",
+    "build:formandbuilder":"npm run build:dpform && npm run build:formbuilder",
+    "start:web":"cd packages/web && yarn start"
+  },
   "devDependencies": {
     "@babel/core": "^7.4.5",
     "@babel/preset-env": "^7.4.5",

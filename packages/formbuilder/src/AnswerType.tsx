@@ -1,9 +1,9 @@
-import React from "react";
-import { customStyles } from "./DPFormItem";
-import Select from "react-select";
-import { Row, Col } from "reactstrap";
-import _ from "lodash";
+import { FormGroup, Label, ControlGroup } from "@blueprintjs/core";
 import { ANSWER_TYPES, IValueType } from "@datapali/dpform";
+import _ from "lodash";
+import React from "react";
+import Select from "react-select";
+import { customStyles } from "./DPFormItem";
 
 type QAAnswerTypeOption = { label: string, value: ANSWER_TYPES };
 
@@ -16,7 +16,7 @@ const ValueSelectOptions: QAAnswerTypeOption[] = [
     { value: ANSWER_TYPES.NUMBER, label: "Number" },
     { value: ANSWER_TYPES.RANGE, label: "Range" },
     { value: ANSWER_TYPES.SELECT, label: "Multiple Choice" },
-    {value: ANSWER_TYPES.GEOLOCATION, label:"Geo location"}
+    { value: ANSWER_TYPES.GEOLOCATION, label: "Geo location" }
 ]
 
 const OptionsForSelect: QAAnswerTypeOption[] = ValueSelectOptions.filter((item) => item.value && item.value !== ANSWER_TYPES.SELECT);
@@ -108,33 +108,27 @@ export class AnswerTypeInput extends React.Component<AnswerTypeInputProps, Answe
         let optionsForSecondSelect = this.state.answerType.name === ANSWER_TYPES.SELECT ? OptionsForSelect : this.state.answerType.name === ANSWER_TYPES.RANGE ? OptionsForRange : []
         let OptionsForThirdSelect = this.state.answerType.ofType && this.state.answerType.ofType.name === ANSWER_TYPES.RANGE ? OptionsForRange : []
         return (
-            <Row>
-                <Col>
-                    <label>Value Type</label>
+            < >
+                <FormGroup label="Value Type">
                     <Select onChange={this.handleAnswerTypeChange.bind(this)} styles={customStyles}
                         options={ValueSelectOptions}
                         value={ValueSelectOptions.find((item: QAAnswerTypeOption) => item.value === this.state.answerType.name)}
                     />
-                </Col>
-                {shouldDisplaySecondSelect && <Col>
-                    <label>of type</label>
+                </FormGroup>
+                {shouldDisplaySecondSelect && <FormGroup label="of Type">
                     <Select onChange={this.handleSecondSelectChange.bind(this)} styles={customStyles}
                         options={optionsForSecondSelect}
                         value={optionsForSecondSelect.find(item => this.state.answerType.ofType && item.value === this.state.answerType.ofType.name)}
                     />
-
-                </Col>}
-                {shouldDisplayThirdSelect && <Col>
-                    <label>of type</label>
+                </FormGroup>}
+                {shouldDisplayThirdSelect && <FormGroup label="of Type">
                     <Select onChange={this.handleThirdSelectChange.bind(this)} styles={customStyles}
                         options={OptionsForThirdSelect}
                         value={OptionsForThirdSelect.find(item => this.state.answerType.ofType && this.state.answerType.ofType.ofType && item.value === this.state.answerType.ofType.ofType.name)}
                     />
-
-                </Col>
+                </FormGroup>
                 }
-            </Row>
-
+            </>
         )
     }
 

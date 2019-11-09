@@ -1,12 +1,11 @@
 import React from "react";
-import { Table, Button } from "reactstrap";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { openModal, destroyModal } from "./utils";
 import { CreateConditionModal } from "./CreateConditionModal";
 import _ from "lodash";
 import { faKey, faPlusSquare, faWindowClose } from "@fortawesome/free-solid-svg-icons";
-import { ValInput } from "./ValInput";
-import { Switch } from "@blueprintjs/core";
+import { ValInput, } from "./ValInput";
+import { Switch, Button, HTMLTable } from "@blueprintjs/core";
 import { QAQuestion, IAutoAnswer, AnswerOptions, IValueType, IAnswerCondition, ANSWER_TYPES, QACondition, ILiteral } from "@datapali/dpform";
 
 interface AutoAnswerProps {
@@ -141,7 +140,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
         return (
             <div>
                 <Switch checked={this.state.isEnabled} onChange={this.changeEnabled.bind(this)} label="Enabled"></Switch>
-                <Table>
+                <HTMLTable>
                     <thead>
                         <tr>
                             <th></th>
@@ -163,18 +162,16 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
 
                             return (<tr key={`af${index}`}>
                                 <td></td>
-                                <td><Button type="button" onClick={() => this.openConditionModal(index)}
-                                    size="sm">
-                                    <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
+                                <td><Button icon="key" onClick={() => this.openConditionModal(index)}
+                                />
                                 </td>
                                 <td>{comparisonValueSelect("true")}</td>
                                 <td>{comparisonValueSelect("false")}</td>
-                                <td><Button size="sm" onClick={() => { this.removeAutofillCondition(index) }}> <FontAwesomeIcon icon={faWindowClose} /></Button></td>
+                                <td><Button icon="cross" onClick={() => { this.removeAutofillCondition(index) }} /></td>
                             </tr>)
                         })}
                         <tr>
-                            <td ><Button size="sm" onClick={() => this.addAutoFillCondition()} type="button" >
-                                <FontAwesomeIcon icon={faPlusSquare} />
+                            <td ><Button icon="plus" onClick={() => this.addAutoFillCondition()} type="button" >
                             </Button></td>
                             <td></td>
                             <td></td>
@@ -183,7 +180,7 @@ export class AutofillCondition extends React.Component<AutoAnswerProps, AutoAnsw
                         </tr>
 
                     </tbody>
-                </Table>
+                </HTMLTable>
             </div>
         )
     }

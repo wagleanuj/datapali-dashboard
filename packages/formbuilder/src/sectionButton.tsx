@@ -1,7 +1,6 @@
-import { Badge, Row } from "reactstrap";
-
+import { Alignment, Button, ButtonGroup, Collapse, EditableText, H5, Navbar } from "@blueprintjs/core";
 import React, { ReactNode, useState } from "react";
-import { ButtonGroup, Button, Collapse, EditableText, Card, Divider, H5, Navbar, Alignment, NavbarDivider } from "@blueprintjs/core";
+
 
 interface SectionButtonProps {
     sectionId: string;

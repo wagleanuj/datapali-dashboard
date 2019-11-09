@@ -1,8 +1,6 @@
-import { ReactNode, useState } from "react";
+import { Button, ButtonGroup, Collapse } from "@blueprintjs/core";
+import React, { ReactNode, useState } from "react";
 
-import { Badge } from "reactstrap";
-import React from "react";
-import { Button, ButtonGroup, Collapse, Divider } from "@blueprintjs/core";
 
 interface QuestionButtonProps {
     questionId: string,
@@ -22,7 +20,7 @@ export const QuestionButton = (props: QuestionButtonProps) => {
             <ButtonGroup>
                 <Button onClick={() => props.handleMoveUp(props.questionId, props.path)} style={{ height: 50, width: 20 }} icon={"arrow-up"} />
 
-                <Button style={{ height: 50 }} onClick={() => setIsExpanded(!isExpanded)} alignText={"left"} rightIcon={isExpanded ? "chevron-up" : "chevron-down"}><Badge color="secondary">Q</Badge> <span>{props.readablePath} </span> <span> {props.questionTitle} </span></Button>
+                <Button style={{ height: 50 }} onClick={() => setIsExpanded(!isExpanded)} alignText={"left"} rightIcon={isExpanded ? "chevron-up" : "chevron-down"}>Q <span>{props.readablePath} </span> <span> {props.questionTitle} </span></Button>
                 <Button onClick={() => props.handleDeletion(props.questionId, props.path)} style={{ height: 50, width: 20 }} alignText="left" rightIcon={"cross"} />
             </ButtonGroup>
             <Collapse keepChildrenMounted={false} isOpen={isExpanded}>

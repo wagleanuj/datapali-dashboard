@@ -1,16 +1,15 @@
 
 import { EditableText, Intent, IToastProps, ITreeNode, Toaster } from "@blueprintjs/core";
-import copy from "copy-to-clipboard";
 import { Constants, IDupeSettings, ILiteral, QAQuestion, QORS, QuestionSection, request, RootSection } from "@datapali/dpform";
+import copy from "copy-to-clipboard";
 import _ from "lodash";
 import React from "react";
-import { Row } from "reactstrap";
 import { CONFIG } from "./APPCONFIG";
 import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 import { Toolbar } from "./Toolbar";
-
+// import "./App.css";
 
 
 
@@ -399,16 +398,16 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     render() {
 
         return (
-            <Row>
+            <div>
                 <Toaster ref={r => r ? this.toasterRef = r : null}></Toaster>
                 <ConstantDefinitions isOpen={false}></ConstantDefinitions>
                 <Toolbar handleItemClick={this.handleToolbarItemClick.bind(this)}>
                     <EditableText value={this.state.root.name} onChange={this.handleRootNameChange.bind(this)} />
 
                 </Toolbar>
-                <div className="container">
+                <div style={{display:"flex", flexDirection:"row"}} className="container">
 
-                    <div style={{ background: "transparent" }} className="sidebar">
+                    <div style={{ background: "transparent", marginRight:20 }} className="sidebar">
                         <div className="sidebar-wrapper">
                             <FormTree
                                 expandedNodes={this.state.expandedNodes}
@@ -420,7 +419,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                             />
                         </div>
                     </div>
-                    <div className="content">
+                    <div  style={{width:"100%"}}className="">
                         <SectionC
                             handleSectionCustomIdChange={this.handleSectionCustomIdChange.bind(this)}
                             handleSectionConditionChange={this.handleSectionConditionChange.bind(this)}
@@ -435,19 +434,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                             handleQuestionChange={this.handleQuestionUpdate.bind(this)}
                             section={this.state.activeSection} />
                     </div>
-                    <Row style={{
-                        position: "fixed",
-                        height: "60px",
-                        bottom: 0,
-                        width: "100%",
-                        margin: "0 auto"
-                    }} className="fixed-footer">
-
-
-
-                    </Row>
+                  
                 </div>
-            </Row>
+            </div>
 
         )
     }

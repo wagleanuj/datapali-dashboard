@@ -1,8 +1,7 @@
+import { Button, Classes, Dialog } from "@blueprintjs/core";
+import { ILiteral, QACondition, QAQuestion } from "@datapali/dpform";
 import React from "react";
-import { Button, Row, ModalFooter, ModalBody } from "reactstrap";
-import Modal from "react-modal";
 import { CreateCondition } from "./CreateCondition";
-import { ILiteral, QAQuestion, QACondition } from "@datapali/dpform";
 
 
 
@@ -14,9 +13,10 @@ interface CreateConditionModalState {
 
 interface CreateConditionModalProp {
     isOpen: boolean
-    definedQuestions: {[key:string]: QAQuestion}
+    definedQuestions: { [key: string]: QAQuestion }
     onSubmit?: (data: ILiteral[]) => void;
     onCancel?: (data: ILiteral[]) => void;
+    themeName?:string;
     condition?: QACondition
 }
 
@@ -62,34 +62,20 @@ export class CreateConditionModal extends React.Component<CreateConditionModalPr
         }
     };
     render() {
-        const customStyles = {
-            content: {
-                top: '50%',
-                left: '50%',
-                right: 'auto',
-                bottom: 'auto',
-                marginRight: '-50%',
-                transform: 'translate(-50%, -50%)',
-                minHeight: "400px",
-                backgroundColor: "#27293d"
-            },
-            overlay: {
-                backgroundColor: "rgba(0, 0, 0, 0.50)"
-            }
-        };
-        return (<Modal style={customStyles} isOpen={this.props.isOpen}>
-            <ModalBody>
 
-                {this.props.isOpen && <CreateCondition definedQuestions = {this.props.definedQuestions} condition={this.props.condition ? this.props.condition : undefined} ref={this.createCondition_} onChange={(data) => this.handleChange(data)} />}
-                <Row>
-                    <div className="btn-danger">{this.state.errors.map((item: { message: string }) => item.message)}</div>
-                </Row>
-            </ModalBody>
+        return (<Dialog isCloseButtonShown={false} title={"Add/Edit Condition"} style={{ width: 900 }} isOpen={this.props.isOpen}>
+            <div style={{ maxHeight: 500, overflow: 'auto', minHeight:500 }} className={Classes.DIALOG_BODY}>
 
-            <ModalFooter>
-                <Button color="primary" onClick={this.primaryButtonHandler}>Submit</Button>
-                <Button color="secondary" onClick={this.secondaryButtonHandler}>Cancel</Button>
-            </ModalFooter>
-        </Modal>);
+                {this.props.isOpen && <CreateCondition definedQuestions={this.props.definedQuestions} condition={this.props.condition ? this.props.condition : undefined} ref={this.createCondition_} onChange={(data) => this.handleChange(data)} />}
+                <div className="btn-danger">{this.state.errors.map((item: { message: string }) => item.message)}</div>
+            </div>
+            <div className={Classes.DIALOG_FOOTER}>
+                <div className={Classes.DIALOG_FOOTER_ACTIONS}>
+                    <Button color="primary" onClick={this.primaryButtonHandler}>Submit</Button>
+                    <Button color="secondary" onClick={this.secondaryButtonHandler}>Cancel</Button>
+                </div>
+            </div>
+
+        </Dialog>);
     }
 }

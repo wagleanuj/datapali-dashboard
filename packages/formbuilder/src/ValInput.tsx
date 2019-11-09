@@ -1,9 +1,9 @@
+import { ButtonGroup, Divider, InputGroup } from "@blueprintjs/core";
+import { DateInput, DateRangePicker, TimePicker, TimePrecision } from "@blueprintjs/datetime";
+import { AnswerOptions, ANSWER_TYPES, IOption, IOptionGroup, IValueType } from "@datapali/dpform";
 import React, { useState } from "react";
-import { TimePicker, TimePrecision, DateRangePicker, DateInput } from "@blueprintjs/datetime"
-import { ButtonGroup, Divider } from "@blueprintjs/core";
-import Select from "react-select"
+import Select from "react-select";
 import { customStyles } from "./DPFormItem";
-import {IValueType, ANSWER_TYPES, AnswerOptions, IOptionGroup, IOption} from "@datapali/dpform";
 
 interface RangeValue {
     min: string | undefined
@@ -162,7 +162,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
         let comp = null;
         switch (this.props.type.name) {
             case ANSWER_TYPES.NUMBER:
-                comp = <input
+                comp = <InputGroup
                     defaultValue={this.props.defaultValue}
                     className="form-control"
                     type="number"
@@ -217,7 +217,7 @@ export class ValInput extends React.Component<ValInputProps, ValInputState> {
                 }
                 break;
             case ANSWER_TYPES.STRING:
-                comp = <input
+                comp = <InputGroup
                     className="form-control"
                     type="text"
                     defaultValue={this.props.defaultValue}

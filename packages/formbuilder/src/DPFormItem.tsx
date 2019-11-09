@@ -1,11 +1,8 @@
-import { Switch } from "@blueprintjs/core";
-import { faKey } from "@fortawesome/free-solid-svg-icons";
-import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { Button, Card, FormGroup, InputGroup, Label, Switch, TextArea } from "@blueprintjs/core";
 import { AnswerOptions, AnswerType, ANSWER_TYPES, Constants, IAutoAnswer, ILiteral, IValueType, QAComparisonOperator, QACondition, QAQuestion, QAType } from "@datapali/dpform";
 import * as _ from "lodash";
 import React from "react";
 import Modal from "react-modal";
-import { Button, Card, CardBody, CardHeader, FormGroup } from "reactstrap";
 import { QAAddOptions } from "./AddOptions";
 import { AnswerTypeInput } from "./AnswerType";
 import { AutofillCondition } from "./AutofillCondition";
@@ -64,6 +61,7 @@ export const customStyles = {
         ...base,
         background: "black",
         borderColor: "#e14eca",
+        position:"absolute",
         zIndex: "999999999999999999 !important"
 
     }),
@@ -206,66 +204,61 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
 
             <div>
                 <Card>
-                    <CardHeader>
-                        <h5 className="title">Add Question</h5>
-                    </CardHeader>
-                    <CardBody>
-                        <FormGroup>
-                            <label htmlFor="customid">Custom ID</label>
-                            <input defaultValue={this.state.question.customId} className="form-control" onChange={e => this.handleCustomIdChange(e.target.value)} id="custom_id" name="custom_id" placeholder="Custom id" />
+                    <h5 className="title">Add Question</h5>
+                    <FormGroup>
+                        <Label htmlFor="customid">Custom ID</Label>
+                        <InputGroup defaultValue={this.state.question.customId} className="form-control" onChange={e => this.handleCustomIdChange(e.target.value)} id="custom_id" name="custom_id" placeholder="Custom id" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Label htmlFor="question">Question</Label>
+                        <TextArea fill defaultValue={this.state.question.questionContent.content} className="form-control" onChange={e => this.handleQuestionChange(e.target.value)} id="question" name="question" placeholder="" />
+                    </FormGroup>
+                    <FormGroup>
+                        <Switch defaultChecked={this.state.question.isRequired} label="Required" onChange={this.handleRequiredChange.bind(this)} />
+                    </FormGroup>
+                    <FormGroup>
+                        <AnswerTypeInput answerType={this.state.question.answerType} onChange={this.handleAnswerTypeChange.bind(this)} />
+                    </FormGroup>
+
+                    {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
+                        <label >Add Options</label>
+                        <Card>
+                            <QAAddOptions
+                                constants={this.props.constants}
+                                definedQuestions={this.props.definedQuestions}
+                                onChange={this.handleOptionsChange.bind(this)}
+                                defaultOptionType={this.state.question.answerType}
+                                options={this.state.question.options} />
+                        </Card>
+                    </FormGroup>}
+
+                    <FormGroup>
+                        <Label htmlFor="type">Appearing Condition</Label>
+                        <Button
+                            type="button"
+                            large
+                            icon="key"
+                            fill={false}
+                            onClick={this.openAppearingConditionModal.bind(this)}
+                        />
+
+
+                    </FormGroup>
+
+                    <FormGroup>
+                        <FormGroup label="Add AutoFill condition">
+
+                            <AutofillCondition
+                                autoAnswer={this.state.question.autoAnswer}
+                                definedQuestions={this.props.definedQuestions}
+                                onChange={this.handleAutoFillChange.bind(this)}
+                                answerType={this.state.question.answerType}
+                                options={this.state.question.options} />
+
                         </FormGroup>
-                        <FormGroup>
-                            <label htmlFor="question">Question</label>
-                            <textarea defaultValue={this.state.question.questionContent.content} className="form-control" onChange={e => this.handleQuestionChange(e.target.value)} id="question" name="question" placeholder="" />
-                        </FormGroup>
+                    </FormGroup>
 
 
-                        <FormGroup>
-                            <Switch defaultChecked={this.state.question.isRequired} label="Required" onChange={this.handleRequiredChange.bind(this)} />
-                        </FormGroup>
-                        <FormGroup>
-                            <AnswerTypeInput answerType={this.state.question.answerType} onChange={this.handleAnswerTypeChange.bind(this)} />
-                        </FormGroup>
-
-                        {this.state.question.answerType && this.state.question.answerType.name === ANSWER_TYPES.SELECT && this.state.question.answerType.ofType && <FormGroup >
-                            <label >Add Options</label>
-                            <Card>
-                                <QAAddOptions
-                                    constants={this.props.constants}
-                                    definedQuestions={this.props.definedQuestions}
-                                    onChange={this.handleOptionsChange.bind(this)}
-                                    defaultOptionType={this.state.question.answerType}
-                                    options={this.state.question.options} />
-                            </Card>
-                        </FormGroup>}
-
-                        <FormGroup>
-                            <label htmlFor="type">Appearing Condition</label>
-                            <div>
-                                <Button type="button" onClick={this.openAppearingConditionModal.bind(this)}
-                                    size="sm">
-                                    <FontAwesomeIcon size={"sm"} icon={faKey} /></Button>
-
-                            </div>
-
-                        </FormGroup>
-
-                        <FormGroup>
-                            <FormGroup>
-                                <label htmlFor="type">Add Autofill Conditions</label>
-
-                                <AutofillCondition
-                                    autoAnswer={this.state.question.autoAnswer}
-                                    definedQuestions={this.props.definedQuestions}
-                                    onChange={this.handleAutoFillChange.bind(this)}
-                                    answerType={this.state.question.answerType}
-                                    options={this.state.question.options} />
-
-                            </FormGroup>
-                        </FormGroup>
-
-
-                    </CardBody>
 
                 </Card>
             </div>
