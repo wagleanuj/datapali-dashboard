@@ -10,7 +10,7 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    "@datapali/dpform": "^1.0.0",
+    
     "@playlyfe/gql": "^2.6.2",
     "apollo-server-express": "^2.4.0",
     "bcrypt-nodejs": "0.0.3",

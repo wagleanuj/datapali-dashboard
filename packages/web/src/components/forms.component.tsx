@@ -1,14 +1,20 @@
-import { Alignment, Button, ButtonGroup, Card, Classes, EditableText, Elevation, NonIdealState } from '@blueprintjs/core';
+import { useQuery } from '@apollo/react-hooks';
+import { Button, Card, Classes, EditableText, Elevation, NonIdealState, Spinner } from '@blueprintjs/core';
 import classNames from 'classnames';
-import React, { Component } from 'react';
-import { CellMeasurerCache } from 'react-virtualized';
+import gql from 'graphql-tag';
+import React from 'react';
+import { useHistory, useLocation } from 'react-router-dom';
 
-const cache = new CellMeasurerCache({
-    defaultWidth: 100,
-    minWidth: 75,
-    defaultHeight: 120,
-    fixedWidth: true,
-});
+
+const GET_FORMS = gql`
+    query{
+        forms{
+          id
+          name
+        }
+      } 
+
+`;
 
 interface IFormItem {
     id: string;
@@ -17,61 +23,60 @@ interface IFormItem {
     createdBy: string;
     sharedTo: string[];
 }
+
+
+function NonIdealFormsState() {
+    return (
+        <NonIdealState
+            icon={"folder-open"}
+            title="No Forms Found"
+            description={"Create a form to populate this area"}
+            action={<Button>Create Form</Button>}
+        />
+    )
+}
 type FormsProps = {
-    data: IFormItem[]
 }
-export class Forms extends Component<FormsProps, {}> {
-    private height: number = 0;
-    static defaultProps = {
-        data: [
-            {
-                id: "adsasd",
-                title: "Form 1",
-                createdDate: new Date().getTime(),
-                createdBy: "Anuj Wagle",
-                sharedTo: ["who", "who"]
 
-            }
-        ]
+export function Forms(props: FormsProps) {
+    const { loading, error, data } = useQuery(GET_FORMS);
+    const history = useHistory();
+    const location = useLocation();
+    const onItemClick = (id: string) => {
+        history.replace("/formbuilder?id=" + id);
     }
 
-    renderRow(index: number) {
-        const data = this.props.data[index];
+    const render = () => {
+        if (loading) {
+            return <Spinner />
+        }
+        if (data.forms.length === 0) {
+            return <NonIdealFormsState />
+        }
         return (
-
-            <FormItem
-                key={data.id}
-                {...data}
-                onClick={() => console.log(data.id)}
-                onDeleteClick={() => console.log("delete", data.id)}
-                onTitleChange={(newTitle) => console.log(newTitle)}
-            />
-
+            data.forms.map(item => {
+                return (
+                    <FormItem
+                        key={item.id}
+                        {...item}
+                        onClick={() => onItemClick(item.id)}
+                    />)
+            })
         )
     }
-    nonIdealState() {
-        return (
-            <NonIdealState
-                icon={"folder-open"}
-                title="No Forms Found"
-                description={"Create a form to populate this area"}
-                action={<Button>Create Form</Button>}
-            />
-        )
-    }
-
-    render() {
-        const children = this.props.data && this.props.data.length > 0 ? this.props.data.map((item, index) => this.renderRow(index)) : this.nonIdealState();
-        return (
-            <div style={{ display: 'flex' }}>
-                <div style={{ flex: '1 1 auto' }}>
-                    {children}
-                </div>
-            </div>
-
-        )
-    }
+    return render();
 }
+Forms.staticProps = [
+    {
+        id: "adsasd",
+        title: "Form 1",
+        lastUpdated: new Date().getTime(),
+        createdBy: "Anuj Wagle",
+        sharedTo: ["who", "who"]
+
+    }
+]
+
 type FormItemProps = {
     onTitleChange: (newTitle: string) => void;
     onClick: () => void;
@@ -81,20 +86,15 @@ type FormItemProps = {
 function FormItem(props: FormItemProps) {
     return (
         <Card style={props.style} onClick={() => props.onClick()} elevation={Elevation.FOUR} interactive>
+            <h4>
+                <EditableText value={props.title} />
+            </h4>
             <div style={{ display: "flex", flexDirection: "row", justifyContent: "space-between" }}>
                 <div>
-
-                    <h4>
-                        <EditableText value={props.title} />
-                    </h4>
                     <p className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>{props.createdBy}</p>
                     <p className={classNames(Classes.TEXT_MUTED, Classes.TEXT_SMALL)}>{new Date(props.createdDate).toDateString()}</p>
-
                 </div>
 
-                <ButtonGroup large alignText={Alignment.RIGHT}>
-                    <Button onClick={props.onDeleteClick} icon="trash"></Button>
-                </ButtonGroup>
             </div>
 
 

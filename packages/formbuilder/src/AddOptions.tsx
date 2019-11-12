@@ -25,8 +25,8 @@ enum OPTION_OR_GROUP {
     GROUP = 2
 }
 export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOptionsState>{
-    constantNameInputRef: InputGroup | null = null;
-    makeFromTextInputRef: TextArea | null = null;
+    constantNameInputRef: HTMLInputElement | null = null;
+    makeFromTextInputRef: HTMLTextAreaElement | null = null;
     constructor(props: QAAddOptionsProps) {
         super(props);
         this.state = {
@@ -226,10 +226,10 @@ export class QAAddOptions extends React.Component<QAAddOptionsProps, QAAddOption
                 <Select styles={customStyles} options={constantsOptions} onChange={this.handleImportFromConstant.bind(this)}></Select>
                 <Divider />
                 <H5>Export To Constant</H5>
-                <InputGroup placeholder="Constant name"  ref={r => this.constantNameInputRef = r} /><Button onClick={this.makeConstant.bind(this)}>Export</Button>
+                <InputGroup placeholder="Constant name"  inputRef={r => this.constantNameInputRef = r} /><Button onClick={this.makeConstant.bind(this)}>Export</Button>
                 <Divider />
                 <H5>Make From Text</H5>
-                <TextArea ref={r => this.makeFromTextInputRef = r}></TextArea>
+                <TextArea inputRef={r => this.makeFromTextInputRef = r}></TextArea>
                 <Button onClick={this.makeOptionsFromText.bind(this)}>Make From Text</Button>
                 <QAOptionSection
                     defaultType={this.props.defaultOptionType}

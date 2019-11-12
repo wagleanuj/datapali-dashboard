@@ -1,4 +1,6 @@
+import { ApolloConsumer } from '@apollo/react-hooks';
 import { Button, Card, FormGroup, InputGroup, Intent, Tooltip } from '@blueprintjs/core';
+import ApolloClient from 'apollo-boost';
 import React from "react";
 import { Field, InjectedFormProps, WrappedFieldProps } from 'redux-form';
 
@@ -8,8 +10,8 @@ type Value = {
     password: string;
 }
 export type LoginOwnProps = {
-    customSubmit?: (values: Value) => Promise<void>;
-    onLoggedIn?: () => void;
+    customSubmit?: (values: Value) => Promise<string>;
+    onLoggedIn?: (token: string) => void;
     authToken?: string;
 };
 
@@ -41,12 +43,14 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
         })
     }
 
-    handleSubmit = (e: any) => {
-        const { handleSubmit, customSubmit } = this.props;
-        if (customSubmit) handleSubmit(customSubmit)().then(() => {
-            if (this.props.onLoggedIn) this.props.onLoggedIn();
-        });
-        e.preventDefault();
+    createSubmitFunction = (client: ApolloClient<any>) => {
+        return (e: any) => {
+            const { handleSubmit, customSubmit } = this.props;
+            if (customSubmit) handleSubmit(customSubmit(client))().then((token: string) => {
+                if (this.props.onLoggedIn) this.props.onLoggedIn(token);
+            });
+            e.preventDefault();
+        }
     }
 
     renderPasswordHideButton() {
@@ -100,39 +104,46 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
 
     render() {
         return (
-            <Card className="login-form">
-                <h5>Login</h5>
-                <form onSubmit={this.handleSubmit}>
-                    <FormGroup>
-                        <Field
-                            name="email"
-                            type="text"
-                            component={this.renderEmailInput}
-                        />
+            <ApolloConsumer>
+                {client => {
+                    return (
+                        <Card className="login-form">
+                            <h5>Login</h5>
+                            <form onSubmit={this.createSubmitFunction(client)}>
+                                <FormGroup>
+                                    <Field
+                                        name="email"
+                                        type="text"
+                                        component={this.renderEmailInput}
+                                    />
 
-                    </FormGroup>
-                    <FormGroup>
-                        <Field
-                            name="password"
-                            type="password"
-                            component={this.renderPasswordInput}
-                        />
-                    </FormGroup>
-                    {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
-                    <FormGroup>
-                        <Button
-                            tabIndex={3}
-                            type="submit"
-                            large
-                            fill
-                        >
-                            Login
-                                    </Button>
-                    </FormGroup>
+                                </FormGroup>
+                                <FormGroup>
+                                    <Field
+                                        name="password"
+                                        type="password"
+                                        component={this.renderPasswordInput}
+                                    />
+                                </FormGroup>
+                                {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
+                                <FormGroup>
+                                    <Button
+                                        tabIndex={3}
+                                        type="submit"
+                                        large
+                                        fill
+                                    >
+                                        Login
+                                            </Button>
+                                </FormGroup>
 
-                </form>
+                            </form>
 
-            </Card>
+                        </Card>
+                    )
+                }}
+            </ApolloConsumer>
+
         )
     }
 }

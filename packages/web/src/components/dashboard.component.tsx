@@ -1,44 +1,42 @@
-import { Alignment, Button, Navbar } from "@blueprintjs/core";
-import React, { ReactNode } from "react";
-import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+import React, { ReactNode, useState } from "react";
+import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import { ConnectedNavBar } from "../containers/navBar.container";
 import { tabs } from "../routes";
 import { ISidebarItemNode } from "./navMenu.component";
 import { SideNav } from "./sidenav.component";
-import { NavBar } from "./navBar.component";
-import { persistor } from "../configureStore";
-import { ConnectedNavBar } from "../containers/navBar.container";
 
 
 type DashboardProps = {
 
 }
 type DashboardState = {
+    isSidebarVisible: boolean;
 }
-export class DashboardComponent extends React.Component<DashboardProps, DashboardState>{
+export function DashboardComponent(props: DashboardProps) {
+    const location = useLocation();
+    const shouldShowSidebar = location.pathname !== "/formbuilder";
+    return (
+        <Router>
 
-    render() {
-        return (
-            <Router>
+            <div className="dashboard-wrapper">
+                <ConnectedNavBar />
+                <div className="dashboard">
 
-                <div className="dashboard-wrapper">
-                   <ConnectedNavBar/>
-                    <div className="dashboard">
-
-                        <div className="sidebar-wrapper">
-                            <SideNav />
-                        </div>
-                        <div className="content-wrapper">
-                            <Switch>
-                                {getRoutesComponents(tabs)}
-                            </Switch>
-                        </div>
+                    <div style={{ display: shouldShowSidebar ? 'flex' : "none" }} className="sidebar-wrapper">
+                        <SideNav isVisible={true} />
+                    </div>
+                    <div className="content-wrapper">
+                        <Switch>
+                            {getRoutesComponents(tabs)}
+                        </Switch>
                     </div>
                 </div>
-            </Router>
+            </div>
+        </Router>
 
 
-        )
-    }
+    )
+
 }
 
 function getRoutesComponents(tabs: ISidebarItemNode[], bag: ReactNode[] = [], parentPath: string = "") {

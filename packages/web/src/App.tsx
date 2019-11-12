@@ -1,4 +1,3 @@
-import { ApolloProvider } from '@apollo/react-hooks';
 import ApolloClient from 'apollo-boost';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -8,25 +7,29 @@ import './App.css';
 import { DashboardComponent } from './components/dashboard.component';
 import { CONFIG } from './config';
 import { persistor, store } from './configureStore';
+import { ConnectedApolloProvider } from './containers/apollo.provider';
 import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
 import { EAppTheme } from './types';
 
-export const client = new ApolloClient({
+const client = new ApolloClient({
   uri: CONFIG.localServerURL
-  
-})
+
+});
+
 
 type Props = {
-
+  authToken?: string;
 }
 type State = {
-  theme: EAppTheme
+  theme: EAppTheme,
+  apClient: ApolloClient<any>
 }
 class App extends React.Component<Props, State>{
 
   state = {
-    theme: EAppTheme.DARK
+    theme: EAppTheme.DARK,
+    apClient: client
   }
 
   get Theme() {
@@ -44,25 +47,21 @@ class App extends React.Component<Props, State>{
       theme: newTheme
     })
   }
-  onLogin() {
-
-
-  }
 
   render() {
     return (
       <Router>
 
         <Provider store={store}>
-          <PersistGate onBeforeLift={()=>console.log(store.getState())} loading={null} persistor={persistor}>
-
-            <ApolloProvider client={client}>
+          <PersistGate onBeforeLift={() => console.log(store.getState())} loading={null} persistor={persistor}>
+            <ConnectedApolloProvider client={this.state.apClient}>
               <div className={`main-wrapper ${this.Theme}`}>
                 <Switch>
                   <Route path="/login" render={({ history, location }) => {
                     return <LoginForm onLoggedIn={() => {
                       let { from } = location.state || { from: { pathname: "/" } };
                       history.replace(from);
+
                     }}
                     />
 
@@ -70,9 +69,10 @@ class App extends React.Component<Props, State>{
                   <Route path="/">
                     <ConnectedProtectedRoute component={DashboardComponent} />
                   </Route>
+
                 </Switch>
               </div>
-            </ApolloProvider>
+            </ConnectedApolloProvider>
           </PersistGate>
 
         </Provider >
@@ -81,5 +81,6 @@ class App extends React.Component<Props, State>{
     );
   }
 }
+
 
 export default App;

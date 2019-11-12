@@ -252,7 +252,6 @@ export class SelInput extends React.Component<SelInputProps, SelInputState>{
         this.state = {}
     }
     handleChange(d: any) {
-        console.log(d);
         if (this.props.onChange) this.props.onChange(d);
     }
     render() {

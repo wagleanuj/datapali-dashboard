@@ -7,7 +7,7 @@ import { tabs } from '../routes';
 import { SidebarMenu } from './navMenu.component';
 
 type SideNavProps = {
-
+    isVisible: boolean;
 }
 
 export class SideNav extends Component<SideNavProps, { selectedRoute: string }> {
@@ -20,7 +20,9 @@ export class SideNav extends Component<SideNavProps, { selectedRoute: string }> 
         })
     }
     render() {
+        if (!this.props.isVisible) return <></>
         return (
+
             <div className="sidebar">
                 <div className="logo">
                     <img height={190} style={{ padding: 15 }} src={Logo} />
@@ -32,6 +34,7 @@ export class SideNav extends Component<SideNavProps, { selectedRoute: string }> 
                     onItemClick={this.onSideBarItemClick.bind(this)}
                 />
             </div>
+
         )
     }
 }

@@ -75,7 +75,6 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 let valbag: (QuestionSection | QAQuestion)[] = []
                 let iterated = this.getAllEntries([0, 1], 6, root, null, true, valbag);
                 console.log(iterated);
-                // let ir = this.Iterator2(root, [0], 0, QORS.QUESTION);
                 this.setState({
                     root: root,
                     activeSection: root,

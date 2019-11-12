@@ -1,10 +1,11 @@
+import { RootSection } from "@datapali/dpform";
 import { SurveyForm } from "@datapali/formbuilder";
 import React from "react";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Surveyors } from "./components/surveyors.component";
-import { RootSection } from "@datapali/dpform";
+import { FormBuilder } from "./components/formbuilder.component";
 export const tabs: ISidebarItemNode[] = [
     {
         title: "Forms",
@@ -34,8 +35,16 @@ export const tabs: ISidebarItemNode[] = [
         title: "Roots",
         routeKey: "/roots",
         icon: "grouped-bar-chart",
-        component: <SurveyForm onSave={() => { }} onChange={() => { }} token="" root={new RootSection()}/>,
+        component: <SurveyForm onSave={() => { }} onChange={() => { }} token="" root={new RootSection()} />,
         children: []
     },
+    {
+        title: "Form Builder",
+        routeKey: "/formbuilder",
+        hideOnSidebar: true,
+        icon: "form",
+        children: [],
+        component: <FormBuilder />
+    }
 
 ]

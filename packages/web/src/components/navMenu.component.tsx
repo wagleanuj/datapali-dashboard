@@ -8,6 +8,7 @@ export type ISidebarItemNode = {
     icon: IconName;
     children: ISidebarItemNode[];
     component?: ReactNode;
+    hideOnSidebar?: boolean;
 }
 
 type SidebarProps = {
@@ -34,6 +35,7 @@ export class SidebarMenu extends Component<SidebarProps, SidebarState>{
     }
     render() {
         const menu = this.props.items.map(section => {
+            if (section.hideOnSidebar) return null;
             const item = <SidebarItem
                 routeKey={(this.props.currentRouteKey || "") + section.routeKey}
                 title={section.title}
