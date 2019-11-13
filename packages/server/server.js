@@ -18,7 +18,7 @@ const jwt = require("jsonwebtoken");
 const { User } = require("./models/user");
 const { Controls } = require("./models/controls");
 const { Level } = require("./models/Level");
-const {FormFile} = require("./models/form");
+const { FormFile } = require("./models/form");
 
 const SALT_WORK_FACTOR = 10;
 const bcrypt = require("bcrypt-nodejs");
@@ -26,11 +26,11 @@ const bcrypt = require("bcrypt-nodejs");
 app.use(express.static(path.join(__dirname, "../client/build")));
 app.use("/assets", express.static(path.join(__dirname, "../client/assets")));
 
-app.get("/", function (req, res) {
+app.get("/", function(req, res) {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 
-app.get("/reset-password", function (req, res) {
+app.get("/reset-password", function(req, res) {
   res.sendFile(path.join(__dirname, "../client/build/index.html"));
 });
 //TODO:: instrospection and playground should be off in production when project is complete
@@ -48,7 +48,7 @@ const server = new ApolloServer({
     let token = req.headers.authorization;
     if (!token) return null;
     return new Promise((resolve, reject) => {
-      jwt.verify(token, process.env.JWT_SECRET, function (err, decoded) {
+      jwt.verify(token, process.env.JWT_SECRET, function(err, decoded) {
         if (err) {
           reject(new AuthenticationError("Invalid user"));
         }
@@ -74,8 +74,8 @@ const auth = process.env.DB_PASS
 //connect to the database
 mongoose
   .connect(process.env.DB_HOST, {
-    useUnifiedTopology:true,
-    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    useNewUrlParser: true
   })
   .then(dbClient => {
     //start listening at the server port
@@ -87,4 +87,3 @@ mongoose
   .catch(err => {
     throw err;
   });
-

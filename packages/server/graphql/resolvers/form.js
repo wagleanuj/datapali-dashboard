@@ -11,9 +11,9 @@ const resolvers = {
                 item.createdAt = item.createdAt.getTime().toString();
                 item.updatedAt = item.updatedAt.getTime().toString();
                 return item;
-
             }
-            return FormFile.find({}).then(formFiles => {
+            
+            return FormFile.find({}).populate("assignedTo").then(formFiles => {
                 if (!formFiles) return [];
                 if (id ) {
                     let found = [];
@@ -43,6 +43,10 @@ const resolvers = {
             if (!surveyor.availableForms.includes(form._id)) {
                 surveyor.availableForms.push(form);
                 await surveyor.save();
+            }
+            if(!form.assignedTo.includes(surveyor._id)){
+                form.assignedTo.push(surveyor);
+                await form.save();
             }
             return { message: `Sucessfully made the form available for ${surveyorEmail}` };
         },

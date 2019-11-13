@@ -61,6 +61,7 @@ const typeDefs =
         content: String
         createdAt: String
         updatedAt: String
+        assignedTo: [User]
     }
     
     input FormFileInput {
@@ -72,6 +73,7 @@ const typeDefs =
     type Query {
         getFilledForms(bySurveyor: String): [FilledForm]
         forms(id: [String]): [FormFile]
+        users(ids:[String]): [User]
         login(email: String!, password: String!): AuthData
         sendPasswordResetEmail(email: String!): GeneralQueryResponse!
     }

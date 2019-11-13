@@ -5,6 +5,7 @@ const FormFile = new Schema({
     name: { type: Schema.Types.String, required: false },
     content: { type: Schema.Types.String },
     createdBy: { type: Schema.Types.ObjectId, required: true, ref: "User" },
+    assignedTo: [{type: Schema.Types.ObjectId, required: true, ref: "User"}]
 }, { timestamps: true });
 
 
