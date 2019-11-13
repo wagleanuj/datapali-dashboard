@@ -1,0 +1,8 @@
+{
+  "editor.fontFamily": "Fira Code Retina, FiraCode-Retina",
+  "editor.fontLigatures": true,
+  "editor.formatOnSave": true,
+  "editor.codeActionsOnSave": {
+    "source.organizeImports": true
+  }
+}
