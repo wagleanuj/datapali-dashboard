@@ -6,22 +6,29 @@ const { AuthenticationError, ApolloError } = require("apollo-server-express");
 const resolvers = {
     Query: {
         forms: async (parent, { id }, context, info) => {
-            if (!context._id ) throw new AuthenticationError();
+            if (!context._id) throw new AuthenticationError();
+            const dateTransformer = (item) => {
+                item.createdAt = item.createdAt.getTime().toString();
+                item.updatedAt = item.updatedAt.getTime().toString();
+                return item;
+
+            }
             return FormFile.find({}).then(formFiles => {
                 if (!formFiles) return [];
-                if (id) {
+                if (id ) {
                     let found = [];
                     if (context.accountType === "surveyor") {
-                        found = formFiles.filter(item => id.includes(item.id) && context.availableForms.includes(item._id));
+                        found = formFiles.filter(item => id.includes(item.id) && context.availableForms.includes(item._id)).map(dateTransformer);
                     } else {
-                        found = formFiles.filter(item => id.includes(item.id));
+                        found = formFiles.filter(item => id.includes(item.id)).map(dateTransformer);
                     }
                     return found;
                 }
-                if(context.accountType==="surveyor"){
-                    return formFiles.filter(item=>context.availableForms.includes(item._id));
+                if (context.accountType === "surveyor") {
+                    return formFiles.filter(item => context.availableForms.includes(item._id)).map(dateTransformer);
                 }
-                return formFiles;
+                const ret = formFiles.map(dateTransformer);
+                return ret;
             })
         }
     },
@@ -46,11 +53,11 @@ const resolvers = {
             let form = await FormFile.findOne({ id: formId }).exec();
             if (!form) throw new ApolloError("Form not found");
             if (!surveyor.availableForms) surveyor.availableForms = [];
-            let surveyFormIndex = surveyor.availableForms.findIndex(item=>item && item.toString()===form._id.toString());
-            if (surveyFormIndex>-1) {
-               surveyor.availableForms.splice(surveyFormIndex,1);
-               console.log('removed');
-               await surveyor.save();
+            let surveyFormIndex = surveyor.availableForms.findIndex(item => item && item.toString() === form._id.toString());
+            if (surveyFormIndex > -1) {
+                surveyor.availableForms.splice(surveyFormIndex, 1);
+                console.log('removed');
+                await surveyor.save();
             }
             return { message: `Sucessfully made the form unavailable for ${surveyorEmail}` };
         },
@@ -71,14 +78,14 @@ const resolvers = {
                         context.createdForms.push(rootFile);
                         await context.save();
                         let result = await rootFile.save();
-                        return { ...result._doc, content: JSON.stringify(JSON.parse(formfile.content)) }
+                        return { ...result._doc, content: JSON.stringify(JSON.parse(rootFile.content)) }
                     }
                     else {
                         //save the existing form 
                         formfile.content = form.content;
                         formfile.name = form.name;
                         let result = await formfile.save();
-                        if(!context.createdForms.includes(formfile._id)){
+                        if (!context.createdForms.includes(formfile._id)) {
                             context.createdForms.push(formfile);
                             await context.save()
                         }

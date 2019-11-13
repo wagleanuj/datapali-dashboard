@@ -11,25 +11,24 @@ import { ConnectedApolloProvider } from './containers/apollo.provider';
 import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
 import { EAppTheme } from './types';
+import { Toaster } from '@blueprintjs/core';
 
 const client = new ApolloClient({
   uri: CONFIG.localServerURL
 
 });
-
+export const AppToaster = Toaster.create({});
 
 type Props = {
   authToken?: string;
 }
 type State = {
   theme: EAppTheme,
-  apClient: ApolloClient<any>
 }
 class App extends React.Component<Props, State>{
 
   state = {
     theme: EAppTheme.DARK,
-    apClient: client
   }
 
   get Theme() {
@@ -54,7 +53,7 @@ class App extends React.Component<Props, State>{
 
         <Provider store={store}>
           <PersistGate onBeforeLift={() => console.log(store.getState())} loading={null} persistor={persistor}>
-            <ConnectedApolloProvider client={this.state.apClient}>
+            <ConnectedApolloProvider client={client}>
               <div className={`main-wrapper ${this.Theme}`}>
                 <Switch>
                   <Route path="/login" render={({ history, location }) => {

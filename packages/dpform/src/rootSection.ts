@@ -14,6 +14,11 @@ export class RootSection {
     constructor() {
         this.id = getRandomId('root-');
     }
+    
+    setName(name:string){
+        this.name = name;
+        return this;
+    }
 
     static getFromPath(path: number[], root: (RootSection | QuestionSection | QAQuestion)[]): undefined | RootSection | QuestionSection | QAQuestion {
         const el = root[path[0]];
@@ -193,7 +198,9 @@ export class RootSection {
                 r.addQuestion(parentPath, [question]);
             }
         };
-        a.content.forEach((item: any, index: number) => handleSectionAdd(item, path, index));
+        if (a.content) {
+            a.content.forEach((item: any, index: number) => handleSectionAdd(item, path, index));
+        }
         return r;
     }
 

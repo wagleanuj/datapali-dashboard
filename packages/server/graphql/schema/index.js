@@ -59,6 +59,8 @@ const typeDefs =
         id: ID!
         name: String
         content: String
+        createdAt: String
+        updatedAt: String
     }
     
     input FormFileInput {
