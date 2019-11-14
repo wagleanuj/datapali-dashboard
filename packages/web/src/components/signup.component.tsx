@@ -38,6 +38,14 @@ export type SignUpOwnProps = {
     userId?: string;
     signUpType?: "surveyor" | "admin"
 };
+const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
+    return (
+        <FormGroup label={label}>
+            <input autoComplete={"autocomplete_off_hack_xfr4!k"} className={classNames(INPUT, FILL)} {...input} type={type} />
+            {touched && ((error && <span style={{ color: "red" }}>{error}</span>) || (warning && <span>{warning}</span>))}
+        </FormGroup>
+    )
+}
 type SignUpProps = InjectedFormProps<ISignUpUser, SignUpOwnProps> & SignUpOwnProps;
 export function SignUpComponent(props: SignUpProps) {
     const [createUser, errors] = useMutation(SIGN_UP(props.signUpType), { errorPolicy: "none" });
@@ -58,14 +66,7 @@ export function SignUpComponent(props: SignUpProps) {
 
 
     }
-    const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
-        return (
-            <FormGroup label={label}>
-                <input autoComplete={"autocomplete_off_hack_xfr4!k"} className={classNames(INPUT, FILL)} {...input} type={type} />
-                {touched && ((error && <span style={{ color: "red" }}>{error}</span>) || (warning && <span>{warning}</span>))}
-            </FormGroup>
-        )
-    }
+    
     return (
         <Card>
             {submitting && <Spinner />}
