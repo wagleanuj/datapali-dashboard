@@ -150,8 +150,8 @@
         "signature": "0c9ea8c2028047f39a3f66752682604f543c08be8806258c3d95c93e75a43255"
       },
       "./src/appconfig.ts": {
-        "version": "bb54c89cfac6947deb31774283885217aa217880ae68983d0122bca3189887a8",
-        "signature": "7ade1040850def56ff7efbfcf618efbb23b47dfc1318a7a3847b69b9f283cae1"
+        "version": "202f036bb30706e90fbd1c742cff0a0e37f320387eb647674d0198c991323d9e",
+        "signature": "9c946c0f196d06c3586689ff77bbd1607f02901a179f0e138693341783884cb9"
       },
       "../../node_modules/@blueprintjs/core/lib/esm/accessibility/focusstylemanager.d.ts": {
         "version": "45764e880cd0158b4a1692c38670441b7d60ddfe6f8835641ca9bfceb5f78b9e",
@@ -554,56 +554,56 @@
         "signature": "fe8d41d1313b6153acd604ff261250a50f15056f6f574f414a0e38f443abcc3c"
       },
       "../dpform/lib/answer.d.ts": {
-        "version": "dd0a1b5aa561f930a284d208683e01caa233940024fdcd770c3dffe905740888",
-        "signature": "dd0a1b5aa561f930a284d208683e01caa233940024fdcd770c3dffe905740888"
+        "version": "f5594aef64403f0d61b61ed042d2fed01594505544ec3b4cb35f4d041c7869b7",
+        "signature": "f5594aef64403f0d61b61ed042d2fed01594505544ec3b4cb35f4d041c7869b7"
       },
       "../dpform/lib/condition.d.ts": {
-        "version": "9c4bed8d723b4df80f93fbbd68fb86f1dac5e4fc42b00924bca05a9717d3661e",
-        "signature": "9c4bed8d723b4df80f93fbbd68fb86f1dac5e4fc42b00924bca05a9717d3661e"
+        "version": "321bd26b4c10359071b8b7b1819023bf4e6ab410e0bef7e5b90bec96ebcedc4b",
+        "signature": "321bd26b4c10359071b8b7b1819023bf4e6ab410e0bef7e5b90bec96ebcedc4b"
       },
       "../dpform/lib/answertypes.d.ts": {
-        "version": "196240fc019f857a3db5943ef016119df66ecbceef0d9f10be14a9cecc41496a",
-        "signature": "196240fc019f857a3db5943ef016119df66ecbceef0d9f10be14a9cecc41496a"
+        "version": "610d51343f7e32f73e9d23e7e8a71a1b56c503a145063672aa0a6aefd24ffa46",
+        "signature": "610d51343f7e32f73e9d23e7e8a71a1b56c503a145063672aa0a6aefd24ffa46"
       },
       "../dpform/lib/valuetype.d.ts": {
-        "version": "ec5e76cb5abdec93ab84de8d0f9fa93124a0d9acd164a808a6b81cc2628177fc",
-        "signature": "ec5e76cb5abdec93ab84de8d0f9fa93124a0d9acd164a808a6b81cc2628177fc"
+        "version": "a086fc151908618c185dedbaf62a4a0c169daa7fae21369d2831c2d00009e329",
+        "signature": "a086fc151908618c185dedbaf62a4a0c169daa7fae21369d2831c2d00009e329"
       },
       "../dpform/lib/answeroptions.d.ts": {
-        "version": "1790cc7c14fec6f8109251b3779346f31250a2ca0d503a4f1dbb7b6824b7a26f",
-        "signature": "1790cc7c14fec6f8109251b3779346f31250a2ca0d503a4f1dbb7b6824b7a26f"
+        "version": "7034cd76ae79bc17d393b4d383957795d34008700cffc6eeb16841daf2b2f062",
+        "signature": "7034cd76ae79bc17d393b4d383957795d34008700cffc6eeb16841daf2b2f062"
       },
       "../dpform/lib/constant.d.ts": {
-        "version": "c11d2149f39fe1e6564125c382c33a52c9e328b7cc59523cbbbaafa5a4a62eda",
-        "signature": "c11d2149f39fe1e6564125c382c33a52c9e328b7cc59523cbbbaafa5a4a62eda"
+        "version": "dc9dc980ca02c24166a8aa0042c68f1c521a0b96820c76805cf2ec911b723549",
+        "signature": "dc9dc980ca02c24166a8aa0042c68f1c521a0b96820c76805cf2ec911b723549"
       },
       "../dpform/lib/constants.d.ts": {
-        "version": "86608b7baad987adba51308cbd84e9724dac00013412010619fca7eca681d0b2",
-        "signature": "86608b7baad987adba51308cbd84e9724dac00013412010619fca7eca681d0b2"
+        "version": "f9787e96ce2289d8c77d7a9ea516b3e5ba81b347fcc1a35e7698280c109210d0",
+        "signature": "f9787e96ce2289d8c77d7a9ea516b3e5ba81b347fcc1a35e7698280c109210d0"
       },
       "../dpform/lib/duplicatesettings.d.ts": {
-        "version": "d2b7e91d8b4a5367e21430ad2505e4d165405fb968d533deacb3413107e7576e",
-        "signature": "d2b7e91d8b4a5367e21430ad2505e4d165405fb968d533deacb3413107e7576e"
+        "version": "b1840e1c632a6b5c9e2f86d3ee91c6899cfdc917531ecea5c0c2c1bd1ec4dc34",
+        "signature": "b1840e1c632a6b5c9e2f86d3ee91c6899cfdc917531ecea5c0c2c1bd1ec4dc34"
       },
       "../dpform/lib/question.d.ts": {
-        "version": "f8935928c8473a69ada21b7237fa7b53ae376f2e7ff2bc5e246a6a4ef6d42e46",
-        "signature": "f8935928c8473a69ada21b7237fa7b53ae376f2e7ff2bc5e246a6a4ef6d42e46"
+        "version": "7b056afea25dac49da136065b5270281ab9885785655a5f16696d25f56be80eb",
+        "signature": "7b056afea25dac49da136065b5270281ab9885785655a5f16696d25f56be80eb"
       },
       "../dpform/lib/questionsection.d.ts": {
-        "version": "bae4d3a68b5b59a598d5b5b9623633ee96873bbe34c7cf99c6a639546021ce7c",
-        "signature": "bae4d3a68b5b59a598d5b5b9623633ee96873bbe34c7cf99c6a639546021ce7c"
+        "version": "fffb1a9844501d6b67490dad798550961d7bd29db1de499059882ca337c86482",
+        "signature": "fffb1a9844501d6b67490dad798550961d7bd29db1de499059882ca337c86482"
       },
       "../dpform/lib/rootsection.d.ts": {
-        "version": "16ed5cb882b957be355278ab54298fc99d1adf154a8c5a6f145a95b27ca7a1d0",
-        "signature": "16ed5cb882b957be355278ab54298fc99d1adf154a8c5a6f145a95b27ca7a1d0"
+        "version": "c0a814e7816ac542d4c56c8d0a96f0d39e2f5505e6db8fb3e56f25e3995a5a26",
+        "signature": "c0a814e7816ac542d4c56c8d0a96f0d39e2f5505e6db8fb3e56f25e3995a5a26"
       },
       "../dpform/lib/util.d.ts": {
-        "version": "5b3f4880d598ec2ae575d7a3ab42f28497232c7f5952d236c981a1a1c5c33d59",
-        "signature": "5b3f4880d598ec2ae575d7a3ab42f28497232c7f5952d236c981a1a1c5c33d59"
+        "version": "8786706559fd4ac94ab15a4e4efb4765edb01b6a51126a3cd5562d2e8be83582",
+        "signature": "8786706559fd4ac94ab15a4e4efb4765edb01b6a51126a3cd5562d2e8be83582"
       },
       "../dpform/lib/index.d.ts": {
-        "version": "8e3a82d9984540814fe6f526bd144d76703d51be051894f269d39ff31f161b79",
-        "signature": "8e3a82d9984540814fe6f526bd144d76703d51be051894f269d39ff31f161b79"
+        "version": "50ce74d132a9ef5e8760004dc60bc1408dcd6edc20b1c05912b7f6e5b7471bb9",
+        "signature": "50ce74d132a9ef5e8760004dc60bc1408dcd6edc20b1c05912b7f6e5b7471bb9"
       },
       "../../node_modules/@types/lodash/ts3.1/common/common.d.ts": {
         "version": "4025cf62742c5bb3d383c8a62342481622c87e3397ea5e7b7baab18b9efd5798",
@@ -774,12 +774,12 @@
         "signature": "4c2ec5371ce711bcc9364099257d46e89d1ec16fb66247ac7bd12717c7be8ceb"
       },
       "./src/utils/index.tsx": {
-        "version": "92321f64d9ddc2de85d3901bf34a80165723932aaf02c6452287cd809d0b72f1",
-        "signature": "bd8c65b6fd25e71994da0c0151c10642e812a471ec9c90608d3360411df18524"
+        "version": "3eed68339d85e72749a8abdff188ffc4816d97fe6412f439a60b75be8a2c7724",
+        "signature": "e3ea21147c00331b8d4affd43c6d849ea113bb98a36b65f260b33aa0ee7be6a3"
       },
       "./src/utils/getrandomid.tsx": {
-        "version": "d846a8979e9534e91d4685674c130f01d90852439f49519bae23b16d07ffe64f",
-        "signature": "1446423c93f5c22a62e33055598e1f58ffe956f8bba06901ea5f3e14d011ddc0"
+        "version": "26d3285ef7b08e04777989e99f65752e3d8e6ad26478fdfe7cefa037c738b54e",
+        "signature": "a146ec4fe8f90b087ebc0c0294eec2820f0b82322afb06d0375c098583c88d8a"
       },
       "../../node_modules/@blueprintjs/datetime/lib/esm/common/classes.d.ts": {
         "version": "1150a8a0906df33d8a756feeb6d6b6d16075b3e96650370a23ac6d18f047a0a1",
@@ -862,48 +862,48 @@
         "signature": "9b51d7b5354177e7ac60410353d6236a08f09e168268b9eb781b74af82226dcc"
       },
       "./src/valinput.tsx": {
-        "version": "97e2b40e55eab09d30acebd3ed202a4866a9c06b9969089478265ab35fcd07f4",
-        "signature": "2bbf52a5cbdea0f9dca6f03654327eec70f84c3f3ed2f88de938c929f8e1688f"
+        "version": "4e263a9e51e0d9ef43daacfd5bb6eda3dfa9a06918146ca9b167cf37080ef25c",
+        "signature": "6822745272f38dcd8f5804627d9b259bbe0053cb08e08b554162245644d4af18"
       },
       "./src/createcondition.tsx": {
-        "version": "2516e603ebd2243fd81e29f7ac86f97fed246d585e238111a6adb58308f61ead",
-        "signature": "907bc6effc4c8c4260d9c62f2ae670a65a2387308cd65257c3168ace0c8418fb"
+        "version": "1fb3efee76a184465c86538eaba89e472ee45a99f62a1460fa7fbb30070e1405",
+        "signature": "cf0be5204fc081d7ae00488891c0480b13774c0a83eb6be644ac99800b5eceea"
       },
       "./src/createconditionmodal.tsx": {
-        "version": "db9c27164e31c21bddad704279e60245b2856db6bcec04110b2cedd316807d8e",
-        "signature": "f94c6b0c5ab5e19a87991b9c21192c066e72e94e8ce0f4e7db0296e4a044a790"
+        "version": "316589f09ce74b7a9dcd695eda87e6d5141da511c7f181b6af089b9c9d1f8509",
+        "signature": "2635175b71061f418b34674339a087d75bbee49bcbde40a2bc574bfc00fd8348"
       },
       "./node_modules/@fortawesome/free-solid-svg-icons/index.d.ts": {
         "version": "8aadd06d7f4d64a81ac04e769863a22ad7733a65d33ff615c935870c86916439",
         "signature": "8aadd06d7f4d64a81ac04e769863a22ad7733a65d33ff615c935870c86916439"
       },
       "./src/autofillcondition.tsx": {
-        "version": "25a8fb88872a602eaac1e59c2f657690c899e8f903d0afc9fe47a40ce0376128",
-        "signature": "534618fb28f83c24f17baab075e2c3b3f78906f6a0162e1dc6e492df8c63337f"
+        "version": "60770815f8b4f78b9298a50d4a990464ae07c22ccd66eb092ccef86aa48c9b44",
+        "signature": "098510e5f1acf8999d0773eedeebf37ff27dcd8660c2bc84b5198cfc26d7d57b"
       },
       "./src/dpformitem.tsx": {
-        "version": "82007a7f48401230598c51dddefe640a101abb5835629525e84fd06d0f24f5d0",
-        "signature": "0a848dd5959044d977bae11b430907f63a6258f0fba2f024bc46fba7c52ad332"
+        "version": "3eac9788ebfdb3105ceb49be1f1b4969bb0f4218e471ea95256ebe6756db6fc3",
+        "signature": "9e6218c1582025117e1e55fa54045a68964c70f8683faae42aedec002e86973b"
       },
       "./src/answertype.tsx": {
-        "version": "88924fb1a9a03931386e77258bf8b99b98388ba6fa9da3fc51451959d45651d4",
-        "signature": "56c1fba056768a9bc41abf2b67439270ea6d69d46b555dc1a004c8afd4d51d70"
+        "version": "b98c2487f9cfcf74f13811a13b3542b67dea1c7cd2c92907b50df2d421ea8fe4",
+        "signature": "be93bcece3ce63ba2f9e42356f6f11778960632c29d90f73f183fa321a67f2c9"
       },
       "./src/addoptions.tsx": {
-        "version": "2b346b0fa6886ab020943ce88fd7116976b2cef91f83a3043d6c2876f06cb410",
-        "signature": "8150b2e7afa2be4bcb315d16d749465678bfb62f51685ae8634586a15c79a0e9"
+        "version": "6ce4648d86b425bd6938255b9152259e2fef15b9481028832719d7319946f955",
+        "signature": "4c86fcfaa1b881cab3a4bff9e11a9e02da49ae3987e2718748a65c613f61b6de"
       },
       "./node_modules/copy-to-clipboard/index.d.ts": {
         "version": "7ad8cb566b45583991cc39ebf05e704c4246a4f522985ce061a6108a8bd44423",
         "signature": "7ad8cb566b45583991cc39ebf05e704c4246a4f522985ce061a6108a8bd44423"
       },
       "./src/constants.tsx": {
-        "version": "756a0a50387f8b847f967ceb3a5aa255f9c74075db120e4ecb4824a5a08ca401",
-        "signature": "80de733d4a0ac1524e967aedaa62bd16fdbdce818436d46469f5091ab389b249"
+        "version": "87618efe518ff159c4181a52423d6f8705ec56d44a666b1ce733aa521c4e83cb",
+        "signature": "da0ccdc13812a595a27995b81c5dd56e4d7df4b2292b15ae211c231611f72a14"
       },
       "./src/formtree.tsx": {
-        "version": "1690307cdb47877116833b89f4cfec7c6bbded4e6dffb78891d6ea40d1d91060",
-        "signature": "a8e70295feba3d58c382d4978a4610d667832ffced320d958f3a6f4115810d81"
+        "version": "bdd3637efa0d17a9aed8ee0869c4ab0096452999d4e5c8b0140c2e9d6e1ddd4b",
+        "signature": "00dd6e20c314501a4c643c99c0ca0620e1637ce8e738ec4f738b859db59ebed1"
       },
       "./node_modules/@types/classnames/types.d.ts": {
         "version": "dc688638e386342faae164e68ac0205274b6731e70ac1a45921f3ce3aa083795",
@@ -914,36 +914,36 @@
         "signature": "b16c6ab962274dc23b0c57aba4425c3265cc05ad84782b8db5a344df6ad0f8f1"
       },
       "./src/duplicatesettings.tsx": {
-        "version": "a0f66b32630f95407df905ea66d3a9c951c24354002e861a2189ed19355dbf19",
-        "signature": "8dac10e0cdb9c072a4db90981b8587d2cb328755417957965dcb1e2454c4930f"
+        "version": "2cffcdb38c03e6adecadc885d4d31d8f0a1ebfe33580caafe647f0436e35e397",
+        "signature": "94d618bd62ecb8d1b29f18cf3ba2e072ee20e94748210717bacb2d966f8c0092"
       },
       "./src/questionbutton.tsx": {
-        "version": "5567e1792dea2433031e2bd6fa7f58f905501778ed7ab5097383790a8c826749",
-        "signature": "cc18c73fe454c3df6b73f94aa1e1f7fbd8925a4c6d3b7020048a1b5fb17b34cd"
+        "version": "6ff834ad456ab9cc15e34ee80cf9487bc42a4884e72d8c66ead24571ac5d2125",
+        "signature": "ac77507e0e1baf4d0f4b344aa8a87164ac1361cd3b0e8739dd7ec6084c267fe0"
       },
       "./src/sectionbutton.tsx": {
-        "version": "6272f5647bea06ae91c7088ebe6cec43081252ef8544bfc042b85d53c6b84358",
-        "signature": "f169444edb8416761253d767564f8034146839862e31e2491a1f6401a789d4e2"
+        "version": "f081b4d167dc6c5815d84a059a68d93c470fade66719fec55b4458d739a27aa3",
+        "signature": "2cf0f5bfa5ae86cb5dae01fe69e565664fb8b1cee3f9f04030a8b4c5ad573c3a"
       },
       "./src/section.tsx": {
-        "version": "2399fadb8ac1d396fb8e43d4c66a45dbe5ab01ab975218b09a4aa57cf6c6cf15",
-        "signature": "f468b22b30a134a8d79a6128057cbec2b5dafa716930cabc2ebb6a79879ca1b2"
+        "version": "526ba9520adccadda8410b0aafdbb9689d5fdf41fb4bfcec8290311e3214283b",
+        "signature": "f84906fbbd89d1804377b16419c82d6b13c37b2fbaf6aba7b9d2ad5761c9ce3a"
       },
       "./src/toolbar.tsx": {
-        "version": "0e093f32b27afdca23d8057b913bdc9ada1782308d5bf6523adefe2978ce39a9",
-        "signature": "1e102aad167639e0b6e2e021520e7459fd146496999cc87c15d9672b72b44942"
+        "version": "49802106a232e6aa466dc4d83e3f0bebce3d908b263aedc5ec65b32ebf5bf6ad",
+        "signature": "7c7d1a40bd8e84545153a9fb38e560616b1aec41b0621a982914cba3287b9b55"
       },
       "./src/surveyform.tsx": {
-        "version": "77a372a6c74631cd24a309a4164d51cdc8a5fcf696ae326973a526edc97c5ae1",
-        "signature": "970753b91a84ba53df8b63cdb84de1771ff1990aaaab7d5fb483f97452a66bf2"
+        "version": "2bb2c0cdf1aed820c26986654beccb1eeb3108daa981ca8acad537f732653ed7",
+        "signature": "cd485dc08d79bc4baf04bdfaaef4163138fee5cd2590fa0bea644bf724fd49f4"
       },
       "./src/valueinput.tsx": {
-        "version": "44482e8a8cc6557b231049ede297838123f91b12cbb9904c82b1ae650eddbf6d",
-        "signature": "c9e3806b68ee387f7b031d6c0dd6080baf7c0da259150527096dff2816cc9a01"
+        "version": "101495d8caf299a2723533ad6f5d847ae303edbd4148430448380d0fd5e0fdc9",
+        "signature": "897b4e5e9f920ca2cd25b9596114cb5a379ad558f28282f663d131a0cc86ea1c"
       },
       "./src/index.ts": {
-        "version": "581b6762ebd9905f142c5bce477719866097913a5cfda608b4305846652bf9d7",
-        "signature": "20610320132d7f3574bfeb03dffbe8985503b7ce28f19d8212231e40c98c89a0"
+        "version": "7fdaa8565b5b2fa227884cc288779a67e1aa3a7477138c8159c09fc9c9242fb8",
+        "signature": "c582cf533e569411384527e6aafc03d684deca60cbd46e912669859bac71a7cf"
       },
       "./node_modules/@babel/types/lib/index.d.ts": {
         "version": "74f9bcff3ff74cf869dd567eefb979e017a6d5d7503c39ee11582f7c10e21d02",
@@ -1636,6 +1636,66 @@
       "../../node_modules/@types/react-test-renderer/index.d.ts": {
         "version": "d255704f3310198e567665abb2d45ae4edaa3d5b3e16d86dee18a7d88c944815",
         "signature": "d255704f3310198e567665abb2d45ae4edaa3d5b3e16d86dee18a7d88c944815"
+      },
+      "../../node_modules/@types/redux-form/lib/reduxform.d.ts": {
+        "version": "ecf8d9821344b166740478a480c4fdbb59f1efe1e528d5ad79256092c760ac95",
+        "signature": "ecf8d9821344b166740478a480c4fdbb59f1efe1e528d5ad79256092c760ac95"
+      },
+      "../../node_modules/@types/redux-form/lib/field.d.ts": {
+        "version": "6edd68b6e27098abcf08a0169901f49d4949779ed3bd5776b85f58359b89979c",
+        "signature": "6edd68b6e27098abcf08a0169901f49d4949779ed3bd5776b85f58359b89979c"
+      },
+      "../../node_modules/@types/redux-form/lib/fields.d.ts": {
+        "version": "6e69e104e7dd86e134e2e1a65c76a3213a807f4f32ea628b16dd5869c650e94a",
+        "signature": "6e69e104e7dd86e134e2e1a65c76a3213a807f4f32ea628b16dd5869c650e94a"
+      },
+      "../../node_modules/@types/redux-form/lib/fieldarray.d.ts": {
+        "version": "b2bf613f71e22417ddec5b7b9e371f89bc02696d9fb5d2a4d5559c7f1c980629",
+        "signature": "b2bf613f71e22417ddec5b7b9e371f89bc02696d9fb5d2a4d5559c7f1c980629"
+      },
+      "../../node_modules/@types/redux-form/lib/form.d.ts": {
+        "version": "174646acc6a5d249e80601046b4365b7416010067dd9f111300b434a043610d6",
+        "signature": "174646acc6a5d249e80601046b4365b7416010067dd9f111300b434a043610d6"
+      },
+      "../../node_modules/@types/redux-form/lib/formname.d.ts": {
+        "version": "7cd49f0e77265bb2ac3150f9b084fa6df4c9c8e7dfb8464f1d1a3a04fc733191",
+        "signature": "7cd49f0e77265bb2ac3150f9b084fa6df4c9c8e7dfb8464f1d1a3a04fc733191"
+      },
+      "../../node_modules/@types/redux-form/lib/formsection.d.ts": {
+        "version": "3de97159795ba27ea9ca39622264539ec10fa4db794ecc95ecb825b823451e57",
+        "signature": "3de97159795ba27ea9ca39622264539ec10fa4db794ecc95ecb825b823451e57"
+      },
+      "../../node_modules/@types/redux-form/lib/formvalues.d.ts": {
+        "version": "fadd0438f46868179f7253b429d13bdee49949c79f4bd12ee327fb6df6930b33",
+        "signature": "fadd0438f46868179f7253b429d13bdee49949c79f4bd12ee327fb6df6930b33"
+      },
+      "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts": {
+        "version": "6f2a4aea8a0fc60a1fd049cd6fd7598a130559d4388ba35e40ce94d84ffac38e",
+        "signature": "6f2a4aea8a0fc60a1fd049cd6fd7598a130559d4388ba35e40ce94d84ffac38e"
+      },
+      "../../node_modules/@types/redux-form/lib/reducer.d.ts": {
+        "version": "a5b2b7c663ef659be3e31e9a0c0a9c5e284461de1ac05ccc8365b20d79d91ecb",
+        "signature": "a5b2b7c663ef659be3e31e9a0c0a9c5e284461de1ac05ccc8365b20d79d91ecb"
+      },
+      "../../node_modules/@types/redux-form/lib/submissionerror.d.ts": {
+        "version": "291d6501a87f6c9d2484c50ee893dbcd3745a84737fb4040959f6a748ef36aa4",
+        "signature": "291d6501a87f6c9d2484c50ee893dbcd3745a84737fb4040959f6a748ef36aa4"
+      },
+      "../../node_modules/@types/redux-form/lib/actions.d.ts": {
+        "version": "def906877f01223f3b75100b2d81df75604a0f998f5912048e4140999d2c4c2d",
+        "signature": "def906877f01223f3b75100b2d81df75604a0f998f5912048e4140999d2c4c2d"
+      },
+      "../../node_modules/@types/redux-form/lib/actiontypes.d.ts": {
+        "version": "9d21bc9e41c51633a0e5cdfbae0a378c069f1e6e07e5cd348ff56310d6a0b2e4",
+        "signature": "9d21bc9e41c51633a0e5cdfbae0a378c069f1e6e07e5cd348ff56310d6a0b2e4"
+      },
+      "../../node_modules/@types/redux-form/lib/selectors.d.ts": {
+        "version": "fc621ec2918b194125bacdd25e9be15729620b516c55181bc668fdeaa3127695",
+        "signature": "fc621ec2918b194125bacdd25e9be15729620b516c55181bc668fdeaa3127695"
+      },
+      "../../node_modules/@types/redux-form/index.d.ts": {
+        "version": "97b5503ac03ca89e2dde5f7490e1736a1b1d0d30fcba91d9cafe58a4ca9ca912",
+        "signature": "97b5503ac03ca89e2dde5f7490e1736a1b1d0d30fcba91d9cafe58a4ca9ca912"
       }
     },
     "options": {
@@ -1669,6 +1729,7 @@
       "declaration": true,
       "declarationMap": true,
       "sourceMap": true,
+      "watch": true,
       "configFilePath": "./tsconfig.json"
     },
     "referencedMap": {
@@ -5313,6 +5374,133 @@
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/reduxform.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/field.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/redux/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/fields.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/fieldarray.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/form.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formname.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formsection.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formvalues.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/reducer.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/submissionerror.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actions.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actiontypes.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/selectors.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/index.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/lib/reduxform.d.ts",
+        "../../node_modules/@types/redux-form/lib/field.d.ts",
+        "../../node_modules/@types/redux-form/lib/fields.d.ts",
+        "../../node_modules/@types/redux-form/lib/fieldarray.d.ts",
+        "../../node_modules/@types/redux-form/lib/form.d.ts",
+        "../../node_modules/@types/redux-form/lib/formname.d.ts",
+        "../../node_modules/@types/redux-form/lib/formsection.d.ts",
+        "../../node_modules/@types/redux-form/lib/formvalues.d.ts",
+        "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts",
+        "../../node_modules/@types/redux-form/lib/reducer.d.ts",
+        "../../node_modules/@types/redux-form/lib/submissionerror.d.ts",
+        "../../node_modules/@types/redux-form/lib/actions.d.ts",
+        "../../node_modules/@types/redux-form/lib/actiontypes.d.ts",
+        "../../node_modules/@types/redux-form/lib/selectors.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
       ]
     },
     "exportedModulesMap": {
@@ -7270,8 +7458,7 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./src/valinput.tsx": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../dpform/lib/index.d.ts"
+        "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/createcondition.tsx": [
         "../dpform/lib/index.d.ts",
@@ -7290,7 +7477,6 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./src/autofillcondition.tsx": [
-        "../dpform/lib/index.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/dpformitem.tsx": [
@@ -7298,11 +7484,9 @@
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/answertype.tsx": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../dpform/lib/index.d.ts"
+        "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/addoptions.tsx": [
-        "../dpform/lib/index.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./node_modules/copy-to-clipboard/index.d.ts": [
@@ -7315,7 +7499,6 @@
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/formtree.tsx": [
-        "../dpform/lib/index.d.ts",
         "../../node_modules/@blueprintjs/core/lib/esm/index.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
@@ -7333,8 +7516,7 @@
         "./node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./src/duplicatesettings.tsx": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../dpform/lib/index.d.ts"
+        "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/questionbutton.tsx": [
         "../../node_modules/@types/react/index.d.ts"
@@ -7343,7 +7525,6 @@
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/section.tsx": [
-        "../dpform/lib/index.d.ts",
         "../../node_modules/@types/react/index.d.ts"
       ],
       "./src/toolbar.tsx": [
@@ -7356,7 +7537,6 @@
       ],
       "./src/valueinput.tsx": [
         "../../node_modules/@types/react/index.d.ts",
-        "../dpform/lib/index.d.ts",
         "./src/dpformitem.tsx"
       ],
       "./src/index.ts": [
@@ -8808,6 +8988,133 @@
         "./node_modules/@types/node/ts3.2/fs.d.ts",
         "./node_modules/@types/node/util.d.ts",
         "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/reduxform.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/index.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/lib/reduxform.d.ts",
+        "../../node_modules/@types/redux-form/lib/field.d.ts",
+        "../../node_modules/@types/redux-form/lib/fields.d.ts",
+        "../../node_modules/@types/redux-form/lib/fieldarray.d.ts",
+        "../../node_modules/@types/redux-form/lib/form.d.ts",
+        "../../node_modules/@types/redux-form/lib/formname.d.ts",
+        "../../node_modules/@types/redux-form/lib/formsection.d.ts",
+        "../../node_modules/@types/redux-form/lib/formvalues.d.ts",
+        "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts",
+        "../../node_modules/@types/redux-form/lib/reducer.d.ts",
+        "../../node_modules/@types/redux-form/lib/submissionerror.d.ts",
+        "../../node_modules/@types/redux-form/lib/actions.d.ts",
+        "../../node_modules/@types/redux-form/lib/actiontypes.d.ts",
+        "../../node_modules/@types/redux-form/lib/selectors.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/selectors.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actions.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/submissionerror.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/reducer.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formvalues.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/form.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/fieldarray.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/fields.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/field.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/redux/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formname.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formsection.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actiontypes.d.ts": [
+        "./node_modules/@types/node/fs.d.ts",
+        "./node_modules/@types/node/ts3.2/fs.d.ts",
+        "./node_modules/@types/node/util.d.ts",
+        "./node_modules/@types/node/ts3.2/util.d.ts"
       ]
     },
     "semanticDiagnosticsPerFile": [
@@ -8848,6 +9155,7 @@
       "../../node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
+      "./src/appconfig.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/accessibility/focusstylemanager.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/accessibility/index.d.ts",
       "../../node_modules/@types/react/global.d.ts",
@@ -8948,6 +9256,19 @@
       "../../node_modules/@blueprintjs/core/lib/esm/components/tree/tree.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/components/index.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/index.d.ts",
+      "../dpform/lib/answer.d.ts",
+      "../dpform/lib/condition.d.ts",
+      "../dpform/lib/answertypes.d.ts",
+      "../dpform/lib/valuetype.d.ts",
+      "../dpform/lib/answeroptions.d.ts",
+      "../dpform/lib/constant.d.ts",
+      "../dpform/lib/constants.d.ts",
+      "../dpform/lib/duplicatesettings.d.ts",
+      "../dpform/lib/question.d.ts",
+      "../dpform/lib/questionsection.d.ts",
+      "../dpform/lib/rootsection.d.ts",
+      "../dpform/lib/util.d.ts",
+      "../dpform/lib/index.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/common.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/array.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/collection.d.ts",
@@ -8990,6 +9311,8 @@
       "./node_modules/@fortawesome/fontawesome-common-types/index.d.ts",
       "./node_modules/@fortawesome/fontawesome-svg-core/index.d.ts",
       "./node_modules/@fortawesome/react-fontawesome/index.d.ts",
+      "./src/utils/index.tsx",
+      "./src/utils/getrandomid.tsx",
       "../../node_modules/@blueprintjs/datetime/lib/esm/common/classes.d.ts",
       "../../node_modules/react-day-picker/types/common.d.ts",
       "../../node_modules/react-day-picker/types/utils.d.ts",
@@ -9010,10 +9333,27 @@
       "../../node_modules/@blueprintjs/datetime/lib/esm/common/monthandyear.d.ts",
       "../../node_modules/@blueprintjs/datetime/lib/esm/daterangepicker.d.ts",
       "../../node_modules/@blueprintjs/datetime/lib/esm/index.d.ts",
+      "./src/valinput.tsx",
+      "./src/createcondition.tsx",
+      "./src/createconditionmodal.tsx",
       "./node_modules/@fortawesome/free-solid-svg-icons/index.d.ts",
+      "./src/autofillcondition.tsx",
+      "./src/dpformitem.tsx",
+      "./src/answertype.tsx",
+      "./src/addoptions.tsx",
       "./node_modules/copy-to-clipboard/index.d.ts",
+      "./src/constants.tsx",
+      "./src/formtree.tsx",
       "./node_modules/@types/classnames/types.d.ts",
       "./node_modules/@types/classnames/index.d.ts",
+      "./src/duplicatesettings.tsx",
+      "./src/questionbutton.tsx",
+      "./src/sectionbutton.tsx",
+      "./src/section.tsx",
+      "./src/toolbar.tsx",
+      "./src/surveyform.tsx",
+      "./src/valueinput.tsx",
+      "./src/index.ts",
       "./node_modules/@babel/types/lib/index.d.ts",
       "./node_modules/@types/babel__generator/index.d.ts",
       "./node_modules/@types/babel__traverse/index.d.ts",
@@ -9187,39 +9527,21 @@
       "../../node_modules/redux/index.d.ts",
       "../../node_modules/@types/react-redux/index.d.ts",
       "../../node_modules/@types/react-test-renderer/index.d.ts",
-      "./src/appconfig.ts",
-      "../dpform/lib/condition.d.ts",
-      "../dpform/lib/duplicatesettings.d.ts",
-      "../dpform/lib/answertypes.d.ts",
-      "../dpform/lib/valuetype.d.ts",
-      "../dpform/lib/util.d.ts",
-      "./src/utils/index.tsx",
-      "./src/utils/getrandomid.tsx",
-      "./src/constants.tsx",
-      "./src/questionbutton.tsx",
-      "./src/sectionbutton.tsx",
-      "./src/toolbar.tsx",
-      "../dpform/lib/answer.d.ts",
-      "../dpform/lib/answeroptions.d.ts",
-      "../dpform/lib/constant.d.ts",
-      "../dpform/lib/constants.d.ts",
-      "../dpform/lib/question.d.ts",
-      "../dpform/lib/questionsection.d.ts",
-      "../dpform/lib/rootsection.d.ts",
-      "../dpform/lib/index.d.ts",
-      "./src/valinput.tsx",
-      "./src/createcondition.tsx",
-      "./src/createconditionmodal.tsx",
-      "./src/autofillcondition.tsx",
-      "./src/dpformitem.tsx",
-      "./src/answertype.tsx",
-      "./src/addoptions.tsx",
-      "./src/formtree.tsx",
-      "./src/duplicatesettings.tsx",
-      "./src/section.tsx",
-      "./src/surveyform.tsx",
-      "./src/valueinput.tsx",
-      "./src/index.ts"
+      "../../node_modules/@types/redux-form/lib/field.d.ts",
+      "../../node_modules/@types/redux-form/lib/formname.d.ts",
+      "../../node_modules/@types/redux-form/lib/formsection.d.ts",
+      "../../node_modules/@types/redux-form/lib/actiontypes.d.ts",
+      "../../node_modules/@types/redux-form/lib/reduxform.d.ts",
+      "../../node_modules/@types/redux-form/lib/fields.d.ts",
+      "../../node_modules/@types/redux-form/lib/fieldarray.d.ts",
+      "../../node_modules/@types/redux-form/lib/form.d.ts",
+      "../../node_modules/@types/redux-form/lib/formvalues.d.ts",
+      "../../node_modules/@types/redux-form/lib/formvalueselector.d.ts",
+      "../../node_modules/@types/redux-form/lib/reducer.d.ts",
+      "../../node_modules/@types/redux-form/lib/submissionerror.d.ts",
+      "../../node_modules/@types/redux-form/lib/actions.d.ts",
+      "../../node_modules/@types/redux-form/lib/selectors.d.ts",
+      "../../node_modules/@types/redux-form/index.d.ts"
     ]
   },
   "version": "3.7.2"

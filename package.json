@@ -8,10 +8,10 @@
   "license": "MIT",
   "private": true,
   "scripts": {
-    "watch:dpform":"cd packages/dpform && tsc -w",
-    "watch:formbuilder":"cd packages/formbuilder && tsc -w",
+    "watch:dpform": "cd packages/dpform && tsc -w",
+    "watch:formbuilder": "cd packages/formbuilder && tsc -w",
     "watch:all": "npx npm-run-all -p watch:dpform watch:formbuilder",
-    "start":"npx npm-run-all -p watch:all start:server start:web",
+    "start": "npx npm-run-all -p watch:all start:server start:web",
     "test": "echo \"Error: no test specified\" && exit 1",
     "build:dpform": "cd packages/dpform && tsc && cd ../../ ",
     "build:formbuilder": "cd packages/formbuilder && tsc && cd ../../",
@@ -19,7 +19,7 @@
     "install:formbuilder": "cd packages/formbuilder && npm i && cd ../../",
     "build:formandbuilder": "npm run build:dpform && npm run build:formbuilder",
     "start:web": "cd packages/web && yarn start",
-    "start:server":"cd packages/server && yarn start"
+    "start:server": "cd packages/server && yarn start"
   },
   "devDependencies": {
     "@babel/core": "^7.4.5",
@@ -51,5 +51,7 @@
     "ts-jest": "^24.0.2",
     "typescript": "^3.4.5"
   },
-  "dependencies": {}
+  "dependencies": {
+    "@types/redux-form": "^8.2.0"
+  }
 }

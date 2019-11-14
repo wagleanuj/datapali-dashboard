@@ -10,7 +10,7 @@ type Value = {
     password: string;
 }
 export type LoginOwnProps = {
-    customSubmit?: (values: Value) => Promise<string>;
+    customSubmit?: (client: ApolloClient<any>) => (values: any) => void;
     onLoggedIn?: (token: string) => void;
     authToken?: string;
 };
@@ -30,7 +30,7 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
     }
     componentDidMount() {
         if (!!this.props.authToken) {
-            if (this.props.onLoggedIn) this.props.onLoggedIn();
+            if (this.props.onLoggedIn) this.props.onLoggedIn(this.props.authToken);
         }
     }
 

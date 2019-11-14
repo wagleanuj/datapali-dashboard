@@ -4,7 +4,7 @@ import React from "react";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
-import { Surveyors } from "./components/surveyors.component";
+import { Users } from "./components/surveyors.component";
 import { FormBuilder } from "./components/formbuilder.component";
 export const tabs: ISidebarItemNode[] = [
     {
@@ -20,7 +20,7 @@ export const tabs: ISidebarItemNode[] = [
         title: "Surveyors",
         routeKey: "/surveyors",
         icon: "person",
-        component: <Surveyors />,
+        component: <Users />,
         children: []
 
     },
