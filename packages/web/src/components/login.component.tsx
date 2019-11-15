@@ -1,5 +1,5 @@
 import { ApolloConsumer } from '@apollo/react-hooks';
-import { Button, Card, FormGroup, InputGroup, Intent, Tooltip } from '@blueprintjs/core';
+import { Button, Card, Input, Tooltip, Icon, Form } from 'antd';
 import ApolloClient from 'apollo-boost';
 import React from "react";
 import { Field, InjectedFormProps, WrappedFieldProps } from 'redux-form';
@@ -56,11 +56,9 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
     renderPasswordHideButton() {
         return (
             <Tooltip
-                content={`${this.state.showPassword ? "Hide" : "Show"} Password`}>
+                title={`${this.state.showPassword ? "Hide" : "Show"} Password`}>
                 <Button
                     icon={this.state.showPassword ? "eye-open" : "eye-off"}
-                    intent={Intent.WARNING}
-                    minimal
                     tabIndex={99}
                     onClick={this.togglePasswordHide}
                 />
@@ -76,12 +74,11 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
     }
     renderEmailInput = (props: WrappedFieldProps) => {
         return (
-            <InputGroup
-                tabIndex={1}
-                intent={this.props.error ? Intent.DANGER : Intent.NONE}
-                large
-                placeholder="Email address"
-                leftIcon={'user'}
+            <Input
+                tabIndex={2}
+                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                placeholder="Email"
+                type={"email"}
                 {...props.input}
             />
         )
@@ -89,14 +86,11 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
 
     renderPasswordInput = (props: WrappedFieldProps) => {
         return (
-            <InputGroup
-                intent={this.props.error ? Intent.DANGER : Intent.NONE}
+            <Input
                 tabIndex={2}
-                large
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
                 placeholder="Password"
                 type={this.state.showPassword ? "text" : "password"}
-                rightElement={this.renderPasswordHideButton()}
-                leftIcon={"lock"}
                 {...props.input}
             />
         )
@@ -110,39 +104,38 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
                         <Card className="login-form">
                             <h5>Login</h5>
                             <form onSubmit={this.createSubmitFunction(client)}>
-                                <FormGroup>
+                                <Form.Item>
+
                                     <Field
                                         name="email"
                                         type="text"
                                         component={this.renderEmailInput}
                                     />
+                                </Form.Item>
+                                <Form.Item>
 
-                                </FormGroup>
-                                <FormGroup>
                                     <Field
                                         name="password"
                                         type="password"
                                         component={this.renderPasswordInput}
                                     />
-                                </FormGroup>
+                                </Form.Item>
+
                                 {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
-                                <FormGroup>
-                                    <Button
-                                        tabIndex={3}
-                                        type="submit"
-                                        large
-                                        fill
-                                    >
-                                        Login
-                                            </Button>
-                                </FormGroup>
+                                <Form.Item>
+                                    <Button style={{width:'100%'}} type="primary" htmlType="submit" className="login-form-button">
+                                        Log in
+                                    </Button>
+                                    
+                                </Form.Item>
 
                             </form>
 
-                        </Card>
+                        </Card >
                     )
-                }}
-            </ApolloConsumer>
+                }
+                }
+            </ApolloConsumer >
 
         )
     }

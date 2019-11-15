@@ -12,6 +12,9 @@ import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
 import { EAppTheme } from './types';
 import { Toaster } from '@blueprintjs/core';
+import { ConfigProvider } from 'antd';
+import frFR from 'antd/es/locale/fr_FR';
+
 
 const client = new ApolloClient({
   uri: CONFIG.localServerURL
@@ -54,23 +57,28 @@ class App extends React.Component<Props, State>{
         <Provider store={store}>
           <PersistGate onBeforeLift={() => console.log(store.getState())} loading={null} persistor={persistor}>
             <ConnectedApolloProvider client={client}>
-              <div className={`main-wrapper ${this.Theme}`}>
-                <Switch>
-                  <Route path="/login" render={({ history, location }) => {
-                    return <LoginForm onLoggedIn={() => {
-                      let { from } = location.state || { from: { pathname: "/" } };
-                      history.replace(from);
+              <ConfigProvider locale={frFR}>
 
-                    }}
-                    />
+                <div className={`main-wrapper ${this.Theme}`}>
+                  <Switch>
+                    <Route path="/login" render={({ history, location }) => {
+                      return <LoginForm onLoggedIn={() => {
+                        let { from } = location.state || { from: { pathname: "/" } };
+                        history.replace(from);
 
-                  }} />
-                  <Route path="/">
-                    <ConnectedProtectedRoute component={DashboardComponent} />
-                  </Route>
+                      }}
+                      />
 
-                </Switch>
-              </div>
+                    }} />
+                    <Route path="/">
+                      <ConnectedProtectedRoute component={DashboardComponent} />
+                    </Route>
+
+                  </Switch>
+
+                </div>
+              </ConfigProvider>
+
             </ConnectedApolloProvider>
           </PersistGate>
 

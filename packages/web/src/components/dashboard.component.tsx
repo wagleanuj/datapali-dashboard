@@ -1,10 +1,14 @@
-import React, { ReactNode, useState } from "react";
-import { BrowserRouter as Router, Route, Switch, useLocation } from 'react-router-dom';
+import { Icon, Layout, Menu } from "antd";
+import React, { ReactNode } from "react";
+import { BrowserRouter as Router, Route, useLocation, NavLink } from 'react-router-dom';
 import { ConnectedNavBar } from "../containers/navBar.container";
 import { tabs } from "../routes";
 import { ISidebarItemNode } from "./navMenu.component";
 import { SideNav } from "./sidenav.component";
 
+
+const { Header, Footer, Sider, Content } = Layout;
+const { SubMenu } = Menu;
 
 type DashboardProps = {
 
@@ -17,22 +21,25 @@ export function DashboardComponent(props: DashboardProps) {
     const shouldShowSidebar = location.pathname !== "/formbuilder";
     return (
         <Router>
+            <Layout>
+                <Header>
+                    <ConnectedNavBar />
 
-            <div className="dashboard-wrapper">
-                <ConnectedNavBar />
-                <div className="dashboard">
+                </Header>
+                <Layout>
+                    <Sider collapsible >
+                        <SideNav isVisible />
 
-                    <div style={{ display: shouldShowSidebar ? 'flex' : "none" }} className="sidebar-wrapper">
-                        <SideNav isVisible={true} />
-                    </div>
-                    <div className="content-wrapper">
-                        <Switch>
-                            {getRoutesComponents(tabs)}
-                        </Switch>
-                    </div>
-                </div>
-            </div>
+                    </Sider>                    <Content>
+                        {getRoutesComponents(tabs)}
+
+                    </Content>
+                </Layout>
+            </Layout>
+
         </Router>
+
+
 
 
     )

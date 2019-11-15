@@ -1,40 +1,30 @@
-import { Alert, Alignment, Button, Intent, Navbar } from "@blueprintjs/core";
-import React, { useState } from "react";
+import { Button, Menu, Modal, Icon } from "antd";
+import React from "react";
+const { confirm } = Modal;
+
+function showConfirm(onConfirm: () => void) {
+    confirm({
+        title: 'Sign Out',
+        content: 'Are you sure you want to sign out?',
+        onOk() {
+            onConfirm();
+        },
+        onCancel() { },
+    });
+}
 
 export type NavBarProps = {
     onLogoutClick?: () => void;
 }
 export function NavBar(props: NavBarProps) {
-    const [isSignOutModalOpen, setSignOutModalOpen] = useState(false);
     const onConfirmLogout = () => {
         if (props.onLogoutClick) props.onLogoutClick();
-        setSignOutModalOpen(false);
 
     }
     return (
         <>
-            <Navbar fixedToTop>
-                <Navbar.Group align={Alignment.LEFT}>
-                    <Navbar.Heading>Datapali</Navbar.Heading>
-                    <Navbar.Divider />
-                </Navbar.Group>
-                <Navbar.Group align={Alignment.RIGHT}>
-                    <Button onClick={() => setSignOutModalOpen(true)} className="bp3-minimal" icon={"log-out"} />
-                </Navbar.Group>
-            </Navbar>
-            <Alert
-                cancelButtonText="Cancel"
-                confirmButtonText="Logout"
-                icon="log-out"
-                intent={Intent.DANGER}
-                isOpen={isSignOutModalOpen}
-                onCancel={() => setSignOutModalOpen(false)}
-                onConfirm={onConfirmLogout}
-            >
-                <p>
-                    Are you sure you want to logout ?
-                    </p>
-            </Alert>
+            <Button style={{ float: 'right' }} onClick={e => showConfirm(onConfirmLogout)} key="1"><Icon type="logout" /></Button>
+
         </>
 
     )

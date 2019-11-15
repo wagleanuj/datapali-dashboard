@@ -19,7 +19,7 @@ export const tabs: ISidebarItemNode[] = [
     {
         title: "Surveyors",
         routeKey: "/surveyors",
-        icon: "person",
+        icon: "user",
         component: <Users />,
         children: []
 
@@ -27,17 +27,11 @@ export const tabs: ISidebarItemNode[] = [
     {
         title: "Statistics",
         routeKey: "/statistics",
-        icon: "grouped-bar-chart",
+        icon: "pie-chart",
         component: <Statistics />,
         children: []
     },
-    {
-        title: "Roots",
-        routeKey: "/roots",
-        icon: "grouped-bar-chart",
-        component: <SurveyForm onSave={() => { }} onChange={() => { }} token="" root={new RootSection()} />,
-        children: []
-    },
+    
     {
         title: "Form Builder",
         routeKey: "/formbuilder",

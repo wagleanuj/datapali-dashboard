@@ -1,8 +1,9 @@
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Card, Checkbox, Colors, ControlGroup, Dialog, InputGroup, Spinner, Tab, Tabs, Tag } from '@blueprintjs/core';
+import { Button, Card, Colors, Dialog, InputGroup, Spinner, Tab, Tabs } from '@blueprintjs/core';
+import { Table, Tag } from 'antd';
+import { ColumnProps } from 'antd/lib/table';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
-import { AutoSizer, Column, Table } from 'react-virtualized';
 import 'react-virtualized/styles.css'; // only needs to be imported once
 import { SignUpForm } from '../containers/signUp.container';
 
@@ -94,6 +95,45 @@ export function SurveyorUsers() {
     const onMakeFormUnavailable = () => {
 
     }
+
+    const columns: ColumnProps<any>[] = [
+        {
+            key:"name",
+            title: 'Name',
+            dataIndex: 'name',
+
+
+        },
+        {
+            key:"email",
+            title: 'Email',
+            dataIndex: 'email',
+
+        },
+        {
+            key:"filledforms",
+            title: 'Filled Forms',
+            dataIndex: 'filledFormsCount',
+
+        },
+        {
+            key:"assignedForms",
+            title: 'Assigned Forms',
+            dataIndex: 'assignedForms',
+
+            render: ((data, record, index) => {
+                return (
+                <span>
+                    {data.map(d => <Tag key={d.id} title={d.name} >{d.name}</Tag>)}
+                </span>
+                )
+            })
+
+        },
+    ];
+
+
+
     const render = () => {
         if (loading) {
             return (
@@ -104,67 +144,15 @@ export function SurveyorUsers() {
             const transformedData = data.users.map(item => ({
                 name: item.firstName + " " + item.lastName,
                 email: item.email,
-                filledFormsNumber: item.filledForms.length,
+                filledFormsCount: item.filledForms.length,
                 assignedForms: item.availableForms,
 
-            }))
-            return (<AutoSizer disableHeight>
-                {({ width }) => (
-                    <Table
-                        width={width}
-                        height={700}
-                        headerHeight={40}
-                        rowHeight={40}
-                        rowCount={transformedData.length}
-                        rowGetter={({ index }) => transformedData[index]}
-                        style={{ outline: "none" }}
-                        gridStyle={{ outline: "none" }}
+            }));
 
-                    >
-                        <Column
-                            className={"table-cell"}
-                            width={50}
-                            headerRenderer={() => <ControlGroup><Checkbox alignIndicator="center" /></ControlGroup>}
-                            cellRenderer={() => <ControlGroup><Checkbox alignIndicator="center" /></ControlGroup>}
-                        />
-
-                        <Column
-                            label='Name'
-                            dataKey='name'
-                            width={200}
-                        />
-                        <Column
-                            width={200}
-                            label='Email'
-                            dataKey='email'
-                        />
-                        <Column
-                            width={200}
-                            label='Submitted Forms'
-                            dataKey='filledFormsNumber'
-                        />
-                        <Column
-                            width={200}
-                            label="Assigned Forms"
-                            dataKey="assignedForms"
-                            cellRenderer={
-                                (data) => {
-                                    return data.cellData.map(item => {
-                                        return (<Tag
-                                            key={item.id}
-                                            onRemove={onMakeFormUnavailable}
-                                        >
-                                            {item.name}
-                                        </Tag>);
-
-                                    })
-
-                                }
-                            }
-                        />
-                    </Table>)}
-            </AutoSizer>
+            return (
+                <Table  columns={columns} dataSource={transformedData} />
             )
+
         }
     }
     return render();
