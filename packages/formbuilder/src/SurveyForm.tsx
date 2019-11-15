@@ -9,7 +9,7 @@ import { ConstantDefinitions } from "./constants";
 import { FormTree } from "./formtree";
 import { SectionC } from "./section";
 import { Toolbar } from "./Toolbar";
-// import "./App.css";
+import "./App.css";
 
 
 
@@ -404,9 +404,9 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                     <EditableText value={this.state.root.name} onChange={this.handleRootNameChange.bind(this)} />
 
                 </Toolbar>
-                <div style={{display:"flex", flexDirection:"row"}} className="container">
+                <div style={{display:"flex", flexDirection:"row", padding: 16}} className="builder-container">
 
-                    <div style={{ background: "transparent", marginRight:20 }} className="sidebar">
+                    <div style={{ background: "transparent", marginRight:20 }} className="builder-sidebar">
                         <div className="sidebar-wrapper">
                             <FormTree
                                 expandedNodes={this.state.expandedNodes}

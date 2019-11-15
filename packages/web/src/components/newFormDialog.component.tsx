@@ -1,6 +1,6 @@
 import { useMutation } from "@apollo/react-hooks";
-import { Button, Classes, Dialog, FormGroup, InputGroup } from "@blueprintjs/core";
 import { RootSection } from "@datapali/dpform";
+import { Card, Form, Input, Modal } from "antd";
 import { GraphQLError } from "graphql";
 import React, { useState } from "react";
 import { Save_Form } from "./formbuilder.component";
@@ -36,20 +36,12 @@ export const NewFormDialog = function (props: NewFormDialogProps) {
         if (props.onCancel) props.onCancel();
     }
     return (
-        <Dialog title={"Create New Form"} isOpen={props.isOpen} isCloseButtonShown={false}>
-            <div className={Classes.DIALOG_BODY}>
-                <FormGroup label="Form Name">
-                    <InputGroup onChange={(e: React.FormEvent<HTMLInputElement>) => setNewFormName(e.currentTarget.value)} />
-                </FormGroup>
+        <Modal destroyOnClose centered okText={'Create'} title={"Create New Form"} onCancel={onCancelFormCreation} onOk={onCreateNewForm} visible={props.isOpen} >
+                <Form.Item label="Form Name">
+                    <Input onChange={(e: React.FormEvent<HTMLInputElement>) => setNewFormName(e.currentTarget.value)} />
+                </Form.Item>
 
-            </div>
-            <div className={Classes.DIALOG_FOOTER}>
-                <div className={Classes.DIALOG_FOOTER_ACTIONS}>
-                    <Button color="primary" onClick={onCreateNewForm}>Create</Button>
-                    <Button color="secondary" onClick={onCancelFormCreation}>Cancel</Button>
-                </div>
-            </div>
 
-        </Dialog>
+        </Modal>
     )
 }

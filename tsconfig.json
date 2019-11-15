@@ -1,6 +1,13 @@
 {
-  "exclude": ["node_modules", "dist", "lib", "__tests__", "**/*.test*", "**/*.spec*"],
-  "files":  [],
+  "exclude": [
+    "node_modules",
+    "dist",
+    "lib",
+    "__tests__",
+    "**/*.test*",
+    "**/*.spec*"
+  ],
+  "files": [],
   "compilerOptions": {
     "skipLibCheck": true,
     "target": "esnext",
@@ -22,20 +29,18 @@
     "forceConsistentCasingInFileNames": true,
     "baseUrl": ".",
     "paths": {
-      "@datapali/*": ["packages/*/src"],
-
+      "@datapali/*": ["packages/*/src"]
     },
     "composite": true,
     "declaration": true,
     "declarationMap": true,
-    "sourceMap": true,
+    "sourceMap": true
   },
   "references": [
     { "path": "packages/web" },
-        { "path": "packages/mobile"},
+    { "path": "packages/mobile" },
 
     { "path": "packages/formbuilder" },
-    { "path": "packages/dpform" },
-
+    { "path": "packages/dpform" }
   ]
 }

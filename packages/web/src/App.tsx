@@ -11,7 +11,6 @@ import { ConnectedApolloProvider } from './containers/apollo.provider';
 import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
 import { EAppTheme } from './types';
-import { Toaster } from '@blueprintjs/core';
 import { ConfigProvider } from 'antd';
 import frFR from 'antd/es/locale/fr_FR';
 
@@ -20,7 +19,6 @@ const client = new ApolloClient({
   uri: CONFIG.localServerURL
 
 });
-export const AppToaster = Toaster.create({});
 
 type Props = {
   authToken?: string;

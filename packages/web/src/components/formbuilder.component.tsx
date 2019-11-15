@@ -1,12 +1,11 @@
 import { ApolloConsumer, useMutation, useQuery } from "@apollo/react-hooks";
-import { Button, NonIdealState, Spinner } from "@blueprintjs/core";
 import { RootSection } from "@datapali/dpform";
 import { SurveyForm } from "@datapali/formbuilder";
+import { Button, Empty, message, Row, Spin } from "antd";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
 import React, { useState } from "react";
 import { useHistory, useLocation } from "react-router-dom";
-import { AppToaster } from "../App";
 
 export const GET_FORM = gql`
     query GetForm($formId:[String!]){
@@ -38,8 +37,8 @@ export function FormBuilder() {
             file.content = JSON.stringify(file.content);
             setSaving(true);
             const { data, errors } = await saveForm({ variables: { saveFile: file } });
-            if (errors) AppToaster.show({ message: "Form could not be saved", intent: "danger", icon: "warning-sign", timeout: 1000 });
-            else AppToaster.show({ message: "Form has been saved", intent: "success", icon: "saved", timeout: 1000 });
+            if (errors) message.error("Form could not be saved");
+            else message.success("Form has been saved");
             setSaving(false);
         }
     }
@@ -52,22 +51,22 @@ export function FormBuilder() {
     });
 
     const render = (client: ApolloClient<any>) => {
-        if (loading) return <Spinner />
 
-        if (error || !data) {
+        if (!loading && (error || !data)) {
             return (
-                <NonIdealState
-                    icon={"warning-sign"}
-                    title="Form not found"
+                <Empty
+                    image={Empty.PRESENTED_IMAGE_DEFAULT}
                     description={"Please create a new Form by going back to Home"}
-                    action={<Button icon="home" onClick={() => history.replace("/forms")}> Home</Button>}
+                >
+                    <Button icon="home" onClick={() => history.replace("/forms")}> Home</Button>
 
-                />
+                </Empty>
             )
         }
+        if (loading) return <Row style={{ marginTop: 60 }}></Row>;
         let root: RootSection;
         if (data.forms.length === 0) {
-            AppToaster.show({ message: "Started a new form", intent: "success", icon: "tick-circle", timeout: 2000 });
+            message.success("Started a new form!");
             root = new RootSection();
         } else {
             const form = data.forms[0];
@@ -75,13 +74,11 @@ export function FormBuilder() {
             root = RootSection.fromJSON(form);
         }
 
-        return <>
-            <SurveyForm token={""} onChange={() => { }} onSave={onSave} root={root} />
-        </>
+        return <SurveyForm token={""} onChange={() => { }} onSave={onSave} root={root} />
     }
     return (
         <ApolloConsumer>
-            {client => render(client)}
+            {client => <Spin spinning={loading}>{render(client)}</Spin>}
         </ApolloConsumer>
     )
 }

@@ -1,6 +1,5 @@
 import { useQuery } from '@apollo/react-hooks';
-import { Button, Card, Colors, Dialog, InputGroup, Spinner, Tab, Tabs } from '@blueprintjs/core';
-import { Table, Tag } from 'antd';
+import { Button, Card, Col, Input, Modal, Row, Spin, Table, Tabs, Tag } from 'antd';
 import { ColumnProps } from 'antd/lib/table';
 import gql from 'graphql-tag';
 import React, { Component } from 'react';
@@ -68,19 +67,30 @@ export class Users extends Component<UsersProps, UsersState> {
     }
     render() {
         return (
-            <Card color={Colors.DARK_GRAY5} style={{ width: "100%", height: "100%" }}>
-                <Tabs onChange={this.handleTabChange} selectedTabId={this.state.selectedTab}>
-                    <Tab key="surveyors" id="surveyor" title="Surveyors" panel={<SurveyorUsers />} />
-                    <Tab key="admin" id="admin" title="Admin" panel={<AdminUsers />} panelClassName="ember-panel" />
-                    <Tabs.Expander />
-                    {this.getAddUserButton()}
-                    <Button icon="filter-list">Filter</Button>
-                    <InputGroup leftIcon="search" placeholder="Find User..." type="search" />
-                </Tabs>
-                <Dialog onClose={this.toggleSignUpDialog} canEscapeKeyClose={true} isOpen={this.state.isSignUpDialogOpen} title={`Create ${this.state.selectedTab}`}>
+            <Card style={{ width: "100%", height: "100%" }}>
+                <>
+                    <Row>
+                        <Col span={6}>
+                            {this.getAddUserButton()}
+                        </Col>
+                        <Col span={6}>
+                            <Button icon="filter"></Button>
+                        </Col>
+                        <Col span={12}>
+                            <Input.Search placeholder="Find User..." type="search" />
+                        </Col>
+                    </Row>
+                    <Tabs onChange={this.handleTabChange} defaultActiveKey={this.state.selectedTab}>
+                        <Tabs.TabPane key="surveyor" tab={'Surveyors'} ><SurveyorUsers /></Tabs.TabPane>
+                        <Tabs.TabPane key="admin" tab={'Admin'}><AdminUsers /></Tabs.TabPane>
+                    </Tabs>
+
+                </>
+
+                <Modal centered destroyOnClose onCancel={this.toggleSignUpDialog} visible={this.state.isSignUpDialogOpen} title={`Create ${this.state.selectedTab}`}>
                     <SignUpForm signUpType={this.state.selectedTab} />
-                </Dialog>
-            </Card>
+                </Modal>
+            </Card >
         )
     }
 }
@@ -98,34 +108,33 @@ export function SurveyorUsers() {
 
     const columns: ColumnProps<any>[] = [
         {
-            key:"name",
+            key: "name",
             title: 'Name',
             dataIndex: 'name',
 
-
         },
         {
-            key:"email",
+            key: "email",
             title: 'Email',
             dataIndex: 'email',
 
         },
         {
-            key:"filledforms",
+            key: "filledforms",
             title: 'Filled Forms',
             dataIndex: 'filledFormsCount',
 
         },
         {
-            key:"assignedForms",
+            key: "assignedForms",
             title: 'Assigned Forms',
             dataIndex: 'assignedForms',
 
             render: ((data, record, index) => {
                 return (
-                <span>
-                    {data.map(d => <Tag key={d.id} title={d.name} >{d.name}</Tag>)}
-                </span>
+                    <span key={'assignedForms' + index}>
+                        {data.map(d => <Tag key={d.id} title={d.name} >{d.name}</Tag>)}
+                    </span>
                 )
             })
 
@@ -137,7 +146,7 @@ export function SurveyorUsers() {
     const render = () => {
         if (loading) {
             return (
-                <Spinner />
+                <Spin />
             )
         }
         if (data && data.users) {
@@ -150,7 +159,7 @@ export function SurveyorUsers() {
             }));
 
             return (
-                <Table  columns={columns} dataSource={transformedData} />
+                <Table rowKey={record => record._id} columns={columns} dataSource={transformedData} />
             )
 
         }

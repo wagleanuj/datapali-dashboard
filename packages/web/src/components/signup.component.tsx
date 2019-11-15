@@ -1,11 +1,8 @@
 import { useMutation } from '@apollo/react-hooks';
-import { Button, Card, FormGroup, Spinner } from '@blueprintjs/core';
-import { FILL, INPUT } from '@blueprintjs/core/lib/esm/common/classes';
-import classNames from 'classnames';
+import { Button, Card, Form, Input, Spin, message } from 'antd';
 import gql from 'graphql-tag';
 import React from 'react';
 import { Field, InjectedFormProps, SubmissionError } from "redux-form";
-import { AppToaster } from '../App';
 import { ISignUpUser } from '../containers/signUp.container';
 
 const SIGN_UP = (accountType: "surveyor" | "admin") => gql`mutation(
@@ -40,10 +37,10 @@ export type SignUpOwnProps = {
 };
 const renderField = ({ input, label, type, meta: { touched, error, warning } }) => {
     return (
-        <FormGroup label={label}>
-            <input autoComplete={"autocomplete_off_hack_xfr4!k"} className={classNames(INPUT, FILL)} {...input} type={type} />
-            {touched && ((error && <span style={{ color: "red" }}>{error}</span>) || (warning && <span>{warning}</span>))}
-        </FormGroup>
+        <Form.Item>
+            <Input placeholder={label} autoComplete={"autocomplete_off_hack_xfr4!k"}  {...input} type={type} />
+            {touched && ((error && <span style={{ color: "red", top: 0, bottom: 0 }}>{error}</span>) || (warning && <span>{warning}</span>))}
+        </Form.Item>
     )
 }
 type SignUpProps = InjectedFormProps<ISignUpUser, SignUpOwnProps> & SignUpOwnProps;
@@ -55,21 +52,18 @@ export function SignUpComponent(props: SignUpProps) {
 
         const submissionData = { ...values, createdBy: props.userId }
         return createUser({ variables: submissionData }).then(res => {
-            AppToaster.show({ message: `${submissionData.firstName} has been signed up!`, intent: "success", timeout: 2000, icon: "tick-circle" })
+            message.success(`${submissionData.firstName} has been signed up!`)
             return true;
         }).catch(err => {
             throw new SubmissionError({
                 _error: err.message.split(":")[1]
             })
-
         });
-
-
     }
-    
+
     return (
         <Card>
-            {submitting && <Spinner />}
+            {submitting && <Spin />}
             <form onSubmit={handleSubmit(signUp)}>
                 <Field
                     name="firstName"
@@ -100,7 +94,7 @@ export function SignUpComponent(props: SignUpProps) {
                 />
                 {props.error && <strong className={'error'}>{props.error}</strong>}
 
-                <Button disabled={submitting} type="submit" large fill alignText="center" icon="endorsed">Submit</Button>
+                <Button style={{ width: '100%' }} disabled={submitting} htmlType="submit" icon="user-add">Submit</Button>
             </form>
         </Card >
     )
