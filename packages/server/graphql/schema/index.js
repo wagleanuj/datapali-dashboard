@@ -79,8 +79,8 @@ const typeDefs =
     }
 
     type Mutation {
-        makeFormAvailableFor(formId: String!, surveyorEmail: String!): GeneralQueryResponse!
-        makeFormUnavailableFor(formId: String!, surveyorEmail: String!): GeneralQueryResponse!
+        makeFormsAvailableFor(formIds: [String]!, surveyorEmails: [String]!): GeneralQueryResponse!
+        makeFormsUnavailableFor(formIds: [String]!, surveyorEmails: [String]!): GeneralQueryResponse!
         saveFilledForm(filledForm: FilledFormInput!): FilledForm
         deleteFilledForms(id: [String]!): GeneralQueryResponse!
         deleteForm(id: [String]!): GeneralQueryResponse!

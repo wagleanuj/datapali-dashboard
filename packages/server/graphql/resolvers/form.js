@@ -33,8 +33,24 @@ const resolvers = {
         }
     },
     Mutation: {
-        makeFormAvailableFor: async (parent, { formId, surveyorEmail }, context, info) => {
+        makeFormsAvailableFor: async (parent, { formIds, surveyorEmails }, context, info) => {
             if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
+            const surveyors = await User.find({
+                "email":{
+                    $in:surveyorEmails
+                }
+            }).exec();
+            const specifiedForms = await FormFile.find({
+                id: {
+                    $in: formIds
+                }
+            }).exec();
+            surveyors.forEach(surv=>{
+                if(!surv) throw new ApolloError("Surveyor not found");
+                specifiedForms.forEach(form=>{
+                    if(!form) throw new ApolloError("Form not ")
+                })
+            })
             let surveyor = await User.findOne({ email: surveyorEmail }).exec();
             if (!surveyor) throw new ApolloError("Surveyor not found");
             let form = await FormFile.findOne({ id: formId }).exec();
@@ -50,7 +66,7 @@ const resolvers = {
             }
             return { message: `Sucessfully made the form available for ${surveyorEmail}` };
         },
-        makeFormUnavailableFor: async (parent, { formId, surveyorEmail }, context, info) => {
+        makeFormsUnavailableFor: async (parent, { formId, surveyorEmail }, context, info) => {
             if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
             let surveyor = await User.findOne({ email: surveyorEmail }).exec();
             if (!surveyor) throw new ApolloError("Surveyor not found");
