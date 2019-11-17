@@ -8,7 +8,6 @@ export type ProtectedRouteProps = {
 export class ProtectedRoute extends Route<ProtectedRouteProps>{
     
     render() {
-        console.log(this.props.authToken);
         
         if (!!this.props.authToken) {
             return <Route {...this.props} />

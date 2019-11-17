@@ -1,3 +1,5 @@
+import { ConfigProvider } from 'antd';
+import ne_NP from 'antd/es/locale/ne_NP';
 import ApolloClient from 'apollo-boost';
 import React from 'react';
 import { Provider } from 'react-redux';
@@ -11,8 +13,6 @@ import { ConnectedApolloProvider } from './containers/apollo.provider';
 import { LoginForm } from './containers/login.container';
 import { ConnectedProtectedRoute } from './containers/protectedRoute.container';
 import { EAppTheme } from './types';
-import { ConfigProvider } from 'antd';
-import frFR from 'antd/es/locale/fr_FR';
 
 
 const client = new ApolloClient({
@@ -55,8 +55,8 @@ class App extends React.Component<Props, State>{
         <Provider store={store}>
           <PersistGate onBeforeLift={() => console.log(store.getState())} loading={null} persistor={persistor}>
             <ConnectedApolloProvider client={client}>
-              <ConfigProvider locale={frFR}>
-
+              <ConfigProvider locale={ne_NP}>
+        
                 <div className={`main-wrapper ${this.Theme}`}>
                   <Switch>
                     <Route path="/login" render={({ history, location }) => {
@@ -74,6 +74,8 @@ class App extends React.Component<Props, State>{
 
                   </Switch>
 
+                </div>
+                <div id="modal-container">
                 </div>
               </ConfigProvider>
 

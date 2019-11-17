@@ -1,5 +1,5 @@
 import { useMutation } from '@apollo/react-hooks';
-import { Button, Card, Form, Input, Spin, message } from 'antd';
+import { Button, Card, Form, Input, message, Spin } from 'antd';
 import gql from 'graphql-tag';
 import React from 'react';
 import { Field, InjectedFormProps, SubmissionError } from "redux-form";
@@ -63,39 +63,42 @@ export function SignUpComponent(props: SignUpProps) {
 
     return (
         <Card>
-            {submitting && <Spin />}
-            <form onSubmit={handleSubmit(signUp)}>
-                <Field
-                    name="firstName"
-                    label={"First Name"}
-                    type={"text"}
-                    component={renderField}
-                />
-                <Field
-                    name="lastName"
-                    type={"text"}
-                    label="Last Name"
-                    component={renderField}
-                />
+            <Spin spinning={submitting}>
 
-                <Field
-                    name="email"
-                    component={renderField}
-                    type="text"
-                    label="Email Address"
+                <form onSubmit={handleSubmit(signUp)}>
+                    <Field
+                        name="firstName"
+                        label={"First Name"}
+                        type={"text"}
+                        component={renderField}
+                    />
+                    <Field
+                        name="lastName"
+                        type={"text"}
+                        label="Last Name"
+                        component={renderField}
+                    />
 
-                />
-                <Field
-                    name="password"
-                    label="Password"
-                    type="password"
-                    component={renderField}
+                    <Field
+                        name="email"
+                        component={renderField}
+                        type="text"
+                        label="Email Address"
 
-                />
-                {props.error && <strong className={'error'}>{props.error}</strong>}
+                    />
+                    <Field
+                        name="password"
+                        label="Password"
+                        type="password"
+                        component={renderField}
 
-                <Button style={{ width: '100%' }} disabled={submitting} htmlType="submit" icon="user-add">Submit</Button>
-            </form>
+                    />
+                    {props.error && <strong className={'error'}>{props.error}</strong>}
+
+                    <Button style={{ width: '100%' }} disabled={submitting} htmlType="submit" icon="user-add">Submit</Button>
+                </form>
+            </Spin>
+
         </Card >
     )
 }

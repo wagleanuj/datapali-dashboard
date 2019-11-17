@@ -15,7 +15,6 @@ export function userReducer(state = initialUserState, action: UserActions) {
     switch (action.type) {
         case SET_USER:
             const payload = action.payload;
-            console.log("setting user");
             return { ...state, ...payload };
         default:
             return state;

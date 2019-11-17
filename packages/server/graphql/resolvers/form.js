@@ -48,38 +48,52 @@ const resolvers = {
             surveyors.forEach(surv=>{
                 if(!surv) throw new ApolloError("Surveyor not found");
                 specifiedForms.forEach(form=>{
-                    if(!form) throw new ApolloError("Form not ")
+                    if(!form) throw new ApolloError("Form not found ");
+                    if(!form.assignedTo.includes(surv._id)){
+                        form.assignedTo.push(surv);
+                        
+                    }
+                    if(!surv.availableForms.includes(form._id)){
+                        surv.availableForms.push(form);
+                    }
                 })
-            })
-            let surveyor = await User.findOne({ email: surveyorEmail }).exec();
-            if (!surveyor) throw new ApolloError("Surveyor not found");
-            let form = await FormFile.findOne({ id: formId }).exec();
-            if (!form) throw new ApolloError("Form not found");
-            if (!surveyor.availableForms) surveyor.availableForms = [];
-            if (!surveyor.availableForms.includes(form._id)) {
-                surveyor.availableForms.push(form);
-                await surveyor.save();
-            }
-            if(!form.assignedTo.includes(surveyor._id)){
-                form.assignedTo.push(surveyor);
-                await form.save();
-            }
-            return { message: `Sucessfully made the form available for ${surveyorEmail}` };
+            });
+            await Promise.all( surveyors.map(item=>item.save()))
+            await Promise.all(specifiedForms.map(item=>item.save()))
+            return { message: `Sucessfully made the form available for ${surveyorEmails}` };
         },
-        makeFormsUnavailableFor: async (parent, { formId, surveyorEmail }, context, info) => {
+        makeFormsUnavailableFor: async (parent, { formIds, surveyorEmails }, context, info) => {
             if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
-            let surveyor = await User.findOne({ email: surveyorEmail }).exec();
-            if (!surveyor) throw new ApolloError("Surveyor not found");
-            let form = await FormFile.findOne({ id: formId }).exec();
-            if (!form) throw new ApolloError("Form not found");
-            if (!surveyor.availableForms) surveyor.availableForms = [];
-            let surveyFormIndex = surveyor.availableForms.findIndex(item => item && item.toString() === form._id.toString());
-            if (surveyFormIndex > -1) {
-                surveyor.availableForms.splice(surveyFormIndex, 1);
-                console.log('removed');
-                await surveyor.save();
-            }
-            return { message: `Sucessfully made the form unavailable for ${surveyorEmail}` };
+            if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
+            const surveyors = await User.find({
+                "email":{
+                    $in:surveyorEmails
+                }
+            }).exec();
+            const specifiedForms = await FormFile.find({
+                id: {
+                    $in: formIds
+                }
+            }).exec();
+            surveyors.forEach(surv=>{
+                if(!surv) throw new ApolloError("Surveyor not found");
+                specifiedForms.forEach(form=>{
+                    if(!form) throw new ApolloError("Form not found ");
+                    const surveyFormIndex = surv.availableForms.findIndex(item => item && item.toString() === form._id.toString());
+                    if(surveyFormIndex>-1){
+                        surv.availableForms.splice(surveyFormIndex,1);
+                    }
+                    const userIndex = form.assignedTo.findIndex(item=>item && item.toString()===surv._id.toString());
+                    if(userIndex>-1){
+                        form.assignedTo.splice(userIndex, 1);
+                    }
+                })
+            });
+            await Promise.all( surveyors.map(item=>item.save()))
+            await Promise.all(specifiedForms.map(item=>item.save()))
+
+           
+            return { message: `Sucessfully made the form unavailable for ${surveyorEmails}` };
         },
 
 

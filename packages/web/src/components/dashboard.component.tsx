@@ -1,6 +1,6 @@
-import { Icon, Layout, Menu } from "antd";
+import { Layout, Menu } from "antd";
 import React, { ReactNode } from "react";
-import { BrowserRouter as Router, Route, useLocation, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 import { ConnectedNavBar } from "../containers/navBar.container";
 import { tabs } from "../routes";
 import { ISidebarItemNode } from "./navMenu.component";
@@ -30,9 +30,9 @@ export function DashboardComponent(props: DashboardProps) {
                     <Sider collapsible >
                         <SideNav isVisible />
 
-                    </Sider>                    <Content>
+                    </Sider>
+                    <Content style={{ padding: 16 }}>
                         {getRoutesComponents(tabs)}
-
                     </Content>
                 </Layout>
             </Layout>

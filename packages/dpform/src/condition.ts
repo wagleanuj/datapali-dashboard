@@ -31,7 +31,6 @@ export class QACondition {
             const validity: boolean = Object.values(literal).every((x: ILiteral) => !_.isNil(x));
             if (!validity) { isValid = false; }
         });
-        console.log(isValid);
         return isValid;
 
     }

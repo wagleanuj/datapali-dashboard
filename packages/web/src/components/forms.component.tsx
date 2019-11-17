@@ -1,8 +1,10 @@
 import { useMutation, useQuery } from '@apollo/react-hooks';
-import { Button, Card, Empty, List, message, Popconfirm, Row, Spin } from 'antd';
+import { Avatar, Button, Card, Col, Empty, Input, List, message, PageHeader, Popconfirm, Row, Skeleton, Tag } from 'antd';
+import Paragraph from 'antd/lib/typography/Paragraph';
 import gql from 'graphql-tag';
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { AssignUser } from './assignUser.component';
 import { NewFormDialog } from './newFormDialog.component';
 
 
@@ -13,6 +15,11 @@ const GET_FORMS = gql`
           name
           createdAt
           updatedAt
+          assignedTo{
+              _id
+              firstName
+              lastName
+          }
         }
       } 
 
@@ -62,6 +69,7 @@ export function Forms(props: FormsProps) {
     const [deleteForm, { data: deleteFormResult }] = useMutation(DELETE_FORMS);
 
     const [isWizardOpen, setWizardOpen] = useState(false);
+    const [assigningForm, setAssigningForm] = useState(null);
 
     const onAddFormClick = () => {
         setWizardOpen(true);
@@ -75,39 +83,79 @@ export function Forms(props: FormsProps) {
         }
     }
 
+    const content = (
+        <div className="form-content">
+            <Paragraph>
+                Manage your forms and assign or unassign to your surveyors.
+            </Paragraph>
 
+            <Paragraph>
+            </Paragraph>
+            <Row style={{ display: 'flex', flexDirection: 'row', justifyContent: 'flex-end' }}>
+                <Col span={12}>
+                    <Input.Search type="" size="large" placeholder="Find Users..." />
+                </Col>
+            </Row >
+
+        </div >
+
+    );
 
     const render = () => {
-        if (loading) {
-            return <Spin />
-        }
-        if (error || !data || data.forms.length === 0) {
+
+        if (!loading && (error || !data || data.forms.length === 0)) {
             return <NonIdealFormsState onCreateClick={() => setWizardOpen(true)} />
         }
         return (<>
+            <AssignUser onOk={() => setAssigningForm(null)} onCancel={() => setAssigningForm(null)} formId={assigningForm} visible={!!assigningForm} />
             <NewFormDialog onCancel={() => setWizardOpen(false)} isOpen={isWizardOpen} onCreationSuccess={() => { setWizardOpen(false) }} />
-            <Row align='middle' justify='center' style={{ height: 40 }}>
-                <Button onClick={onAddFormClick} icon="plus">New Form</Button>
-
-            </Row>
             <Card>
+                <PageHeader
+                    title="Forms"
+                    style={{
+                        border: '1px solid rgb(235, 237, 240)',
+                    }}
+                    subTitle=""
+                    extra={[
+                        <Button onClick={() => setWizardOpen(true)} icon="file" type="primary" key="3">Create Form</Button>,
+
+                    ]}
+                    avatar={{ icon: "file" }}
+                >
+                    <div
+
+                    >
+                        {content}
+                    </div>
+                </PageHeader>
                 <List
-                    className="demo-loadmore-list"
                     loading={loading}
                     itemLayout="horizontal"
-                    dataSource={data.forms}
+                    dataSource={data && data.forms || []}
                     renderItem={(item: any) => (
                         <List.Item
+
                             actions={[
+                                <Button onClick={() => {
+                                    setAssigningForm(item.id)
+                                }} type="primary" icon={'user-add'} key="add-user" />,
                                 <Popconfirm placement={"left"} arrowPointAtCenter={true} title="Are you sure you want to delete this form?" onCancel={() => { }} onConfirm={() => onFormDeleteConfirm([item.id])} >
-                                    <Button icon={'delete'} key="delete" />
-                                </Popconfirm>
+                                    <Button type="danger" icon={'delete'} key="delete" />
+                                </Popconfirm>,
+
                             ]}
                         >
-                            <List.Item.Meta
-                                title={<Link to={`/formbuilder?id=${item.id}`}>{item.name}</Link>}
-                                description={new Date(parseInt(item.updatedAt)).toLocaleTimeString()}
-                            />
+                            <Skeleton loading={loading} active avatar>
+                                <List.Item.Meta
+                                    avatar={<Avatar shape="square" size={64} icon="file-text" />
+                                    }
+                                    title={<Link to={`/formbuilder?id=${item.id}`}>{item.name}</Link>}
+                                    description={new Date(parseInt(item.updatedAt)).toLocaleTimeString()}
+                                />
+                                <div>
+                                    {item.assignedTo.map(item => <Tag key={item._id}>{item.firstName + " " + item.lastName}</Tag>)}
+                                </div>
+                            </Skeleton>
                         </List.Item>
                     )}
                 />
