@@ -1,5 +1,6 @@
 import { IContent, IDupeSettings, IOption, IOptionGroup, IValueType, QACondition } from "@datapali/dpform/src";
 
+
 export interface IRootSection {
     _type:string;
     id: string;
@@ -10,7 +11,6 @@ export interface IRootSection {
 export interface IQuestion {
     _type:string;
     id: string;
-    name: string;
     answerType: IValueType;
     questionContent: IContent;
     options: IAnswerOptions;

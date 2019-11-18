@@ -1,12 +1,11 @@
 import React from 'react';
+import { ThemedComponentProps, withStyles } from 'react-native-ui-kitten';
 import { connect } from "react-redux";
+import { Action, Dispatch } from 'redux';
 import { Field, WrappedFieldProps } from "redux-form";
+import { DAppState } from '../../redux/actions/types';
 import { getQuestionValidators } from '../../redux/selectors/questionSelector';
 import { ConnectedFormItem } from './surveyformitem';
-import { DAppState } from '../../redux/actions/types';
-import { Dispatch, Action } from 'redux';
-import { withStyles, ThemedComponentProps } from 'react-native-ui-kitten';
-import { View } from 'react-native';
 
 type validatorFunction = (value: string | undefined) => string | undefined;
 type QuestionNodeProps = {

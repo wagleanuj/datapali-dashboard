@@ -1,0 +1,20 @@
+{
+	"folders": [
+		{
+			"path": "packages\\web"
+		},
+		{
+			"path": "packages\\dpform"
+		},
+		{
+			"path": "packages\\formbuilder"
+		},
+		{
+			"path": "packages\\mobile"
+		},
+		{
+			"path": "packages\\server"
+		}
+	],
+	"settings": {}
+}
