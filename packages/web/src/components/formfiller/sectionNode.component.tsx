@@ -1,9 +1,8 @@
 import { Tabs } from "antd";
 import React, { useContext } from "react";
 import { FormRenderContext } from "./formviewer.component";
-import { QuestionNode } from "./questionNode.component";
-import { ConnectedSectionNode } from "./sectionNode.container";
 import { ConnectedQuestionNode } from "./questionNode.container";
+import { ConnectedSectionNode } from "./sectionNode.container";
 
 type ChildProps = {
     typeChecker: (id: string) => "section" | "root" | "question",
@@ -15,32 +14,33 @@ type ChildProps = {
     hideIterationInPath: boolean,
     formId: string,
     rootId: string,
+    isInRootNode: boolean;
 }
 
 const getChild = (props: ChildProps) => {
-    const { formId, rootId, typeChecker, path, locationName, id, index, iteration, hideIterationInPath } = props;
+    const { formId, rootId, typeChecker, path, locationName, id, index, iteration, hideIterationInPath, isInRootNode } = props;
     const newPath = hideIterationInPath ? path.concat(index) : path.concat(iteration, index);
-    const newLocation = locationName.concat(`[${iteration}].${id}`);
+    const newLocation = isInRootNode ? id : locationName.concat(`[${iteration}].${id}`);
     if (typeChecker(id) === "section") {
         return (
             <ConnectedSectionNode formId={formId} rootId={rootId} key={newLocation} id={id} path={newPath} locationName={newLocation} />
         )
     } else {
         return (
-            <ConnectedQuestionNode formId={formId} rootId={rootId} id={id} path={newPath} locationName={newLocation} />
+            <ConnectedQuestionNode key={newLocation} formId={formId} rootId={rootId} id={id} path={newPath} locationName={newLocation} />
         )
     }
 }
 
-const getChildren = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", path: number[], locationName: string, childNodes: string[], iteration: number, hideIterationInPath: boolean = true) => {
-    return childNodes.map((id, index) => getChild({ formId, rootId, typeChecker, path, locationName, id, index, iteration, hideIterationInPath }));
+const getChildren = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", path: number[], locationName: string, childNodes: string[], iteration: number, hideIterationInPath: boolean = true, isInRootNode: boolean = false) => {
+    return childNodes.map((id, index) => getChild({ formId, rootId, typeChecker, path, locationName, id, index, iteration, hideIterationInPath, isInRootNode }));
 }
 
-const getTabbedView = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", duplicateTimes: number, childNodes: string[], path: number[], locationName: string) => {
+const getTabbedView = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", duplicateTimes: number, childNodes: string[], path: number[], locationName: string, isInRootNode:boolean=false) => {
     return <Tabs defaultActiveKey={"0"} tabPosition="top">
         {[...Array(duplicateTimes).keys()].map(i => (
             <Tabs.TabPane tab={`Record-${i}`} key={i.toString()}>
-                {getChildren(formId, rootId, typeChecker, path, locationName, childNodes, i, false)}
+                {getChildren(formId, rootId, typeChecker, path, locationName, childNodes, i, false, isInRootNode)}
             </Tabs.TabPane>
         ))}
     </Tabs>
@@ -55,15 +55,26 @@ type SectionNodeProps = {
     locationName: string;
     duplicateTimes?: number;
     path: number[];
+    isRootNode?: boolean;
     typeChecker?: (id: string) => "section" | "root" | "question";
 }
 export function SectionNode(props: SectionNodeProps) {
     const renderContext = useContext(FormRenderContext);
     const decisiveRender = (duplicateTimes: number) => {
         if (duplicateTimes !== -1) {
-            return duplicateTimes === 0 ? <NotRequiredSectionPage /> : getTabbedView(props.formId, props.rootId, props.typeChecker, duplicateTimes, props.childNodes, props.path, props.locationName);
+            return duplicateTimes === 0 ? <NotRequiredSectionPage key={'nr' + props.locationName} /> : getTabbedView(props.formId, props.rootId, props.typeChecker, duplicateTimes, props.childNodes, props.path, props.locationName, props.id===props.formId);
         }
-        return getChildren(props.formId, props.rootId, props.typeChecker, props.path, props.locationName, props.childNodes, 0, true);
+        return getChildren(
+            props.formId,
+            props.rootId,
+            props.typeChecker,
+            props.path,
+            props.locationName,
+            props.childNodes,
+            0,
+            true,
+            props.rootId===props.id
+        );
     }
     return (
         <div>

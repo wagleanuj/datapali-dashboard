@@ -61,12 +61,10 @@ export const tabs: ISidebarItemNode[] = [
         children: [],
         //@ts-ignore
         component: <FormViewerW renderSectionHeader={(sectionName: string, path: number[]) => {
-            console.log(sectionName, path);
 
             return null;
         }}
             renderQuestion={(question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => {
-                console.log(question, path);
                 const title = <div>{getReadablePath(path)} {question.title}</div>
                 return <Form.Item>
                     {title}

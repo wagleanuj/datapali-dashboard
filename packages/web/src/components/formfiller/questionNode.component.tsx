@@ -20,6 +20,7 @@ export function QuestionNode(props: QuestionNodeProps) {
         <Field
             name={props.locationName}
             component={(wp: WrappedFieldProps) => {
+
                 return renderContext.renderQuestion(
                     {
                         isRequired,

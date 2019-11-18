@@ -65,6 +65,7 @@ export type FormViewerProps = {
     handleFilledFormAdd?: (formId: string, filledForm: IFilledForm) => void;
     handleRootFormAdd?: (id: string, root: IRootForm) => void;
     initializeForm?: (formId: string, values: any) => void;
+
 } & RouteComponentProps & InjectedFormProps;
 
 
@@ -131,7 +132,7 @@ export class FormViewer extends React.Component<FormViewerProps, any> {
                         }
                     >
                         <Spin spinning={!props.filledForm || !props.rootForm}>
-                            {props.filledForm && props.rootForm && <ConnectedSectionNode rootId={rootId} id={rootId} formId={formId} path={[]} locationName={rootId} />}
+                            {props.filledForm && props.rootForm && <ConnectedSectionNode rootId={rootId} id={rootId} formId={formId} path={[]} locationName={""} />}
                         </Spin>
 
                     </FormRenderContext.Provider>
