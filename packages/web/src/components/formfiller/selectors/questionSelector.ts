@@ -1,14 +1,15 @@
 import _ from 'lodash';
+import { Helper } from 'packages/web/src/helper';
 import createCachedSelector from 're-reselect';
 import { getFormValues } from 'redux-form';
 import { createSelector } from 'reselect';
-import { AutoCompleteItem } from '../../components/form/surveyformitem';
-import { Helper } from "../helper";
 import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
-import { required } from '../../validators';
-import { getNodeOfRootForm, getRootFormOfFilledForm } from './nodeSelector';
+export const required = value => value ? undefined : 'Required field.'
 
-
+export type AutoCompleteItem = {
+    strength: number;
+    text: string;
+}
 export const getRootFormById = createSelector([$getRootForm, $getRootFormId],
     (rootForms, rootId) => {
         return rootForms.byId[rootId]
@@ -26,7 +27,7 @@ export const getDuplicatingSettingsForSection = createSelector([getRootFormSecti
 
 export const getAllFilledFormIdsOfRootForm = createCachedSelector([$getRootFormId, $getFilledForms], (rid, filledForms) => {
     let bag = [];
-    Object.values(filledForms.byId).forEach(item => {
+    Object.values(filledForms.byId).forEach((item: any) => {
         if (item.formId === rid) {
             bag.push(item.id);
         }
@@ -47,7 +48,7 @@ export const getQuestionOptions = createSelector([getQuestionById], (question) =
 export const getSortedOptions = createSelector([getQuestionOptions],
     (options) => {
         return {
-            rootOptions: Object.values(options.optionsMap).filter(item => !item.groupName),
+            rootOptions: Object.values(options.optionsMap).filter((item: any) => !item.groupName),
             groups: Object.values(options.optionGroupMap),
         }
     });
@@ -55,10 +56,10 @@ export const getSortedOptions = createSelector([getQuestionOptions],
 export const getDependenciesOfOptions = createSelector([getSortedOptions], (options => {
     const { groups, rootOptions } = options;
     let dependencies: string[] = [];
-    groups.forEach(item => {
+    groups.forEach((item: any) => {
         dependencies = dependencies.concat(item.appearingCondition ? item.appearingCondition.literals.map(item => item.questionRef) : []);
     });
-    rootOptions.forEach(item => {
+    rootOptions.forEach((item: any) => {
         dependencies = dependencies.concat(item.appearingCondition ? item.appearingCondition.literals.map(item => item.questionRef) : []);
     });
 
@@ -116,12 +117,12 @@ export const getValidOptions = createSelector([getSortedOptions, getValuesOfDepe
 export const getTransformedValidOptions = createSelector(getValidOptions, options => {
     const { groups, rootOptions } = options;
     let allOptions: { id: string, text: string }[] = [];
-    groups.forEach(item => {
+    groups.forEach((item: any) => {
         return item.members.forEach(option => {
             allOptions.push({ id: option.id, text: option.value });
         });
     });
-    rootOptions.forEach(option => {
+    rootOptions.forEach((option: any) => {
         allOptions.push({ id: option.id, text: option.value });
     });
     return allOptions;
@@ -150,7 +151,7 @@ export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLoc
 
 export const getQuestionValidators = createSelector(getQuestionById, (question) => {
     const validators = [];
-    if (question.isRequired) validators.push(required);
+    if (question.isRequired) validators.push((required));
     return validators;
 })
 

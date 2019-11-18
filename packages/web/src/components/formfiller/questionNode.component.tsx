@@ -1,6 +1,7 @@
 import React, { useContext } from "react";
 import { Field, WrappedFieldProps } from "redux-form";
-import { FormRenderContext } from "./section.component";
+import { FormRenderContext } from "./formviewer.component";
+import { IQuestionRenderProps } from "./questionNode.container";
 import { IQuestion } from "./types";
 
 
@@ -10,15 +11,24 @@ type QuestionNodeProps = {
     path: number[];
     question?: IQuestion;
     id: string;
-}
+
+} & IQuestionRenderProps;
 export function QuestionNode(props: QuestionNodeProps) {
     const renderContext = useContext(FormRenderContext);
+    const { isRequired, autoCompleteData, options, type, dependencies, title } = props;
     return (
         <Field
             name={props.locationName}
             component={(wp: WrappedFieldProps) => {
                 return renderContext.renderQuestion(
-                    props.question,
+                    {
+                        isRequired,
+                        autoCompleteData,
+                        options,
+                        type,
+                        dependencies,
+                        title,
+                    },
                     props.path,
                     wp
                 );

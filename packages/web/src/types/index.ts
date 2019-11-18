@@ -1,10 +1,10 @@
+import { IQuestion, IRootSection, ISection } from "../components/formfiller/types";
 
 export interface IAppState {
     user: IUser;
-    createdForms: ICreatedFormsState;
+    rootForms: IRootFormsState;
     filledForms: IFilledFormsState;
-    
-    form:any;
+    form: any;
 }
 export interface IUser {
     firstName: string;
@@ -21,12 +21,13 @@ export enum EUserType {
     SURVEYOR = 'surveyor',
     ADMIN = 'admin'
 }
-export interface ICreatedFormsState {
+export interface IRootFormsState {
     byId: { [key: string]: IRootForm },
     ids: string[]
 }
-export type IRootForm = any; //TODO;
-
+export type IRootForm = {
+    [key: string]: ISection | IRootSection | IQuestion
+};
 export interface IFilledFormsState {
     byId: { [key: string]: IFilledForm },
     ids: string[]

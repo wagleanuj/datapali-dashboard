@@ -1,6 +1,12 @@
 import { ANSWER_TYPES, ILiteral, IValueType, QAComparisonOperator, QACondition, QAFollowingOperator, QAQuestion, QuestionSection } from "@datapali/dpform";
 
-
+export type IDependency = {
+    all: any[],
+    autoFillConditions: string[],
+    groupConditions: string[],
+    rootOptionConditions: string[],
+    duplicationRef: string,
+}
 export class Helper {
 
     static checkIfQuestionHasCondition(question: QAQuestion | any) {
@@ -152,7 +158,7 @@ export class Helper {
             }
         }
     }
-    static collectDependencies(item: QuestionSection | QAQuestion) {
+    static collectDependencies(item: QuestionSection | QAQuestion): IDependency {
         let apConditionRef: string[] = [];
         let groupConditionRefs: string[] = [];
         let rootOptionConditionRefs: string[] = [];

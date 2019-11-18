@@ -1,9 +1,9 @@
 import { QuestionSection, RootSection } from "@datapali/dpform";
-import { Tabs } from "antd";
 import React, { ReactNode } from "react";
-import { Field, WrappedFieldProps } from "redux-form";
-import { IQuestion, IRootSection, ISection } from "./types";
+import { WrappedFieldProps } from "redux-form";
+import { IQuestionRenderProps } from "./questionNode.container";
 import { SectionNode } from "./sectionNode.component";
+import { IQuestion, IRootSection, ISection } from "./types";
 
 type FormTree = { [key: string]: IRootSection | ISection | IQuestion }
 function makeTree(root: RootSection | QuestionSection, tree: FormTree = {}) {
@@ -34,7 +34,7 @@ type FormViewerProps = {
     rootId: string;
     tree: FormTree;
     renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
-    renderQuestion: (question: IQuestion, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
+    renderQuestion: (question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
 }
 type FormViewerState = {
 
@@ -69,9 +69,14 @@ export class FormViewer extends React.Component<FormViewerProps, FormViewerState
         )
     }
 }
+export type RenderQuestionProps = {
+    question: {
+
+    }
+}
 export type RenderContextType = {
     renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
-    renderQuestion: (question: IQuestion, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
+    renderQuestion: (question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
 }
 export const FormRenderContext = React.createContext<RenderContextType>({
     renderSectionHeader: (sectionName: string, path: number[]) => null,

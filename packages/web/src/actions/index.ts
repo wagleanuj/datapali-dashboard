@@ -1,4 +1,4 @@
-import { IUser } from "../types";
+import { IRootForm, IUser } from "../types";
 
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
@@ -100,7 +100,7 @@ export interface JumpTo {
         index: number;
     }
 }
-export type FilledFormActions = AddFilledForm | UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo|MarkFormAsSubmitted;
+export type FilledFormActions = AddFilledForm | UpdateFilledForms | DeleteFilledForm | UpdateFormAnswer | PrevFormItem | NextFormItem | JumpTo | MarkFormAsSubmitted;
 
 //available forms action types
 
@@ -108,7 +108,8 @@ export const ADD_ROOT_FORM = 'add-available-form';
 export interface AddRootForm {
     type: typeof ADD_ROOT_FORM;
     payload: {
-        root: any
+        root: IRootForm,
+        id: string;
     }
 }
 
@@ -116,7 +117,7 @@ export const REPLACE_ROOT_FORMS = 'replace-available-forms';
 export interface ReplaceRootForms {
     type: typeof REPLACE_ROOT_FORMS;
     payload: {
-        roots: { [key: string]: any }
+        roots: { [key: string]: IRootForm }
     }
 }
 
@@ -153,4 +154,4 @@ export interface TogglePagerMode {
     type: typeof TOGGLE_PAGER_MODE;
     payload: undefined;
 }
-export type SettingActions =  TogglePagerMode
+export type SettingActions = TogglePagerMode

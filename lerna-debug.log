@@ -1,21 +1,390 @@
 0 silly argv {
-0 silly argv   _: [ 'add' ],
-0 silly argv   scope: '@datapali/web',
-0 silly argv   globs: [],
+0 silly argv   _: [ 'bootstrap' ],
 0 silly argv   lernaVersion: '3.18.4',
-0 silly argv   '$0': 'C:\\Program Files\\nodejs\\node_modules\\lerna\\cli.js',
-0 silly argv   pkg: 'antd'
+0 silly argv   '$0': 'C:\\Program Files\\nodejs\\node_modules\\lerna\\cli.js'
 0 silly argv }
 1 notice cli v3.18.4
 2 verbose rootPath C:\Users\Anuj\Desktop\datapali-dashboard
-3 notice filter including "@datapali/web"
-4 info filter [ '@datapali/web' ]
-5 error TypeError: Cannot read property 'split' of undefined
-5 error     at Minimatch.match (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\minimatch\minimatch.js:713:11)
-5 error     at C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\minimatch\minimatch.js:691:15
-5 error     at Array.filter (<anonymous>)
-5 error     at Function.minimatch.match (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\minimatch\minimatch.js:690:15)
-5 error     at C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\multimatch\index.js:23:33
-5 error     at Array.reduce (<anonymous>)
-5 error     at module.exports (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\multimatch\index.js:15:18)
-5 error     at filterPackages (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\@lerna\filter-packages\filter-packages.js:45:28)
+3 silly npmConfig {
+3 silly npmConfig   registry: undefined,
+3 silly npmConfig   npmClient: 'yarn',
+3 silly npmConfig   npmClientArgs: [],
+3 silly npmConfig   mutex: 'network:42424'
+3 silly npmConfig }
+4 info Bootstrapping 5 packages
+5 verbose lifecycle preinstall
+6 silly lifecycle No script for "preinstall" in "@datapali/dpform", continuing
+7 silly lifecycle No script for "preinstall" in "@datapali/server", continuing
+8 silly lifecycle No script for "preinstall" in "@datapali/formbuilder", continuing
+9 silly lifecycle No script for "preinstall" in undefined, continuing
+10 silly lifecycle No script for "preinstall" in "@datapali/web", continuing
+11 silly hasDependencyInstalled undefined @babel/core
+12 silly hasDependencyInstalled @datapali/formbuilder @types/jest
+13 silly hasDependencyInstalled @datapali/web @types/jest
+14 silly hasDependencyInstalled @datapali/dpform @types/lodash
+15 silly hasDependencyInstalled undefined @types/react
+16 silly hasDependencyInstalled undefined @types/react-dom
+17 silly hasDependencyInstalled undefined @types/react-redux
+18 silly hasDependencyInstalled @datapali/web jest
+19 silly hasDependencyInstalled @datapali/dpform lodash
+20 silly hasDependencyInstalled undefined lodash
+21 silly hasDependencyInstalled undefined react
+22 silly hasDependencyInstalled undefined react-dom
+23 silly hasDependencyInstalled undefined react-redux
+24 silly hasDependencyInstalled undefined redux
+25 silly hasDependencyInstalled undefined redux-form
+26 silly hasDependencyInstalled undefined redux-persist
+27 silly hasDependencyInstalled @datapali/formbuilder typescript
+28 silly hasDependencyInstalled undefined typescript
+29 silly hasDependencyInstalled undefined @types/redux-form
+30 silly hasDependencyInstalled @datapali/formbuilder @fortawesome/fontawesome-svg-core
+31 silly hasDependencyInstalled @datapali/formbuilder @fortawesome/free-solid-svg-icons
+32 silly hasDependencyInstalled @datapali/formbuilder @fortawesome/react-fontawesome
+33 silly hasDependencyInstalled @datapali/formbuilder @types/classnames
+34 silly hasDependencyInstalled @datapali/web @types/classnames
+35 silly hasDependencyInstalled @datapali/formbuilder @types/history
+36 silly hasDependencyInstalled @datapali/formbuilder @types/node
+37 silly hasDependencyInstalled @datapali/web @types/node
+38 silly hasDependencyInstalled @datapali/formbuilder @types/react-bootstrap-table
+39 silly hasDependencyInstalled @datapali/formbuilder @types/react-fontawesome
+40 silly hasDependencyInstalled @datapali/formbuilder @types/react-modal
+41 silly hasDependencyInstalled @datapali/formbuilder @types/react-router
+42 silly hasDependencyInstalled @datapali/formbuilder @types/react-router-dom
+43 silly hasDependencyInstalled @datapali/web @types/react-router-dom
+44 silly hasDependencyInstalled @datapali/formbuilder @types/react-select
+45 silly hasDependencyInstalled @datapali/formbuilder @types/why-did-you-update
+46 silly hasDependencyInstalled @datapali/formbuilder classnames
+47 silly hasDependencyInstalled @datapali/web classnames
+48 silly hasDependencyInstalled @datapali/formbuilder copy-to-clipboard
+49 silly hasDependencyInstalled @datapali/formbuilder eslint
+50 silly hasDependencyInstalled @datapali/formbuilder history
+51 silly hasDependencyInstalled @datapali/formbuilder react-bootstrap-table-next
+52 silly hasDependencyInstalled @datapali/formbuilder react-modal
+53 silly hasDependencyInstalled @datapali/formbuilder react-router-dom
+54 silly hasDependencyInstalled @datapali/web react-router-dom
+55 silly hasDependencyInstalled @datapali/formbuilder react-scripts
+56 silly hasDependencyInstalled @datapali/web react-scripts
+57 silly hasDependencyInstalled @datapali/formbuilder react-select
+58 silly hasDependencyInstalled @datapali/formbuilder why-did-you-update
+59 silly hasDependencyInstalled undefined @types/react-native
+60 silly hasDependencyInstalled undefined babel-preset-expo
+61 silly hasDependencyInstalled undefined @apollo/react-hooks
+62 silly hasDependencyInstalled @datapali/web @apollo/react-hooks
+63 silly hasDependencyInstalled undefined @babel/runtime
+64 silly hasDependencyInstalled undefined @eva-design/eva
+65 silly hasDependencyInstalled undefined @expo/vector-icons
+66 silly hasDependencyInstalled undefined @react-native-community/art
+67 silly hasDependencyInstalled undefined @react-native-community/viewpager
+68 silly hasDependencyInstalled undefined @types/pretty-format
+69 silly hasDependencyInstalled undefined @types/react-native-autocomplete-input
+70 silly hasDependencyInstalled undefined @types/react-native-modal
+71 silly hasDependencyInstalled undefined @types/react-native-scrollable-tab-view
+72 silly hasDependencyInstalled undefined @types/react-native-swiper
+73 silly hasDependencyInstalled undefined @ui-kitten/eva-icons
+74 silly hasDependencyInstalled undefined @ui-kitten/moment
+75 silly hasDependencyInstalled undefined apollo-boost
+76 silly hasDependencyInstalled @datapali/web apollo-boost
+77 silly hasDependencyInstalled undefined apollo-client
+78 silly hasDependencyInstalled undefined expo
+79 silly hasDependencyInstalled undefined graphql
+80 silly hasDependencyInstalled @datapali/web graphql
+81 silly hasDependencyInstalled @datapali/server graphql
+82 silly hasDependencyInstalled undefined graphql-tag
+83 silly hasDependencyInstalled undefined immer
+84 silly hasDependencyInstalled @datapali/web immer
+85 silly hasDependencyInstalled undefined jsonwebtoken
+86 silly hasDependencyInstalled @datapali/server jsonwebtoken
+87 silly hasDependencyInstalled undefined native-base
+88 silly hasDependencyInstalled undefined pretty-format
+89 silly hasDependencyInstalled undefined re-reselect
+90 silly hasDependencyInstalled @datapali/web re-reselect
+91 silly hasDependencyInstalled undefined react-native
+92 silly hasDependencyInstalled undefined react-native-animatable
+93 silly hasDependencyInstalled undefined react-native-collapsible
+94 silly hasDependencyInstalled undefined react-native-dots-pagination
+95 silly hasDependencyInstalled undefined react-native-gesture-handler
+96 silly hasDependencyInstalled undefined react-native-keyboard-accessory
+97 silly hasDependencyInstalled undefined react-native-keyboard-aware-scroll-view
+98 silly hasDependencyInstalled undefined react-native-modal
+99 silly hasDependencyInstalled undefined react-native-nested-listview
+100 silly hasDependencyInstalled undefined react-native-paper
+101 silly hasDependencyInstalled undefined react-native-progress
+102 silly hasDependencyInstalled undefined react-native-reanimated
+103 silly hasDependencyInstalled undefined react-native-scrollable-tab-view
+104 silly hasDependencyInstalled undefined react-native-snap-carousel
+105 silly hasDependencyInstalled undefined react-native-svg
+106 silly hasDependencyInstalled undefined react-native-swipe-list-view
+107 silly hasDependencyInstalled undefined react-native-swiper
+108 silly hasDependencyInstalled undefined react-native-tab-view
+109 silly hasDependencyInstalled undefined react-native-ui-kitten
+110 silly hasDependencyInstalled undefined react-native-web
+111 silly hasDependencyInstalled undefined react-navigation
+112 silly hasDependencyInstalled undefined react-navigation-animated-switch
+113 silly hasDependencyInstalled undefined react-navigation-material-bottom-tabs
+114 silly hasDependencyInstalled undefined react-navigation-stack
+115 silly hasDependencyInstalled undefined react-navigation-tabs
+116 silly hasDependencyInstalled undefined reselect
+117 silly hasDependencyInstalled @datapali/web reselect
+118 silly hasDependencyInstalled @datapali/server @playlyfe/gql
+119 silly hasDependencyInstalled @datapali/server apollo-server-express
+120 silly hasDependencyInstalled @datapali/server bcrypt-nodejs
+121 silly hasDependencyInstalled @datapali/server dotenv
+122 silly hasDependencyInstalled @datapali/server express
+123 silly hasDependencyInstalled @datapali/server graphql-subscriptions
+124 silly hasDependencyInstalled @datapali/server graphql-tools
+125 silly hasDependencyInstalled @datapali/server mongoose
+126 silly hasDependencyInstalled @datapali/server nodemailer
+127 silly hasDependencyInstalled @datapali/server nodemon
+128 silly hasDependencyInstalled @datapali/server socket.io
+129 silly hasDependencyInstalled @datapali/server subscriptions-transport-ws
+130 silly hasDependencyInstalled @datapali/web @graphql-codegen/typescript
+131 silly hasDependencyInstalled @datapali/web @graphql-codegen/typescript-operations
+132 silly hasDependencyInstalled @datapali/web @graphql-codegen/typescript-react-apollo
+133 silly hasDependencyInstalled @datapali/web @types/react-virtualized
+134 silly hasDependencyInstalled @datapali/web @documentalist/client
+135 silly hasDependencyInstalled @datapali/web @graphql-codegen/cli
+136 silly hasDependencyInstalled @datapali/web antd
+137 silly hasDependencyInstalled @datapali/web immutable-js
+138 silly hasDependencyInstalled @datapali/web react-sidenav
+139 silly hasDependencyInstalled @datapali/web react-virtualized
+140 silly root dependencies {}
+141 silly leaf dependencies {}
+142 info Installing external dependencies
+143 verbose actions 2 actions, concurrency 8
+144 silly npmInstallDependencies undefined [
+144 silly npmInstallDependencies   '@babel/core@^7.7.2',
+144 silly npmInstallDependencies   '@types/react@16.9.11',
+144 silly npmInstallDependencies   '@types/react-dom@16.9.3',
+144 silly npmInstallDependencies   '@types/react-redux@^7.1.4',
+144 silly npmInstallDependencies   'lodash@^4.17.15',
+144 silly npmInstallDependencies   'react@^16.11.0',
+144 silly npmInstallDependencies   'react-dom@^16.11.0',
+144 silly npmInstallDependencies   'react-redux@^7.1.1',
+144 silly npmInstallDependencies   'redux@^4.0.4',
+144 silly npmInstallDependencies   'redux-form@^8.2.6',
+144 silly npmInstallDependencies   'redux-persist@^6.0.0',
+144 silly npmInstallDependencies   'typescript@3.6.4',
+144 silly npmInstallDependencies   '@types/redux-form@^8.1.9',
+144 silly npmInstallDependencies   '@types/react-native@^0.57.65',
+144 silly npmInstallDependencies   'babel-preset-expo@^7.1.0',
+144 silly npmInstallDependencies   '@apollo/react-hooks@^3.1.3',
+144 silly npmInstallDependencies   '@babel/runtime@^7.7.2',
+144 silly npmInstallDependencies   '@eva-design/eva@^1.1.0-beta.1',
+144 silly npmInstallDependencies   '@expo/vector-icons@^10.0.0',
+144 silly npmInstallDependencies   '@react-native-community/art@^1.0.1',
+144 silly npmInstallDependencies   '@react-native-community/viewpager@^2.0.0',
+144 silly npmInstallDependencies   '@types/pretty-format@^24.3.0',
+144 silly npmInstallDependencies   '@types/react-native-autocomplete-input@^4.0.1',
+144 silly npmInstallDependencies   '@types/react-native-modal@^4.1.1',
+144 silly npmInstallDependencies   '@types/react-native-scrollable-tab-view@^0.10.1',
+144 silly npmInstallDependencies   '@types/react-native-swiper@^1.5.10',
+144 silly npmInstallDependencies   '@ui-kitten/eva-icons@^4.2.0-beta.1',
+144 silly npmInstallDependencies   '@ui-kitten/moment@^4.2.0',
+144 silly npmInstallDependencies   'apollo-boost@^0.4.4',
+144 silly npmInstallDependencies   'apollo-client@^2.6.4',
+144 silly npmInstallDependencies   'expo@^34.0.1',
+144 silly npmInstallDependencies   'graphql@^14.5.8',
+144 silly npmInstallDependencies   'graphql-tag@^2.10.1',
+144 silly npmInstallDependencies   'immer@^4.0.1',
+144 silly npmInstallDependencies   'jsonwebtoken@^8.5.1',
+144 silly npmInstallDependencies   'native-base@^2.13.8',
+144 silly npmInstallDependencies   'pretty-format@^24.9.0',
+144 silly npmInstallDependencies   're-reselect@^3.4.0',
+144 silly npmInstallDependencies   'react-native@https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz',
+144 silly npmInstallDependencies   'react-native-animatable@^1.3.2',
+144 silly npmInstallDependencies   'react-native-collapsible@^1.5.1',
+144 silly npmInstallDependencies   'react-native-dots-pagination@^0.1.6',
+144 silly npmInstallDependencies   'react-native-gesture-handler@^1.3.0',
+144 silly npmInstallDependencies   'react-native-keyboard-accessory@^0.1.10',
+144 silly npmInstallDependencies   'react-native-keyboard-aware-scroll-view@^0.9.1',
+144 silly npmInstallDependencies   'react-native-modal@^11.4.0',
+144 silly npmInstallDependencies   'react-native-nested-listview@^0.7.2',
+144 silly npmInstallDependencies   'react-native-paper@^2.16.0',
+144 silly npmInstallDependencies   'react-native-progress@3.6.0',
+144 silly npmInstallDependencies   'react-native-reanimated@^1.1.0',
+144 silly npmInstallDependencies   'react-native-scrollable-tab-view@^0.10.0',
+144 silly npmInstallDependencies   'react-native-snap-carousel@^3.8.2',
+144 silly npmInstallDependencies   'react-native-svg@^9.5.3',
+144 silly npmInstallDependencies   'react-native-swipe-list-view@^2.0.1',
+144 silly npmInstallDependencies   'react-native-swiper@^1.5.14',
+144 silly npmInstallDependencies   'react-native-tab-view@^2.10.0',
+144 silly npmInstallDependencies   'react-native-ui-kitten@^4.2.0-beta.2',
+144 silly npmInstallDependencies   'react-native-web@^0.11.4',
+144 silly npmInstallDependencies   'react-navigation@^4.0.5',
+144 silly npmInstallDependencies   'react-navigation-animated-switch@^0.3.2',
+144 silly npmInstallDependencies   'react-navigation-material-bottom-tabs@^2.1.5',
+144 silly npmInstallDependencies   'react-navigation-stack@^1.8.0',
+144 silly npmInstallDependencies   'react-navigation-tabs@^2.5.3',
+144 silly npmInstallDependencies   'reselect@^4.0.0'
+144 silly npmInstallDependencies ]
+145 silly npmInstallDependencies backup C:\Users\Anuj\Desktop\datapali-dashboard\packages\mobile\package.json
+146 silly npmInstallDependencies @datapali/web [
+146 silly npmInstallDependencies   '@types/jest@24.0.21',
+146 silly npmInstallDependencies   'jest@^24.9.0',
+146 silly npmInstallDependencies   '@types/classnames@^2.2.9',
+146 silly npmInstallDependencies   '@types/node@12.12.5',
+146 silly npmInstallDependencies   '@types/react-router-dom@^5.1.2',
+146 silly npmInstallDependencies   'classnames@^2.2.6',
+146 silly npmInstallDependencies   'react-router-dom@^5.1.2',
+146 silly npmInstallDependencies   'react-scripts@3.2.0',
+146 silly npmInstallDependencies   '@apollo/react-hooks@^3.1.3',
+146 silly npmInstallDependencies   'apollo-boost@^0.4.4',
+146 silly npmInstallDependencies   'graphql@^14.5.8',
+146 silly npmInstallDependencies   'immer@^5.0.0',
+146 silly npmInstallDependencies   're-reselect@^3.4.0',
+146 silly npmInstallDependencies   'reselect@^4.0.0',
+146 silly npmInstallDependencies   '@graphql-codegen/typescript@1.8.2',
+146 silly npmInstallDependencies   '@graphql-codegen/typescript-operations@1.8.2',
+146 silly npmInstallDependencies   '@graphql-codegen/typescript-react-apollo@1.8.2',
+146 silly npmInstallDependencies   '@types/react-virtualized@^9.21.5',
+146 silly npmInstallDependencies   '@documentalist/client@^2.2.0',
+146 silly npmInstallDependencies   '@graphql-codegen/cli@^1.8.2',
+146 silly npmInstallDependencies   'antd@^3.25.1',
+146 silly npmInstallDependencies   'immutable-js@^0.3.1-6',
+146 silly npmInstallDependencies   'react-sidenav@^4.0.6',
+146 silly npmInstallDependencies   'react-virtualized@^9.21.1'
+146 silly npmInstallDependencies ]
+147 silly npmInstallDependencies backup C:\Users\Anuj\Desktop\datapali-dashboard\packages\web\package.json
+148 silly npmInstallDependencies writing tempJson {
+148 silly npmInstallDependencies   main: 'node_modules/expo/AppEntry.js',
+148 silly npmInstallDependencies   dependencies: {
+148 silly npmInstallDependencies     '@apollo/react-hooks': '^3.1.3',
+148 silly npmInstallDependencies     '@babel/core': '^7.7.2',
+148 silly npmInstallDependencies     '@babel/runtime': '^7.7.2',
+148 silly npmInstallDependencies     '@eva-design/eva': '^1.1.0-beta.1',
+148 silly npmInstallDependencies     '@expo/vector-icons': '^10.0.0',
+148 silly npmInstallDependencies     '@react-native-community/art': '^1.0.1',
+148 silly npmInstallDependencies     '@react-native-community/viewpager': '^2.0.0',
+148 silly npmInstallDependencies     '@types/pretty-format': '^24.3.0',
+148 silly npmInstallDependencies     '@types/react': '16.9.11',
+148 silly npmInstallDependencies     '@types/react-dom': '16.9.3',
+148 silly npmInstallDependencies     '@types/react-native-autocomplete-input': '^4.0.1',
+148 silly npmInstallDependencies     '@types/react-native-modal': '^4.1.1',
+148 silly npmInstallDependencies     '@types/react-native-scrollable-tab-view': '^0.10.1',
+148 silly npmInstallDependencies     '@types/react-native-swiper': '^1.5.10',
+148 silly npmInstallDependencies     '@types/react-redux': '^7.1.4',
+148 silly npmInstallDependencies     '@types/redux-form': '^8.1.9',
+148 silly npmInstallDependencies     '@ui-kitten/eva-icons': '^4.2.0-beta.1',
+148 silly npmInstallDependencies     '@ui-kitten/moment': '^4.2.0',
+148 silly npmInstallDependencies     'apollo-boost': '^0.4.4',
+148 silly npmInstallDependencies     'apollo-client': '^2.6.4',
+148 silly npmInstallDependencies     expo: '^34.0.1',
+148 silly npmInstallDependencies     graphql: '^14.5.8',
+148 silly npmInstallDependencies     'graphql-tag': '^2.10.1',
+148 silly npmInstallDependencies     immer: '^4.0.1',
+148 silly npmInstallDependencies     jsonwebtoken: '^8.5.1',
+148 silly npmInstallDependencies     lodash: '^4.17.15',
+148 silly npmInstallDependencies     'native-base': '^2.13.8',
+148 silly npmInstallDependencies     'pretty-format': '^24.9.0',
+148 silly npmInstallDependencies     're-reselect': '^3.4.0',
+148 silly npmInstallDependencies     react: '^16.11.0',
+148 silly npmInstallDependencies     'react-dom': '^16.11.0',
+148 silly npmInstallDependencies     'react-native': 'https://github.com/expo/react-native/archive/sdk-34.0.0.tar.gz',
+148 silly npmInstallDependencies     'react-native-animatable': '^1.3.2',
+148 silly npmInstallDependencies     'react-native-collapsible': '^1.5.1',
+148 silly npmInstallDependencies     'react-native-dots-pagination': '^0.1.6',
+148 silly npmInstallDependencies     'react-native-gesture-handler': '^1.3.0',
+148 silly npmInstallDependencies     'react-native-keyboard-accessory': '^0.1.10',
+148 silly npmInstallDependencies     'react-native-keyboard-aware-scroll-view': '^0.9.1',
+148 silly npmInstallDependencies     'react-native-modal': '^11.4.0',
+148 silly npmInstallDependencies     'react-native-nested-listview': '^0.7.2',
+148 silly npmInstallDependencies     'react-native-paper': '^2.16.0',
+148 silly npmInstallDependencies     'react-native-progress': '3.6.0',
+148 silly npmInstallDependencies     'react-native-reanimated': '^1.1.0',
+148 silly npmInstallDependencies     'react-native-scrollable-tab-view': '^0.10.0',
+148 silly npmInstallDependencies     'react-native-snap-carousel': '^3.8.2',
+148 silly npmInstallDependencies     'react-native-svg': '^9.5.3',
+148 silly npmInstallDependencies     'react-native-swipe-list-view': '^2.0.1',
+148 silly npmInstallDependencies     'react-native-swiper': '^1.5.14',
+148 silly npmInstallDependencies     'react-native-tab-view': '^2.10.0',
+148 silly npmInstallDependencies     'react-native-ui-kitten': '^4.2.0-beta.2',
+148 silly npmInstallDependencies     'react-native-web': '^0.11.4',
+148 silly npmInstallDependencies     'react-navigation': '^4.0.5',
+148 silly npmInstallDependencies     'react-navigation-animated-switch': '^0.3.2',
+148 silly npmInstallDependencies     'react-navigation-material-bottom-tabs': '^2.1.5',
+148 silly npmInstallDependencies     'react-navigation-stack': '^1.8.0',
+148 silly npmInstallDependencies     'react-navigation-tabs': '^2.5.3',
+148 silly npmInstallDependencies     'react-redux': '^7.1.1',
+148 silly npmInstallDependencies     redux: '^4.0.4',
+148 silly npmInstallDependencies     'redux-form': '^8.2.6',
+148 silly npmInstallDependencies     'redux-persist': '^6.0.0',
+148 silly npmInstallDependencies     reselect: '^4.0.0',
+148 silly npmInstallDependencies     typescript: '3.6.4'
+148 silly npmInstallDependencies   },
+148 silly npmInstallDependencies   devDependencies: { '@types/react-native': '^0.57.65', 'babel-preset-expo': '^7.1.0' },
+148 silly npmInstallDependencies   private: true
+148 silly npmInstallDependencies }
+149 silly npmInstallDependencies writing tempJson {
+149 silly npmInstallDependencies   name: '@datapali/web',
+149 silly npmInstallDependencies   version: '0.1.0',
+149 silly npmInstallDependencies   private: true,
+149 silly npmInstallDependencies   dependencies: {
+149 silly npmInstallDependencies     '@apollo/react-hooks': '^3.1.3',
+149 silly npmInstallDependencies     '@documentalist/client': '^2.2.0',
+149 silly npmInstallDependencies     '@graphql-codegen/cli': '^1.8.2',
+149 silly npmInstallDependencies     '@types/jest': '24.0.21',
+149 silly npmInstallDependencies     '@types/node': '12.12.5',
+149 silly npmInstallDependencies     antd: '^3.25.1',
+149 silly npmInstallDependencies     'apollo-boost': '^0.4.4',
+149 silly npmInstallDependencies     classnames: '^2.2.6',
+149 silly npmInstallDependencies     graphql: '^14.5.8',
+149 silly npmInstallDependencies     immer: '^5.0.0',
+149 silly npmInstallDependencies     'immutable-js': '^0.3.1-6',
+149 silly npmInstallDependencies     jest: '^24.9.0',
+149 silly npmInstallDependencies     'react-router-dom': '^5.1.2',
+149 silly npmInstallDependencies     'react-scripts': '3.2.0',
+149 silly npmInstallDependencies     'react-sidenav': '^4.0.6',
+149 silly npmInstallDependencies     'react-virtualized': '^9.21.1',
+149 silly npmInstallDependencies     reselect: '^4.0.0',
+149 silly npmInstallDependencies     're-reselect': '^3.4.0'
+149 silly npmInstallDependencies   },
+149 silly npmInstallDependencies   eslintConfig: { extends: 'react-app' },
+149 silly npmInstallDependencies   browserslist: {
+149 silly npmInstallDependencies     production: [ '>0.2%', 'not dead', 'not op_mini all' ],
+149 silly npmInstallDependencies     development: [
+149 silly npmInstallDependencies       'last 1 chrome version',
+149 silly npmInstallDependencies       'last 1 firefox version',
+149 silly npmInstallDependencies       'last 1 safari version'
+149 silly npmInstallDependencies     ]
+149 silly npmInstallDependencies   },
+149 silly npmInstallDependencies   devDependencies: {
+149 silly npmInstallDependencies     '@graphql-codegen/typescript': '1.8.2',
+149 silly npmInstallDependencies     '@graphql-codegen/typescript-operations': '1.8.2',
+149 silly npmInstallDependencies     '@graphql-codegen/typescript-react-apollo': '1.8.2',
+149 silly npmInstallDependencies     '@types/classnames': '^2.2.9',
+149 silly npmInstallDependencies     '@types/react-router-dom': '^5.1.2',
+149 silly npmInstallDependencies     '@types/react-virtualized': '^9.21.5'
+149 silly npmInstallDependencies   },
+149 silly npmInstallDependencies   peerDependencies: {
+149 silly npmInstallDependencies     '@types/react': '16.9.11',
+149 silly npmInstallDependencies     '@types/react-dom': '16.9.3',
+149 silly npmInstallDependencies     '@types/redux-form': '^8.1.9',
+149 silly npmInstallDependencies     react: '^16.11.0',
+149 silly npmInstallDependencies     'react-dom': '^16.11.0',
+149 silly npmInstallDependencies     redux: '^4.0.4',
+149 silly npmInstallDependencies     'redux-form': '^8.2.6',
+149 silly npmInstallDependencies     'redux-persist': '^6.0.0',
+149 silly npmInstallDependencies     typescript: '3.6.4',
+149 silly npmInstallDependencies     '@types/react-redux': '^7.1.5',
+149 silly npmInstallDependencies     lodash: '^4.17.15',
+149 silly npmInstallDependencies     'react-redux': '^7.1.1'
+149 silly npmInstallDependencies   }
+149 silly npmInstallDependencies }
+150 silly getExecOpts C:\Users\Anuj\Desktop\datapali-dashboard\packages\mobile undefined
+151 silly npmInstall [
+151 silly npmInstall   'yarn',
+151 silly npmInstall   [ 'install', '--mutex', 'network:42424', '--non-interactive' ]
+151 silly npmInstall ]
+152 silly getExecOpts C:\Users\Anuj\Desktop\datapali-dashboard\packages\web undefined
+153 silly npmInstall [
+153 silly npmInstall   'yarn',
+153 silly npmInstall   [ 'install', '--mutex', 'network:42424', '--non-interactive' ]
+153 silly npmInstall ]
+154 silly npmInstallDependencies cleanup C:\Users\Anuj\Desktop\datapali-dashboard\packages\mobile\package.json
+155 verbose installed leaf undefined
+156 silly npmInstallDependencies cleanup C:\Users\Anuj\Desktop\datapali-dashboard\packages\web\package.json
+157 error Error: ENOENT: no such file or directory, rename 'C:\Users\Anuj\Desktop\datapali-dashboard\packages\web\package.json.lerna_backup' -> 'C:\Users\Anuj\Desktop\datapali-dashboard\packages\web\package.json'
+157 error     at Object.renameSync (fs.js:620:3)
+157 error     at cleanup (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\@lerna\npm-install\npm-install.js:70:10)
+157 error     at done (C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\@lerna\npm-install\npm-install.js:78:7)
+157 error     at C:\Users\Anuj\Desktop\datapali-dashboard\node_modules\@lerna\npm-install\npm-install.js:94:19

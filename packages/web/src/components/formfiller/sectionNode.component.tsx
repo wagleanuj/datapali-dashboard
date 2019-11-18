@@ -1,7 +1,7 @@
 import { Tabs } from "antd";
-import React, { ReactNode, useContext } from "react";
+import React, { useContext } from "react";
+import { FormRenderContext } from "./formviewer.component";
 import { QuestionNode } from "./questionNode.component";
-import { FormRenderContext } from "./section.component";
 
 type ChildProps = {
     typeChecker: (id: string) => "section" | "root" | "question",
@@ -18,7 +18,7 @@ const getChild = (props: ChildProps) => {
     const newLocation = locationName.concat(`[${iteration}].${id}`);
     if (typeChecker(id) === "section") {
         return (
-            <SectionNode key={newLocation} id={id} path={newPath} locationName={newLocation} renderSectionHeader={props.renderSectionHeader} />
+            <SectionNode key={newLocation} id={id} path={newPath} locationName={newLocation} />
         )
     } else {
         return (
@@ -48,7 +48,6 @@ type SectionNodeProps = {
     locationName: string;
     duplicateTimes?: number;
     path: number[];
-    renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
     typeChecker?: (id: string) => "section" | "root" | "question";
 }
 export function SectionNode(props: SectionNodeProps) {

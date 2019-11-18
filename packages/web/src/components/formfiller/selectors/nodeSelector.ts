@@ -1,14 +1,14 @@
 import { IDupeSettings } from "@datapali/dpform";
 import _ from "lodash";
+import { IFilledForm } from "packages/web/src/types";
 import { getFormValues } from "redux-form";
 import { createSelector } from "reselect";
 import { Helper } from "../../../helper";
-import { FilledForm } from "../actions/types";
 import { getFilledFormById } from "./filledFormSelectors";
 import { getFilledFormValues } from "./questionSelector";
 import { $getFilledForms, $getNodeId, $getRootForm, $getRootFormId, $getState, $getValueLocationName } from "./shared";
 
-export const getRootFormOfFilledForm = createSelector([getFilledFormById, $getRootForm], (filledForm: FilledForm, rootForms) => {
+export const getRootFormOfFilledForm = createSelector([getFilledFormById, $getRootForm], (filledForm: IFilledForm, rootForms) => {
     const rootId = filledForm.formId;
     return rootForms.byId[rootId];
 });
@@ -75,7 +75,6 @@ export const getFilledFormsTransformedData = createSelector([$getFilledForms, $g
                 submitted: filledForms.byId[item].submitted,
                 values: values,
                 formName: formName || "Main Form",
-                responderName: _.get(values, APP_CONFIG.responderValueLocation),
             }
         })
     })
