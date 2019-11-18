@@ -5,9 +5,9 @@ import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
 import React, { ReactNode } from "react";
 import { RouteComponentProps } from "react-router";
-import { InjectedFormProps, WrappedFieldProps } from "redux-form";
+import { InjectedFormProps } from "redux-form";
 import { IFilledForm, IRootForm } from "../../types";
-import { IQuestionRenderProps } from "./questionNode.container";
+import { FieldProps } from "./formItem.component";
 import { ConnectedSectionNode } from "./sectionNode.container";
 import { IQuestion, IRootSection, ISection } from "./types";
 
@@ -61,7 +61,7 @@ export type FormViewerProps = {
     filledForm?: IFilledForm;
     rootForm?: IRootForm;
     renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
-    renderQuestion: (question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
+    renderQuestion: (fieldProps: FieldProps) => ReactNode;
     handleFilledFormAdd?: (formId: string, filledForm: IFilledForm) => void;
     handleRootFormAdd?: (id: string, root: IRootForm) => void;
     initializeForm?: (formId: string, values: any) => void;
@@ -154,7 +154,7 @@ export type RenderQuestionProps = {
 }
 export type RenderContextType = {
     renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
-    renderQuestion: (question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
+    renderQuestion: (fieldProps: FieldProps) => ReactNode;
 }
 export const FormRenderContext = React.createContext<RenderContextType>({
     renderSectionHeader: (sectionName: string, path: number[]) => null,

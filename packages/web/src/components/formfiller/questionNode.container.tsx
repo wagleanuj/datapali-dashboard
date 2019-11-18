@@ -12,7 +12,8 @@ export interface IQuestionRenderProps {
     dependencies?: IDependency,
     title?: string,
     type?: IValueType,
-    options?: { id: string, text: string }[]
+    options?: { id: string, text: string }[],
+    path: number[];
 }
 
 const mapStateToProps = (state: IAppState, props: any) => {
