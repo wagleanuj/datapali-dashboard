@@ -1,5 +1,5 @@
-import { ADD_FILLED_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, SET_USER, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, LOGOUT, TOGGLE_PAGER_MODE, MARK_AS_SUBMITTED } from ".";
-import { IUser, IFilledForm } from "../types";
+import { ADD_FILLED_FORM, ADD_ROOT_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, LOGOUT, MARK_AS_SUBMITTED, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, RootFormActions, SET_USER, TOGGLE_PAGER_MODE, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER } from ".";
+import { IFilledForm, IRootForm, IUser } from "../types";
 
 
 export function handleNext(formId: string): FilledFormActions {
@@ -30,12 +30,21 @@ export function handleJump(formId: string, newSectionIndex: number): FilledFormA
     }
 }
 
-export function handleAddNewForm(root: string, userId: string): FilledFormActions {
+export function handleAddNewForm(id: string, filledForm: IFilledForm): FilledFormActions {
     return {
         type: ADD_FILLED_FORM,
         payload: {
-            rootId: root,
-            userId: userId
+            id,
+            filledForm
+        }
+    }
+}
+export function handleAddRootForm(id: string, root: IRootForm): RootFormActions {
+    return {
+        type: ADD_ROOT_FORM,
+        payload: {
+            id: id,
+            root: root,
         }
     }
 }
@@ -95,7 +104,7 @@ export function handleLogout() {
     }
 }
 
-export function handleTogglePagerMode(){
+export function handleTogglePagerMode() {
     return {
         type: TOGGLE_PAGER_MODE,
         payload: undefined

@@ -1,7 +1,6 @@
-import { getRandomId } from "@datapali/dpform";
 import produce from "immer";
 import { ADD_FILLED_FORM, FilledFormActions } from "../actions";
-import { IFilledForm, IFilledFormsState } from "../types";
+import { IFilledFormsState } from "../types";
 
 
 export const initialFilledFormsState: IFilledFormsState = {
@@ -12,19 +11,11 @@ export const initialFilledFormsState: IFilledFormsState = {
 export function filledFormReducer(state = initialFilledFormsState, action: FilledFormActions) {
     switch (action.type) {
         case ADD_FILLED_FORM:
-            const { rootId, userId } = action.payload;
-            if (!rootId) return state;
-            let newForm: IFilledForm = {
-                completedDate: undefined,
-                startedDate: new Date().getTime(),
-                filledBy: userId,
-                formId: rootId,
-                id: getRandomId("filledform-"),
+            const { id, filledForm } = action.payload;
 
-            };
             return produce(state, draft => {
-                draft.byId[newForm.id] = newForm;
-                draft.ids.push(newForm.id);
+                draft.byId[id] = filledForm;
+                if (!draft.ids.includes(filledForm.id)) draft.ids.push(filledForm.id);
             })
 
         default:

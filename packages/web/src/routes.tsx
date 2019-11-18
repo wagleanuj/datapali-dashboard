@@ -1,7 +1,11 @@
+import { ANSWER_TYPES, getReadablePath } from "@datapali/dpform";
+import { DatePicker, Form, Input, Radio } from "antd";
 import React from "react";
+import { WrappedFieldProps } from "redux-form";
 import { FilledFormsPage } from "./components/filledFormsPage.component";
 import { FormBuilder } from "./components/formbuilder.component";
-import { FormViewer } from "./components/formfiller/formviewer.component";
+import { FormViewerW } from "./components/formfiller/FormViewer.container";
+import { IQuestionRenderProps } from "./components/formfiller/questionNode.container";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
@@ -55,7 +59,61 @@ export const tabs: ISidebarItemNode[] = [
         hideOnSidebar: true,
         icon: "form",
         children: [],
-        component: <FormViewer renderSectionHeader={() => null} renderQuestion={() => null} />
+        //@ts-ignore
+        component: <FormViewerW renderSectionHeader={(sectionName: string, path: number[]) => {
+            console.log(sectionName, path);
+
+            return null;
+        }}
+            renderQuestion={(question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => {
+                console.log(question, path);
+                const title = <div>{getReadablePath(path)} {question.title}</div>
+                return <Form.Item>
+                    {title}
+                    <QuestionItem question={question} path={path} fieldProps={fieldProps} />
+                </Form.Item>;
+            }} />
     },
 
 ]
+function QuestionItem(props: { question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps }) {
+    switch (props.question.type.name) {
+        case ANSWER_TYPES.NUMBER:
+            return <Input {...props.fieldProps.input} type="number" />
+
+        case ANSWER_TYPES.STRING:
+            return <Input {...props.fieldProps.input} type="text" />
+
+
+
+        case ANSWER_TYPES.GEOLOCATION:
+            return <Input {...props.fieldProps.input} type="number" />
+
+        case ANSWER_TYPES.DATE:
+            return <DatePicker {...props.fieldProps.input} />
+
+
+        case ANSWER_TYPES.SELECT:
+            return <SelectInput options={props.question.options} onChange={props.fieldProps.input.onChange} />
+    }
+}
+type SelectInputProps = {
+    options: { text: string, id: string }[],
+    onChange: any;
+}
+const radioStyle = {
+    display: 'block',
+    height: '30px',
+    lineHeight: '30px',
+};
+function SelectInput(props: SelectInputProps) {
+    return (
+        <Radio.Group onChange={props.onChange}>
+            {props.options.map(item => {
+                return (
+                    <Radio style={radioStyle} key={item.id} value={item.id}>{item.text}</Radio>
+                )
+            })}
+        </Radio.Group>
+    )
+}

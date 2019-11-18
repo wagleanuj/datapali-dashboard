@@ -3,7 +3,7 @@ import gql from "graphql-tag";
 import { connect } from 'react-redux';
 import { Action, Dispatch } from "redux";
 import { clearSubmitErrors, reduxForm, SubmissionError } from "redux-form";
-import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../actions/actions";
+import { handleSetUser } from "../actions/actions";
 import { LoginComponent, LoginOwnProps, LoginProps } from "../components/login.component";
 import { IAppState, IFilledForm, IUser } from "../types";
 const LOGIN = gql`
@@ -86,8 +86,6 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
                                 ;
                         });
                         dispatch(handleSetUser(user));
-                        dispatch(handleSetRootForms(rootForms));
-                        dispatch(handleSetFilledForms(filledForms));
                         return login.user.token;
 
                     })

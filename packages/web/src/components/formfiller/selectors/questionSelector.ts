@@ -146,7 +146,7 @@ export const getAutoCompleteDataForQuestion = createCachedSelector([$getValueLoc
     });
     return Object.values(result).sort((a, b) => b.strength - a.strength);
 })(
-    (state, props) => props.valueLocationName
+    (state, props) => props.locationName
 )
 
 export const getQuestionValidators = createSelector(getQuestionById, (question) => {

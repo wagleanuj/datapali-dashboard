@@ -1,4 +1,4 @@
-import { IRootForm, IUser } from "../types";
+import { IRootForm, IUser, IFilledForm } from "../types";
 
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
@@ -38,8 +38,8 @@ export const ADD_FILLED_FORM = 'add-filled-form';
 export interface AddFilledForm {
     type: typeof ADD_FILLED_FORM;
     payload: {
-        rootId: string,
-        userId: string
+        id: string,
+        filledForm: IFilledForm
     }
 }
 

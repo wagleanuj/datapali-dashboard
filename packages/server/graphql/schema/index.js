@@ -72,6 +72,7 @@ const typeDefs =
 
     type Query {
         getFilledForms(bySurveyor: String): [FilledForm]
+        getFilledFormById(ids: [String]!): [FilledForm]
         forms(id: [String]): [FormFile]
         users(ids:[String]): [User]
         login(email: String!, password: String!): AuthData

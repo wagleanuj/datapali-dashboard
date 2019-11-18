@@ -6,7 +6,7 @@ import { createSelector } from "reselect";
 import { Helper } from "../../../helper";
 import { getFilledFormById } from "./filledFormSelectors";
 import { getFilledFormValues } from "./questionSelector";
-import { $getFilledForms, $getNodeId, $getRootForm, $getRootFormId, $getState, $getValueLocationName } from "./shared";
+import { $getFilledForms, $getNodeId, $getRootForm, $getRootFormId, $getState, $getValueLocationName, $getProps } from "./shared";
 
 export const getRootFormOfFilledForm = createSelector([getFilledFormById, $getRootForm], (filledForm: IFilledForm, rootForms) => {
     const rootId = filledForm.formId;
@@ -32,7 +32,8 @@ export const getDupeSettingsForSectionNode = createSelector([getNodeOfRootForm],
 });
 
 export const getDupeTimesForSectionNode = createSelector([getDupeSettingsForSectionNode, $getValueLocationName, getFilledFormValues], (settings: IDupeSettings, location: string, values: any) => {
-    if (!settings.isEnabled) return -1;
+    
+    if (!settings || !settings.isEnabled) return -1;
     else {
         let times = settings.duplicateTimes;
 
@@ -125,3 +126,9 @@ function checkSection(section, values, root, sectionLocation, counts: any = {}, 
         }
     }
 }
+export const getTypeChecker = createSelector([$getState, $getProps], ( state, props)=>{
+
+    return function(id:string){
+        return getNodeTypeFromId(state, props, id);
+    }
+})

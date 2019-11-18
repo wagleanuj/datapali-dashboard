@@ -2,7 +2,7 @@ import { IAppState } from "packages/web/src/types";
 
 export const $getRootForm = (state, props) => state.rootForms;
 export const $getRootFormId = (state: IAppState, props) => props.rootId;
-export const $getQuestionId = (state, props) => props.questionId;
+export const $getQuestionId = (state, props) => props.questionId || props.id;
 export const $getFilledForms = (state: IAppState, props) => state.filledForms;
 export const $getFilledFormId = (state, props) => props.formId;
 export const $getPathForQuestion = (state, props) => props.path;

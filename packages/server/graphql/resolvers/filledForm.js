@@ -19,6 +19,25 @@ const resolvers = {
         let found = await FilledForm.find({ filledBy: context._id }).exec();
         return found;
       }
+    },
+    getFilledFormById: async(parent, {ids}, context, info)=>{
+      if(!context._id) throw new AuthenticationError();
+      const foundForms = await FilledForm.find({
+        "id": {$in: ids}
+      }).exec();
+
+      if(context.accountType==="admin"){
+        return foundForms;
+      }else{
+        //check permission for surveyor
+        foundForms.forEach(ff=>{
+          if(ff.filledBy!==context._id.toString()){
+            throw new AuthenticationError();
+            
+          }
+        });
+        return foundForms;
+      }
     }
   },
   Mutation: {

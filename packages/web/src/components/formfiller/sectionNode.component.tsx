@@ -3,6 +3,7 @@ import React, { useContext } from "react";
 import { FormRenderContext } from "./formviewer.component";
 import { QuestionNode } from "./questionNode.component";
 import { ConnectedSectionNode } from "./sectionNode.container";
+import { ConnectedQuestionNode } from "./questionNode.container";
 
 type ChildProps = {
     typeChecker: (id: string) => "section" | "root" | "question",
@@ -26,7 +27,7 @@ const getChild = (props: ChildProps) => {
         )
     } else {
         return (
-            <QuestionNode id={id} path={newPath} locationName={newLocation} />
+            <ConnectedQuestionNode formId={formId} rootId={rootId} id={id} path={newPath} locationName={newLocation} />
         )
     }
 }
@@ -60,9 +61,9 @@ export function SectionNode(props: SectionNodeProps) {
     const renderContext = useContext(FormRenderContext);
     const decisiveRender = (duplicateTimes: number) => {
         if (duplicateTimes !== -1) {
-            return duplicateTimes === 0 ? <NotRequiredSectionPage /> : getTabbedView(props.rootId, props.formId, props.typeChecker, duplicateTimes, props.childNodes, props.path, props.locationName);
+            return duplicateTimes === 0 ? <NotRequiredSectionPage /> : getTabbedView(props.formId, props.rootId, props.typeChecker, duplicateTimes, props.childNodes, props.path, props.locationName);
         }
-        return getChildren(props.rootId, props.formId, props.typeChecker, props.path, props.locationName, props.childNodes, 0, true);
+        return getChildren(props.formId, props.rootId, props.typeChecker, props.path, props.locationName, props.childNodes, 0, true);
     }
     return (
         <div>
