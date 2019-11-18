@@ -1,12 +1,13 @@
 import { QuestionSection, RootSection } from "@datapali/dpform";
 import React, { ReactNode } from "react";
+import { useLocation } from "react-router-dom";
 import { WrappedFieldProps } from "redux-form";
 import { IQuestionRenderProps } from "./questionNode.container";
-import { SectionNode } from "./sectionNode.component";
+import { ConnectedSectionNode } from "./sectionNode.container";
 import { IQuestion, IRootSection, ISection } from "./types";
 
 type FormTree = { [key: string]: IRootSection | ISection | IQuestion }
-function makeTree(root: RootSection | QuestionSection, tree: FormTree = {}) {
+export function makeTree(root: RootSection | QuestionSection, tree: FormTree = {}) {
     const type = root instanceof QuestionSection ? 'section' : 'root';
     const val: IRootSection | ISection = {
         ...root,
@@ -30,45 +31,39 @@ function makeTree(root: RootSection | QuestionSection, tree: FormTree = {}) {
 }
 
 type FormViewerProps = {
-    formId: string;
-    rootId: string;
-    tree: FormTree;
     renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
     renderQuestion: (question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps) => ReactNode;
 }
 type FormViewerState = {
 
 }
-export class FormViewer extends React.Component<FormViewerProps, FormViewerState>{
-    state = {
-
-    }
-    init() {
-
-    }
-
-    renderSection(section: ISection) {
-
-    }
-
-
-    render() {
-        const children = [];
-        return (<FormRenderContext.Provider
-            value={
-                {
-                    renderQuestion: this.props.renderQuestion,
-                    renderSectionHeader: this.props.renderSectionHeader,
-                }
+export function FormViewer(props: FormViewerProps) {
+    const params = new URLSearchParams(useLocation().search);
+    const rootId = params.get("rootId");
+    const formId = params.get("formId");
+    return (<FormRenderContext.Provider
+        value={
+            {
+                renderQuestion: props.renderQuestion,
+                renderSectionHeader: props.renderSectionHeader,
             }
-        >
-            <SectionNode id={this.props.rootId} path={[]} locationName={this.props.rootId} />
+        }
+    >
+        <ConnectedSectionNode id={rootId} formId={formId} path={[]} locationName={rootId} />
 
-        </FormRenderContext.Provider>
+    </FormRenderContext.Provider>
 
-        )
-    }
+    )
+
 }
+
+//load the filledform from database
+//create rootform
+//create filledform
+//initialize values
+
+
+
 export type RenderQuestionProps = {
     question: {
 

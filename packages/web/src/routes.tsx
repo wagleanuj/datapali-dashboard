@@ -1,11 +1,11 @@
-import { RootSection } from "@datapali/dpform";
-import { SurveyForm } from "@datapali/formbuilder";
 import React from "react";
+import { FilledFormsPage } from "./components/filledFormsPage.component";
+import { FormBuilder } from "./components/formbuilder.component";
+import { FormViewer } from "./components/formfiller/formviewer.component";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Users } from "./components/surveyors.component";
-import { FormBuilder } from "./components/formbuilder.component";
 export const tabs: ISidebarItemNode[] = [
     {
         title: "Forms",
@@ -22,7 +22,6 @@ export const tabs: ISidebarItemNode[] = [
         icon: "user",
         component: <Users />,
         children: []
-
     },
     {
         title: "Statistics",
@@ -31,7 +30,7 @@ export const tabs: ISidebarItemNode[] = [
         component: <Statistics />,
         children: []
     },
-    
+
     {
         title: "Form Builder",
         routeKey: "/formbuilder",
@@ -39,6 +38,24 @@ export const tabs: ISidebarItemNode[] = [
         icon: "form",
         children: [],
         component: <FormBuilder />
-    }
+    },
+
+    {
+        title: "Filled Forms",
+        routeKey: "/filledForms",
+        hideOnSidebar: false,
+        icon: "form",
+        children: [],
+        component: <FilledFormsPage />
+    },
+
+    {
+        title: "Form Builder",
+        routeKey: "/formviewer",
+        hideOnSidebar: true,
+        icon: "form",
+        children: [],
+        component: <FormViewer renderSectionHeader={() => null} renderQuestion={() => null} />
+    },
 
 ]

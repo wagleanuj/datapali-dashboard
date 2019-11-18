@@ -3,7 +3,6 @@
 import { Menu, Typography } from 'antd';
 import React from 'react';
 import { tabs } from '../routes';
-import { ConnectedNavBar } from '../containers/navBar.container';
 import { SidebarMenu } from './sidebar.component';
 const { Title } = Typography;
 

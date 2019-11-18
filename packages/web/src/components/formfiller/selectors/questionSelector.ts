@@ -1,8 +1,8 @@
 import _ from 'lodash';
-import { Helper } from 'packages/web/src/helper';
 import createCachedSelector from 're-reselect';
 import { getFormValues } from 'redux-form';
 import { createSelector } from 'reselect';
+import { Helper } from '../../../helper';
 import { $getFilledFormId, $getFilledForms, $getQuestionId, $getRootForm, $getRootFormId, $getSectionId, $getState, $getValueLocationName } from './shared';
 export const required = value => value ? undefined : 'Required field.'
 
