@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/react-hooks";
-import { Avatar, Button, Card, List, PageHeader, Popconfirm, Skeleton, Spin, Typography } from "antd";
+import { Avatar, Button, Card, Descriptions, List, PageHeader, Popconfirm, Skeleton, Spin, Typography } from "antd";
 import gql from "graphql-tag";
 import produce from "immer";
 import React from "react";
@@ -11,6 +11,7 @@ query GetFilledFormsPaged($pagination: PaginationInput!) {
       totalCount
       forms {
         id
+        completedDate
         filledBy {
           firstName
           lastName
@@ -45,13 +46,17 @@ export function FilledFormsPage(props: FilledFormsPageProps) {
             loading: true,
             id: "",
             updatedAt: "",
+            completedDate: "",
+            filledBy: {
 
+            }
         }
         if (!item) item = loadingItem;
+        if (item.loading) return (<Spin style={style} key={key} />)
         return (
 
             <List.Item
-                key={key}
+                key={"li" + key}
                 style={style}
                 actions={[
 
@@ -66,10 +71,14 @@ export function FilledFormsPage(props: FilledFormsPageProps) {
                         avatar={<Avatar shape="square" size={64} icon="file-text" />
                         }
                         title={<Link to={`/formviewer?formId=${item.id}&rootId=${item.formId}`}>{item.id}</Link>}
-                        description={new Date(parseInt(item.updatedAt)).toLocaleTimeString()}
+                        description={
+                            <Descriptions layout="vertical" size="small">
+                                <Descriptions.Item label="Surveyor Name">{item.filledBy.firstName + " " + item.filledBy.lastName}</Descriptions.Item>
+                                <Descriptions.Item label="Email">{item.filledBy.email}</Descriptions.Item>
+                                <Descriptions.Item label="Completed Date">{new Date(parseInt(item.completedDate)).toDateString()}</Descriptions.Item>
+                            </Descriptions>}
                     />
-                    <div>
-                    </div>
+
                 </Skeleton>
             </List.Item>
         )
@@ -142,7 +151,7 @@ export function FilledFormsPage(props: FilledFormsPageProps) {
                                             rowCount={data && data.getFilledForms && data.getFilledForms.totalCount || 0}
                                             rowRenderer={rowRenderer}
                                             width={width}
-                                            rowHeight={73}
+                                            rowHeight={100}
 
                                         />
                                     }}

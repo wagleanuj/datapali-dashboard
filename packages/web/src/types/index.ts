@@ -37,7 +37,7 @@ export interface IFilledForm {
     startedDate: number;
     completedDate?: number;
     formId: string;
-    filledBy: string;
+    filledBy: IUser;
     id: string;
     submitted?: boolean;
     answerStore?: any;

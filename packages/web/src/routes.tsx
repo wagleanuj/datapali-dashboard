@@ -40,8 +40,8 @@ const renderRootSectionHeader = (filledForm: IFilledForm, name: string) => {
                 <div
 
                 >
-                    <Descriptions title="Surveyor Information">
-                        <Descriptions.Item label="Name">Not Set</Descriptions.Item>
+                    <Descriptions  title="Surveyor Information">
+                        <Descriptions.Item label="Name">{filledForm.filledBy.firstName + " " + filledForm.filledBy.lastName}</Descriptions.Item>
                         <Descriptions.Item label="Started Date">{new Date(parseInt(`${filledForm.startedDate}`)).toLocaleDateString()}</Descriptions.Item>
                         <Descriptions.Item label="Completed Date">{new Date(parseInt(`${filledForm.completedDate}`)).toLocaleDateString()}</Descriptions.Item>
 
