@@ -23,15 +23,15 @@ const { FormFile } = require("./models/form");
 const SALT_WORK_FACTOR = 10;
 const bcrypt = require("bcrypt-nodejs");
 
-app.use(express.static(path.join(__dirname, "../client/build")));
-app.use("/assets", express.static(path.join(__dirname, "../client/assets")));
+app.use(express.static(path.join(__dirname, "../web/build")));
+app.use("/assets", express.static(path.join(__dirname, "../web/assets")));
 
 app.get("/", function(req, res) {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  res.sendFile(path.join(__dirname, "../web/build/index.html"));
 });
 
 app.get("/reset-password", function(req, res) {
-  res.sendFile(path.join(__dirname, "../client/build/index.html"));
+  res.sendFile(path.join(__dirname, "../web/build/index.html"));
 });
 //TODO:: instrospection and playground should be off in production when project is complete
 const server = new ApolloServer({
