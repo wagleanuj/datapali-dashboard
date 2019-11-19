@@ -161,11 +161,14 @@ export class FormViewer extends React.Component<FormViewerProps, any> {
         const rootId = params.get("rootId");
         const formId = params.get("formId");
         const props = this.props;
-        const rootNode = props.rootForm[rootId];
         let rootName = "";
-        if (rootNode._type === "root") {
-            //@ts-ignore
-            rootName = rootNode.name;
+        if (props.rootForm && props.rootForm[rootId]) {
+            const rootNode = props.rootForm[rootId];
+
+            if (rootNode._type === "root") {
+                //@ts-ignore
+                rootName = rootNode.name;
+            }
         }
         return (
             <ApolloConsumer>
@@ -179,7 +182,7 @@ export class FormViewer extends React.Component<FormViewerProps, any> {
                             }
                         }
                     >
-                        {props.renderRootSectionHeader && props.renderRootSectionHeader(props.filledForm, rootName)}
+                        {props.filledForm && props.rootForm && props.renderRootSectionHeader && props.renderRootSectionHeader(props.filledForm, rootName)}
 
                         <Spin spinning={!props.filledForm || !props.rootForm}>
                             {props.filledForm && props.rootForm && <ConnectedSectionNode rootId={rootId} id={rootId} formId={formId} path={[0]} locationName={""} />}
