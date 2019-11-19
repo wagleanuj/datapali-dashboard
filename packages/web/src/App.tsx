@@ -16,7 +16,7 @@ import { EAppTheme } from './types';
 
 
 const client = new ApolloClient({
-  uri: CONFIG.serverURL
+  uri: CONFIG.localServerURL
 
 });
 

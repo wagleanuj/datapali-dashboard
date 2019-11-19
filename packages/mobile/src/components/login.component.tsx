@@ -2,17 +2,17 @@ import { ApolloConsumer } from "@apollo/react-hooks";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
 import React from "react";
-import { Image, View, ViewProps } from "react-native";
+import { View, ViewProps } from "react-native";
 import { Button as Btn } from "react-native-paper";
 import { Input, Text, ThemedComponentProps, ThemeType, withStyles } from "react-native-ui-kitten";
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
 import { initialize } from "redux-form";
+import { LogoIcon } from "../assets/icons";
 import { handleSetFilledForms, handleSetRootForms, handleSetUser } from "../redux/actions/action";
 import { FilledForm, User } from "../redux/actions/types";
 import { Helper } from "../redux/helper";
 import { getUserToken } from "../redux/selectors/authSelector";
-import { ImageIconFill, LogoIcon } from "../assets/icons";
 
 
 const LOGIN = gql`query Login($email: String!, $password: String!){
@@ -28,12 +28,15 @@ const LOGIN = gql`query Login($email: String!, $password: String!){
           content
         }
         filledForms{
-          id
-          startedDate
-          completedDate
-          formId
-          filledBy
-          answerStore
+          totalCount
+          forms{
+            id
+            startedDate
+            completedDate
+            formId
+            filledBy
+            answerStore
+          }
         }
       }
     }
@@ -99,7 +102,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
             availableForms: login.user.availableForms.map(item => item.id),
             firstName: login.user.firstName,
             lastName: login.user.lastName,
-            filledForms: login.user.filledForms.map(item => item.id)
+            filledForms: login.user.filledForms.forms.map(item => item.id)
 
         }
         let rootForms = {};
@@ -109,7 +112,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
             rootForms[v.id] = tree;
         });
         let filledForms = {};
-        login.user.filledForms.forEach(v => {
+        login.user.filledForms.forms.forEach(v => {
             if (typeof v.answerStore === 'string') v.answerStore = JSON.parse(v.answerStore);
             filledForms[v.id] = {
                 completedDate: parseInt(v.completedDate),
@@ -150,7 +153,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
                 {client => {
                     return (
                         <View style={themedStyle.container}>
-                            <View style={{flex:0, flexDirection:"row", justifyContent:"center", alignItems:"center"}}>
+                            <View style={{ flex: 0, flexDirection: "row", justifyContent: "center", alignItems: "center" }}>
                                 <LogoIcon />
 
                             </View>

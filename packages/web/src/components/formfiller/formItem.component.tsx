@@ -67,7 +67,7 @@ export type FieldProps = {
 export const renderQuestion = (fieldProps: FieldProps) => {
     const { input, meta, ...custom } = fieldProps;
     const title = <div>
-        <strong>{getReadablePath(custom.path)} {custom.title}</strong>
+<strong>{getReadablePath(custom.path)} {custom.title} {fieldProps.isRequired?"*":""}</strong>
     </div>
     return <Form.Item key={'form-item' + fieldProps.input.name}>
         {title}

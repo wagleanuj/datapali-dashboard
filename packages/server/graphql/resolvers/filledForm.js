@@ -2,38 +2,94 @@ const { FilledForm } = require("../../models/filledForm");
 const { FormFile } = require("../../models/form");
 const { User } = require("../../models/user");
 const { AuthenticationError, ApolloError } = require("apollo-server-express");
+const Mongoose = require("mongoose");
 
 const resolvers = {
   Query: {
-    getFilledForms: async (parent, { bySurveyor, pagination }, context, info) => {
+    getFilledForms: async (
+      parent,
+      { bySurveyorEmail, pagination },
+      context,
+      info
+    ) => {
       if (!context._id) throw new AuthenticationError();
+      const totalCount = await FilledForm.countDocuments({}).exec();
       if (context.accountType === "admin") {
         let found = [];
-        if (bySurveyor) {
-          found = await FilledForm.find({ filledBy: bySurveyor }).exec();
+        if (bySurveyorEmail) {
+          let findPromise = null;
+          const surveyor = await User.findOne({
+            email: bySurveyorEmail
+          }).exec();
+          if (
+            pagination &&
+            Number.isInteger(pagination.offset) &&
+            Number.isInteger(pagination.limit)
+          ) {
+            findPromise = FilledForm.find({
+              filledBy: surveyor._id
+            })
+              .skip(pagination.offset)
+              .limit(pagination.limit)
+              .populate("filledBy");
+          } else {
+            findPromise = FilledForm.find({ filledBy: surveyor._id }).populate(
+              "filledBy"
+            );
+          }
+          found = await findPromise.exec();
         } else {
-          found = await FilledForm.find().exec();
+          let findPromise = null;
+          if (
+            pagination &&
+            Number.isInteger(pagination.offset) &&
+            Number.isInteger(pagination.limit)
+          ) {
+            findPromise = FilledForm.find({})
+              .skip(pagination.offset)
+              .limit(pagination.limit)
+              .populate("filledBy");
+          } else {
+            findPromise = FilledForm.find({}).populate("filledBy");
+          }
+          found = await findPromise.exec();
         }
-        return found;
+        return {forms:found, totalCount:totalCount};
       } else {
-        let found = await FilledForm.find({ filledBy: context._id }).exec();
-        return found;
+        let findPromise = null;
+        if (
+          pagination &&
+          Number.isInteger(pagination.offset) &&
+          Number.isInteger(pagination.limit)
+        ) {
+          findPromise = FilledForm.find({ filledBy: context._id })
+            .skip(pagination.offset)
+            .limit(pagination.limit)
+            .populate("filledBy");
+        } else {
+          findPromise = FilledForm.find({ filledBy: context._id }).populate(
+            "filledBy"
+          );
+        }
+        found = await findPromise.exec();
+        return {forms:found, totalCount:totalCount};
       }
     },
-    getFilledFormById: async(parent, {ids}, context, info)=>{
-      if(!context._id) throw new AuthenticationError();
+    getFilledFormById: async (parent, { ids }, context, info) => {
+      if (!context._id) throw new AuthenticationError();
       const foundForms = await FilledForm.find({
-        "id": {$in: ids}
-      }).exec();
+        id: { $in: ids }
+      })
+        .populate("filledBy")
+        .exec();
 
-      if(context.accountType==="admin"){
+      if (context.accountType === "admin") {
         return foundForms;
-      }else{
+      } else {
         //check permission for surveyor
-        foundForms.forEach(ff=>{
-          if(ff.filledBy!==context._id.toString()){
+        foundForms.forEach(ff => {
+          if (ff.filledBy !== context._id.toString()) {
             throw new AuthenticationError();
-            
           }
         });
         return foundForms;
@@ -47,10 +103,9 @@ const resolvers = {
       let result = null;
       if (foundForm) {
         foundForm.answerStore = filledForm.answerStore;
-        foundForm.filledBy = context._id;
         if (filledForm.completedDate)
           foundForm.completedDate = parseInt(filledForm.completedDate);
-          foundForm.lastModifyUser = context;
+        foundForm.lastModifyUser = context;
         result = await foundForm.save();
       } else {
         let referredForm = await FormFile.findOne({
@@ -59,7 +114,7 @@ const resolvers = {
         if (!referredForm) throw new ApolloError("Form does not exist");
         let ff = new FilledForm({
           ...filledForm,
-          filledBy: context._id,
+          filledBy: context,
           answerStore: filledForm.answerStore,
           lastModifyUser: context
         });
@@ -102,8 +157,7 @@ const resolvers = {
       });
       return { message: " Sucessfully deleted all filled forms" };
     }
-  },
-  
+  }
 };
 
 module.exports = {

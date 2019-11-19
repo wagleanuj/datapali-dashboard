@@ -27,7 +27,11 @@ query getFilled($ids: [String]!){
       answerStore
       completedDate
       startedDate
-      filledBy
+      filledBy{
+          firstName
+          lastName
+          email
+      }
     }
   }`;
 const GET_ROOT_FORM = gql`

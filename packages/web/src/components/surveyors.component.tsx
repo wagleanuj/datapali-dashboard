@@ -216,7 +216,7 @@ export function UsersTable(props: UsersTableProps) {
 
         return (
             <Spin spinning={loading}>
-                <Table pagination={{ pageSize: 50 }} scroll={{ y: 600 }} key={"surveyorstable"} rowKey={record => record._id} columns={columns} dataSource={transformedData} />
+                <Table pagination={{ pageSize: 50 }} scroll={{ y: 400 }} key={"surveyorstable"} rowKey={record => record._id} columns={columns} dataSource={transformedData} />
             </Spin>
         )
 

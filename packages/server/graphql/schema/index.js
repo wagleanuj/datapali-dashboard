@@ -22,11 +22,12 @@ const typeDefs =
     }
 
     type FilledForm {
+        _id: String!
         id: ID!
         startedDate: String!
         completedDate: String!
         formId: String!
-        filledBy: String!
+        filledBy: User!
         answerStore: String!
         lastModified: User
         
@@ -71,9 +72,18 @@ const typeDefs =
         name: String
         content: String
     }
+    input PaginationInput{
+        offset: Int!
+        limit: Int!
+    }
+    type FilledFormsQueryResult{
+        totalCount: Int
+        forms: [FilledForm]
+    }
+
 
     type Query {
-        getFilledForms(bySurveyor: String): [FilledForm]
+        getFilledForms(bySurveyorEmail: String, pagination: PaginationInput): FilledFormsQueryResult
         getFilledFormById(ids: [String]!): [FilledForm]
         forms(id: [String]): [FormFile]
         users(ids:[String]): [User]

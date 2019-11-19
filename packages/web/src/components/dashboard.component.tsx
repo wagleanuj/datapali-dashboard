@@ -30,9 +30,7 @@ export function DashboardComponent(props: DashboardProps) {
                 <Layout>
 
 
-                    <Header  hasSider style={{background: '#fff', display: "flex", alignItems: "center", justifyContent: "space-between" }}>
-
-
+                    <Header style={{ background: '#fff', display: "flex", alignItems: "center", justifyContent: "space-between" }}>
                         <ConnectedNavBar isSidebarCollapsed={isSidebarCollapsed} setSidebarCollapsed={setSidebarCollapsed} />
 
                     </Header>
