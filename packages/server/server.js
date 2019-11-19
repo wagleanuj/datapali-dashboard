@@ -33,6 +33,9 @@ app.get("/", function(req, res) {
 app.get("/reset-password", function(req, res) {
   res.sendFile(path.join(__dirname, "../web/build/index.html"));
 });
+app.get("/*", function(req, res) {
+  res.sendFile(path.join(__dirname, "../web/build/index.html"));
+});
 //TODO:: instrospection and playground should be off in production when project is complete
 const server = new ApolloServer({
   schema: graphQlSchema,
