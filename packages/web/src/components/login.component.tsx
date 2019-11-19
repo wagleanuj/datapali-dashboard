@@ -1,5 +1,5 @@
 import { ApolloConsumer } from '@apollo/react-hooks';
-import { Button, Card, Input, Tooltip, Icon, Form } from 'antd';
+import { Button, Card, Form, Icon, Input, Tooltip } from 'antd';
 import ApolloClient from 'apollo-boost';
 import React from "react";
 import { Field, InjectedFormProps, WrappedFieldProps } from 'redux-form';
@@ -123,10 +123,10 @@ export class LoginComponent extends React.Component<LoginProps, LoginState>{
 
                                 {this.props.error && <strong className={'error'}>Incorrect email or password</strong>}
                                 <Form.Item>
-                                    <Button style={{width:'100%'}} type="primary" htmlType="submit" className="login-form-button">
+                                    <Button style={{ width: '100%' }} type="primary" htmlType="submit" className="login-form-button">
                                         Log in
                                     </Button>
-                                    
+
                                 </Form.Item>
 
                             </form>

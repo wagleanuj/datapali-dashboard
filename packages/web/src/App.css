@@ -13,9 +13,18 @@ html {
 body {
   margin: 0;
 }
+.float{
+	position:fixed;
+	width:60px;
+	height:60px;
+	bottom:40px;
+	right:40px;
+	box-shadow: 2px 2px 3px #999;
+}
 
 .error {
   color: #C23030;
+
 
 }
 .logo {

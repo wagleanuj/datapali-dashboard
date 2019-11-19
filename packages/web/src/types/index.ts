@@ -40,6 +40,7 @@ export interface IFilledForm {
     filledBy: string;
     id: string;
     submitted?: boolean;
+    answerStore?: any;
 }
 
 

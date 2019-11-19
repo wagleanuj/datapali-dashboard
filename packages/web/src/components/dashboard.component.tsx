@@ -1,5 +1,5 @@
 import { Layout, Menu } from "antd";
-import React, { ReactNode } from "react";
+import React, { ReactNode, useState } from "react";
 import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 import { ConnectedNavBar } from "../containers/navBar.container";
 import { tabs } from "../routes";
@@ -18,22 +18,30 @@ type DashboardState = {
 }
 export function DashboardComponent(props: DashboardProps) {
     const location = useLocation();
+    const [isSidebarCollapsed, setSidebarCollapsed] = useState(false)
     const shouldShowSidebar = location.pathname !== "/formbuilder";
     return (
+
         <Router>
             <Layout>
-                <Header>
-                    <ConnectedNavBar />
-
-                </Header>
+                <Sider trigger={null} collapsible collapsed={isSidebarCollapsed}  >
+                    <SideNav isVisible />
+                </Sider>
                 <Layout>
-                    <Sider collapsible >
-                        <SideNav isVisible />
 
-                    </Sider>
+
+                    <Header  hasSider style={{background: '#fff', display: "flex", alignItems: "center", justifyContent: "space-between" }}>
+
+
+                        <ConnectedNavBar isSidebarCollapsed={isSidebarCollapsed} setSidebarCollapsed={setSidebarCollapsed} />
+
+                    </Header>
+
                     <Content style={{ padding: 16 }}>
                         {getRoutesComponents(tabs)}
                     </Content>
+                    <Footer></Footer>
+
                 </Layout>
             </Layout>
 

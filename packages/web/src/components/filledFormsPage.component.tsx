@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/react-hooks";
-import { Avatar, Button, List, Popconfirm, Skeleton, Spin } from "antd";
+import { Avatar, Button, Card, List, PageHeader, Popconfirm, Skeleton, Spin, Typography } from "antd";
 import gql from "graphql-tag";
 import React from "react";
 import { Link } from "react-router-dom";
@@ -24,38 +24,60 @@ export function FilledFormsPage(props: FilledFormsPageProps) {
     }
     return (
         <>
-            <Spin spinning={loading}>
+            <Card>
+                <PageHeader
+                    title={"Filled forms"}
+                    style={{
+                        border: '1px solid rgb(235, 237, 240)',
+                    }}
+                    subTitle=""
+                    extra={[
 
-                <List
-                    loading={loading}
-                    itemLayout="horizontal"
-                    dataSource={data && data.getFilledForms || []}
-                    renderItem={(item: any) => (
-                        <List.Item
+                    ]}
+                    avatar={{ icon: "file" }}
+                >
+                    <div
 
-                            actions={[
+                    >
+                        <Typography.Paragraph>
+                            Review submitted forms and make changes to the form if necessary.
+                        </Typography.Paragraph>
+                    </div>
+                </PageHeader>
+                <Spin spinning={loading}>
 
-                                <Popconfirm placement={"left"} arrowPointAtCenter={true} title="Are you sure you want to delete this form?" onCancel={() => { }} onConfirm={() => onFormDeleteConfirm([item.id])} >
-                                    <Button type="danger" icon={'delete'} key="delete" />
-                                </Popconfirm>,
+                    <List
+                        loading={loading}
+                        itemLayout="horizontal"
+                        dataSource={data && data.getFilledForms || []}
+                        renderItem={(item: any) => (
+                            <List.Item
 
-                            ]}
-                        >
-                            <Skeleton loading={loading} active avatar>
-                                <List.Item.Meta
-                                    avatar={<Avatar shape="square" size={64} icon="file-text" />
-                                    }
-                                    title={<Link to={`/formviewer?formId=${item.id}&rootId=${item.formId}`}>{item.id}</Link>}
-                                    description={new Date(parseInt(item.updatedAt)).toLocaleTimeString()}
-                                />
-                                <div>
-                                </div>
-                            </Skeleton>
-                        </List.Item>
-                    )}
-                />
+                                actions={[
 
-            </Spin>
+                                    <Popconfirm placement={"left"} arrowPointAtCenter={true} title="Are you sure you want to delete this form?" onCancel={() => { }} onConfirm={() => onFormDeleteConfirm([item.id])} >
+                                        <Button type="danger" icon={'delete'} key="delete" />
+                                    </Popconfirm>,
+
+                                ]}
+                            >
+                                <Skeleton loading={loading} active avatar>
+                                    <List.Item.Meta
+                                        avatar={<Avatar shape="square" size={64} icon="file-text" />
+                                        }
+                                        title={<Link to={`/formviewer?formId=${item.id}&rootId=${item.formId}`}>{item.id}</Link>}
+                                        description={new Date(parseInt(item.updatedAt)).toLocaleTimeString()}
+                                    />
+                                    <div>
+                                    </div>
+                                </Skeleton>
+                            </List.Item>
+                        )}
+                    />
+
+                </Spin>
+            </Card>
+
         </>
     )
 }

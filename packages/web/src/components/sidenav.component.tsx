@@ -16,6 +16,11 @@ export function SideNav(props: SideNavProps) {
     if (!props.isVisible) return <></>
     return (
         <>
+            <div style={{ textAlign: "center" }}>
+                <Typography.Title ellipsis style={{ color: 'white' }}>Datapali</Typography.Title>
+
+            </div>
+
             <Menu theme="dark" defaultSelectedKeys={['1']} mode="inline">
                 {SidebarMenu({
                     parentRouteKey: "",

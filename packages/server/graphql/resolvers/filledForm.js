@@ -5,7 +5,7 @@ const { AuthenticationError, ApolloError } = require("apollo-server-express");
 
 const resolvers = {
   Query: {
-    getFilledForms: async (parent, { bySurveyor }, context, info) => {
+    getFilledForms: async (parent, { bySurveyor, pagination }, context, info) => {
       if (!context._id) throw new AuthenticationError();
       if (context.accountType === "admin") {
         let found = [];
@@ -46,14 +46,13 @@ const resolvers = {
       let foundForm = await FilledForm.findOne({ id: filledForm.id }).exec();
       let result = null;
       if (foundForm) {
-        console.log('found one');
         foundForm.answerStore = filledForm.answerStore;
         foundForm.filledBy = context._id;
         if (filledForm.completedDate)
           foundForm.completedDate = parseInt(filledForm.completedDate);
+          foundForm.lastModifyUser = context;
         result = await foundForm.save();
       } else {
-        console.log('making');
         let referredForm = await FormFile.findOne({
           id: filledForm.formId
         }).exec();
@@ -61,7 +60,8 @@ const resolvers = {
         let ff = new FilledForm({
           ...filledForm,
           filledBy: context._id,
-          answerStore: filledForm.answerStore
+          answerStore: filledForm.answerStore,
+          lastModifyUser: context
         });
 
         result = await ff.save();
@@ -102,7 +102,8 @@ const resolvers = {
       });
       return { message: " Sucessfully deleted all filled forms" };
     }
-  }
+  },
+  
 };
 
 module.exports = {

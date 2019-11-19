@@ -1,16 +1,23 @@
 import { ApolloConsumer } from "@apollo/react-hooks";
 import { QuestionSection, RootSection } from "@datapali/dpform";
-import { Spin } from "antd";
+import { message, Popconfirm, Spin } from "antd";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
+import produce from "immer";
 import React, { ReactNode } from "react";
 import { RouteComponentProps } from "react-router";
-import { InjectedFormProps } from "redux-form";
+import { InjectedFormProps, SubmissionError } from "redux-form";
 import { IFilledForm, IRootForm } from "../../types";
+import { FAB } from "../fab.component";
 import { FieldProps } from "./formItem.component";
 import { ConnectedSectionNode } from "./sectionNode.container";
 import { IQuestion, IRootSection, ISection } from "./types";
-
+const SAVE_FILLED_FORM = gql`
+mutation SaveForm($filledForm: FilledFormInput!){
+    saveFilledForm(filledForm: $filledForm){
+        completedDate
+    }
+}`;
 
 const GET_FILLED_FORM_BY_ID = gql`
 query getFilled($ids: [String]!){
@@ -19,6 +26,7 @@ query getFilled($ids: [String]!){
       formId
       answerStore
       completedDate
+      startedDate
       filledBy
     }
   }`;
@@ -60,7 +68,9 @@ export function makeTree(root: RootSection | QuestionSection, tree: FormTree = {
 export type FormViewerProps = {
     filledForm?: IFilledForm;
     rootForm?: IRootForm;
-    renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
+    renderSectionHeader: (sectionName: string, path: number[], type: "section" | "root") => ReactNode;
+    renderRootSectionHeader: (filledForm: IFilledForm, name: string) => ReactNode;
+
     renderQuestion: (fieldProps: FieldProps) => ReactNode;
     handleFilledFormAdd?: (formId: string, filledForm: IFilledForm) => void;
     handleRootFormAdd?: (id: string, root: IRootForm) => void;
@@ -71,8 +81,40 @@ export type FormViewerProps = {
 
 export class FormViewer extends React.Component<FormViewerProps, any> {
     client: ApolloClient<any>;
+    state = {
+        isSaveConfirmVisible: false,
+    }
+    toggleSaveConfirmVisibility = () => {
+        this.setState({
+            isSaveConfirmVisible: !this.state.isSaveConfirmVisible
+        })
+    }
+    saveForm = () => {
+        const r = this.props.handleSubmit(values => {
+            const filledForm = produce(this.props.filledForm, draft => {
+                delete draft['filledBy'];
+                draft.answerStore = JSON.stringify(values);
+            })
 
+            this.client.mutate({
+                mutation: SAVE_FILLED_FORM,
+                variables: {
+                    filledForm: filledForm
+                }
+            }).then(res => {
+                message.success("Form has been submitted.");
+                this.toggleSaveConfirmVisibility();
 
+            }).catch(err => {
+                message.error("Something went wrong, try again later!");
+                throw new SubmissionError({
+                    _error: "Could not save the form!"
+                });
+                this.toggleSaveConfirmVisibility();
+
+            })
+        })()
+    }
     componentDidMount() {
         const props = this.props;
         const params = new URLSearchParams(this.props.location.search);
@@ -119,6 +161,12 @@ export class FormViewer extends React.Component<FormViewerProps, any> {
         const rootId = params.get("rootId");
         const formId = params.get("formId");
         const props = this.props;
+        const rootNode = props.rootForm[rootId];
+        let rootName = "";
+        if (rootNode._type === "root") {
+            //@ts-ignore
+            rootName = rootNode.name;
+        }
         return (
             <ApolloConsumer>
                 {client => {
@@ -131,9 +179,20 @@ export class FormViewer extends React.Component<FormViewerProps, any> {
                             }
                         }
                     >
+                        {props.renderRootSectionHeader && props.renderRootSectionHeader(props.filledForm, rootName)}
+
                         <Spin spinning={!props.filledForm || !props.rootForm}>
-                            {props.filledForm && props.rootForm && <ConnectedSectionNode rootId={rootId} id={rootId} formId={formId} path={[]} locationName={""} />}
+                            {props.filledForm && props.rootForm && <ConnectedSectionNode rootId={rootId} id={rootId} formId={formId} path={[0]} locationName={""} />}
                         </Spin>
+                        <Popconfirm
+                            title="Are you sure you want to make the changes?"
+                            visible={this.state.isSaveConfirmVisible}
+                            onConfirm={this.saveForm}
+                            onCancel={this.toggleSaveConfirmVisibility}
+                            placement="left"
+                        >
+                            <FAB onClick={this.toggleSaveConfirmVisibility} title="Save Form" type="primary" shape="circle" icon="save" />
+                        </Popconfirm>
 
                     </FormRenderContext.Provider>
                     )
@@ -153,7 +212,7 @@ export type RenderQuestionProps = {
     }
 }
 export type RenderContextType = {
-    renderSectionHeader: (sectionName: string, path: number[]) => ReactNode;
+    renderSectionHeader: (sectionName: string, path: number[], type: "root" | "section") => ReactNode;
     renderQuestion: (fieldProps: FieldProps) => ReactNode;
 }
 export const FormRenderContext = React.createContext<RenderContextType>({

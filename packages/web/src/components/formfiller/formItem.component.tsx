@@ -66,7 +66,9 @@ export type FieldProps = {
 } & SprayedFieldProps;
 export const renderQuestion = (fieldProps: FieldProps) => {
     const { input, meta, ...custom } = fieldProps;
-    const title = <div>{getReadablePath(custom.path)} {custom.title}</div>
+    const title = <div>
+        <strong>{getReadablePath(custom.path)} {custom.title}</strong>
+    </div>
     return <Form.Item key={'form-item' + fieldProps.input.name}>
         {title}
         <QuestionItem key={'form-question' + fieldProps.input.name} question={custom} path={custom.path} fieldProps={fieldProps} />

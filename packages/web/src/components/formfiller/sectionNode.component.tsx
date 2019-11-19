@@ -1,4 +1,4 @@
-import { Tabs } from "antd";
+import { Card, Empty, Tabs } from "antd";
 import React, { useContext } from "react";
 import { FormRenderContext } from "./formviewer.component";
 import { ConnectedQuestionNode } from "./questionNode.container";
@@ -37,10 +37,12 @@ const getChildren = (formId: string, rootId: string, typeChecker: (id: string) =
 }
 
 const getTabbedView = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", duplicateTimes: number, childNodes: string[], path: number[], locationName: string, isInRootNode: boolean = false) => {
-    return <Tabs defaultActiveKey={"0"} tabPosition="top">
+    return <Tabs  defaultActiveKey={"0"} tabPosition="top">
         {[...Array(duplicateTimes).keys()].map(i => (
-            <Tabs.TabPane tab={`Record-${i}`} key={i.toString()}>
-                {getChildren(formId, rootId, typeChecker, path, locationName, childNodes, i, false, isInRootNode)}
+            <Tabs.TabPane  tab={`Record-${i}`} key={i.toString()}>
+                <div style={{ maxHeight: 580, overflow: "auto" }}>
+                    {getChildren(formId, rootId, typeChecker, path, locationName, childNodes, i, false, isInRootNode)}
+                </div>
             </Tabs.TabPane>
         ))}
     </Tabs>
@@ -77,16 +79,15 @@ export function SectionNode(props: SectionNodeProps) {
         );
     }
     return (
-        <div>
-            {renderContext.renderSectionHeader(props.name, props.path)}
+        <Card style={{ marginTop: 16 }}>
+            {renderContext.renderSectionHeader(props.name, props.path, props.rootId === props.id ? "root" : "section")}
             {decisiveRender(props.duplicateTimes)}
-        </div>
+        </Card>
     )
 }
 function NotRequiredSectionPage() {
     return (
-        <>
-            Not Required to Fill.
-        </>
+        <Empty image={Empty.PRESENTED_IMAGE_SIMPLE} description={"Not Required to Fill"} >
+        </Empty>
     )
 }

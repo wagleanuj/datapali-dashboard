@@ -1,16 +1,57 @@
-import { ANSWER_TYPES } from "@datapali/dpform";
-import { DatePicker, Input, Radio } from "antd";
+import { getReadablePath } from "@datapali/dpform";
+import { Card, Descriptions, Divider, PageHeader } from "antd";
+import Title from "antd/lib/typography/Title";
 import React from "react";
-import { WrappedFieldProps } from "redux-form";
 import { FilledFormsPage } from "./components/filledFormsPage.component";
 import { FormBuilder } from "./components/formbuilder.component";
 import { renderQuestion } from "./components/formfiller/formItem.component";
 import { FormViewerW } from "./components/formfiller/FormViewer.container";
-import { IQuestionRenderProps } from "./components/formfiller/questionNode.container";
 import { Forms } from "./components/forms.component";
 import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Users } from "./components/surveyors.component";
+import { IFilledForm } from "./types";
+const renderSectionHeader = (sectionName: string, path: number[], type: "section" | "root") => {
+    if (type === "root") return null;
+    return (
+        <div style={{ display: "flex", flexDirection: "column" }}>
+            <Title level={type === "section" ? 4 : 3}>{`${getReadablePath(path)} ${sectionName}`}</Title>
+            <Divider type="horizontal" />
+        </div>
+    )
+}
+
+const renderRootSectionHeader = (filledForm: IFilledForm, name: string) => {
+    console.log(filledForm);
+    return (
+        <Card>
+
+            <PageHeader
+                title={name}
+                style={{
+                    border: '1px solid rgb(235, 237, 240)',
+                }}
+                subTitle=""
+                extra={[
+
+                ]}
+                avatar={{ icon: "file" }}
+            >
+                <div
+
+                >
+                    <Descriptions title="Surveyor Information">
+                        <Descriptions.Item label="Name">Zhou Maomao</Descriptions.Item>
+                        <Descriptions.Item label="Started Date">{new Date(parseInt(`${filledForm.startedDate}`)).toLocaleDateString()}</Descriptions.Item>
+                        <Descriptions.Item label="Completed Date">{new Date(parseInt(`${filledForm.completedDate}`)).toLocaleDateString()}</Descriptions.Item>
+
+                    </Descriptions>
+                </div>
+            </PageHeader>
+        </Card>
+
+    )
+}
 export const tabs: ISidebarItemNode[] = [
     {
         title: "Forms",
@@ -62,52 +103,10 @@ export const tabs: ISidebarItemNode[] = [
         children: [],
         //@ts-ignore
         component: <FormViewerW
-            renderSectionHeader={(sectionName: string, path: number[]) => {
-                return null;
-            }}
+            renderSectionHeader={renderSectionHeader}
             renderQuestion={renderQuestion}
+            renderRootSectionHeader={renderRootSectionHeader}
         />
     },
 
 ]
-function QuestionItem(props: { question: IQuestionRenderProps, path: number[], fieldProps: WrappedFieldProps }) {
-    switch (props.question.type.name) {
-        case ANSWER_TYPES.NUMBER:
-            return <Input key={'form-input' + props.fieldProps.input.name} value={props.fieldProps.input.value} onChange={props.fieldProps.input.onChange} type="number" />
-
-        case ANSWER_TYPES.STRING:
-            return <Input key={'form-input' + props.fieldProps.input.name} value={props.fieldProps.input.value} onChange={props.fieldProps.input.onChange} type="text" />
-
-
-
-        case ANSWER_TYPES.GEOLOCATION:
-            return <Input key={'form-input' + props.fieldProps.input.name} value={props.fieldProps.input.value} onChange={props.fieldProps.input.onChange} type="number" />
-
-        case ANSWER_TYPES.DATE:
-            return <DatePicker key={'form-input' + props.fieldProps.input.name} {...props.fieldProps.input} />
-
-
-        case ANSWER_TYPES.SELECT:
-            return <SelectInput key={'form-input' + props.fieldProps.input.name} options={props.question.options} onChange={props.fieldProps.input.onChange} />
-    }
-}
-type SelectInputProps = {
-    options: { text: string, id: string }[],
-    onChange: any;
-}
-const radioStyle = {
-    display: 'block',
-    height: '30px',
-    lineHeight: '30px',
-};
-function SelectInput(props: SelectInputProps) {
-    return (
-        <Radio.Group onChange={props.onChange}>
-            {props.options.map(item => {
-                return (
-                    <Radio style={radioStyle} key={item.id} value={item.id}>{item.text}</Radio>
-                )
-            })}
-        </Radio.Group>
-    )
-}

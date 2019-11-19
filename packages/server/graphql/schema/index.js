@@ -28,6 +28,8 @@ const typeDefs =
         formId: String!
         filledBy: String!
         answerStore: String!
+        lastModified: User
+        
     }
 
     input FilledFormInput{

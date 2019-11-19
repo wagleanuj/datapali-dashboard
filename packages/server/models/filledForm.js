@@ -6,6 +6,7 @@ const filledForm = new Schema({
     formId: { type: String, required: true},
     filledBy: { type: Schema.Types.ObjectId, required: true, ref: 'User' },
     answerStore: { type: Object, required: true },
+    lastModifyUser: {type: Schema.Types.ObjectId, required: false, ref: 'User'}
 }, { timestamps: true })
 
 module.exports = {
