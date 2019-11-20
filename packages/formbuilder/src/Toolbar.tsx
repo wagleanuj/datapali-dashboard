@@ -54,7 +54,7 @@ export class Toolbar extends React.Component<ToolbarProps, ToolbarState>{
     }
     render() {
         return (
-            <Navbar className="bp3-dark" fixedToTop>
+            <Navbar  fixedToTop>
                 <Navbar.Group align={Alignment.LEFT}>
                     {this.props.children}
                     {toolbarItems.map(item => <Button onClick={this.handleClick.bind(this, item.name)} key={item.name} icon={item.icon as IconName} text={item.text} className="bp3-minimal" />)}

@@ -407,7 +407,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
                 <div style={{display:"flex", flexDirection:"row", padding: 16}} className="builder-container">
 
                     <div style={{ background: "transparent", marginRight:20 }} className="builder-sidebar">
-                        <div className="sidebar-wrapper">
+                        <div className="tree-sidebar-wrapper">
                             <FormTree
                                 expandedNodes={this.state.expandedNodes}
                                 selectedNodes={this.state.selectedNodes}

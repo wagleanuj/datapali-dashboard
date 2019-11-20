@@ -16,7 +16,7 @@ interface QuestionButtonProps {
 export const QuestionButton = (props: QuestionButtonProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
     return (
-        <ButtonGroup className="bp3-dark" style={{ paddingBottom: "20px" }} fill vertical>
+        <ButtonGroup  style={{ paddingBottom: "20px" }} fill vertical>
             <ButtonGroup>
                 <Button onClick={() => props.handleMoveUp(props.questionId, props.path)} style={{ height: 50, width: 20 }} icon={"arrow-up"} />
 

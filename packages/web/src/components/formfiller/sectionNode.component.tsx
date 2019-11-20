@@ -8,7 +8,7 @@ type ChildProps = {
     typeChecker: (id: string) => "section" | "root" | "question",
     path: number[],
     locationName: string,
-    id: string,
+    id?: string,
     index: number,
     iteration: number,
     hideIterationInPath: boolean,
@@ -32,16 +32,19 @@ const getChild = (props: ChildProps) => {
     }
 }
 
-const getChildren = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", path: number[], locationName: string, childNodes: string[], iteration: number, hideIterationInPath: boolean = true, isInRootNode: boolean = false) => {
-    return childNodes.map((id, index) => getChild({ formId, rootId, typeChecker, path, locationName, id, index, iteration, hideIterationInPath, isInRootNode }));
+const getChildren = (eachChildProp: ChildProps, childNodes: string[]) => {
+    return childNodes.map((id, index) => getChild({ ...eachChildProp, index, id }));
 }
 
-const getTabbedView = (formId: string, rootId: string, typeChecker: (id: string) => "section" | "root" | "question", duplicateTimes: number, childNodes: string[], path: number[], locationName: string, isInRootNode: boolean = false) => {
-    return <Tabs  defaultActiveKey={"0"} tabPosition="top">
+const getTabbedView = (eachChildProp: ChildProps, childNodes: string[], duplicateTimes: number) => {
+    return <Tabs defaultActiveKey={"0"} tabPosition="top">
         {[...Array(duplicateTimes).keys()].map(i => (
-            <Tabs.TabPane  tab={`Record-${i}`} key={i.toString()}>
+            <Tabs.TabPane tab={`Record-${i}`} key={i.toString()}>
                 <div style={{ maxHeight: 580, overflow: "auto" }}>
-                    {getChildren(formId, rootId, typeChecker, path, locationName, childNodes, i, false, isInRootNode)}
+                    {getChildren({
+                        ...eachChildProp,
+                        iteration: i,
+                    }, childNodes)}
                 </div>
             </Tabs.TabPane>
         ))}
@@ -63,19 +66,25 @@ type SectionNodeProps = {
 export function SectionNode(props: SectionNodeProps) {
     const renderContext = useContext(FormRenderContext);
     const decisiveRender = (duplicateTimes: number) => {
-        if (duplicateTimes !== -1) {
-            return duplicateTimes === 0 ? <NotRequiredSectionPage key={'nr' + props.locationName} /> : getTabbedView(props.formId, props.rootId, props.typeChecker, duplicateTimes, props.childNodes, props.path, props.locationName, props.id === props.formId);
+        const eachChildProp: ChildProps = {
+            formId: props.formId,
+            rootId: props.rootId,
+            typeChecker: props.typeChecker,
+            path: props.path,
+            locationName: props.locationName,
+            iteration: 0,
+            hideIterationInPath: true,
+            isInRootNode: props.rootId === props.id,
+            index: undefined,
+            id: undefined,
         }
+        if (duplicateTimes !== -1) {
+            return duplicateTimes === 0 ? <NotRequiredSectionPage key={'nr' + props.locationName} /> :
+                getTabbedView({ ...eachChildProp, hideIterationInPath: false }, props.childNodes, duplicateTimes);
+        }
+
         return getChildren(
-            props.formId,
-            props.rootId,
-            props.typeChecker,
-            props.path,
-            props.locationName,
-            props.childNodes,
-            0,
-            true,
-            props.rootId === props.id
+            eachChildProp, props.childNodes
         );
     }
     return (

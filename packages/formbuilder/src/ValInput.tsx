@@ -120,7 +120,7 @@ const TimeRange = (props: TimeRangeProps = defaultTimeRangeProps) => {
     console.log(maxValue);
     console.log(minValue);
     return (
-        <ButtonGroup className="bp3-dark">
+        <ButtonGroup >
             <TimePicker precision={TimePrecision.MINUTE} useAmPm={true} defaultValue={minValue ? new Date(minValue) : undefined} onChange={newTime => {
                 setMin(newTime.toLocaleDateString());
                 if (props.onChange) props.onChange({ min: minValue, max: maxValue })

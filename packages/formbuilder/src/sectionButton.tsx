@@ -21,7 +21,7 @@ export const SectionButton = (props: SectionButtonProps) => {
     const [isExpanded, setIsExpanded] = useState(false);
 
     return (
-        <ButtonGroup className="bp3-dark" style={{ paddingBottom: "20px" }} fill vertical>
+        <ButtonGroup  style={{ paddingBottom: "20px" }} fill vertical>
             <ButtonGroup>
                 <Button style={{ width: 20 }} icon="arrow-up" onClick={() => props.handleMoveUp(props.sectionId, props.path)} />
 

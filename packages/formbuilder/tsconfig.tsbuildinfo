@@ -862,7 +862,7 @@
         "signature": "9b51d7b5354177e7ac60410353d6236a08f09e168268b9eb781b74af82226dcc"
       },
       "./src/valinput.tsx": {
-        "version": "97e2b40e55eab09d30acebd3ed202a4866a9c06b9969089478265ab35fcd07f4",
+        "version": "1ea5d2577bdb78e04fb010a5de8c1a3622ed44bbea78bd1016fcae57c7f70bc8",
         "signature": "2bbf52a5cbdea0f9dca6f03654327eec70f84c3f3ed2f88de938c929f8e1688f"
       },
       "./src/createcondition.tsx": {
@@ -918,11 +918,11 @@
         "signature": "8dac10e0cdb9c072a4db90981b8587d2cb328755417957965dcb1e2454c4930f"
       },
       "./src/questionbutton.tsx": {
-        "version": "5567e1792dea2433031e2bd6fa7f58f905501778ed7ab5097383790a8c826749",
+        "version": "090b2e218d01a7948c2daae878925d16a2a52b0a5b439e795424827efae5820a",
         "signature": "cc18c73fe454c3df6b73f94aa1e1f7fbd8925a4c6d3b7020048a1b5fb17b34cd"
       },
       "./src/sectionbutton.tsx": {
-        "version": "6272f5647bea06ae91c7088ebe6cec43081252ef8544bfc042b85d53c6b84358",
+        "version": "fb4126a24792d1b8095204df2cf421b71e149cd2fa1c65ca1358c49904649f8f",
         "signature": "f169444edb8416761253d767564f8034146839862e31e2491a1f6401a789d4e2"
       },
       "./src/section.tsx": {
@@ -930,11 +930,11 @@
         "signature": "f468b22b30a134a8d79a6128057cbec2b5dafa716930cabc2ebb6a79879ca1b2"
       },
       "./src/toolbar.tsx": {
-        "version": "0e093f32b27afdca23d8057b913bdc9ada1782308d5bf6523adefe2978ce39a9",
+        "version": "fa8e01af64115d7b85f692aea7d61a5265323e5494a9207f0bf4c14c48bfa5de",
         "signature": "1e102aad167639e0b6e2e021520e7459fd146496999cc87c15d9672b72b44942"
       },
       "./src/surveyform.tsx": {
-        "version": "5001cebcdb34dc7630bec39384cd8cd066fff7463006ddeaec5f264244838364",
+        "version": "7378e3f07f0e607f0076b86a12d16c90a689d61940786de54d103b938ab1973d",
         "signature": "d43027121beec179634e687ad04c3b494c06c367e2e690d0fdb57e4227937fd4"
       },
       "./src/valueinput.tsx": {
@@ -8849,6 +8849,7 @@
       "../../node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
+      "./src/appconfig.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/accessibility/focusstylemanager.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/accessibility/index.d.ts",
       "../../node_modules/@types/react/global.d.ts",
@@ -8949,8 +8950,19 @@
       "../../node_modules/@blueprintjs/core/lib/esm/components/tree/tree.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/components/index.d.ts",
       "../../node_modules/@blueprintjs/core/lib/esm/index.d.ts",
+      "../dpform/lib/answer.d.ts",
+      "../dpform/lib/condition.d.ts",
       "../dpform/lib/answertypes.d.ts",
       "../dpform/lib/valuetype.d.ts",
+      "../dpform/lib/answeroptions.d.ts",
+      "../dpform/lib/constant.d.ts",
+      "../dpform/lib/constants.d.ts",
+      "../dpform/lib/duplicatesettings.d.ts",
+      "../dpform/lib/question.d.ts",
+      "../dpform/lib/questionsection.d.ts",
+      "../dpform/lib/rootsection.d.ts",
+      "../dpform/lib/util.d.ts",
+      "../dpform/lib/index.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/common.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/array.d.ts",
       "../../node_modules/@types/lodash/ts3.1/common/collection.d.ts",
@@ -8993,6 +9005,8 @@
       "./node_modules/@fortawesome/fontawesome-common-types/index.d.ts",
       "./node_modules/@fortawesome/fontawesome-svg-core/index.d.ts",
       "./node_modules/@fortawesome/react-fontawesome/index.d.ts",
+      "./src/utils/index.tsx",
+      "./src/utils/getrandomid.tsx",
       "../../node_modules/@blueprintjs/datetime/lib/esm/common/classes.d.ts",
       "../../node_modules/react-day-picker/types/common.d.ts",
       "../../node_modules/react-day-picker/types/utils.d.ts",
@@ -9013,10 +9027,26 @@
       "../../node_modules/@blueprintjs/datetime/lib/esm/common/monthandyear.d.ts",
       "../../node_modules/@blueprintjs/datetime/lib/esm/daterangepicker.d.ts",
       "../../node_modules/@blueprintjs/datetime/lib/esm/index.d.ts",
+      "./src/valinput.tsx",
+      "./src/createcondition.tsx",
+      "./src/createconditionmodal.tsx",
       "./node_modules/@fortawesome/free-solid-svg-icons/index.d.ts",
+      "./src/autofillcondition.tsx",
+      "./src/dpformitem.tsx",
+      "./src/answertype.tsx",
+      "./src/addoptions.tsx",
       "./node_modules/copy-to-clipboard/index.d.ts",
+      "./src/constants.tsx",
+      "./src/formtree.tsx",
       "./node_modules/@types/classnames/types.d.ts",
       "./node_modules/@types/classnames/index.d.ts",
+      "./src/duplicatesettings.tsx",
+      "./src/questionbutton.tsx",
+      "./src/sectionbutton.tsx",
+      "./src/section.tsx",
+      "./src/toolbar.tsx",
+      "./src/valueinput.tsx",
+      "./src/index.ts",
       "./node_modules/@babel/types/lib/index.d.ts",
       "./node_modules/@types/babel__generator/index.d.ts",
       "./node_modules/@types/babel__traverse/index.d.ts",
@@ -9190,37 +9220,7 @@
       "../../node_modules/redux/index.d.ts",
       "../../node_modules/@types/react-redux/index.d.ts",
       "../../node_modules/@types/react-test-renderer/index.d.ts",
-      "./src/appconfig.ts",
-      "../dpform/lib/condition.d.ts",
-      "../dpform/lib/questionsection.d.ts",
-      "../dpform/lib/duplicatesettings.d.ts",
-      "../dpform/lib/answeroptions.d.ts",
-      "../dpform/lib/util.d.ts",
-      "./src/utils/index.tsx",
-      "./src/section.tsx",
-      "./src/addoptions.tsx",
-      "./src/dpformitem.tsx",
-      "./src/autofillcondition.tsx",
-      "./src/utils/getrandomid.tsx",
-      "./src/valinput.tsx",
-      "./src/createcondition.tsx",
-      "./src/createconditionmodal.tsx",
-      "./src/answertype.tsx",
-      "./src/constants.tsx",
-      "./src/formtree.tsx",
-      "./src/duplicatesettings.tsx",
-      "./src/questionbutton.tsx",
-      "./src/sectionbutton.tsx",
-      "./src/toolbar.tsx",
-      "./src/surveyform.tsx",
-      "./src/valueinput.tsx",
-      "./src/index.ts",
-      "../dpform/lib/answer.d.ts",
-      "../dpform/lib/constant.d.ts",
-      "../dpform/lib/constants.d.ts",
-      "../dpform/lib/question.d.ts",
-      "../dpform/lib/rootsection.d.ts",
-      "../dpform/lib/index.d.ts"
+      "./src/surveyform.tsx"
     ]
   },
   "version": "3.7.2"

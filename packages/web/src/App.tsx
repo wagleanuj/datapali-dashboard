@@ -57,7 +57,7 @@ class App extends React.Component<Props, State>{
             <ConnectedApolloProvider client={client}>
               <ConfigProvider locale={ne_NP}>
         
-                <div className={`main-wrapper ${this.Theme}`}>
+                <div className={`main-wrapper `}>
                   <Switch>
                     <Route path="/login" render={({ history, location }) => {
                       return <LoginForm onLoggedIn={() => {
