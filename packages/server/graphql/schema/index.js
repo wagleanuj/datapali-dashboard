@@ -89,6 +89,7 @@ const typeDefs =
         users(ids:[String]): [User]
         login(email: String!, password: String!): AuthData
         sendPasswordResetEmail(email: String!): GeneralQueryResponse!
+        runQueryOn(formId:String!, query: String!): String!
     }
 
     type Mutation {
@@ -102,6 +103,7 @@ const typeDefs =
         saveForm(form: FormFileInput!): FormFile
         registerUser(username: String!, email: String!, password: String!): User!
         resetUserPassword(email: String!, password: String!, token: String!): User!
+        initDbFor(formId:String!):GeneralQueryResponse
     }`;
 
 module.exports = {

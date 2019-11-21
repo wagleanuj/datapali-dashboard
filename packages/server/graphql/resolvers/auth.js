@@ -3,7 +3,6 @@ const jwt = require('jsonwebtoken');
 const { AuthorizationErrorsCodes, MailerErrorCodes } = require("../../error_defs/index");
 const { ApolloError, AuthenticationError, UserInputError } = require("apollo-server-express");
 const { User } = require('../../models/user');
-const { Controls } = require('../../models/controls');
 const { ResetToken } = require("../../models/resetTokens");
 const { FilledForm } = require("../../models/filledForm");
 const { FormFile } = require("../../models/form");
@@ -82,34 +81,7 @@ const resolvers = {
         }
     },
     Mutation: {
-        registerUser: (parent, { username, email, password }, context, info) => {
-            return User.findOne({ email: email }).exec().then((user, err) => {
-                if (user) throw new ApolloError("User already exists", AuthorizationErrorsCodes.EMAIL_ALREADY_EXISTS, { email: email });
-                return User.findOne({ username: username }).exec().then(user => {
-                    if (user) throw new ApolloError("User already exists", AuthorizationErrorsCodes.USERNAME_ALREADY_EXISTS, { username: username });
-                    return new Promise((resolve, reject) => {
-                        bcrypt.genSalt(SALT_WORK_FACTOR, (err, salt) => {
-                            if (err) reject(new ApolloError("Failed to generate salt", AuthorizationErrorsCodes.BCRYPT_ERROR, {}));
-                            bcrypt.hash(password, salt, null, async (err, hash) => {
-                                if (err) reject(new ApolloError("Failed to hash password", AuthorizationErrorsCodes.BCRYPT_ERROR, {}));
-                                password = hash;
-                                const newUser = new User({
-                                    email: email,
-                                    username: username,
-                                    password: password,
-                                });
-                                const newControls = new Controls({ user: newUser._id });
-                                let result = await newUser.save();
-                                let userControls = await newControls.save();
-                                newUser.controls = newControls;
-                                await newUser.save();
-                                resolve({ ...result._doc, controls: userControls, _doc: result.id });
-                            })
-                        })
-                    })
-                })
-            });
-        },
+      
         register: async (parent, { user }, context, info) => {
             let { email, firstName, lastName, accountType, password, createdBy } = user;
             let referredBy = undefined;

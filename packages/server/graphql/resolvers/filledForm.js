@@ -2,7 +2,6 @@ const { FilledForm } = require("../../models/filledForm");
 const { FormFile } = require("../../models/form");
 const { User } = require("../../models/user");
 const { AuthenticationError, ApolloError } = require("apollo-server-express");
-const Mongoose = require("mongoose");
 
 const resolvers = {
   Query: {

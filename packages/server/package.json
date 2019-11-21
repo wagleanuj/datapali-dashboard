@@ -10,7 +10,6 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
-    
     "@playlyfe/gql": "^2.6.2",
     "apollo-server-express": "^2.4.0",
     "bcrypt-nodejs": "0.0.3",
@@ -21,6 +20,7 @@
     "graphql-tools": "^4.0.4",
     "jsonwebtoken": "^8.4.0",
     "mongoose": "^5.7.1",
+    "mongoose-query-parser": "^1.1.5",
     "nodemailer": "^5.1.1",
     "nodemon": "^1.18.10",
     "socket.io": "^2.2.0",

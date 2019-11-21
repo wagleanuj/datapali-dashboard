@@ -1,7 +1,13 @@
 const { FormFile } = require("../../models/form");
-const { User } = require("../../models/user");
+const { FilledForm } = require("../../models/filledForm");
 
+const { User } = require("../../models/user");
+const { makeTree, makeSchema } = require("../../utils/formdbHelper");
 const { AuthenticationError, ApolloError } = require("apollo-server-express");
+const mongoose = require("mongoose");
+const { Schema } = require("mongoose");
+const { MongooseQueryParser } = require('mongoose-query-parser');
+const parser = new MongooseQueryParser();
 
 const resolvers = {
   Query: {
@@ -42,6 +48,20 @@ const resolvers = {
           const ret = formFiles.map(dateTransformer);
           return ret;
         });
+    },
+    runQueryOn: async (parent, { formId, query }, context, info) => {
+      if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
+      if (!mongoose.models[formId]) throw new ApolloError("Database has not been initialized");
+      const formModel = mongoose.models[formId];
+      const qq = parser.parse(query);
+      const { filter, skip, limit, sort, projection, population } = qq;
+      const results = await formModel.find(filter)
+        .skip(skip)
+        .limit(limit)
+        .sort(sort)
+        .select(projection)
+        .populate(population);
+      return JSON.stringify(results);
     }
   },
   Mutation: {
@@ -178,28 +198,77 @@ const resolvers = {
       return Promise.all(deletion).then(r => {
         return { message: "Deleted successfully" };
       });
-    }
-  },
-  initDbFor: async (parent, { formId }, context, info) => {
-    if (!context._id || context.accountType !== "admin")
-      throw new AuthenticationError();
-    const formFile = await FormFile.findone({ id: formId }).exec();
-    const hasDB = !!formFile.dbId;
-    if (hasDB) {
-      //make update to the schema
-    }
-  },
-  disposeDbFor: async (parent, { formId }, context, info) => {
-    if (!context._id || context.accountType !== "admin")
-      throw new AuthenticationError();
-    const formFile = await FormFile.findone({ id: formId }).exec();
-    const hasDB = !!formFile.dbId;
-    if (hasDB) {
-        //dispose it 
-    }
+    },
+
+    initDbFor: async (parent, { formId, }, context, info) => {
+      // if (!context._id || context.accountType !== "admin")
+      //   throw new AuthenticationError();
+      const formFile = await FormFile.findOne({ id: formId }).exec();
+      // const filledForm = await FilledForm.findOne({formid: formId});
+      // if(!filledForm) throw new ApolloError("No filled forms found to create the db. You need to have at least one filled form submitted in order to initialize");
+      const hasDB = !!formFile.dbId;
+      const isDBinitialized = !!mongoose.models[formFile.id];
+      if (isDBinitialized) {
+        //reinit
+        delete mongoose.models[formFile.id];
+        await mongoose.connection.dropCollection(formFile.id);
+
+      }
+      if (hasDB) {
+        //make update to the schema
+      } else {
+        const fileObj = formFile.toObject();
+        fileObj.content = JSON.parse(fileObj.content);
+        const normalized = makeTree(fileObj);
+
+        const formSchema = makeSchema(normalized, formFile.id);
+        formSchema.add({
+          id: { type: Schema.Types.String, required: true },
+          formId: { type: Schema.Types.String },
+          revision: { type: Schema.Types.String }
+        })
+        const FORM_MODEL = mongoose.model(fileObj.id, formSchema);
+
+        const allFilledForms = await FilledForm.find({ formId: formId }).exec();
+        const formDocuments = allFilledForms.map(ff => {
+          const ffObj = ff.toObject();
+          const newObj = Object.assign({}, {
+            id: ff.id,
+            formId: ff.formId,
+
+          }, JSON.parse(ffObj.answerStore));
+          const formObj = new FORM_MODEL(newObj);
+          return formObj.save();
+        });
+        await Promise.all(formDocuments);
+        const all = await FORM_MODEL.findOne({}).exec();
+        return {
+          message: "initialized db!" + all.toString()
+        }
+      }
+      return {
+        message: "success"
+      }
+    },
+    // disposeDbFor: async (parent, { formId }, context, info) => {
+    //   if (!context._id || context.accountType !== "admin")
+    //     throw new AuthenticationError();
+    //   const formFile = await FormFile.findOne({ id: formId }).exec();
+    //   const hasDB = !!formFile.dbId;
+    //   if (hasDB) {
+    //       //dispose it 
+    //   }
+    // }
+
   }
+
 };
 
 module.exports = {
   FormFileResolvers: resolvers
 };
+
+
+function initDB(formId, ) {
+
+}
