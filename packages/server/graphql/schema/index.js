@@ -90,6 +90,8 @@ const typeDefs =
         login(email: String!, password: String!): AuthData
         sendPasswordResetEmail(email: String!): GeneralQueryResponse!
         runQueryOn(formId:String!, query: String!): String!
+        runAggregationOn(formId:String!, query:String!):String!
+
     }
 
     type Mutation {

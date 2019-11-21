@@ -62,6 +62,15 @@ const resolvers = {
         .select(projection)
         .populate(population);
       return JSON.stringify(results);
+    },
+    runAggregationOn: async (parent, { formId, query }, context, info) => {
+      if (!context._id || context.accountType !== "admin") throw new AuthenticationError();
+      if(!mongoose.models[formId]) throw new ApolloError("Database has not been initialized");
+      const formModel = mongoose.models[formId];
+      const q = JSON.parse(query);
+      console.log(q);
+      const results = await formModel.aggregate(q).exec();
+      return JSON.stringify(results);
     }
   },
   Mutation: {

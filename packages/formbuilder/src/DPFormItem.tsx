@@ -53,8 +53,6 @@ export const customStyles = {
     }),
     valueContainer: (base: any, state: any) => ({
         ...base,
-        background: "transparent",
-        color: "white"
     }),
 
     menu: (base: any, state: any) => ({
@@ -70,7 +68,6 @@ export const customStyles = {
         return {
             ...base,
             background: "#525f7f",
-            color: "white",
 
         }
     },
@@ -241,8 +238,6 @@ export class DPFormItem extends React.Component<FormItemProps, FormItemState>{
                             fill={false}
                             onClick={this.openAppearingConditionModal.bind(this)}
                         />
-
-
                     </FormGroup>
 
                     <FormGroup>
