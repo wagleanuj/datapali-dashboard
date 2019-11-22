@@ -238,7 +238,7 @@
         "signature": "5b3f4880d598ec2ae575d7a3ab42f28497232c7f5952d236c981a1a1c5c33d59"
       },
       "./src/question.ts": {
-        "version": "9c8e9233335e9d0e25ae6dfe0a0a995de97922261ab9aed198a6981f9570ae05",
+        "version": "aedd9c8b684b794d3f25bbe8b884b7ad86281b9a0c62793ac9bfaf98f241cd3c",
         "signature": "f8935928c8473a69ada21b7237fa7b53ae376f2e7ff2bc5e246a6a4ef6d42e46"
       },
       "./src/questionSection.ts": {
@@ -1168,7 +1168,6 @@
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
       "./src/question.ts": [
-        "./node_modules/@types/lodash/ts3.1/index.d.ts",
         "./src/answer.ts",
         "./src/AnswerOptions.ts",
         "./src/condition.ts",
@@ -2370,6 +2369,13 @@
       "./src/condition.ts": [
         "./src/answer.ts"
       ],
+      "./src/valueType.ts": [
+        "./src/answerTypes.ts"
+      ],
+      "./src/AnswerOptions.ts": [
+        "./src/condition.ts",
+        "./src/valueType.ts"
+      ],
       "./src/constant.ts": [
         "./src/valuetype.ts",
         "./src/answeroptions.ts"
@@ -2377,11 +2383,23 @@
       "./src/constants.ts": [
         "./src/constant.ts"
       ],
+      "./src/duplicateSettings.ts": [
+        "./src/condition.ts"
+      ],
       "./src/question.ts": [
         "./src/condition.ts",
         "./src/answer.ts",
         "./src/answeroptions.ts",
         "./src/valuetype.ts"
+      ],
+      "./src/questionSection.ts": [
+        "./src/question.ts",
+        "./src/duplicateSettings.ts",
+        "./src/condition.ts"
+      ],
+      "./src/rootSection.ts": [
+        "./src/question.ts",
+        "./src/questionSection.ts"
       ],
       "./src/index.ts": [
         "./src/answeroptions.ts",
@@ -2938,47 +2956,106 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../../node_modules/@types/stack-utils/index.d.ts": [
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/yargs-parser/index.d.ts": [
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/yargs/index.d.ts": [
-        "../../node_modules/@types/yargs-parser/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "./src/valueType.ts": [
-        "./src/answerTypes.ts"
-      ],
-      "./src/AnswerOptions.ts": [
-        "./src/condition.ts",
-        "./src/valueType.ts"
-      ],
-      "./src/duplicateSettings.ts": [
-        "./src/condition.ts"
-      ],
-      "./src/rootSection.ts": [
-        "./src/question.ts",
-        "./src/questionSection.ts"
-      ],
-      "./src/questionSection.ts": [
-        "./src/question.ts",
-        "./src/duplicateSettings.ts",
-        "./src/condition.ts"
-      ],
       "../../node_modules/@types/redux-form/lib/reduxForm.d.ts": [
         "../../node_modules/@types/react/index.d.ts",
         "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/Field.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/Fields.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/FieldArray.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/Form.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/FormName.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/FormSection.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formValues.d.ts": [
+        "../../node_modules/@types/react/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/formValueSelector.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/reducer.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/SubmissionError.d.ts": [
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actions.d.ts": [
+        "../../node_modules/redux/index.d.ts",
+        "../../node_modules/@types/redux-form/index.d.ts",
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/actionTypes.d.ts": [
+        "../../node_modules/@types/node/fs.d.ts",
+        "../../node_modules/@types/node/ts3.2/fs.d.ts",
+        "../../node_modules/@types/node/util.d.ts",
+        "../../node_modules/@types/node/ts3.2/util.d.ts"
+      ],
+      "../../node_modules/@types/redux-form/lib/selectors.d.ts": [
         "../../node_modules/@types/redux-form/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
@@ -3006,98 +3083,20 @@
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../../node_modules/@types/redux-form/lib/selectors.d.ts": [
-        "../../node_modules/@types/redux-form/index.d.ts",
+      "../../node_modules/@types/stack-utils/index.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../../node_modules/@types/redux-form/lib/actions.d.ts": [
-        "../../node_modules/redux/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
+      "../../node_modules/@types/yargs-parser/index.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
         "../../node_modules/@types/node/ts3.2/util.d.ts"
       ],
-      "../../node_modules/@types/redux-form/lib/SubmissionError.d.ts": [
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/reducer.d.ts": [
-        "../../node_modules/redux/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/formValueSelector.d.ts": [
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/formValues.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/Form.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/FieldArray.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/Fields.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/redux-form/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/Field.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/redux/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/FormName.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/FormSection.d.ts": [
-        "../../node_modules/@types/react/index.d.ts",
-        "../../node_modules/@types/node/fs.d.ts",
-        "../../node_modules/@types/node/ts3.2/fs.d.ts",
-        "../../node_modules/@types/node/util.d.ts",
-        "../../node_modules/@types/node/ts3.2/util.d.ts"
-      ],
-      "../../node_modules/@types/redux-form/lib/actionTypes.d.ts": [
+      "../../node_modules/@types/yargs/index.d.ts": [
+        "../../node_modules/@types/yargs-parser/index.d.ts",
         "../../node_modules/@types/node/fs.d.ts",
         "../../node_modules/@types/node/ts3.2/fs.d.ts",
         "../../node_modules/@types/node/util.d.ts",
@@ -3155,6 +3154,18 @@
       "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
       "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
       "./node_modules/@types/lodash/ts3.1/index.d.ts",
+      "./src/answer.ts",
+      "./src/condition.ts",
+      "./src/answerTypes.ts",
+      "./src/valueType.ts",
+      "./src/AnswerOptions.ts",
+      "./src/constant.ts",
+      "./src/constants.ts",
+      "./src/duplicateSettings.ts",
+      "./src/util.ts",
+      "./src/questionSection.ts",
+      "./src/rootSection.ts",
+      "./src/index.ts",
       "../../node_modules/@babel/types/lib/index.d.ts",
       "../../node_modules/@types/babel__generator/index.d.ts",
       "../../node_modules/@types/babel__traverse/index.d.ts",
@@ -3226,37 +3237,25 @@
       "../../node_modules/redux/index.d.ts",
       "../../node_modules/@types/react-redux/index.d.ts",
       "../../node_modules/@types/react-test-renderer/index.d.ts",
-      "../../node_modules/@types/stack-utils/index.d.ts",
-      "../../node_modules/@types/yargs-parser/index.d.ts",
-      "../../node_modules/@types/yargs/index.d.ts",
-      "./src/answer.ts",
-      "./src/condition.ts",
-      "./src/answerTypes.ts",
-      "./src/valueType.ts",
-      "./src/question.ts",
-      "./src/constant.ts",
-      "./src/AnswerOptions.ts",
-      "./src/constants.ts",
-      "./src/duplicateSettings.ts",
-      "./src/rootSection.ts",
-      "./src/questionSection.ts",
-      "./src/util.ts",
-      "../../node_modules/@types/redux-form/lib/Field.d.ts",
-      "../../node_modules/@types/redux-form/lib/FormName.d.ts",
-      "../../node_modules/@types/redux-form/lib/FormSection.d.ts",
-      "../../node_modules/@types/redux-form/lib/actionTypes.d.ts",
-      "./src/index.ts",
       "../../node_modules/@types/redux-form/lib/reduxForm.d.ts",
+      "../../node_modules/@types/redux-form/lib/Field.d.ts",
       "../../node_modules/@types/redux-form/lib/Fields.d.ts",
       "../../node_modules/@types/redux-form/lib/FieldArray.d.ts",
       "../../node_modules/@types/redux-form/lib/Form.d.ts",
+      "../../node_modules/@types/redux-form/lib/FormName.d.ts",
+      "../../node_modules/@types/redux-form/lib/FormSection.d.ts",
       "../../node_modules/@types/redux-form/lib/formValues.d.ts",
       "../../node_modules/@types/redux-form/lib/formValueSelector.d.ts",
       "../../node_modules/@types/redux-form/lib/reducer.d.ts",
       "../../node_modules/@types/redux-form/lib/SubmissionError.d.ts",
       "../../node_modules/@types/redux-form/lib/actions.d.ts",
+      "../../node_modules/@types/redux-form/lib/actionTypes.d.ts",
       "../../node_modules/@types/redux-form/lib/selectors.d.ts",
-      "../../node_modules/@types/redux-form/index.d.ts"
+      "../../node_modules/@types/redux-form/index.d.ts",
+      "../../node_modules/@types/stack-utils/index.d.ts",
+      "../../node_modules/@types/yargs-parser/index.d.ts",
+      "../../node_modules/@types/yargs/index.d.ts",
+      "./src/question.ts"
     ]
   },
   "version": "3.7.2"

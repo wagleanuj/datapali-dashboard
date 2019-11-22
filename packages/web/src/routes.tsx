@@ -2,6 +2,7 @@ import { getReadablePath } from "@datapali/dpform";
 import { Card, Descriptions, Divider, PageHeader } from "antd";
 import Title from "antd/lib/typography/Title";
 import React from "react";
+import DatabaseManagement from "./components/dbmgmt.component";
 import { FilledFormsPage } from "./components/filledFormsPage.component";
 import { FormBuilder } from "./components/formbuilder.component";
 import { renderQuestion } from "./components/formfiller/formItem.component";
@@ -11,7 +12,6 @@ import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Users } from "./components/surveyors.component";
 import { IFilledForm } from "./types";
-import { Builder } from "./components/builder/builder.component";
 const renderSectionHeader = (sectionName: string, path: number[], type: "section" | "root") => {
     if (type === "root") return null;
     return (
@@ -41,7 +41,7 @@ const renderRootSectionHeader = (filledForm: IFilledForm, name: string) => {
                 <div
 
                 >
-                    <Descriptions  title="Surveyor Information">
+                    <Descriptions title="Surveyor Information">
                         <Descriptions.Item label="Name">{filledForm.filledBy.firstName + " " + filledForm.filledBy.lastName}</Descriptions.Item>
                         <Descriptions.Item label="Started Date">{new Date(parseInt(`${filledForm.startedDate}`)).toLocaleDateString()}</Descriptions.Item>
                         <Descriptions.Item label="Completed Date">{new Date(parseInt(`${filledForm.completedDate}`)).toLocaleDateString()}</Descriptions.Item>
@@ -101,7 +101,7 @@ export const tabs: ISidebarItemNode[] = [
         hideOnSidebar: false,
         icon: "form",
         children: [],
-        component: <Builder />
+        component: <DatabaseManagement />
     },
 
     {

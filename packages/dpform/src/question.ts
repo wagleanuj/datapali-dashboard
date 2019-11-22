@@ -1,4 +1,3 @@
-import { isNil } from "lodash";
 import { IContent, QAType } from './answer';
 import { AnswerOptions } from './AnswerOptions';
 import { QACondition } from './condition';
@@ -48,7 +47,7 @@ export class QAQuestion {
         if (a.options) { q.options = AnswerOptions.fromJSON(a.options); }
         if (a.answerType) { q.answerType = answerTypeFromJSON(a.answerType); }
         if (a.autoAnswer) { q.autoAnswer = autoAnswerFromJSON(a.autoAnswer); }
-        a.customId = q.customId || "";
+        q.customId = a.customId || "";
         return q;
     }
 
@@ -59,6 +58,8 @@ export class QAQuestion {
         this.autoAnswer = q.autoAnswer;
         this.options = q.options;
         this.answerType = q.answerType;
+        this.customId = q.customId;
+        this.id = q.id;
         return this;
     }
 
