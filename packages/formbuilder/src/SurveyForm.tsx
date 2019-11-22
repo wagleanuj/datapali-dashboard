@@ -50,40 +50,7 @@ export class SurveyForm extends React.Component<SurveyFormProps, SurveyFormState
     componentDidMount() {
     }
 
-    loadForm() {
-        let requestBody = {
-            query: `
-            query GetForm($formId: [String]!){
-                forms(id: $formId){
-                  id
-                  name
-                  content
-                }
-              }`,
-            variables: {
-                formId: "root-53c37497-3808-cfd8-c886-1361dbaab171"
-            }
-        }
-        let token = this.props.token;
-        return request(CONFIG.PROD_SERVER, "forms", requestBody, "Could not delete the game file", token).then(file => {
-            file = file[0]
-            if (file) {
-                file.content = JSON.parse(file.content);
-                console.log(file.id);
-
-                let root: RootSection = RootSection.fromJSON(file);
-                let valbag: (QuestionSection | QAQuestion)[] = []
-                let iterated = this.getAllEntries([0, 1], 6, root, null, true, valbag);
-                console.log(iterated);
-                this.setState({
-                    root: root,
-                    activeSection: root,
-                    activeSectionPath: [0]
-                })
-            }
-        });
-    }
-
+   
     getAllEntries(startSectionPath: number[], startIndex: number, root: RootSection, fetchType: QORS | null, first: boolean = true, returnbag?: (QuestionSection | QAQuestion)[]) {
         if (!returnbag) returnbag = [];
         if (startSectionPath.length <= 0) return;

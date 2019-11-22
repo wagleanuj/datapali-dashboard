@@ -1,4 +1,5 @@
-import { IRootForm, IUser, IFilledForm } from "../types";
+import { IQuestion, ISection } from "../components/formfiller/types";
+import { IFilledForm, IRootForm, IUser } from "../types";
 
 
 export const UPDATE_ANSWER = 'UPDATE_ANSWER';
@@ -128,7 +129,37 @@ export interface DeleteRootForms {
         ids: string[]
     }
 }
-export type RootFormActions = AddRootForm | ReplaceRootForms | DeleteRootForms;
+
+export const ADD_ITEM_TO_ROOT_FORM = "add-item-to-root-form";
+export interface AddItemToRootForm {
+    type: typeof ADD_ITEM_TO_ROOT_FORM;
+    payload: {
+        rootId: string;
+        parentId: string;
+        item: ISection | IQuestion;
+    }
+}
+
+export const MOVE_ITEM_IN_ROOT_FORM = "move-item-in-root-form";
+export interface MoveItemInRootForm {
+    type: typeof MOVE_ITEM_IN_ROOT_FORM;
+    payload: {
+        rootId: string;
+        parentId: string;
+        newParentId: string;
+        itemId: string;
+    }
+}
+export const DELETE_ITEM_IN_ROOT_FORM = "delete-item-in-root-form";
+export interface DeleteItemInRootForm {
+    type: typeof DELETE_ITEM_IN_ROOT_FORM;
+    payload: {
+        rootId: string;
+        parentId: string;
+        itemId: string;
+    }
+}
+export type RootFormActions = AddRootForm | ReplaceRootForms | DeleteRootForms | AddItemToRootForm | MoveItemInRootForm | DeleteItemInRootForm;
 
 
 //user actions

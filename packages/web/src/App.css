@@ -21,7 +21,9 @@ body {
 	right:40px;
 	box-shadow: 2px 2px 3px #999;
 }
-
+.ant-tree-node-content-wrapper{
+  width:calc(100% - 24px);
+}
 .error {
   color: #C23030;
 

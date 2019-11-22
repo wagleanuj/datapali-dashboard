@@ -11,6 +11,7 @@ import { ISidebarItemNode } from "./components/navMenu.component";
 import { Statistics } from "./components/statistics.component";
 import { Users } from "./components/surveyors.component";
 import { IFilledForm } from "./types";
+import { Builder } from "./components/builder/builder.component";
 const renderSectionHeader = (sectionName: string, path: number[], type: "section" | "root") => {
     if (type === "root") return null;
     return (
@@ -93,6 +94,14 @@ export const tabs: ISidebarItemNode[] = [
         icon: "form",
         children: [],
         component: <FilledFormsPage />
+    },
+    {
+        title: "New form builder",
+        routeKey: "/newformbuilder",
+        hideOnSidebar: false,
+        icon: "form",
+        children: [],
+        component: <Builder />
     },
 
     {

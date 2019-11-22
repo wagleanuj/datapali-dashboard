@@ -57,23 +57,19 @@ export const customStyles = {
 
     menu: (base: any, state: any) => ({
         ...base,
-        background: "black",
         borderColor: "#e14eca",
         position:"absolute",
         zIndex: "999999999999999999 !important"
 
     }),
     menuList: (base: any, state: any) => {
-        console.log(state)
         return {
             ...base,
-            background: "#525f7f",
 
         }
     },
     singleValue: (base: any, state: any) => ({
         ...base,
-        color: "white"
     }),
 
     input: (base: any, state: any) => ({
@@ -82,7 +78,6 @@ export const customStyles = {
     }),
     option: (base: any, state: any) => ({
         ...base,
-        background: state.isSelected ? "lightblue" : state.isFocused ? "hotpink" : "#525f7f"
     }),
 };
 

@@ -882,7 +882,7 @@
         "signature": "534618fb28f83c24f17baab075e2c3b3f78906f6a0162e1dc6e492df8c63337f"
       },
       "./src/DPFormItem.tsx": {
-        "version": "01394d20fa28505351609693efa95b338f036ecea3e2c30d872fa81004950454",
+        "version": "8c0885b68e5534b1a35ce2497bcf9d227cf5e87550696a8a2a76568386e52687",
         "signature": "0a848dd5959044d977bae11b430907f63a6258f0fba2f024bc46fba7c52ad332"
       },
       "./src/AnswerType.tsx": {
@@ -934,8 +934,8 @@
         "signature": "1e102aad167639e0b6e2e021520e7459fd146496999cc87c15d9672b72b44942"
       },
       "./src/SurveyForm.tsx": {
-        "version": "4c09fc15bce7c61cee7d523d89a1f2889313c240adfab55b9d27479acc778be5",
-        "signature": "bbc430fdb0368769ad43506a14f089add71c9e443481644ea35ebd021c0b4149"
+        "version": "fc507b237921cc5f001c40a0b0115dfb81646a19bdf493f376ba8c56a8ca9679",
+        "signature": "c7428c778a658a2ec1ef52d08e0759ff33b8926ad93a6f32c8fa41ff634392ce"
       },
       "./src/ValueInput.tsx": {
         "version": "101495d8caf299a2723533ad6f5d847ae303edbd4148430448380d0fd5e0fdc9",
