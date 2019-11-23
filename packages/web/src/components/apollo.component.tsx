@@ -9,7 +9,7 @@ export type ApProps = {
 } & ApolloProviderProps<any>
 export function CustomApolloProvider(props: ApProps) {
     const client = new ApolloClient({
-        uri: CONFIG.localServerURL,
+        uri: CONFIG.serverURL,
         request: (operation) => {
             operation.setContext({
                 headers: {

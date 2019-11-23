@@ -4,6 +4,7 @@ import React from "react";
 import { IRootForm } from "../../types";
 import { IQuestion, ISection } from "../formfiller/types";
 import SidebarTree from "./sidebartree.builder.component";
+import {Map, List} from "immutable-js";
 const { Header, Footer, Sider, Content } = Layout;
 const { TreeNode } = Tree;
 

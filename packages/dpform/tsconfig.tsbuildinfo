@@ -182,8 +182,8 @@
         "signature": "00baffbe8a2f2e4875367479489b5d43b5fc1429ecb4a4cc98cfc3009095f52a"
       },
       "./node_modules/@types/lodash/ts3.1/common/object.d.ts": {
-        "version": "c95aec6e01c1b18c75c09d18767352761c00394e4864d4b7dd29386a1728eae9",
-        "signature": "c95aec6e01c1b18c75c09d18767352761c00394e4864d4b7dd29386a1728eae9"
+        "version": "7fc5a3d7cff296cea5c225911726a56283b663328709088fcc912d61f73682fc",
+        "signature": "7fc5a3d7cff296cea5c225911726a56283b663328709088fcc912d61f73682fc"
       },
       "./node_modules/@types/lodash/ts3.1/common/seq.d.ts": {
         "version": "3c92b6dfd43cc1c2485d9eba5ff0b74a19bb8725b692773ef1d66dac48cda4bd",
@@ -194,8 +194,8 @@
         "signature": "e34f3f6159b1e23de9bb5521382795aaa5aaed6f53b4702e70a2ec45bc76ddb5"
       },
       "./node_modules/@types/lodash/ts3.1/common/util.d.ts": {
-        "version": "5fada6791e558aa457f05073abdb381a31cf885dff9f3a9b167f7c62a4fcedba",
-        "signature": "5fada6791e558aa457f05073abdb381a31cf885dff9f3a9b167f7c62a4fcedba"
+        "version": "2630a7cbb597e85d713b7ef47f2946d4280d3d4c02733282770741d40672b1a5",
+        "signature": "2630a7cbb597e85d713b7ef47f2946d4280d3d4c02733282770741d40672b1a5"
       },
       "./node_modules/@types/lodash/ts3.1/index.d.ts": {
         "version": "bbf144d4354e2aaa6439f32761f3ee798cc68d1600adab6e2a596f25269f106d",
@@ -2377,8 +2377,8 @@
         "./src/valueType.ts"
       ],
       "./src/constant.ts": [
-        "./src/valuetype.ts",
-        "./src/answeroptions.ts"
+        "./src/valueType.ts",
+        "./src/AnswerOptions.ts"
       ],
       "./src/constants.ts": [
         "./src/constant.ts"
@@ -2389,8 +2389,8 @@
       "./src/question.ts": [
         "./src/condition.ts",
         "./src/answer.ts",
-        "./src/answeroptions.ts",
-        "./src/valuetype.ts"
+        "./src/AnswerOptions.ts",
+        "./src/valueType.ts"
       ],
       "./src/questionSection.ts": [
         "./src/question.ts",
@@ -2402,18 +2402,18 @@
         "./src/questionSection.ts"
       ],
       "./src/index.ts": [
-        "./src/answeroptions.ts",
+        "./src/AnswerOptions.ts",
         "./src/answer.ts",
-        "./src/answertypes.ts",
+        "./src/answerTypes.ts",
         "./src/condition.ts",
         "./src/constant.ts",
         "./src/constants.ts",
-        "./src/duplicatesettings.ts",
+        "./src/duplicateSettings.ts",
         "./src/question.ts",
-        "./src/questionsection.ts",
-        "./src/rootsection.ts",
+        "./src/questionSection.ts",
+        "./src/rootSection.ts",
         "./src/util.ts",
-        "./src/valuetype.ts"
+        "./src/valueType.ts"
       ],
       "../../node_modules/@babel/types/lib/index.d.ts": [
         "../../node_modules/@types/node/fs.d.ts",
@@ -3141,31 +3141,9 @@
       "../../node_modules/typescript/lib/lib.es2020.symbol.wellknown.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.intl.d.ts",
       "../../node_modules/typescript/lib/lib.esnext.bigint.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/common.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/array.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/date.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/function.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/math.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/number.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/object.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
-      "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
-      "./node_modules/@types/lodash/ts3.1/index.d.ts",
-      "./src/answer.ts",
-      "./src/condition.ts",
       "./src/answerTypes.ts",
       "./src/valueType.ts",
-      "./src/AnswerOptions.ts",
-      "./src/constant.ts",
-      "./src/constants.ts",
-      "./src/duplicateSettings.ts",
       "./src/util.ts",
-      "./src/questionSection.ts",
-      "./src/rootSection.ts",
-      "./src/index.ts",
       "../../node_modules/@babel/types/lib/index.d.ts",
       "../../node_modules/@types/babel__generator/index.d.ts",
       "../../node_modules/@types/babel__traverse/index.d.ts",
@@ -3255,7 +3233,29 @@
       "../../node_modules/@types/stack-utils/index.d.ts",
       "../../node_modules/@types/yargs-parser/index.d.ts",
       "../../node_modules/@types/yargs/index.d.ts",
-      "./src/question.ts"
+      "./node_modules/@types/lodash/ts3.1/common/util.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/string.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/seq.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/number.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/math.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/lang.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/function.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/date.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/collection.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/array.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/common.d.ts",
+      "./node_modules/@types/lodash/ts3.1/common/object.d.ts",
+      "./node_modules/@types/lodash/ts3.1/index.d.ts",
+      "./src/answer.ts",
+      "./src/condition.ts",
+      "./src/AnswerOptions.ts",
+      "./src/constant.ts",
+      "./src/constants.ts",
+      "./src/duplicateSettings.ts",
+      "./src/question.ts",
+      "./src/questionSection.ts",
+      "./src/rootSection.ts",
+      "./src/index.ts"
     ]
   },
   "version": "3.7.2"

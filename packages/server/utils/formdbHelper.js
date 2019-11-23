@@ -7,12 +7,12 @@ const makeSchema = function(tree, rootId){
         node.childNodes.forEach(it=>{
             const item = tree[it];
             if(item._type==="question"){
-                schema.add({[item.id]:{type: String }})       
+                schema.add({[item.customId||item.id]:{type: String }})       
 
             }else if(item._type==="section"){
-                schema.add({[item.id]: [{type: treeToSchema(item), default:()=>({})}]});
+                schema.add({[item.customId||item.id]: [{type: treeToSchema(item), default:()=>({})}]});
             }else{
-                schema.add({[item.id]:{type: treeToSchema(item),default:()=>({})}})
+                schema.add({[item.customId||item.id]:{type: treeToSchema(item),default:()=>({})}})
             }
         });
         return schema;
@@ -33,15 +33,15 @@ function makeTree(root , tree = undefined) {
     for (let i = 0; i < root.content.length; i++) {
         let item = root.content[i];
         if (item.hasOwnProperty("content")) {
-            val.childNodes.push(item.id);
+            val.childNodes.push(item.customId||item.id);
             makeTree(item, tree);
         } else {
-            val.childNodes.push(item.id);
+            val.childNodes.push(item.customId||item.id);
             const question = { ...item, _type: 'question' };
-            tree[item.id] = question;
+            tree[item.customId||item.id] = question;
         }
     }
-    tree[root.id] = val;
+    tree[root.customId||root.id] = val;
     return tree;
 }
 
