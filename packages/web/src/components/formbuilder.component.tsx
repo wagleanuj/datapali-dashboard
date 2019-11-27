@@ -1,11 +1,15 @@
 import { ApolloConsumer, useMutation, useQuery } from "@apollo/react-hooks";
 import { RootSection } from "@datapali/dpform";
-import { SurveyForm } from "@datapali/formbuilder";
 import { Button, Empty, message, Row, Spin } from "antd";
 import { ApolloClient } from "apollo-boost";
 import gql from "graphql-tag";
 import React, { useState } from "react";
+import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
+import { Action, Dispatch } from "redux";
+import { handleAddRootForm } from "../actions/actions";
+import { IAppState, IRootForm } from "../types";
+import { ConnectedBuilder } from "./builder/builder.container";
 
 export const GET_FORM = gql`
     query GetForm($formId:[String!]){
@@ -24,8 +28,10 @@ export const Save_Form = gql`
         }
       }`;
 
-
-export function FormBuilder() {
+type FormBuilderProps = {
+    handleAddRootForm?: (id: string, root: IRootForm) => void;
+}
+export function FormBuilder(props: FormBuilderProps) {
     const params = new URLSearchParams(useLocation().search);
     const [saveForm, { data: saveFormResult }] = useMutation(Save_Form);
     const [isSaving, setSaving] = useState(false);
@@ -70,11 +76,12 @@ export function FormBuilder() {
             root = new RootSection();
         } else {
             const form = data.forms[0];
-            form.content = typeof (form.content) === "string" ? JSON.parse(form.content) : form.content
-            root = RootSection.fromJSON(form);
+            form.content = typeof (form.content) === "string" ? JSON.parse(form.content) : form.content;
+            root = form;
+            props.handleAddRootForm(form.id, form.content);
         }
 
-        return <SurveyForm token={""} onChange={() => { }} onSave={onSave} root={root} />
+        return <ConnectedBuilder formId={formId} />
     }
     return (
         <ApolloConsumer>
@@ -82,3 +89,17 @@ export function FormBuilder() {
         </ApolloConsumer>
     )
 }
+
+const mapStateToProps = (state: IAppState, props: any) => {
+    return {
+
+    }
+
+}
+const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
+    return {
+        handleAddRootForm: (id: string, root: IRootForm) => dispatch(handleAddRootForm(id, root))
+    }
+}
+
+export const ConnectedFormBuilder_ = connect(mapStateToProps, mapDispatchToProps)(FormBuilder);

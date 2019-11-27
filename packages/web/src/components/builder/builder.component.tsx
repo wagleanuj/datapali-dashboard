@@ -3,8 +3,8 @@ import { Button, Card, Col, Divider, Dropdown, Icon, Layout, Menu, Row, Tree } f
 import React from "react";
 import { IRootForm } from "../../types";
 import { IQuestion, ISection } from "../formfiller/types";
-import SidebarTree from "./sidebartree.builder.component";
-import {Map, List} from "immutable-js";
+import QuestionEdit from "./questionedit.builder.component";
+import { ConnectedBuilderSidebar } from "./sidebartree.builder.container";
 const { Header, Footer, Sider, Content } = Layout;
 const { TreeNode } = Tree;
 
@@ -17,30 +17,24 @@ const defaultTree = {
 type BuilderProps = {
     handleMoveItemInForm?: (formId: string, itemId: string, parentId: string, newParentId: string) => void;
     handleDeleteItemInForm?: (formId: string, itemId: string, parentId: string) => void;
-    handleAddItemInForm?: (formId: string, item: IQuestion | ISection, parentId: string) => void;
+    handleAddItemInForm?: (rootId: string, parentId: string, item: ISection | IQuestion) => void;
     formId?: string;
+    tree?: IRootForm;
 }
 type BuilderState = {
     selectedNode: string;
-    tree: IRootForm;
-    rootId: string;
     currentSectionId: string;
 }
 
 export class Builder extends React.Component<BuilderProps, BuilderState>{
     state = {
         selectedNode: null,
-        tree: {
-            [defaultTree.id]: defaultTree
-        },
-        rootId: defaultTree.id,
-        currentSectionId: defaultTree.id,
+        currentSectionId: this.props.formId,
     }
 
     onSelect = (id) => {
         console.log(id);
     }
-
 
 
     handleActionMenuItemClick = ({ key }) => {
@@ -53,20 +47,24 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
                 id: getRandomId("section-"),
                 duplicatingSettings: undefined,
                 name: ""
-
             };
-            if (this.props.handleAddItemInForm) this.props.handleAddItemInForm(this.props.formId, newSection, this.state.currentSectionId)
+
+            if (this.props.handleAddItemInForm) this.props.handleAddItemInForm(this.props.formId, this.state.currentSectionId, newSection)
         } else if (key === "add-question") {
             const newQuestion: IQuestion = {
                 _type: "question",
                 answerType: { name: undefined },
-                questionContent: undefined,
-                id: getRandomId("root-"),
+                questionContent: {
+                    content: undefined,
+                    type: undefined,
+                },
+                id: getRandomId("question-"),
                 isRequired: false,
                 creationDate: 0,
                 customId: undefined,
                 options: undefined,
             };
+            if (this.props.handleAddItemInForm) this.props.handleAddItemInForm(this.props.formId, this.state.currentSectionId, newQuestion)
 
         }
     }
@@ -76,8 +74,7 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
             <Menu.Item key="add-section">Section</Menu.Item>
             <Menu.Item key="add-question">Question</Menu.Item>
         </Menu>
-
-    )
+    );
 
     render() {
         return (
@@ -101,13 +98,15 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
                     </Row>
                     <Row style={{ minHeight: 700, padding: 20 }}>
                         <Col span={6}>
-                            <SidebarTree tree={this.state.tree} rootId={this.state.rootId} onSelect={() => { console.log("clicked") }} />
+                            <ConnectedBuilderSidebar
+                                formId={this.props.formId}
+                                onSelect={() => { console.log("clicked") }} />
                             <Divider type="vertical" />
                         </Col>
 
                         <Col span={18}>
-                            content
-                       </Col>
+                            <QuestionEdit />
+                        </Col>
                     </Row>
 
                 </Row>

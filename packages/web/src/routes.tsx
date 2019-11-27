@@ -4,7 +4,7 @@ import Title from "antd/lib/typography/Title";
 import React from "react";
 import DatabaseManagement from "./components/dbmgmt.component";
 import { FilledFormsPage } from "./components/filledFormsPage.component";
-import { FormBuilder } from "./components/formbuilder.component";
+import { FormBuilder, ConnectedFormBuilder_ } from "./components/formbuilder.component";
 import { renderQuestion } from "./components/formfiller/formItem.component";
 import { FormViewerW } from "./components/formfiller/FormViewer.container";
 import { Forms } from "./components/forms.component";
@@ -85,7 +85,7 @@ export const tabs: ISidebarItemNode[] = [
         hideOnSidebar: true,
         icon: "form",
         children: [],
-        component: <FormBuilder />
+        component: <ConnectedFormBuilder_ />
     },
 
     {

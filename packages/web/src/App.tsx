@@ -16,7 +16,7 @@ import { EAppTheme } from './types';
 
 
 const client = new ApolloClient({
-  uri: CONFIG.serverURL
+  uri: CONFIG.localServerURL
 
 });
 
@@ -56,7 +56,7 @@ class App extends React.Component<Props, State>{
           <PersistGate onBeforeLift={() => console.log(store.getState())} loading={null} persistor={persistor}>
             <ConnectedApolloProvider client={client}>
               <ConfigProvider locale={ne_NP}>
-        
+
                 <div className={`main-wrapper `}>
                   <Switch>
                     <Route path="/login" render={({ history, location }) => {

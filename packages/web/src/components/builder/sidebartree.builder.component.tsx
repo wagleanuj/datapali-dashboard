@@ -5,8 +5,8 @@ import React, { Component } from 'react';
 import { IRootForm } from '../../types';
 const { TreeNode } = Tree;
 type SidebarTreeProps = {
-    tree: IRootForm;
-    rootId: string;
+    tree?: IRootForm;
+    formId: string;
     onSelect: (selectedKeys: string[], e: AntTreeNodeSelectedEvent) => void;
 }
 type SidebarTreeState = {
@@ -17,28 +17,38 @@ export default class SidebarTree extends Component<SidebarTreeProps, SidebarTree
         if (node._type === "question") {
             //leaf node
             return (
-                <TreeNode className={classNames("tree-question-node", "c-tree-node")} icon={<Icon type="form" />} title={<Typography.Text ellipsis>{node.questionContent.content}</Typography.Text>} key={node.id} />
+                <TreeNode
+                    checkable
+                    className={classNames("tree-question-node", "c-tree-node")}
+                    icon={() => <Icon type="form" />}
+                    title={<Typography.Text ellipsis>{node.questionContent.content}</Typography.Text>}
+                    key={node.id}
+                />
             )
         } else if (node.childNodes) {
-            return <TreeNode className={"c-tree-node"} title={<Typography.Text ellipsis>{node.name}</Typography.Text>} key={node.id}>
+            return <TreeNode
+                checkable
+                icon={() => <Icon type="folder" />}
+                className={"c-tree-node"}
+                title={<Typography.Text ellipsis>{node.name}</Typography.Text>}
+                key={node.id}
+            >
                 {node.childNodes.map((n: string) => this.renderTreeNode(this.props.tree[n]))}
             </TreeNode>
         }
     }
     render() {
-        const { tree, rootId } = this.props;
+        const { tree, formId } = this.props;
+        if (!tree || !formId) return null;
         return (
             <Card>
-
                 <Tree
-
-                    showLine
+                    showIcon
                     switcherIcon={<Icon type="down" />}
                     defaultExpandAll
                     onSelect={this.props.onSelect}
-
                 >
-                    {this.renderTreeNode(tree[rootId])}
+                    {this.renderTreeNode(tree[formId])}
                 </Tree>
             </Card>
 

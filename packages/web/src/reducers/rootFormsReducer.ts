@@ -20,16 +20,31 @@ export function rootFormsReducer(
                 draft.byId[payload.id] = payload.root;
             });
         case ADD_ITEM_TO_ROOT_FORM:
-            return produce(state, draft => {
-                const { item, parentId, rootId } = action.payload;
-                const root = draft.byId[rootId];
-                if (!root) throw new Error("Could not find the root");
-                root[item.id] = item;
-                if (has.call(root[parentId], "childNodes")) {
+            const rootItem = state.byId[action.payload.rootId];
+            //do the update 
+
+            const newItem = {
+                ...rootItem,
+
+            }
+            if (rootItem) {
+                const newItem = produce(rootItem, draft => {
+                    const { item, parentId, rootId } = action.payload;
+                    draft[item.id] = item;
                     //@ts-ignore
-                    root[parentId].childNodes = item.id;
+                    draft[parentId].childNodes.push(item.id);
+                });
+                return {
+                    ...state,
+                    byId: {
+                        ...state.byId,
+                        [action.payload.rootId]: newItem
+                    }
                 }
-            });
+            }
+
+            return state;
+
 
 
         case DELETE_ITEM_IN_ROOT_FORM:
