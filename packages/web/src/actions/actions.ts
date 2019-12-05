@@ -1,4 +1,4 @@
-import { ADD_FILLED_FORM, ADD_ITEM_TO_ROOT_FORM, ADD_ROOT_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, LOGOUT, MARK_AS_SUBMITTED, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, RootFormActions, SET_USER, TOGGLE_PAGER_MODE, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER } from ".";
+import { ADD_FILLED_FORM, ADD_ITEM_TO_ROOT_FORM, ADD_ROOT_FORM, DELETE_FILLED_FORM, FilledFormActions, JUMP_TO, LOGOUT, MARK_AS_SUBMITTED, NEXT_FORM_ITEM, PREV_FORM_ITEM, REPLACE_ROOT_FORMS, RootFormActions, SET_USER, TOGGLE_PAGER_MODE, UPDATE_FILLED_FORMS, UPDATE_FORM_ANSWER, UPDATE_QUESTION, UPDATE_SECTION } from ".";
 import { IQuestion, ISection } from "../components/formfiller/types";
 import { IFilledForm, IRootForm, IUser } from "../types";
 
@@ -100,6 +100,24 @@ export function handleSetRootForms(rootForms: { [key: string]: any }) {
     return {
         type: REPLACE_ROOT_FORMS,
         payload: rootForms
+    }
+}
+export function handleUpdateQuestion(rootId: string, question: IQuestion) {
+    return {
+        type: UPDATE_QUESTION,
+        payload: {
+            rootId: rootId,
+            question: question
+        }
+    }
+}
+export function handleUpdateSection(rootId: string, section: ISection) {
+    return {
+        type: UPDATE_SECTION,
+        payload: {
+            rootId: rootId,
+            section: section
+        }
     }
 }
 

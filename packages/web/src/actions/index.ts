@@ -159,7 +159,24 @@ export interface DeleteItemInRootForm {
         itemId: string;
     }
 }
-export type RootFormActions = AddRootForm | ReplaceRootForms | DeleteRootForms | AddItemToRootForm | MoveItemInRootForm | DeleteItemInRootForm;
+
+export const UPDATE_QUESTION = "update-question";
+export interface UpdateQuestion {
+    type: typeof UPDATE_QUESTION,
+    payload: {
+        rootId: string,
+        question: IQuestion,
+    }
+}
+export const UPDATE_SECTION = "update-section";
+export interface UpdateSection {
+    type: typeof UPDATE_SECTION,
+    payload: {
+        rootId: string,
+        question: IQuestion,
+    }
+}
+export type RootFormActions = AddRootForm | ReplaceRootForms | DeleteRootForms | AddItemToRootForm | MoveItemInRootForm | DeleteItemInRootForm | UpdateQuestion | UpdateSection;
 
 
 //user actions

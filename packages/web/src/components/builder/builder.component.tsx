@@ -78,8 +78,8 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
 
     render() {
         return (
-            <Card>
 
+            <Card>
                 <Row>
                     <Row type="flex" style={{ padding: 20, minHeight: 50 }}>
                         <Col span={6}>
@@ -105,7 +105,7 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
                         </Col>
 
                         <Col span={18}>
-                            <QuestionEdit />
+                            <QuestionEdit rootId={this.props.formId} nodeId={this.state.selectedNode} />
                         </Col>
                     </Row>
 
@@ -114,6 +114,7 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
                     Stats
                 </Footer>
             </Card >
+
         )
     }
 
