@@ -13,9 +13,9 @@ type QuestionEditProps = {
 }
 export default class QuestionEdit extends Component<QuestionEditProps, any> {
     render() {
+        console.log(this.props.node)
         return (
             <div>
-
                 <Form.Item label="Question Title">
                     <TextArea placeholder="question title" />
                 </Form.Item>

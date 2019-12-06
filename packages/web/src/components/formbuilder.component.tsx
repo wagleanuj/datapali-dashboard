@@ -7,6 +7,7 @@ import React, { useState } from "react";
 import { connect } from "react-redux";
 import { useHistory, useLocation } from "react-router-dom";
 import { Action, Dispatch } from "redux";
+import { initialize } from "redux-form";
 import { handleAddRootForm } from "../actions/actions";
 import { IAppState, IRootForm } from "../types";
 import { ConnectedBuilder } from "./builder/builder.container";
@@ -30,6 +31,7 @@ export const Save_Form = gql`
 
 type FormBuilderProps = {
     handleAddRootForm?: (id: string, root: IRootForm) => void;
+    initForm?: (formId: string, data: any) => void;
 }
 export function FormBuilder(props: FormBuilderProps) {
     const params = new URLSearchParams(useLocation().search);
@@ -81,7 +83,7 @@ export function FormBuilder(props: FormBuilderProps) {
             props.handleAddRootForm(form.id, form.content);
         }
 
-        return <ConnectedBuilder formId={formId} />
+        return <ConnectedBuilder form={formId} initialValues={root.content} />
     }
     return (
         <ApolloConsumer>
@@ -98,7 +100,8 @@ const mapStateToProps = (state: IAppState, props: any) => {
 }
 const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
     return {
-        handleAddRootForm: (id: string, root: IRootForm) => dispatch(handleAddRootForm(id, root))
+        handleAddRootForm: (id: string, root: IRootForm) => dispatch(handleAddRootForm(id, root)),
+        initForm: (formId: string, data: any) => dispatch(initialize(formId, data))
     }
 }
 

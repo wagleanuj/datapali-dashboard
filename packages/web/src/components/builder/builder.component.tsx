@@ -1,9 +1,12 @@
-import { getRandomId } from "@datapali/dpform";
+import { getRandomId, QACondition } from "@datapali/dpform";
 import { Button, Card, Col, Divider, Dropdown, Icon, Layout, Menu, Row, Tree } from "antd";
 import React from "react";
+import { InjectedFormProps } from "redux-form";
 import { IRootForm } from "../../types";
-import { IQuestion, ISection } from "../formfiller/types";
-import QuestionEdit from "./questionedit.builder.component";
+import { IQuestion, ISection, QUESTION, SECTION } from "../formfiller/types";
+import { QuestionForm } from "./questionform.component";
+import Rootsectionform from "./rootsectionform.component";
+import Sectionform from "./sectionform.component";
 import { ConnectedBuilderSidebar } from "./sidebartree.builder.container";
 const { Header, Footer, Sider, Content } = Layout;
 const { TreeNode } = Tree;
@@ -18,54 +21,63 @@ type BuilderProps = {
     handleMoveItemInForm?: (formId: string, itemId: string, parentId: string, newParentId: string) => void;
     handleDeleteItemInForm?: (formId: string, itemId: string, parentId: string) => void;
     handleAddItemInForm?: (rootId: string, parentId: string, item: ISection | IQuestion) => void;
+    getNode?: (nodeId: string) => any;
     formId?: string;
     tree?: IRootForm;
 }
+
 type BuilderState = {
     selectedNode: string;
     currentSectionId: string;
 }
 
-export class Builder extends React.Component<BuilderProps, BuilderState>{
+export class Builder extends React.Component<BuilderProps & InjectedFormProps, BuilderState>{
     state = {
-        selectedNode: null,
-        currentSectionId: this.props.formId,
+        selectedNode: this.props.initialValues[this.props.form],
+        currentSectionId: this.props.form,
     }
 
-    onSelect = (id) => {
-        console.log(id);
-    }
+    
 
 
     handleActionMenuItemClick = ({ key }) => {
         if (key === "add-section") {
-            const newSection: ISection = {
-                _type: "section",
-                appearingCondition: undefined,
+            const section: ISection = {
+                _type: SECTION,
+                appearingCondition: new QACondition(),
                 childNodes: [],
-                customId: undefined,
+                customId: "",
+                duplicatingSettings: { isEnabled: false, duplicateTimes: undefined },
                 id: getRandomId("section-"),
-                duplicatingSettings: undefined,
                 name: ""
-            };
+            }
+            this.props.change(section.id, section);
+            const node = this.props.getNode(this.state.currentSectionId);
+            const newChildren = [...new Set(node.childNodes).add(section.id)]
+            this.props.change(`${this.state.currentSectionId}.childNodes`, newChildren)
 
-            if (this.props.handleAddItemInForm) this.props.handleAddItemInForm(this.props.formId, this.state.currentSectionId, newSection)
-        } else if (key === "add-question") {
-            const newQuestion: IQuestion = {
-                _type: "question",
+        } else {
+            const question: IQuestion = {
+                _type: QUESTION,
                 answerType: { name: undefined },
-                questionContent: {
-                    content: undefined,
-                    type: undefined,
-                },
+                creationDate: new Date().getTime(),
+                customId: "",
                 id: getRandomId("question-"),
-                isRequired: false,
-                creationDate: 0,
-                customId: undefined,
-                options: undefined,
-            };
-            if (this.props.handleAddItemInForm) this.props.handleAddItemInForm(this.props.formId, this.state.currentSectionId, newQuestion)
-
+                isRequired: true,
+                options: {
+                    optionGroupMap: {},
+                    _type: "options",
+                    optionsMap: {}
+                },
+                questionContent: {
+                    content: "",
+                    type: undefined
+                }
+            }
+            this.props.change(question.id, question);
+            const node = this.props.getNode(this.state.currentSectionId);
+            const newChildren = [...new Set(node.childNodes).add(question.id)]
+            this.props.change(`${this.state.currentSectionId}.childNodes`, newChildren)
         }
     }
 
@@ -75,10 +87,27 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
             <Menu.Item key="add-question">Question</Menu.Item>
         </Menu>
     );
+    renderEditor = () => {
+        if (!this.state.selectedNode) return null;
+        if (this.state.selectedNode._type === "question") {
+            return (
+                <QuestionForm questionId={this.state.selectedNode.id} />
+            )
+        } else if (this.state.selectedNode._type === "section") {
+            return (
+                <Sectionform sectionId={this.state.selectedNode.id} />
+            )
+
+        } else if (this.state.selectedNode._type === "root") {
+            return (
+                <Rootsectionform rootId={this.state.selectedNode.id} />
+            )
+        }
+
+    }
 
     render() {
         return (
-
             <Card>
                 <Row>
                     <Row type="flex" style={{ padding: 20, minHeight: 50 }}>
@@ -99,13 +128,21 @@ export class Builder extends React.Component<BuilderProps, BuilderState>{
                     <Row style={{ minHeight: 700, padding: 20 }}>
                         <Col span={6}>
                             <ConnectedBuilderSidebar
-                                formId={this.props.formId}
-                                onSelect={() => { console.log("clicked") }} />
+                                formId={this.props.form}
+                                onSelect={(e) => {
+                                    this.setState({
+                                        selectedNode: e[0]
+                                    })
+                                }} />
                             <Divider type="vertical" />
                         </Col>
 
                         <Col span={18}>
-                            <QuestionEdit rootId={this.props.formId} nodeId={this.state.selectedNode} />
+                            <div style={{ marginLeft: 20 }}>
+
+                                {this.renderEditor()}
+                            </div>
+
                         </Col>
                     </Row>
 

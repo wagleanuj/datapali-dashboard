@@ -1,5 +1,4 @@
 import { Card, Icon, Tree, Typography } from 'antd';
-import { AntTreeNodeSelectedEvent } from 'antd/lib/tree';
 import classNames from 'classnames';
 import React, { Component } from 'react';
 import { IRootForm } from '../../types';
@@ -7,7 +6,8 @@ const { TreeNode } = Tree;
 type SidebarTreeProps = {
     tree?: IRootForm;
     formId: string;
-    onSelect: (selectedKeys: string[], e: AntTreeNodeSelectedEvent) => void;
+    values: any;
+    onSelect: (selectedKeys: any[]) => void;
 }
 type SidebarTreeState = {
 
@@ -33,22 +33,28 @@ export default class SidebarTree extends Component<SidebarTreeProps, SidebarTree
                 title={<Typography.Text ellipsis>{node.name}</Typography.Text>}
                 key={node.id}
             >
-                {node.childNodes.map((n: string) => this.renderTreeNode(this.props.tree[n]))}
+                {node.childNodes.map((n: string) => this.renderTreeNode(this.props.values[n]))}
             </TreeNode>
         }
     }
+    onSelect = (selections: string[]) => {
+        const sel = selections.map(item => {
+            return this.props.values[item]
+        });
+        if (this.props.onSelect) this.props.onSelect(sel);
+    }
     render() {
-        const { tree, formId } = this.props;
-        if (!tree || !formId) return null;
+        const { values, formId } = this.props;
+        if (!formId) return null;
         return (
             <Card>
                 <Tree
                     showIcon
                     switcherIcon={<Icon type="down" />}
                     defaultExpandAll
-                    onSelect={this.props.onSelect}
+                    onSelect={this.onSelect}
                 >
-                    {this.renderTreeNode(tree[formId])}
+                    {this.renderTreeNode(values[formId])}
                 </Tree>
             </Card>
 

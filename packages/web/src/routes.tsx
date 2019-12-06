@@ -104,14 +104,6 @@ export const tabs: ISidebarItemNode[] = [
         children: [],
         component: <DatabaseManagement />
     },
-    {
-        title: "New Form Builder",
-        routeKey: "/newFormBuilder",
-        hideOnSidebar: false,
-        icon: "form",
-        children: [],
-        component: <Builder />
-    },
     
 
     {

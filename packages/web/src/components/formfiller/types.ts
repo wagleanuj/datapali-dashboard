@@ -1,15 +1,15 @@
 import { IContent, IDupeSettings, IOption, IOptionGroup, IValueType, QACondition } from "@datapali/dpform/src";
 
-
+export const ROOTSECTION = "root";
 export interface IRootSection {
-    _type:string;
+    _type: typeof ROOTSECTION;
     id: string;
     name: string;
     childNodes: string[];
 }
-
+export const QUESTION = "question";
 export interface IQuestion {
-    _type:string;
+    _type: typeof QUESTION;
     id: string;
     answerType: IValueType;
     questionContent: IContent;
@@ -18,9 +18,9 @@ export interface IQuestion {
     creationDate: number;
     customId: string;
 }
-
+export const SECTION = "section";
 export interface ISection {
-    _type:string;
+    _type: typeof SECTION;
     name: string;
     id: string;
     customId: string;
@@ -30,7 +30,7 @@ export interface ISection {
 }
 
 export interface IAnswerOptions {
-    _type?:string;
+    _type?: string;
     optionsMap: { [key: string]: IOption }
     optionGroupMap: { [key: string]: IOptionGroup }
 

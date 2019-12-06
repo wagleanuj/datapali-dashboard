@@ -11,7 +11,7 @@ import { IFilledForm, IRootForm } from "../../types";
 import { FAB } from "../fab.component";
 import { FieldProps } from "./formItem.component";
 import { ConnectedSectionNode } from "./sectionNode.container";
-import { IQuestion, IRootSection, ISection } from "./types";
+import { IQuestion, IRootSection, ISection, SECTION, ROOTSECTION } from "./types";
 const SAVE_FILLED_FORM = gql`
 mutation SaveForm($filledForm: FilledFormInput!){
     saveFilledForm(filledForm: $filledForm){
@@ -47,7 +47,8 @@ query GetForm($id: [String]!){
   `;
 type FormTree = { [key: string]: IRootSection | ISection | IQuestion }
 export function makeTree(root: RootSection | QuestionSection, tree: FormTree = {}) {
-    const type = root instanceof QuestionSection ? 'section' : 'root';
+    const type = root instanceof QuestionSection ? SECTION : ROOTSECTION;
+    //@ts-ignore
     const val: IRootSection | ISection = {
         ...root,
         _type: type,

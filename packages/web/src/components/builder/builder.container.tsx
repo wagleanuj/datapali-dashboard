@@ -1,13 +1,15 @@
 import { connect } from "react-redux";
 import { Action, Dispatch } from "redux";
+import { formValueSelector, reduxForm } from "redux-form";
 import { handleAddItemToRootForm } from "../../actions/actions";
 import { IAppState } from "../../types";
 import { IQuestion, ISection } from "../formfiller/types";
 import { Builder } from "./builder.component";
 
 const mapStateToProps = (state: IAppState, props: any) => {
+    const selector = formValueSelector(props.form);
     return {
-        tree: state.rootForms.byId[props.formId]
+        getNode: (nodeId: string) => selector(state, nodeId)
     }
 }
 
@@ -16,5 +18,7 @@ const mapDispatchToProps = (dispatch: Dispatch<Action>) => {
         handleAddItemInForm: (rootId: string, parentId: string, item: ISection | IQuestion) => dispatch(handleAddItemToRootForm(rootId, parentId, item))
     }
 }
-
-export const ConnectedBuilder = connect(mapStateToProps, mapDispatchToProps)(Builder);
+const InjectedBuilder = reduxForm({
+    enableReinitialize: false
+})(Builder)
+export const ConnectedBuilder = connect(mapStateToProps, mapDispatchToProps)(InjectedBuilder);
