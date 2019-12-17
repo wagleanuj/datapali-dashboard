@@ -18,6 +18,7 @@
     "immer": "^5.0.0",
     "immutable-js": "^0.3.1-6",
     "jest": "^24.9.0",
+    "moment": "^2.24.0",
     "re-reselect": "^3.4.0",
     "react-router-dom": "^5.1.2",
     "react-scripts": "3.2.0",

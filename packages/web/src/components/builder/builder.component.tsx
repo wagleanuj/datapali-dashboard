@@ -37,7 +37,7 @@ export class Builder extends React.Component<BuilderProps & InjectedFormProps, B
         currentSectionId: this.props.form,
     }
 
-    
+
 
 
     handleActionMenuItemClick = ({ key }) => {
@@ -91,16 +91,16 @@ export class Builder extends React.Component<BuilderProps & InjectedFormProps, B
         if (!this.state.selectedNode) return null;
         if (this.state.selectedNode._type === "question") {
             return (
-                <QuestionForm questionId={this.state.selectedNode.id} />
+                <QuestionForm form={this.props.form} questionId={this.state.selectedNode.id} />
             )
         } else if (this.state.selectedNode._type === "section") {
             return (
-                <Sectionform sectionId={this.state.selectedNode.id} />
+                <Sectionform form={this.props.form} sectionId={this.state.selectedNode.id} />
             )
 
         } else if (this.state.selectedNode._type === "root") {
             return (
-                <Rootsectionform rootId={this.state.selectedNode.id} />
+                <Rootsectionform form={this.props.form} rootId={this.state.selectedNode.id} />
             )
         }
 

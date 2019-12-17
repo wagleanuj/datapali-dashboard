@@ -4,6 +4,7 @@ import FormItem from "antd/lib/form/FormItem";
 import TextArea from "antd/lib/input/TextArea";
 import React from "react";
 import { Field, FormSection, WrappedFieldInputProps, WrappedFieldProps } from "redux-form";
+import AddOptions from "./addoptions.builder.component";
 // export interface IQuestion {
 //     _type: typeof QUESTION;
 //     id: string;
@@ -105,7 +106,7 @@ export class QuestionForm extends React.Component<any, any>{
         </FormItem>;
     }
     renderOptions = (props: WrappedFieldProps) => {
-        return null;
+        return <AddOptions questionId={this.props.questionId} form={this.props.form} />;
     }
     renderAppearingCondition = (props: WrappedFieldProps) => {
         return null;
