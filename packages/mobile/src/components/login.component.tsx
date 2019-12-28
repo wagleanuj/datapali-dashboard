@@ -28,15 +28,15 @@ const LOGIN = gql`query Login($email: String!, $password: String!){
           content
         }
         filledForms{
-          totalCount
-          forms{
             id
             startedDate
             completedDate
             formId
-            filledBy
+            filledBy{
+                _id
+            }
             answerStore
-          }
+          
         }
       }
     }
@@ -102,7 +102,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
             availableForms: login.user.availableForms.map(item => item.id),
             firstName: login.user.firstName,
             lastName: login.user.lastName,
-            filledForms: login.user.filledForms.forms.map(item => item.id)
+            filledForms: login.user.filledForms.map(item => item.id)
 
         }
         let rootForms = {};
@@ -112,7 +112,7 @@ class SignInComponent extends React.Component<SignInProps, State> {
             rootForms[v.id] = tree;
         });
         let filledForms = {};
-        login.user.filledForms.forms.forEach(v => {
+        login.user.filledForms.forEach(v => {
             if (typeof v.answerStore === 'string') v.answerStore = JSON.parse(v.answerStore);
             filledForms[v.id] = {
                 completedDate: parseInt(v.completedDate),
